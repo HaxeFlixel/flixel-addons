@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": ["flash", "game", "cpp", "openfl"],
 	"description": "flixel-addons is a set of useful, additional classes for HaxeFlixel.",
-	"version": "1.0",
+	"version": "1.0.0",
 	"releasenote": "Initial relase of flixel-addons",
 	"contributors": ["haxeflixel"],
 	"dependencies": { "openfl": "", "flixel": "" }
