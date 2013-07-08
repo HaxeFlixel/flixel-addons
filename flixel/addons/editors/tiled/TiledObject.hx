@@ -3,13 +3,13 @@
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
  * This content is released under the MIT License.
  ******************************************************************************/
-package flixel.addons.tmx;
+package flixel.addons.editors.tiled;
 
 import haxe.xml.Fast;
 
-class TmxObject
+class TiledObject
 {
-	public var group:TmxObjectGroup;
+	public var group:TiledObjectGroup;
 	public var xmlData:Fast;
 	public var name:String;
 	public var type:String;
@@ -19,10 +19,10 @@ class TmxObject
 	public var height:Int;
 	public var angle:Float; // in degrees
 	public var gid:Int;
-	public var custom:TmxPropertySet;
-	public var shared:TmxPropertySet; // shared properties are tileset properties added on object tile
+	public var custom:TiledPropertySet;
+	public var shared:TiledPropertySet; // shared properties are tileset properties added on object tile
 	
-	public function new(source:Fast, parent:TmxObjectGroup)
+	public function new(source:Fast, parent:TiledObjectGroup)
 	{
 		xmlData = source;
 		group = parent;
@@ -39,7 +39,7 @@ class TmxObject
 		if(source.has.gid && source.att.gid.length != 0) //object with tile association?
 		{
 			gid = Std.parseInt(source.att.gid);
-			var set:TmxTileSet;
+			var set:TiledTileSet;
 			for (set in group.map.tilesets)
 			{
 				shared = set.getPropertiesByGid(gid);
@@ -50,7 +50,7 @@ class TmxObject
 		
 		//load properties
 		var node:Xml;
-		custom = new TmxPropertySet();
+		custom = new TiledPropertySet();
 		for (node in source.nodes.properties)
 			custom.extend(node);
 	}

@@ -3,11 +3,11 @@
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
  * This content is released under the MIT License.
  ******************************************************************************/
-package flixel.addons.tmx;
+package flixel.addons.editors.tiled;
 
 import haxe.xml.Fast;
 
-class TmxPropertySet implements Dynamic<String>
+class TiledPropertySet implements Dynamic<String>
 {
 	
 	public function new()

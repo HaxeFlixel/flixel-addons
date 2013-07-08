@@ -3,14 +3,14 @@
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
  * This content is released under the MIT License.
  ******************************************************************************/
-package flixel.addons.tmx;
+package flixel.addons.editors.tiled;
 
 import haxe.xml.Fast;
 
-class TmxObjectGroup
+class TiledObjectGroup
 {
 
-    public var map:TmxMap;
+    public var map:TiledMap;
 	public var name:String;
 	public var x:Int;
 	public var y:Int;
@@ -18,13 +18,13 @@ class TmxObjectGroup
 	public var height:Int;
 	public var opacity:Float;
 	public var visible:Bool;
-	public var properties:TmxPropertySet;
-	public var objects:Array<TmxObject>;
+	public var properties:TiledPropertySet;
+	public var objects:Array<TiledObject>;
 	
-	public function new(source:Fast, parent:TmxMap)
+	public function new(source:Fast, parent:TiledMap)
 	{
-		properties = new TmxPropertySet();
-		objects = new Array<TmxObject>();
+		properties = new TiledPropertySet();
+		objects = new Array<TiledObject>();
 		
 		map = parent;
 		name = source.att.name;
@@ -42,7 +42,7 @@ class TmxObjectGroup
 			
 		//load objects
 		for (node in source.nodes.object)
-			objects.push(new TmxObject(node, this));
+			objects.push(new TiledObject(node, this));
 	}
 
 }

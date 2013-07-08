@@ -3,7 +3,7 @@
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
  * This content is released under the MIT License.
  ******************************************************************************/
-package flixel.addons.tmx;
+package flixel.addons.editors.tiled;
 
 import openfl.Assets;
 import haxe.xml.Fast;
@@ -12,7 +12,7 @@ import sys.io.File;
 import sys.FileSystem;
 #end
 
-class TmxMap
+class TiledMap
 {
 	public var version      : String; 
 	public var orientation  : String;
@@ -25,7 +25,7 @@ class TmxMap
 	public var fullWidth  	: Int;
 	public var fullHeight 	: Int;
 	
-	public var properties   : TmxPropertySet;
+	public var properties   : TiledPropertySet;
 	
 	// Add a "noload" property to your Map Properties.
 	// Add comma separated values of tilesets, layers, or object names.
@@ -33,14 +33,14 @@ class TmxMap
 	private var noLoadHash  :Map<String, Bool>;
 	
 	// Use hash, we don't care about order
-	public var tilesets     : Map<String, TmxTileSet>;
+	public var tilesets     : Map<String, TiledTileSet>;
 	// Use array to preserve load order
-	public var layers       : Array<TmxLayer>;
-	public var objectGroups : Array<TmxObjectGroup>;
+	public var layers       : Array<TiledLayer>;
+	public var objectGroups : Array<TiledObjectGroup>;
 	
 	public function new(data: Dynamic)
 	{
-		properties = new TmxPropertySet();
+		properties = new TiledPropertySet();
 		var source:Fast = null;
 		var node:Fast = null;
 		
@@ -71,9 +71,9 @@ class TmxMap
 		fullHeight = height * tileHeight;
 		
 		noLoadHash		= new Map<String, Bool>();
-		tilesets 		= new Map<String, TmxTileSet>();
-		layers 			= new Array<TmxLayer>();
-		objectGroups 	= new Array<TmxObjectGroup>();
+		tilesets 		= new Map<String, TiledTileSet>();
+		layers 			= new Array<TiledLayer>();
+		objectGroups 	= new Array<TiledObjectGroup>();
 		
 		//read properties
 		for (node in source.nodes.properties)
@@ -94,7 +94,7 @@ class TmxMap
 		{
 			name = node.att.name;
 			if(!noLoadHash.exists(name))
-				tilesets.set(name, new TmxTileSet(node));
+				tilesets.set(name, new TiledTileSet(node));
 		}
 		
 		//load layer
@@ -102,7 +102,7 @@ class TmxMap
 		{
 			name = node.att.name;
 			if(!noLoadHash.exists(name))
-				layers.push( new TmxLayer(node, this) );
+				layers.push( new TiledLayer(node, this) );
 		}
 		
 		//load object group
@@ -110,16 +110,16 @@ class TmxMap
 		{
 			name = node.att.name;
 			if(!noLoadHash.exists(name))
-				objectGroups.push( new TmxObjectGroup(node, this) );
+				objectGroups.push( new TiledObjectGroup(node, this) );
 		}
 	}
 	
-	public function getTileSet(name:String):TmxTileSet
+	public function getTileSet(name:String):TiledTileSet
 	{
 		return tilesets.get(name);
 	}
 	
-	public function getLayer(name:String):TmxLayer
+	public function getLayer(name:String):TiledLayer
 	{
 		var i = layers.length;
 		while (i > 0)
@@ -128,7 +128,7 @@ class TmxMap
 		return null;
 	}
 	
-	public function getObjectGroup(name:String):TmxObjectGroup
+	public function getObjectGroup(name:String):TiledObjectGroup
 	{
 		var i = objectGroups.length;
 		while (i > 0)
@@ -137,11 +137,11 @@ class TmxMap
 		return null;
 	}
 	
-	//works only after TmxTileSet has been initialized with an image...
-	public function getGidOwner(gid:Int):TmxTileSet
+	//works only after TiledTileSet has been initialized with an image...
+	public function getGidOwner(gid:Int):TiledTileSet
 	{
-		var last:TmxTileSet = null;
-		var set:TmxTileSet;
+		var last:TiledTileSet = null;
+		var set:TiledTileSet;
 		for (set in tilesets)
 		{
 			if(set.hasGid(gid))

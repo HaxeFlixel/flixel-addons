@@ -3,16 +3,16 @@
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
  * This content is released under the MIT License.
  ******************************************************************************/
-package flixel.addons.tmx;
+package flixel.addons.editors.tiled;
 
 import flash.utils.ByteArray;
 import flash.utils.Endian;
 import flash.Lib;
 import haxe.xml.Fast;
 
-class TmxLayer
+class TiledLayer
 {
-	public var map:TmxMap;
+	public var map:TiledMap;
 	public var name:String;
 	public var x:Int;
 	public var y:Int;
@@ -20,16 +20,16 @@ class TmxLayer
 	public var height:Int;
 	public var opacity:Float;
 	public var visible:Bool;
-	public var properties:TmxPropertySet;
+	public var properties:TiledPropertySet;
 	
 	public var csvData(get_csvData, null):String;
 	public var tileArray(get_tileArray, null):Array<Int>;
 	
 	private var _xmlData:Fast;
 	
-	public function new(source:Fast, parent:TmxMap)
+	public function new(source:Fast, parent:TiledMap)
 	{
-		properties = new TmxPropertySet();
+		properties = new TiledPropertySet();
 		map = parent;
 		name = source.att.name;
 		x = (source.has.x) ? Std.parseInt(source.att.x) : 0;
@@ -47,7 +47,7 @@ class TmxLayer
 		//load tile GIDs
 		_xmlData = source.node.data;
 		if (_xmlData == null)
-			throw "Error loading TmxLayer level data";
+			throw "Error loading TiledLayer level data";
 	}
 	
 	private function get_csvData():String 
@@ -92,7 +92,7 @@ class TmxLayer
 					case "zlib":
 						compressed = true;
 					default:
-						throw "TmxLayer - data compression type not supported!";
+						throw "TiledLayer - data compression type not supported!";
 				}
 			}
 			if (compressed)

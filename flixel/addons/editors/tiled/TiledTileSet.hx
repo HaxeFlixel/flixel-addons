@@ -3,16 +3,16 @@
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
  * This content is released under the MIT License.
  ******************************************************************************/
-package flixel.addons.tmx;
+package flixel.addons.editors.tiled;
 
 import flash.display.BitmapData;
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 import haxe.xml.Fast;
 
-class TmxTileSet
+class TiledTileSet
 {
-	private var _tileProps:Array<TmxPropertySet>;
+	private var _tileProps:Array<TiledPropertySet>;
 	
 	public var firstGID:Int;
 	public var name:String;
@@ -67,14 +67,14 @@ class TmxTileSet
 			if (source.has.margin) margin = Std.parseInt(source.att.margin);
 			
 			//read properties
-			_tileProps = new Array<TmxPropertySet>();
+			_tileProps = new Array<TiledPropertySet>();
 			for (node in source.nodes.tile)
 			{
 				if(!node.has.id)
 					continue;
 				
 				var id:Int = Std.parseInt(node.att.id);
-				_tileProps[id] = new TmxPropertySet();
+				_tileProps[id] = new TiledPropertySet();
 				for (prop in node.nodes.properties)
 					_tileProps[id].extend(prop);
 			}
@@ -103,14 +103,14 @@ class TmxTileSet
 		return firstGID + id;
 	}
 
-	public function getPropertiesByGid(gid:Int):TmxPropertySet
+	public function getPropertiesByGid(gid:Int):TiledPropertySet
 	{
 		if (_tileProps != null)
 			return _tileProps[gid - firstGID];
 		return null;
 	}
 	
-	public inline function getProperties(id:Int):TmxPropertySet
+	public inline function getProperties(id:Int):TiledPropertySet
 	{
 		return _tileProps[id];
 	}

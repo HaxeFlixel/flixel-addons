@@ -1,4 +1,4 @@
-package flixel.addons.tile;
+package flixel.addons.editors.ogmo;
 
 import openfl.Assets;
 import haxe.xml.Fast;
