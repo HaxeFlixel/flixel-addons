@@ -211,7 +211,9 @@ class FlxNestedSprite extends FlxSprite
 	
 	public function preUpdate():Void 
 	{
+		#if !FLX_NO_DEBUG
 		FlxBasic._ACTIVECOUNT++;
+		#end
 		
 		if (_flickerTimer > 0)
 		{
