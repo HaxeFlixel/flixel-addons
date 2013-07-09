@@ -6,7 +6,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.util.FlxAngle;
-import flixel.util.FlxArray;
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxMath;
 
 /**
@@ -119,7 +119,7 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public function add(Child:FlxNestedSprite):FlxNestedSprite
 	{
-		if (FlxArray.indexOf(_children, Child) < 0)
+		if (FlxArrayUtil.indexOf(_children, Child) < 0)
 		{
 			_children.push(Child);
 			Child.velocity.x = Child.velocity.y = 0;
@@ -150,7 +150,7 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public function remove(Child:FlxNestedSprite):FlxNestedSprite
 	{
-		var index:Int = FlxArray.indexOf(_children, Child);
+		var index:Int = FlxArrayUtil.indexOf(_children, Child);
 		
 		if (index >= 0)
 		{
