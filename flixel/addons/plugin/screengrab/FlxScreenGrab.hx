@@ -1,111 +1,99 @@
-/**
-* FlxScreenGrab
-* -- Part of the Flixel Power Tools set
-* 
-* v1.0 Updated for the Flixel 2.5 Plugin system
-* 
-* @version 1.0 - April 28th 2011
-* @link http://www.photonstorm.com
-* @author Richard Davey / Photon Storm
-*/
-
 package flixel.addons.plugin.screengrab;
 
-import flash.geom.Rectangle;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.geom.Matrix;
-#if flash
-import flash.net.FileReference;
-#end
+import flash.geom.Rectangle;
 import flash.utils.ByteArray;
-import flash.Lib;
 import flixel.FlxBasic;
 import flixel.FlxG;
 
+#if flash
+import flash.net.FileReference;
+#end
+
 /**
  * Captures a screen grab of the game and stores it locally, optionally saving as a PNG.
+ * 
+ * @link http://www.photonstorm.com
+ * @author Richard Davey / Photon Storm
  */
 class FlxScreenGrab extends FlxBasic
 {
-	public static var screenshot:Bitmap;
-	private static var hotkey:String = "";
-	private static var autoSave:Bool = false;
-	private static var autoHideMouse:Bool = false;
-	private static var region:Rectangle;
+	static public var screenshot:Bitmap;
 	
-	public function new() 
-	{
-		super();
-	}
+	static private var _hotkey:String = "";
+	static private var _autoSave:Bool = false;
+	static private var _autoHideMouse:Bool = false;
+	static private var _region:Rectangle;
 	
 	/**
-	 * Defines the region of the screen that should be captured. If you need it to be a fixed location then use this.<br />
-	 * If you want to grab the whole SWF size, you don't need to set this as that is the default.<br />
+	 * Defines the region of the screen that should be captured. If you need it to be a fixed location then use this.
+	 * If you want to grab the whole SWF size, you don't need to set this as that is the default.
 	 * Remember that if your game is running in a zoom mode > 1 you need to account for this here.
 	 * 
-	 * @param	x		The x coordinate (in Flash display space, not Flixel game world)
-	 * @param	y		The y coordinate (in Flash display space, not Flixel game world)
-	 * @param	width	The width of the grab region
-	 * @param	height	The height of the grab region
+	 * @param	X		The x coordinate (in Flash display space, not Flixel game world)
+	 * @param	Y		The y coordinate (in Flash display space, not Flixel game world)
+	 * @param	Width	The width of the grab region
+	 * @param	Height	The height of the grab region
 	 */
-	public static function defineCaptureRegion(x:Int, y:Int, width:Int, height:Int):Void
+	static public function defineCaptureRegion(X:Int, Y:Int, Width:Int, Height:Int):Void
 	{
-		region = new Rectangle(x, y, width, height);
+		_region = new Rectangle(X, Y, Width, Height);
 	}
 	
 	/**
 	 * Clears a previously defined capture region
 	 */
-	public static function clearCaptureRegion():Void
+	static public function clearCaptureRegion():Void
 	{
-		region = null;
+		_region = null;
 	}
 	
 	/**
-	 * Specify which key will capture a screen shot. Use the String value of the key in the same way FlxG.keys does (so "F1" for example)<br />
-	 * Optionally save the image to a file immediately. This uses the file systems "Save as" dialog window and pauses your game during the process.<br />
+	 * Specify which key will capture a screen shot. Use the String value of the key in the same way FlxG.keys does (so "F1" for example)
+	 * Optionally save the image to a file immediately. This uses the file systems "Save as" dialog window and pauses your game during the process.
 	 * 
-	 * @param	key			String The key you press to capture the screen (i.e. "F1", "SPACE", etc - see system.input.Keyboard.as source for reference)
-	 * @param	saveToFile	Boolean If set to true it will immediately encodes the grab to a PNG and open a "Save As" dialog window when the hotkey is pressed
-	 * @param	hideMouse	Boolean If set to true the mouse will be hidden before capture and displayed afterwards when the hotkey is pressed
+	 * @param	Key			String The key you press to capture the screen (i.e. "F1", "SPACE", etc - see system.input.Keyboard.as source for reference)
+	 * @param	SaveToFile	Boolean If set to true it will immediately encodes the grab to a PNG and open a "Save As" dialog window when the hotkey is pressed
+	 * @param	HideMouse	Boolean If set to true the mouse will be hidden before capture and displayed afterwards when the hotkey is pressed
 	 */
-	public static function defineHotKey(key:String, saveToFile:Bool = false, hideMouse:Bool = false):Void
+	static public function defineHotKey(Key:String, SaveToFile:Bool = false, HideMouse:Bool = false):Void
 	{
-		hotkey = key;
-		autoSave = saveToFile;
-		autoHideMouse = hideMouse;
+		_hotkey = Key;
+		_autoSave = SaveToFile;
+		_autoHideMouse = HideMouse;
 	}
 	
 	/**
 	 * Clears a previously defined hotkey
 	 */
-	public static function clearHotKey():Void
+	static public function clearHotKey():Void
 	{
-		hotkey = "";
-		autoSave = false;
-		autoHideMouse = false;
+		_hotkey = "";
+		_autoSave = false;
+		_autoHideMouse = false;
 	}
 	
 	/**
 	 * Takes a screen grab immediately of the given region or a previously defined region
 	 * 
-	 * @param	captureRegion	A Rectangle area to capture. This over-rides that set by "defineCaptureRegion". If neither are set the full SWF size is used.
-	 * @param	saveToFile	Boolean If set to true it will immediately encode the grab to a PNG and open a "Save As" dialog window
-	 * @param	hideMouse	Boolean If set to true the mouse will be hidden before capture and displayed again afterwards
-	 * @return	Bitmap		The screen grab as a Flash Bitmap image
+	 * @param	CaptureRegion	A Rectangle area to capture. This over-rides that set by "defineCaptureRegion". If neither are set the full SWF size is used.
+	 * @param	SaveToFile		Boolean If set to true it will immediately encode the grab to a PNG and open a "Save As" dialog window
+	 * @param	HideMouse		Boolean If set to true the mouse will be hidden before capture and displayed again afterwards
+	 * @return	Bitmap			The screen grab as a Flash Bitmap image
 	 */
-	public static function grab(captureRegion:Rectangle = null, ?saveToFile:Bool = false, hideMouse:Bool = false):Bitmap
+	static public function grab(?CaptureRegion:Rectangle, ?SaveToFile:Bool = false, HideMouse:Bool = false):Bitmap
 	{
 		var bounds:Rectangle;
 		
-		if (captureRegion != null)
+		if (CaptureRegion != null)
 		{
-			bounds = new Rectangle(captureRegion.x, captureRegion.y, captureRegion.width, captureRegion.height);
+			bounds = new Rectangle(CaptureRegion.x, CaptureRegion.y, CaptureRegion.width, CaptureRegion.height);
 		}
-		else if (region != null)
+		else if (_region != null)
 		{
-			bounds = new Rectangle(region.x, region.y, region.width, region.height);
+			bounds = new Rectangle(_region.x, _region.y, _region.width, _region.height);
 		}
 		else
 		{
@@ -116,21 +104,21 @@ class FlxScreenGrab extends FlxBasic
 		
 		var m:Matrix = new Matrix(1, 0, 0, 1, -bounds.x, -bounds.y);
 		
-		if (autoHideMouse || hideMouse)
+		if (_autoHideMouse || HideMouse)
 		{
 			FlxG.mouse.hide();
 		}
 		
 		theBitmap.bitmapData.draw(FlxG.stage, m);
 		
-		if (autoHideMouse || hideMouse)
+		if (_autoHideMouse || HideMouse)
 		{
 			FlxG.mouse.show();
 		}
 		
 		screenshot = theBitmap;
 		
-		if (saveToFile || autoSave)
+		if (SaveToFile || _autoSave)
 		{
 			save();
 		}
@@ -138,35 +126,33 @@ class FlxScreenGrab extends FlxBasic
 		return theBitmap;
 	}
 	
-	private static function save(filename:String = ""):Void
+	static private function save(Filename:String = ""):Void
 	{
 		if (screenshot.bitmapData == null)
 		{
 			return;
 		}
 		
-		if (filename == "")
+		if (Filename == "")
 		{
 			var date:String = Date.now().toString();
 			var nameArray:Array<String> = date.split(":");
 			date = nameArray.join("-");
 			
-			filename = "grab-" + date + ".png";
+			Filename = "grab-" + date + ".png";
 		}
-		else if (filename.substr( -4) != ".png")
+		else if (Filename.substr( -4) != ".png")
 		{
-			filename = filename + ".png";
+			Filename = Filename + ".png";
 		}
 		
 		#if flash
 		var png:ByteArray = PNGEncoder.encode(screenshot.bitmapData);
-		
 		var file:FileReference = new FileReference();
-		
-		file.save(png, filename);
+		file.save(png, Filename);
 		#else
 		var png:ByteArray = screenshot.bitmapData.encode('x');
-		var f = sys.io.File.write(filename, true);
+		var f = sys.io.File.write(Filename, true);
 		f.writeString(png.readUTFBytes(png.length));
 		f.close();
 		#end
@@ -174,9 +160,9 @@ class FlxScreenGrab extends FlxBasic
 	
 	override public function update():Void
 	{
-		if (hotkey != "")
+		if (_hotkey != "")
 		{
-			if (FlxG.keys.justReleased(hotkey))
+			if (FlxG.keys.justReleased(_hotkey))
 			{
 				grab();
 			}
@@ -188,5 +174,4 @@ class FlxScreenGrab extends FlxBasic
 		clearCaptureRegion();
 		clearHotKey();
 	}
-	
 }
