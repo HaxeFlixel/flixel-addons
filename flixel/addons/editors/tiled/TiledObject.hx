@@ -1,12 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2013 by Samuel Batista
- * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
- * This content is released under the MIT License.
- ******************************************************************************/
 package flixel.addons.editors.tiled;
 
 import haxe.xml.Fast;
 
+/**
+ * Copyright (c) 2013 by Samuel Batista
+ * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
+ * This content is released under the MIT License.
+ */
 class TiledObject
 {
 	public var group:TiledObjectGroup;
@@ -17,41 +17,57 @@ class TiledObject
 	public var y:Int;
 	public var width:Int;
 	public var height:Int;
-	public var angle:Float; // in degrees
+	/** 
+	 * In degrees
+	 */ 
+	public var angle:Float; 
 	public var gid:Int;
 	public var custom:TiledPropertySet;
-	public var shared:TiledPropertySet; // shared properties are tileset properties added on object tile
+	/** 
+	 * Shared properties are tileset properties added on object tile
+	 */ 
+	public var shared:TiledPropertySet; 
 	
-	public function new(source:Fast, parent:TiledObjectGroup)
+	public function new(Source:Fast, Parent:TiledObjectGroup)
 	{
-		xmlData = source;
-		group = parent;
-		name = (source.has.name) ? source.att.name : "[object]";
-		type = (source.has.type) ? source.att.type : parent.name;
-		x = Std.parseInt(source.att.x);
-		y = Std.parseInt(source.att.y);
-		width = (source.has.width) ? Std.parseInt(source.att.width) : 0;
-		height = (source.has.height) ? Std.parseInt(source.att.height) : 0;
-		angle = (source.has.rotation) ? Std.parseFloat(source.att.rotation) : 0;
-		//resolve inheritence
+		xmlData = Source;
+		group = Parent;
+		name = (Source.has.name) ? Source.att.name : "[object]";
+		type = (Source.has.type) ? Source.att.type : Parent.name;
+		x = Std.parseInt(Source.att.x);
+		y = Std.parseInt(Source.att.y);
+		width = (Source.has.width) ? Std.parseInt(Source.att.width) : 0;
+		height = (Source.has.height) ? Std.parseInt(Source.att.height) : 0;
+		angle = (Source.has.rotation) ? Std.parseFloat(Source.att.rotation) : 0;
+		
+		// resolve inheritence
 		shared = null;
 		gid = -1;
-		if(source.has.gid && source.att.gid.length != 0) //object with tile association?
+		
+		// object with tile association?
+		if (Source.has.gid && Source.att.gid.length != 0) 
 		{
-			gid = Std.parseInt(source.att.gid);
+			gid = Std.parseInt(Source.att.gid);
 			var set:TiledTileSet;
+			
 			for (set in group.map.tilesets)
 			{
 				shared = set.getPropertiesByGid(gid);
-				if(shared != null)
+				
+				if (shared != null)
+				{
 					break;
+				}
 			}
 		}
 		
-		//load properties
+		// load properties
 		var node:Xml;
 		custom = new TiledPropertySet();
-		for (node in source.nodes.properties)
+		
+		for (node in Source.nodes.properties)
+		{
 			custom.extend(node);
+		}
 	}
 }
