@@ -1,4 +1,4 @@
-package flixel.nape;
+package flixel.addons.nape;
 
 import flixel.util.FlxAngle;
 import nape.geom.Vec2;
