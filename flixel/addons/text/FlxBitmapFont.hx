@@ -541,7 +541,7 @@ class FlxBitmapFont extends FlxSprite
 				#if flash
 				pasteLine(temp, lines[i], cx, cy, customSpacingX);
 				#else
-				origin.make(_textWidth * 0.5, _textHeight * 0.5);
+				origin.set(_textWidth * 0.5, _textHeight * 0.5);
 				pasteLine(lines[i], cx, cy, customSpacingX);
 				#end
 				
@@ -583,7 +583,7 @@ class FlxBitmapFont extends FlxSprite
 			#if flash
 			pasteLine(temp, _text, cx, 0, customSpacingX);
 			#else
-			origin.make(_textWidth * 0.5, _textHeight * 0.5);
+			origin.set(_textWidth * 0.5, _textHeight * 0.5);
 			pasteLine(_text, cx, 0, customSpacingX);
 			#end
 		}
