@@ -98,9 +98,9 @@ class FlxPhysState extends FlxState
 			MaxX = FlxG.width;
 		}
 		
-		if (MinY == 0)
+		if (MaxY == 0)
 		{
-			MinY = FlxG.height;
+			MaxY = FlxG.height;
 		}
 		
 		if (_Material == null)
@@ -111,13 +111,13 @@ class FlxPhysState extends FlxState
 		var walls:Body = new Body(BodyType.STATIC);
 		
 		// Left wall
-		walls.shapes.add(new Polygon(Polygon.rect(MinX, MinY, Thickness, MaxY + Math.abs(MinY))));
+		walls.shapes.add(new Polygon(Polygon.rect(MinX - Thickness, MinY, Thickness, MaxY + Math.abs(MinY))));
 		// Right wall
-		walls.shapes.add(new Polygon(Polygon.rect(MaxX - Thickness, MinY, Thickness, MaxY + Math.abs(MinY))));
+		walls.shapes.add(new Polygon(Polygon.rect(MaxX, MinY, Thickness, MaxY + Math.abs(MinY))));
 		// Upper wall
-		walls.shapes.add(new Polygon(Polygon.rect(MinX, MinY, MaxX + Math.abs(MinX), Thickness)));
+		walls.shapes.add(new Polygon(Polygon.rect(MinX, MinY - Thickness, MaxX + Math.abs(MinX), Thickness)));
 		// Bottom wall
-		walls.shapes.add(new Polygon(Polygon.rect(MinX, MaxY - Thickness, MaxX + Math.abs(MinX), Thickness)));
+		walls.shapes.add(new Polygon(Polygon.rect(MinX, MaxY, MaxX + Math.abs(MinX), Thickness)));
 
 		walls.space = space;
 		walls.setShapeMaterials(_Material);
