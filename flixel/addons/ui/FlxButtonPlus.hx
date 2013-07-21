@@ -14,6 +14,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 import flixel.util.FlxMath;
+import flixel.util.loaders.CachedGraphics;
 
 //TODO: Port to use touch as well
 
@@ -379,14 +380,14 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		normalKey = normalKey + "]";
 		
-		if (FlxG.bitmap._cache.exists(normalKey) == false)
+		if (FlxG.bitmap.checkCache(normalKey) == false)
 		{
-			var normalBitmap:BitmapData = FlxG.bitmap.create(width, height, FlxColor.TRANSPARENT, false, normalKey);
-			normalBitmap.fillRect(new Rectangle(0, 0, width, height), borderColor);
-			FlxGradient.overlayGradientOnBitmapData(normalBitmap, width - 2, height - 2, offColor, 1, 1);
+			var normalGraphics:CachedGraphics = FlxG.bitmap.create(width, height, FlxColor.TRANSPARENT, false, normalKey);
+			normalGraphics.bitmap.fillRect(new Rectangle(0, 0, width, height), borderColor);
+			FlxGradient.overlayGradientOnBitmapData(normalGraphics.bitmap, width - 2, height - 2, offColor, 1, 1);
 		}
 		
-		buttonNormal.pixels = FlxG.bitmap._cache.get(normalKey);
+		buttonNormal.pixels = FlxG.bitmap.get(normalKey).bitmap;
 		#end
 	}
 	
@@ -418,14 +419,14 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		highlightKey = highlightKey + "]";
 		
-		if (FlxG.bitmap._cache.exists(highlightKey) == false)
+		if (FlxG.bitmap.checkCache(highlightKey) == false)
 		{
-			var highlightBitmap:BitmapData = FlxG.bitmap.create(width, height, FlxColor.TRANSPARENT, false, highlightKey);
-			highlightBitmap.fillRect(new Rectangle(0, 0, width, height), borderColor);
-			FlxGradient.overlayGradientOnBitmapData(highlightBitmap, width - 2, height - 2, onColor, 1, 1);
+			var highlightGraphics:CachedGraphics = FlxG.bitmap.create(width, height, FlxColor.TRANSPARENT, false, highlightKey);
+			highlightGraphics.bitmap.fillRect(new Rectangle(0, 0, width, height), borderColor);
+			FlxGradient.overlayGradientOnBitmapData(highlightGraphics.bitmap, width - 2, height - 2, onColor, 1, 1);
 		}
 		
-		buttonHighlight.pixels = FlxG.bitmap._cache.get(highlightKey);
+		buttonHighlight.pixels = FlxG.bitmap.get(highlightKey).bitmap;
 		#end
 	}
 	
