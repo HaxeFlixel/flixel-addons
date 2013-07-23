@@ -21,7 +21,8 @@ class FlxSpriteAniRot extends FlxSprite
 {
 	private var cached:Array<CachedGraphics>;
 	private var framesCache:Array<FlxSpriteFrames>;
-	private var numRotations:Int = 0;
+	private var rotations:Float = 0;
+	private var angleIndex:Int = -1;
 
 	public function new(AnimatedGraphic:Dynamic, Rotations:Int, X:Float = 0, Y:Float = 0)
 	{
@@ -29,7 +30,7 @@ class FlxSpriteAniRot extends FlxSprite
 		// Just to get the number of frames
 		loadGraphic(AnimatedGraphic, true); 
 		
-		numRotations = Rotations;
+		rotations = 360 / Rotations;
 		cached = [];
 		framesCache = [];
 		
@@ -51,20 +52,31 @@ class FlxSpriteAniRot extends FlxSprite
 		
 		super.destroy();
 	}
-
-	override private function calcFrame():Void 
+	
+	override private function updateAnimation():Void 
 	{
-		// Select cached graphics for current frame
-		_cachedGraphics = cached[_curIndex];
-		// Calculate index of the frame with current angle
-		var angleHelper:Int = Math.floor((angle) % 360);
+		var oldIndex:Int = angleIndex;
+		var angleHelper:Int = Math.floor(angle % 360);
+		
 		while (angleHelper < 0)
 		{
 			angleHelper += 360;
 		}
-		var angleIndex:Int = Math.floor(angleHelper / bakedRotation + 0.5);
+		
+		angleIndex = Math.floor(angleHelper / rotations + 0.5);
 		angleIndex = Std.int(angleIndex % frames);
 		
+		if (oldIndex != angleIndex)
+		{
+			dirty = true;
+		}
+		
+		super.updateAnimation();
+	}
+
+	override private function calcFrame():Void 
+	{
+		_cachedGraphics = cached[_curIndex];
 		_flxFrame = framesCache[_curIndex].frames[angleIndex];
 		super.calcFrame();
 	}
