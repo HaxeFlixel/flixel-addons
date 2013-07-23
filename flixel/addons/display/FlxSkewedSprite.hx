@@ -104,7 +104,7 @@ class FlxSkewedSprite extends FlxSprite
 			drawItem = camera.getDrawStackItem(_cachedGraphics, isColored, _blendInt, antialiasing);
 			#else
 			var useAlpha:Bool = (alpha < 1);
-			drawItem = camera.getDrawStackItem(_atlas, useAlpha);
+			drawItem = camera.getDrawStackItem(_cachedGraphics, useAlpha);
 			#end
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
