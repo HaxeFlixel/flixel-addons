@@ -5,7 +5,9 @@ import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxSprite;
+import flixel.system.layer.frames.FlxSpriteFrames;
 import flixel.util.FlxColor;
+import flixel.util.loaders.CachedGraphics;
 
 /**
  * Creating animated and rotated sprite from an un-rotated animated image. 
@@ -17,47 +19,53 @@ import flixel.util.FlxColor;
 */
 class FlxSpriteAniRot extends FlxSprite
 {
-	static private var _zeroPoint:Point;
-	
-	private var rotationRefA:Array<BitmapData>;
-	private var rect:Rectangle;
-
-	private var frameCounter:Int = 0;
+	private var cached:Array<CachedGraphics>;
+	private var framesCache:Array<FlxSpriteFrames>;
+	private var numRotations:Int = 0;
 
 	public function new(AnimatedGraphic:Dynamic, Rotations:Int, X:Float = 0, Y:Float = 0)
 	{
-		_zeroPoint = new Point(0, 0);
-		
 		super(X, Y);
 		// Just to get the number of frames
 		loadGraphic(AnimatedGraphic, true); 
 		
-		var columns:Int = Std.int(Math.sqrt(Rotations));
-		rect = new Rectangle(0, 0, width * columns, Std.int(height));
-		
-		rotationRefA = new Array<BitmapData>();
+		numRotations = Rotations;
+		cached = [];
+		framesCache = [];
 		
 		// Load the graphic, create rotations every 10 degrees
-		for (i in 0 ... frames)
+		for (i in 0...frames)
 		{
 			// Create the rotation spritesheet for that frame
 			loadRotatedGraphic(AnimatedGraphic, Rotations, i, true, false);
-			// Create a bitmapData container
-			var bmd:BitmapData = new BitmapData(Std.int(width * columns), Std.int(height), true, 0x00000000);
-			// Get the current pixel data
-			bmd.copyPixels(_cachedGraphics.bitmap, rect, _zeroPoint, pixels, _zeroPoint, true);
-			// Store it for reference.
-			rotationRefA.push(bmd);
+			cached.push(_cachedGraphics);
+			framesCache.push(_framesData);
 		}
 		bakedRotation = 0;
+	}
+	
+	override public function destroy():Void 
+	{
+		cached = null;
+		framesCache = null;
+		
+		super.destroy();
 	}
 
 	override private function calcFrame():Void 
 	{
-		// Clear out blank to avoid artefacts
-		pixels.fillRect(rect, FlxColor.TRANSPARENT);
-		pixels.copyPixels(rotationRefA[_curIndex], rect, _zeroPoint, rotationRefA[_curIndex], _zeroPoint, true);
-		resetFrameBitmapDatas();
+		// Select cached graphics for current frame
+		_cachedGraphics = cached[_curIndex];
+		// Calculate index of the frame with current angle
+		var angleHelper:Int = Math.floor((angle) % 360);
+		while (angleHelper < 0)
+		{
+			angleHelper += 360;
+		}
+		var angleIndex:Int = Math.floor(angleHelper / bakedRotation + 0.5);
+		angleIndex = Std.int(angleIndex % frames);
+		
+		_flxFrame = framesCache[_curIndex].frames[angleIndex];
 		super.calcFrame();
 	}
 }
