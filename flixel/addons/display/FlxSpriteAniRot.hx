@@ -45,7 +45,7 @@ class FlxSpriteAniRot extends FlxSprite
 			// Create a bitmapData container
 			var bmd:BitmapData = new BitmapData(Std.int(width * columns), Std.int(height), true, 0x00000000);
 			// Get the current pixel data
-			bmd.copyPixels(_pixels, rect, _zeroPoint, pixels, _zeroPoint, true);
+			bmd.copyPixels(_cachedGraphics.bitmap, rect, _zeroPoint, pixels, _zeroPoint, true);
 			// Store it for reference.
 			rotationRefA.push(bmd);
 		}
@@ -57,6 +57,7 @@ class FlxSpriteAniRot extends FlxSprite
 		// Clear out blank to avoid artefacts
 		pixels.fillRect(rect, FlxColor.TRANSPARENT);
 		pixels.copyPixels(rotationRefA[_curIndex], rect, _zeroPoint, rotationRefA[_curIndex], _zeroPoint, true);
+		resetFrameBitmapDatas();
 		super.calcFrame();
 	}
 }
