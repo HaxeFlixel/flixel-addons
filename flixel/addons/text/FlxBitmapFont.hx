@@ -3,11 +3,15 @@ package flixel.addons.text;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.system.layer.DrawStackItem;
+import flixel.system.layer.Region;
 import flixel.util.FlxAngle;
 import flixel.util.FlxColor;
+import flixel.util.loaders.CachedGraphics;
+import flixel.util.loaders.TextureRegion;
 
 /**
  * FlxBitmapFont
@@ -98,9 +102,6 @@ class FlxBitmapFont extends FlxSprite
 	 */
 	public var customSpacingY:Int = 0;
 	
-	public var characterWidth:Int;
-	public var characterHeight:Int;
-	
 	#if !flash
 	/**
 	 * Offsets for each letter in the sprite (not affected by scale and rotation)
@@ -115,12 +116,9 @@ class FlxBitmapFont extends FlxSprite
 	/**
 	 * Internval values. All set in the constructor. They should not be changed after that point.
 	 */
-	private var _fontSet:BitmapData;
+	private var _fontSet:CachedGraphics;
+	private var _fontRegion:Region;
 	private var _grabData:Array<Rectangle>;
-	private var _offsetX:Int;
-	private var _offsetY:Int;
-	private var _characterSpacingX:Int;
-	private var _characterSpacingY:Int;
 	private var _characterPerRow:Int;
 	private var _fixedWidth:Int = 0;
 	private var _text:String = "";
@@ -145,22 +143,27 @@ class FlxBitmapFont extends FlxSprite
 	{
 		super();
 		
-		characterWidth = CharacterWidth;
-		characterHeight = CharacterHeight;
-		_characterSpacingX = SpacingX;
-		_characterSpacingY = SpacingY;
 		_characterPerRow = CharsPerRow;
-		_offsetX = OffsetX;
-		_offsetY = OffsetY;
-		
 		_charsInFont = Chars;
 		
 		// Take a copy of the font for internal use
+		setFontGraphics(FlxG.bitmap.add(Font));
+		
+		if (!Std.is(Font, TextureRegion))
+		{
+			_fontRegion = new Region(OffsetX, OffsetY, CharacterWidth, CharacterHeight, SpacingX, SpacingY);
+			_fontRegion.width = _fontSet.bitmap.width - OffsetX;
+			_fontRegion.height = _fontSet.bitmap.height - OffsetY;
+		}
+		else
+		{
+			_fontRegion = cast(Font, TextureRegion).region.clone();
+		}
+		
 		#if flash
-		_fontSet = FlxG.bitmap.add(Font);
+		makeGraphic(1, 1, 0x0, true, "bitmapFont");
 		#else
-		_fontSet = FlxG.bitmap.add(Font, false, false, null, (_characterSpacingX == 0) ? CharacterWidth : 0, (_characterSpacingY == 0) ? CharacterHeight : 0);
-		pixels = _fontSet;
+		pixels = _fontSet.bitmap;
 		#end
 		
 		#if flash
@@ -168,20 +171,35 @@ class FlxBitmapFont extends FlxSprite
 		#end
 	}
 	
+	private function setFontGraphics(value:CachedGraphics):Void
+	{
+		if (_fontSet != null && _fontSet != value)
+		{
+			_fontSet.useCount--;
+		}
+		
+		if (_fontSet != value && value != null)
+		{
+			value.useCount++;
+		}
+		_fontSet = value;
+	}
+	
+	#if !flash
 	override public function updateFrameData():Void 
 	{
-		#if !flash
-		if (_node != null && _charsInFont != null)
+		if (_fontSet != null && _charsInFont != null)
 		{
 			updateCharFrameIDs();
 		}
-		#end
 	}
+	#end
 	
 	override public function destroy():Void 
 	{
-		_fontSet = null;
+		setFontGraphics(null);
 		_grabData = null;
+		_fontRegion = null;
 		
 		#if !flash
 		_points = null;
@@ -196,32 +214,27 @@ class FlxBitmapFont extends FlxSprite
 		_grabData = new Array();
 		
 		//	Now generate our rects for faster copyPixels later on
-		var currentX:Int = _offsetX;
-		var currentY:Int = _offsetY;
+		var currentX:Int = _fontRegion.startX;
+		var currentY:Int = _fontRegion.startY;
 		var r:Int = 0;
 		
-		#if !flash
-		var spacingX:Int = (_characterSpacingX == 0) ? 1 : _characterSpacingX;
-		var spacingY:Int = (_characterSpacingY == 0) ? 1 : _characterSpacingY;
-		#else
-		var spacingX:Int = _characterSpacingX;
-		var spacingY:Int = _characterSpacingY;
-		#end
+		var spacingX:Int = _fontRegion.spacingX;
+		var spacingY:Int = _fontRegion.spacingY;
 		
 		#if !flash
 		_charFrameIDs = new Array<Int>();
 		var frameID:Int = 0;
 		var rowNumber:Int = 0;
-		var maxPossibleCharsPerRow:Int = Std.int((_fontSet.width - _offsetX) / (characterWidth + spacingX));
+		var maxPossibleCharsPerRow:Int = Std.int((_fontSet.bitmap.width - _fontRegion.startX) / (_fontRegion.tileWidth + spacingX));
 		#end
 		
 		for (c in 0..._charsInFont.length)
 		{
 			// The rect is hooked to the ASCII value of the character
-			_grabData[_charsInFont.charCodeAt(c)] = new Rectangle(currentX, currentY, characterWidth, characterHeight);
+			_grabData[_charsInFont.charCodeAt(c)] = new Rectangle(currentX, currentY, _fontRegion.tileWidth, _fontRegion.tileHeight);
 			
 			#if !flash
-			_charFrameIDs[_charsInFont.charCodeAt(c)] = _node.addTileRect(_grabData[_charsInFont.charCodeAt(c)]);
+			_charFrameIDs[_charsInFont.charCodeAt(c)] = _fontSet.tilesheet.addTileRect(_grabData[_charsInFont.charCodeAt(c)]);
 			#end
 			
 			r++;
@@ -229,8 +242,8 @@ class FlxBitmapFont extends FlxSprite
 			if (r == Std.int(_characterPerRow))
 			{
 				r = 0;
-				currentX = _offsetX;
-				currentY += characterHeight + spacingY;
+				currentX = _fontRegion.startX;
+				currentY += _fontRegion.tileHeight + spacingY;
 				#if !flash
 				rowNumber++;
 				frameID = maxPossibleCharsPerRow * rowNumber;
@@ -238,7 +251,7 @@ class FlxBitmapFont extends FlxSprite
 			}
 			else
 			{
-				currentX += characterWidth + spacingX;
+				currentX += _fontRegion.tileWidth + spacingX;
 				#if !flash
 				frameID++;
 				#end
@@ -253,11 +266,6 @@ class FlxBitmapFont extends FlxSprite
 	#if !flash
 	override public function draw():Void 
 	{
-		if (_atlas == null)
-		{
-			return;
-		}
-		
 		if (_flickerTimer != 0)
 		{
 			_flicker = !_flicker;
@@ -304,9 +312,9 @@ class FlxBitmapFont extends FlxSprite
 		{
 			camera = cameras[i++];
 			#if !js
-			drawItem = camera.getDrawStackItem(_atlas, isColored, _blendInt, antialiasing);
+			drawItem = camera.getDrawStackItem(_fontSet, isColored, _blendInt, antialiasing);
 			#else
-			drawItem = camera.getDrawStackItem(_atlas, useAlpha);
+			drawItem = camera.getDrawStackItem(_fontSet, useAlpha);
 			#end
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
@@ -332,7 +340,7 @@ class FlxBitmapFont extends FlxSprite
 			var ssx:Float = 0;
 			var csy:Float = 1;
 
-			if (!simpleRenderSprite ())
+			if (!simpleRender)
 			{
 				radians = angle * FlxAngle.TO_RAD;
 				cos = Math.cos(radians);
@@ -388,6 +396,11 @@ class FlxBitmapFont extends FlxSprite
 			drawItem.position = currIndex;
 		}
 	}
+	
+	override private function get_simpleRender():Bool
+	{ 
+		return ((angle == 0) && (scale.x == 1) && (scale.y == 1));
+	}
 	#end
 	
 	/**
@@ -426,7 +439,7 @@ class FlxBitmapFont extends FlxSprite
 	private function updateTextString(NewText:String):Void
 	{
 		_text = NewText;
-		removeUnsupportedCharacters(multiLine);
+		_text = removeUnsupportedCharacters(multiLine);
 		buildBitmapFontText();
 	}
 	
@@ -498,7 +511,7 @@ class FlxBitmapFont extends FlxSprite
 		if (multiLine)
 		{
 			var lines:Array<String> = _text.split("\n");
-			_textHeight = (lines.length * (characterHeight + customSpacingY)) - customSpacingY;
+			_textHeight = (lines.length * (_fontRegion.tileHeight + customSpacingY)) - customSpacingY;
 			
 			if (_fixedWidth > 0)
 			{
@@ -510,7 +523,7 @@ class FlxBitmapFont extends FlxSprite
 			}
 			else
 			{
-				_textWidth = getLongestLine() * (characterWidth + customSpacingX);
+				_textWidth = getLongestLine() * (_fontRegion.tileWidth + customSpacingX);
 				
 				#if flash
 				temp = new BitmapData(_textWidth, _textHeight, true, 0xf);
@@ -526,9 +539,9 @@ class FlxBitmapFont extends FlxSprite
 					case ALIGN_LEFT:
 						cx = 0;
 					case ALIGN_RIGHT:
-						cx = _textWidth - (lines[i].length * (characterWidth + customSpacingX));
+						cx = _textWidth - (lines[i].length * (_fontRegion.tileWidth + customSpacingX));
 					case ALIGN_CENTER:
-						cx = Math.floor((_textWidth / 2) - ((lines[i].length * (characterWidth + customSpacingX)) / 2));
+						cx = Math.floor((_textWidth / 2) - ((lines[i].length * (_fontRegion.tileWidth + customSpacingX)) / 2));
 						cx += Math.floor(customSpacingX / 2);
 				}
 				
@@ -541,16 +554,16 @@ class FlxBitmapFont extends FlxSprite
 				#if flash
 				pasteLine(temp, lines[i], cx, cy, customSpacingX);
 				#else
-				origin.make(_textWidth * 0.5, _textHeight * 0.5);
+				origin.set(_textWidth * 0.5, _textHeight * 0.5);
 				pasteLine(lines[i], cx, cy, customSpacingX);
 				#end
 				
-				cy += characterHeight + customSpacingY;
+				cy += _fontRegion.tileHeight + customSpacingY;
 			}
 		}
 		else
 		{
-			_textHeight = characterHeight;
+			_textHeight = _fontRegion.tileHeight;
 			
 			if (_fixedWidth > 0)
 			{
@@ -562,7 +575,7 @@ class FlxBitmapFont extends FlxSprite
 			}
 			else
 			{
-				_textWidth = _text.length * (characterWidth + customSpacingX);
+				_textWidth = _text.length * (_fontRegion.tileWidth + customSpacingX);
 				
 				#if flash
 				temp = new BitmapData(_textWidth, _textHeight, true, 0xf);
@@ -574,21 +587,23 @@ class FlxBitmapFont extends FlxSprite
 				case ALIGN_LEFT:
 					cx = 0;
 				case ALIGN_RIGHT:
-					cx = _textWidth - (_text.length * (characterWidth + customSpacingX));
+					cx = _textWidth - (_text.length * (_fontRegion.tileWidth + customSpacingX));
 				case ALIGN_CENTER:
-					cx = Math.floor((_textWidth / 2) - ((_text.length * (characterWidth + customSpacingX)) / 2));
+					cx = Math.floor((_textWidth / 2) - ((_text.length * (_fontRegion.tileWidth + customSpacingX)) / 2));
 					cx += Math.floor(customSpacingX / 2);
 			}
 			
 			#if flash
 			pasteLine(temp, _text, cx, 0, customSpacingX);
 			#else
-			origin.make(_textWidth * 0.5, _textHeight * 0.5);
+			origin.set(_textWidth * 0.5, _textHeight * 0.5);
 			pasteLine(_text, cx, 0, customSpacingX);
 			#end
 		}
 		
 		#if flash
+		var key:String = _cachedGraphics.key;
+		FlxG.bitmap.remove(key);
 		pixels = temp;
 		#else
 		width = frameWidth = _textWidth;
@@ -609,11 +624,11 @@ class FlxBitmapFont extends FlxSprite
 	public function getCharacter(Char:String):FlxSprite
 	{
 		var output:FlxSprite = new FlxSprite();
-		var temp:BitmapData = new BitmapData(characterWidth, characterHeight, true, FlxColor.TRANSPARENT);
+		var temp:BitmapData = new BitmapData(_fontRegion.tileWidth, _fontRegion.tileHeight, true, FlxColor.TRANSPARENT);
 
 		if (_grabData[Char.charCodeAt(0)] != null && Char.charCodeAt(0) != 32)
 		{
-			temp.copyPixels(_fontSet, _grabData[Char.charCodeAt(0)], new Point(0, 0));
+			temp.copyPixels(_fontSet.bitmap, _grabData[Char.charCodeAt(0)], new Point(0, 0));
 		}
 		
 		output.pixels = temp;
@@ -629,11 +644,11 @@ class FlxBitmapFont extends FlxSprite
 	 */
 	public function getCharacterAsBitmapData(Char:String):BitmapData
 	{
-		var temp:BitmapData = new BitmapData(characterWidth, characterHeight, true, FlxColor.TRANSPARENT);
+		var temp:BitmapData = new BitmapData(_fontRegion.tileWidth, _fontRegion.tileHeight, true, FlxColor.TRANSPARENT);
 		
 		if (_grabData[Char.charCodeAt(0)] != null)
 		{
-			temp.copyPixels(_fontSet, _grabData[Char.charCodeAt(0)], new Point(0, 0));
+			temp.copyPixels(_fontSet.bitmap, _grabData[Char.charCodeAt(0)], new Point(0, 0));
 		}
 		
 		return temp;
@@ -660,7 +675,7 @@ class FlxBitmapFont extends FlxSprite
 			//	If it's a space then there is no point copying, so leave a blank space
 			if (Line.charAt(c) == " ")
 			{
-				X += characterWidth + CustomSpacingX;
+				X += _fontRegion.tileWidth + CustomSpacingX;
 			}
 			else
 			{
@@ -668,19 +683,19 @@ class FlxBitmapFont extends FlxSprite
 				if (_grabData[Line.charCodeAt(c)] != null)
 				{
 					#if flash
-					Output.copyPixels(_fontSet, _grabData[Line.charCodeAt(c)], new Point(X, Y));
+					Output.copyPixels(_fontSet.bitmap, _grabData[Line.charCodeAt(c)], new Point(X, Y));
 					#else
 					_points.push(_charFrameIDs[Line.charCodeAt(c)]);
-					_points.push(x - origin.x);
-					_points.push(y - origin.y);
+					_points.push(X - origin.x);
+					_points.push(Y - origin.y);
 					#end
 					
-					X += characterWidth + CustomSpacingX;
+					X += _fontRegion.tileWidth + CustomSpacingX;
 					
 					#if flash
-					if (Math.floor(x) > Output.width)
+					if (Math.floor(X) > Output.width)
 					#else
-					if (Math.floor(x) > _textWidth)
+					if (Math.floor(X) > _textWidth)
 					#end
 					{
 						break;
@@ -727,7 +742,7 @@ class FlxBitmapFont extends FlxSprite
 		
 		for (c in 0...(_text.length))
 		{
-			if (_grabData[_text.charCodeAt(c)] != null || _text.charCodeAt(c) == 32 || (StripCR == false && _text.charAt(c) == "\n"))
+			if (_grabData[_text.charCodeAt(c)] != null || _text.charCodeAt(c) == 32 || (StripCR == true && _text.charAt(c) == "\n"))
 			{
 				newString = newString + _text.charAt(c);
 			}

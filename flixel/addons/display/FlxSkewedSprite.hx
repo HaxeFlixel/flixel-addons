@@ -57,13 +57,6 @@ class FlxSkewedSprite extends FlxSprite
 	
 	override public function draw():Void 
 	{
-		#if !flash
-		if (_atlas == null)
-		{
-			return;
-		}
-		#end
-		
 		if (_flickerTimer != 0)
 		{
 			_flicker = !_flicker;
@@ -108,10 +101,10 @@ class FlxSkewedSprite extends FlxSprite
 			
 		#if !flash
 			#if !js
-			drawItem = camera.getDrawStackItem(_atlas, isColored, _blendInt, antialiasing);
+			drawItem = camera.getDrawStackItem(_cachedGraphics, isColored, _blendInt, antialiasing);
 			#else
 			var useAlpha:Bool = (alpha < 1);
-			drawItem = camera.getDrawStackItem(_atlas, useAlpha);
+			drawItem = camera.getDrawStackItem(_cachedGraphics, useAlpha);
 			#end
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
@@ -167,8 +160,9 @@ class FlxSkewedSprite extends FlxSprite
 			var x2:Float = 0;
 			var y2:Float = 0;
 			
-			var isFlipped : Bool = (_flipped != 0) && (facing == FlxObject.LEFT);
-			if (simpleRenderSkewedSprite ())
+			var isFlipped:Bool = (flipped != 0) && (facing == FlxObject.LEFT);
+			
+			if (simpleRenderSkewedSprite())
 			{
 				if (isFlipped)
 				{
