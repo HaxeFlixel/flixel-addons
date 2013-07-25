@@ -319,7 +319,7 @@ class FlxBitmapFont extends FlxSprite
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
 			
-			if (!onScreenSprite(camera) || !camera.visible || !camera.exists)
+			if (!onScreen(camera) || !camera.visible || !camera.exists)
 			{
 				continue;
 			}
