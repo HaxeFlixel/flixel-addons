@@ -58,8 +58,8 @@ class FlxBullet extends FlxSprite
 	
 	public function fire(FromX:Float, FromY:Float, VelX:Float, VelY:Float):Void
 	{
-		x = FromX + FlxRandom.intRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.intRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
+		x = FromX + FlxRandom.floatRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
+		y = FromY + FlxRandom.floatRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
 		
 		if (accelerates)
 		{
@@ -78,8 +78,8 @@ class FlxBullet extends FlxSprite
 	#if !FLX_NO_MOUSE
 	public function fireAtMouse(FromX:Float, FromY:Float, Speed:Int, RotateBulletTowards = true):Void
 	{
-		x = FromX + FlxRandom.intRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.intRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
+		x = FromX + FlxRandom.floatRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
+		y = FromY + FlxRandom.floatRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
 		
 		if (accelerates)
 		{
@@ -102,8 +102,8 @@ class FlxBullet extends FlxSprite
 	#if !FLX_NO_TOUCH
 	public function fireAtTouch(FromX:Float, FromY:Float, Touch:FlxTouch, Speed:Int, RotateBulletTowards = true):Void
 	{
-		x = FromX + FlxRandom.intRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.intRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
+		x = FromX + FlxRandom.floatRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
+		y = FromY + FlxRandom.floatRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
 		
 		if (accelerates)
 		{
@@ -125,8 +125,8 @@ class FlxBullet extends FlxSprite
 	
 	public function fireAtPosition(FromX:Float, FromY:Float, ToX:Float, ToY:Float, Speed:Int):Void
 	{
-		x = FromX + FlxRandom.intRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.intRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
+		x = FromX + FlxRandom.floatRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
+		y = FromY + FlxRandom.floatRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
 		
 		if (accelerates)
 		{
@@ -142,8 +142,8 @@ class FlxBullet extends FlxSprite
 	
 	public function fireAtTarget(FromX:Float, FromY:Float, Target:FlxSprite, Speed:Int):Void
 	{
-		x = FromX + FlxRandom.intRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.intRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
+		x = FromX + FlxRandom.floatRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
+		y = FromY + FlxRandom.floatRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
 		
 		if (accelerates)
 		{
@@ -159,8 +159,8 @@ class FlxBullet extends FlxSprite
 	
 	public function fireFromAngle(FromX:Float, FromY:Float, FireAngle:Int, Speed:Int):Void
 	{
-		x = FromX + FlxRandom.intRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.intRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
+		x = FromX + FlxRandom.floatRanged( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
+		y = FromY + FlxRandom.floatRanged( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
 		
 		var newVelocity:FlxPoint = FlxVelocity.velocityFromAngle(FireAngle + FlxRandom.intRanged( -_weapon.rndFactorAngle, _weapon.rndFactorAngle), Speed + FlxRandom.intRanged( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed));
 		
@@ -198,7 +198,7 @@ class FlxBullet extends FlxSprite
 		
 		if (_weapon.bulletLifeSpan > 0)
 		{
-			lifespan = _weapon.bulletLifeSpan + FlxRandom.intRanged( -_weapon.rndFactorLifeSpan, _weapon.rndFactorLifeSpan);
+			lifespan = _weapon.bulletLifeSpan + FlxRandom.floatRanged(-_weapon.rndFactorLifeSpan, _weapon.rndFactorLifeSpan);
 		}
 		
 		if (_weapon.onFireCallback != null)
