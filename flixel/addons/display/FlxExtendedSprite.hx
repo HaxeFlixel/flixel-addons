@@ -562,14 +562,14 @@ class FlxExtendedSprite extends FlxSprite
 		if (_allowHorizontalDrag == true)
 		{
 			#if !FLX_NO_MOUSE
-			x = Math.floor(FlxG.mouse.x) - _dragOffsetX;
+			x = Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX)) - _dragOffsetX;
 			#end
 		}
 		
 		if (_allowVerticalDrag == true)
 		{
 			#if !FLX_NO_MOUSE
-			y = Math.floor(FlxG.mouse.y) - _dragOffsetY;
+			y = Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY)) - _dragOffsetY;
 			#end
 		}
 		
@@ -680,8 +680,8 @@ class FlxExtendedSprite extends FlxSprite
 		#if !FLX_NO_MOUSE
 		if (_dragFromPoint == false)
 		{
-			_dragOffsetX = Math.floor(Math.floor(FlxG.mouse.x) - x);
-			_dragOffsetY = Math.floor(Math.floor(FlxG.mouse.y) - y);
+			_dragOffsetX = Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX) - x);
+			_dragOffsetY = Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY) - y);
 		}
 		else
 		{
