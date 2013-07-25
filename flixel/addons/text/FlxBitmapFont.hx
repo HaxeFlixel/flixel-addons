@@ -302,9 +302,7 @@ class FlxBitmapFont extends FlxSprite
 		var currDrawData:Array<Float>;
 		var currIndex:Int;
 		
-		#if !js
-		var isColored:Bool = isColored();
-		#else
+		#if js
 		var useAlpha:Bool = (alpha < 1);
 		#end
 		
@@ -319,7 +317,7 @@ class FlxBitmapFont extends FlxSprite
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
 			
-			if (!onScreenSprite(camera) || !camera.visible || !camera.exists)
+			if (!onScreen(camera) || !camera.visible || !camera.exists)
 			{
 				continue;
 			}

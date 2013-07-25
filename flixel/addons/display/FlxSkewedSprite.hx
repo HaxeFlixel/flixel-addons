@@ -81,7 +81,6 @@ class FlxSkewedSprite extends FlxSprite
 		
 		#if !flash
 		var drawItem:DrawStackItem;
-		var isColored:Bool = isColored();
 		var currDrawData:Array<Float>;
 		var currIndex:Int;
 		#end
@@ -94,7 +93,7 @@ class FlxSkewedSprite extends FlxSprite
 		{
 			camera = cameras[i++];
 			
-			if (!onScreenSprite(camera) || !camera.visible || !camera.exists)
+			if (!onScreen(camera) || !camera.visible || !camera.exists)
 			{
 				continue;
 			}

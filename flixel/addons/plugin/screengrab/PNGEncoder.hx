@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package flixel.addons.plugin.screengrab;
 
+#if !js
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.utils.ByteArray;
@@ -149,3 +150,4 @@ class PNGEncoder
 		png.writeUnsignedInt(c);
 	}
 }
+#end

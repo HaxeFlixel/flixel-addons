@@ -54,7 +54,7 @@ class FlxDelay extends Sprite
 	 */
 	public function start():Void
 	{
-		_started = FlxMisc.getTicks();
+		_started = FlxG.game.ticks;
 		_expires = _started + duration;
 		
 		isRunning = true;
@@ -99,7 +99,7 @@ class FlxDelay extends Sprite
 	
 	private function get_secondsElapsed():Int
 	{
-		return Std.int((FlxMisc.getTicks() - _started) / 1000);
+		return Std.int((FlxG.game.ticks - _started) / 1000);
 	}
 	
 	/**
@@ -109,7 +109,7 @@ class FlxDelay extends Sprite
 	
 	private function get_secondsRemaining():Int
 	{
-		return Std.int((_expires - FlxMisc.getTicks()) / 1000);
+		return Std.int((_expires - FlxG.game.ticks) / 1000);
 	}
 	
 	private function update(E:Event):Void
@@ -120,15 +120,15 @@ class FlxDelay extends Sprite
 			_pausedTimerRunning = false;
 			
 			//	Add the time the game was paused for onto the expires timer
-			_expires += (FlxMisc.getTicks() - _pauseStarted);
+			_expires += (FlxG.game.ticks - _pauseStarted);
 		}
 		else if (FlxG.paused == true && _pausedTimerRunning == false)
 		{
-			_pauseStarted = FlxMisc.getTicks();
+			_pauseStarted = FlxG.game.ticks;
 			_pausedTimerRunning = true;
 		}
 		
-		if (isRunning == true && _pausedTimerRunning == false && FlxMisc.getTicks() > _expires)
+		if (isRunning == true && _pausedTimerRunning == false && FlxG.game.ticks > _expires)
 		{
 			stop();
 		}

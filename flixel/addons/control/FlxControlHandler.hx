@@ -928,9 +928,9 @@ class FlxControlHandler
 		{
 			if (_fireRate > 0)
 			{
-				if (FlxMisc.getTicks() > _nextFireTime)
+				if (FlxG.game.ticks > _nextFireTime)
 				{
-					_lastFiredTime = FlxMisc.getTicks();
+					_lastFiredTime = FlxG.game.ticks;
 					_fireCallback();
 					fired = true;
 					_nextFireTime = _lastFiredTime + Std.int(_fireRate / FlxG.timeScale);
@@ -938,7 +938,7 @@ class FlxControlHandler
 			}
 			else
 			{
-				_lastFiredTime = FlxMisc.getTicks();
+				_lastFiredTime = FlxG.game.ticks;
 				_fireCallback();
 				fired = true;
 			}
@@ -959,7 +959,7 @@ class FlxControlHandler
 		// This should be called regardless if they've pressed jump or not
 		if (_entity.isTouching(_jumpSurface))
 		{
-			_extraSurfaceTime = FlxMisc.getTicks() + _jumpFromFallTime;
+			_extraSurfaceTime = FlxG.game.ticks + _jumpFromFallTime;
 		}
 		
 		if ((_jumpKeyMode == KEYMODE_PRESSED && FlxG.keys.pressed(_jumpKey)) || (_jumpKeyMode == KEYMODE_JUST_DOWN && FlxG.keys.justPressed(_jumpKey)) || (_jumpKeyMode == KEYMODE_RELEASED && FlxG.keys.justReleased(_jumpKey)))
@@ -968,7 +968,7 @@ class FlxControlHandler
 			if (_entity.isTouching(_jumpSurface) == false)
 			{
 				// They've run out of time to jump
-				if (FlxMisc.getTicks() > _extraSurfaceTime)
+				if (FlxG.game.ticks > _extraSurfaceTime)
 				{
 					return jumped;
 				}
@@ -982,7 +982,7 @@ class FlxControlHandler
 				}
 				
 				// If there is a jump repeat rate set and we're still less than it then return
-				if (FlxMisc.getTicks() < _nextJumpTime)
+				if (FlxG.game.ticks < _nextJumpTime)
 				{
 					return jumped;
 				}
@@ -990,7 +990,7 @@ class FlxControlHandler
 			else
 			{
 				// If there is a jump repeat rate set and we're still less than it then return
-				if (FlxMisc.getTicks() < _nextJumpTime)
+				if (FlxG.game.ticks < _nextJumpTime)
 				{
 					return jumped;
 				}
@@ -1012,7 +1012,7 @@ class FlxControlHandler
 				_jumpCallback();
 			}
 			
-			_lastJumpTime = FlxMisc.getTicks();
+			_lastJumpTime = FlxG.game.ticks;
 			_nextJumpTime = _lastJumpTime + Std.int(_jumpRate / FlxG.timeScale);
 			
 			jumped = true;

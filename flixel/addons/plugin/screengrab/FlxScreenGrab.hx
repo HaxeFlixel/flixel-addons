@@ -1,5 +1,6 @@
 package flixel.addons.plugin.screengrab;
 
+#if !js
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.geom.Matrix;
@@ -175,3 +176,4 @@ class FlxScreenGrab extends FlxBasic
 		clearHotKey();
 	}
 }
+#end
