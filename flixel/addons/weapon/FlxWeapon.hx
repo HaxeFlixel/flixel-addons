@@ -262,7 +262,7 @@ class FlxWeapon
 	 */
 	private function runFire(Method:Int, X:Int = 0, Y:Int = 0, ?Target:FlxSprite, Angle:Int = 0):Bool
 	{
-		if (fireRate > 0 && FlxMisc.getTicks() < nextFire)
+		if (fireRate > 0 && FlxG.game.ticks < nextFire)
 		{
 			return false;
 		}
@@ -288,8 +288,8 @@ class FlxWeapon
 		currentBullet.velocity.x = 0;
 		currentBullet.velocity.y = 0;
 		
-		_lastFired = FlxMisc.getTicks();
-		nextFire = FlxMisc.getTicks() + Std.int(fireRate / FlxG.timeScale);
+		_lastFired = FlxG.game.ticks;
+		nextFire = FlxG.game.ticks + Std.int(fireRate / FlxG.timeScale);
 		
 		var launchX:Float = _positionOffset.x;
 		var launchY:Float = _positionOffset.y;
