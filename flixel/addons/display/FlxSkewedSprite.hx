@@ -124,7 +124,7 @@ class FlxSkewedSprite extends FlxSprite
 		#end
 		
 #if flash
-			if (simpleRenderSkewedSprite ())
+			if (simpleRenderSkewedSprite())
 			{
 				_flashPoint.x = _point.x;
 				_flashPoint.y = _point.y;
