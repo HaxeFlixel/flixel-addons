@@ -105,17 +105,21 @@ class FlxScreenGrab extends FlxBasic
 		
 		var m:Matrix = new Matrix(1, 0, 0, 1, -bounds.x, -bounds.y);
 		
+		#if !FLX_NO_MOUSE
 		if (_autoHideMouse || HideMouse)
 		{
 			FlxG.mouse.hide();
 		}
+		#end
 		
 		theBitmap.bitmapData.draw(FlxG.stage, m);
 		
+		#if !FLX_NO_MOUSE
 		if (_autoHideMouse || HideMouse)
 		{
 			FlxG.mouse.show();
 		}
+		#end
 		
 		screenshot = theBitmap;
 		
