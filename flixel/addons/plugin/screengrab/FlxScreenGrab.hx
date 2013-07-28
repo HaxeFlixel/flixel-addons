@@ -161,6 +161,7 @@ class FlxScreenGrab extends FlxBasic
 	
 	override public function update():Void
 	{
+		#if !FLX_NO_KEYBOARD
 		if (_hotkey != "")
 		{
 			if (FlxG.keys.justReleased(_hotkey))
@@ -168,6 +169,7 @@ class FlxScreenGrab extends FlxBasic
 				grab();
 			}
 		}
+		#end
 	}
 	
 	override public function destroy():Void

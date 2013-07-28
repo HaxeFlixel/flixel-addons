@@ -1,5 +1,6 @@
 package flixel.addons.control;
 
+#if !FLX_NO_KEYBOARD
 import flixel.FlxBasic;
 import flixel.FlxSprite;
 import haxe.ds.ObjectMap;
@@ -164,3 +165,4 @@ class FlxControl extends FlxBasic
 		clear();
 	}
 }
+#end

@@ -1,5 +1,6 @@
 package flixel.addons.control;
 
+#if !FLX_NO_KEYBOARD
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -1407,3 +1408,4 @@ class FlxControlHandler
 		_rightKey = "NUMPADSIX";
 	}
 }
+#end
