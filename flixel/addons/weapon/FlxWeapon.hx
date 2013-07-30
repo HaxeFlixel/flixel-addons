@@ -392,7 +392,7 @@ class FlxWeapon
 	{
 		if (Touch == null) 
 		{
-			_touchTarget = FlxG.touchManager.getFirstTouch();
+			_touchTarget = FlxG.touches.getFirst();
 		} 
 		else 
 		{
