@@ -57,15 +57,6 @@ class FlxSkewedSprite extends FlxSprite
 	
 	override public function draw():Void 
 	{
-		if (_flickerTimer != 0)
-		{
-			_flicker = !_flicker;
-			if (_flicker)
-			{
-				return;
-			}
-		}
-		
 		if (dirty)	//rarely 
 		{
 			calcFrame();
