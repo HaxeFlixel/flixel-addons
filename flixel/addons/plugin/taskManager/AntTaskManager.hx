@@ -2,6 +2,7 @@ package flixel.addons.plugin.taskManager;
 
 import flixel.FlxBasic;
 import flixel.FlxG;
+import flixel.plugin.FlxPlugin;
 
 /**
  * The Task Manager is used to perform tasks (call methods) in specified order.
@@ -13,7 +14,7 @@ import flixel.FlxG;
  * @author Zaphod
  * @since  11.19.2012
  */
-class AntTaskManager extends FlxBasic
+class AntTaskManager extends FlxPlugin
 {
 	/**
 	 * This function will be called when all tasks in the task manager will be completed

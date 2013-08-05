@@ -6,8 +6,8 @@ import flash.display.BitmapData;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
-import flixel.FlxBasic;
 import flixel.FlxG;
+import flixel.plugin.FlxPlugin;
 
 #if flash
 import flash.net.FileReference;
@@ -19,7 +19,7 @@ import flash.net.FileReference;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
-class FlxScreenGrab extends FlxBasic
+class FlxScreenGrab extends FlxPlugin
 {
 	static public var screenshot:Bitmap;
 	
