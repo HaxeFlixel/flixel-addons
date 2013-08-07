@@ -4,6 +4,7 @@ import flixel.addons.effects.fx.BaseFX;
 import flixel.addons.effects.fx.StarfieldFX;
 import flixel.FlxBasic;
 import flixel.FlxG;
+import flixel.plugin.FlxPlugin;
 import haxe.ds.ObjectMap;
 
 /**
@@ -12,7 +13,7 @@ import haxe.ds.ObjectMap;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
-class FlxSpecialFX extends FlxBasic
+class FlxSpecialFX extends FlxPlugin
 {
 	static private var members:ObjectMap<BaseFX, BaseFX> = new ObjectMap<BaseFX, BaseFX>();
 	
