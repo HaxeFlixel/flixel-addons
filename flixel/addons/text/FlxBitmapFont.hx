@@ -266,16 +266,6 @@ class FlxBitmapFont extends FlxSprite
 	#if !flash
 	override public function draw():Void 
 	{
-		if (_flickerTimer != 0)
-		{
-			_flicker = !_flicker;
-			
-			if (_flicker)
-			{
-				return;
-			}
-		}
-		
 		if (cameras == null)
 		{
 			cameras = FlxG.cameras.list;
@@ -292,7 +282,6 @@ class FlxBitmapFont extends FlxSprite
 		var currTileX:Float;
 		var currTileY:Float;
 		
-		var radians:Float;
 		var cos:Float;
 		var sin:Float;
 		var relativeX:Float;
@@ -302,9 +291,7 @@ class FlxBitmapFont extends FlxSprite
 		var currDrawData:Array<Float>;
 		var currIndex:Int;
 		
-		#if !js
-		var isColored:Bool = isColored();
-		#else
+		#if js
 		var useAlpha:Bool = (alpha < 1);
 		#end
 		
@@ -342,9 +329,16 @@ class FlxBitmapFont extends FlxSprite
 
 			if (!simpleRender)
 			{
-				radians = angle * FlxAngle.TO_RAD;
-				cos = Math.cos(radians);
-				sin = Math.sin(radians);
+				if (_angleChanged)
+				{
+					var radians:Float = angle * FlxAngle.TO_RAD;
+					_sinAngle = Math.sin(radians);
+					_cosAngle = Math.cos(radians);
+					_angleChanged = false;
+				}
+				
+				cos = _cosAngle;
+				sin = _sinAngle;
 				
 				x1 = (origin.x - _halfWidth);
 				y1 = (origin.y - _halfHeight);

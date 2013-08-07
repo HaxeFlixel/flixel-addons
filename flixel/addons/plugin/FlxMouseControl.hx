@@ -4,6 +4,7 @@ package flixel.addons.plugin;
 import flixel.addons.display.FlxExtendedSprite;
 import flixel.FlxBasic;
 import flixel.FlxG;
+import flixel.plugin.FlxPlugin;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
@@ -14,7 +15,7 @@ import flixel.util.FlxRect;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
-class FlxMouseControl extends FlxBasic
+class FlxMouseControl extends FlxPlugin
 {
 	/**
 	 * Use with <code>sort()</code> to sort in ascending order.
@@ -108,7 +109,7 @@ class FlxMouseControl extends FlxBasic
 		// Is the mouse currently pressed down on a target?
 		if (_hasClickTarget)
 		{
-			if (FlxG.mouse.pressed())
+			if (FlxG.mouse.pressed)
 			{
 				// Has the mouse moved? If so then we're candidate for a drag
 				if (isDragging == false && clickTarget.draggable == true && (_clickCoords.x != FlxG.mouse.x || _clickCoords.y != FlxG.mouse.y))
@@ -143,7 +144,7 @@ class FlxMouseControl extends FlxBasic
 		{
 			// If you are wondering how the brand new array can have anything in it by now, it's because FlxExtendedSprite
 			// adds itself to the clickStack
-			if (FlxG.mouse.pressed() && _clickStack.length > 0)
+			if (FlxG.mouse.pressed && _clickStack.length > 0)
 			{
 				assignClickedSprite();
 			}

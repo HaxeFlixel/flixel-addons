@@ -1,16 +1,18 @@
-package flixel.addons.control;
+package flixel.addons.plugin.control;
 
+#if !FLX_NO_KEYBOARD
 import flixel.FlxBasic;
 import flixel.FlxSprite;
+import flixel.plugin.FlxPlugin;
 import haxe.ds.ObjectMap;
 
 /**
-* FlxControl
-*
-* @link http://www.photonstorm.com
-* @author Richard Davey / Photon Storm
-*/
-class FlxControl extends FlxBasic
+ * FlxControl
+ *
+ * @link http://www.photonstorm.com
+ * @author Richard Davey / Photon Storm
+ */
+class FlxControl extends FlxPlugin
 {
 	//	Quick references
 	static public var player1:FlxControlHandler;
@@ -164,3 +166,4 @@ class FlxControl extends FlxBasic
 		clear();
 	}
 }
+#end

@@ -6,8 +6,8 @@ import flash.display.BitmapData;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
-import flixel.FlxBasic;
 import flixel.FlxG;
+import flixel.plugin.FlxPlugin;
 
 #if flash
 import flash.net.FileReference;
@@ -19,7 +19,7 @@ import flash.net.FileReference;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
-class FlxScreenGrab extends FlxBasic
+class FlxScreenGrab extends FlxPlugin
 {
 	static public var screenshot:Bitmap;
 	
@@ -105,17 +105,21 @@ class FlxScreenGrab extends FlxBasic
 		
 		var m:Matrix = new Matrix(1, 0, 0, 1, -bounds.x, -bounds.y);
 		
+		#if !FLX_NO_MOUSE
 		if (_autoHideMouse || HideMouse)
 		{
 			FlxG.mouse.hide();
 		}
+		#end
 		
 		theBitmap.bitmapData.draw(FlxG.stage, m);
 		
+		#if !FLX_NO_MOUSE
 		if (_autoHideMouse || HideMouse)
 		{
 			FlxG.mouse.show();
 		}
+		#end
 		
 		screenshot = theBitmap;
 		
@@ -161,6 +165,7 @@ class FlxScreenGrab extends FlxBasic
 	
 	override public function update():Void
 	{
+		#if !FLX_NO_KEYBOARD
 		if (_hotkey != "")
 		{
 			if (FlxG.keys.justReleased(_hotkey))
@@ -168,6 +173,7 @@ class FlxScreenGrab extends FlxBasic
 				grab();
 			}
 		}
+		#end
 	}
 	
 	override public function destroy():Void

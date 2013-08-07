@@ -119,7 +119,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		height = Height;
 		_onClick = Callback;
 		
-		buttonNormal = new FlxExtendedSprite(X, Y);
+		buttonNormal = new FlxExtendedSprite();
 		
 		#if flash
 		buttonNormal.makeGraphic(Width, Height, borderColor);
@@ -128,10 +128,9 @@ class FlxButtonPlus extends FlxSpriteGroup
 		updateInactiveButtonColors(offColor);
 		
 		buttonNormal.solid = false;
-		buttonNormal.scrollFactor.x = 0;
-		buttonNormal.scrollFactor.y = 0;
+		buttonNormal.scrollFactor.set();
 		
-		buttonHighlight = new FlxExtendedSprite(X, Y);
+		buttonHighlight = new FlxExtendedSprite();
 		
 		#if flash
 		buttonHighlight.makeGraphic(Width, Height, borderColor);
@@ -141,18 +140,17 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		buttonHighlight.solid = false;
 		buttonHighlight.visible = false;
-		buttonHighlight.scrollFactor.x = 0;
-		buttonHighlight.scrollFactor.y = 0;
+		buttonHighlight.scrollFactor.set();
 		
 		add(buttonNormal);
 		add(buttonHighlight);
 		
 		if (Label != null)
 		{
-			textNormal = new FlxText(X, Y + 3, Width, Label);
+			textNormal = new FlxText(0, 3, Width, Label);
 			textNormal.setFormat(null, 8, 0xffffff, "center", 0x000000);
 			
-			textHighlight = new FlxText(X, Y + 3, Width, Label);
+			textHighlight = new FlxText(0, 3, Width, Label);
 			textHighlight.setFormat(null, 8, 0xffffff, "center", 0x000000);
 			
 			add(textNormal);
@@ -245,7 +243,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 			{
 				offAll = false;
 				
-				if (FlxG.mouse.justPressed())
+				if (FlxG.mouse.justPressed)
 				{
 					_status = PRESSED;
 				}

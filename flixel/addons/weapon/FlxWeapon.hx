@@ -6,7 +6,7 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
 import flixel.system.FlxSound;
-import flixel.system.input.FlxTouch;
+import flixel.system.input.touch.FlxTouch;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxMisc;
 import flixel.util.FlxPoint;
@@ -392,7 +392,7 @@ class FlxWeapon
 	{
 		if (Touch == null) 
 		{
-			_touchTarget = FlxG.touchManager.getFirstTouch();
+			_touchTarget = FlxG.touches.getFirst();
 		} 
 		else 
 		{
