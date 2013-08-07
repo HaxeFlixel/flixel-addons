@@ -109,7 +109,7 @@ class FlxMouseControl extends FlxPlugin
 		// Is the mouse currently pressed down on a target?
 		if (_hasClickTarget)
 		{
-			if (FlxG.mouse.pressed())
+			if (FlxG.mouse.pressed)
 			{
 				// Has the mouse moved? If so then we're candidate for a drag
 				if (isDragging == false && clickTarget.draggable == true && (_clickCoords.x != FlxG.mouse.x || _clickCoords.y != FlxG.mouse.y))
@@ -144,7 +144,7 @@ class FlxMouseControl extends FlxPlugin
 		{
 			// If you are wondering how the brand new array can have anything in it by now, it's because FlxExtendedSprite
 			// adds itself to the clickStack
-			if (FlxG.mouse.pressed() && _clickStack.length > 0)
+			if (FlxG.mouse.pressed && _clickStack.length > 0)
 			{
 				assignClickedSprite();
 			}

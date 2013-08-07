@@ -420,7 +420,7 @@ class FlxExtendedSprite extends FlxSprite
 			updateDrag();
 		}
 		
-		if (isPressed == false && FlxG.mouse.justPressed())
+		if (isPressed == false && FlxG.mouse.justPressed)
 		{
 			checkForClick();
 		}
@@ -597,7 +597,7 @@ class FlxExtendedSprite extends FlxSprite
 	private function checkForClick():Void
 	{
 		#if !FLX_NO_MOUSE
-		if (mouseOver && FlxG.mouse.justPressed())
+		if (mouseOver && FlxG.mouse.justPressed)
 		{
 			//	If we don't need a pixel perfect check, then don't bother running one! By this point we know the mouse is over the sprite already
 			if (_clickPixelPerfect == false && _dragPixelPerfect == false)
