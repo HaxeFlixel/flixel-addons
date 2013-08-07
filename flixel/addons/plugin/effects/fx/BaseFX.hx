@@ -1,4 +1,4 @@
-package flixel.addons.effects.fx; 
+package flixel.addons.plugin.effects.fx; 
 
 import flash.display.BitmapData;
 import flash.geom.Point;

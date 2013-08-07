@@ -1,7 +1,7 @@
-package flixel.addons.effects;
+package flixel.addons.plugin.effects;
 
-import flixel.addons.effects.fx.BaseFX;
-import flixel.addons.effects.fx.StarfieldFX;
+import flixel.addons.plugin.effects.fx.BaseFX;
+import flixel.addons.plugin.effects.fx.StarfieldFX;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.plugin.FlxPlugin;
