@@ -1,6 +1,7 @@
 package flixel.addons.nape;
 
 import flixel.util.FlxAngle;
+import haxe.unit.TestRunner;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -8,6 +9,7 @@ import nape.phys.Material;
 import nape.shape.Circle;
 import nape.shape.Polygon;
 import flixel.FlxSprite;
+import nape.space.Space;
 
 /**
  * FlxPhysSprite consists of an FlxSprite with a physics body.
@@ -40,20 +42,20 @@ class FlxPhysSprite extends FlxSprite
 	 * The body is then added to the space of the current state.
 	 * At each step, the physics are updated, and so is the position and rotation of the sprite 
 	 * to match the bodys position and rotation values.
+	 * By default a physics body with rectangle shape will be created around your sprite graphics
+	 * if you change the graphics after this constructor see createRectangularBody().
 	 * 
 	 * @param	X				The initial X position of the sprite.
 	 * @param	Y				The initial Y position of the sprite.
 	 * @param	SimpleGraphic 	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
-	 * @param	CreateBody	 	Whether a rectangular physics body should be created for this sprite. True by default.
+	 * @param	EnablePhysics	Whether the phisics of this sprite will be enabled from the start.
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic, CreateBody:Bool = true) 
+	public function new(X:Float = 0, Y:Float = 0, SimpleGraphic:Dynamic = null, EnablePhysics:Bool = true) 
 	{
 		super(X, Y, SimpleGraphic);
 		
-		if (CreateBody)
-		{
-			createRectangularBody();
-		}
+		createRectangularBody();
+		enablePhysics(EnablePhysics);
 	}
 
 	/**
@@ -116,14 +118,17 @@ class FlxPhysSprite extends FlxSprite
 	 */
 	public function addPremadeBody(NewBody:Body):Void
 	{
+		var currSpace:Space = null;
+		
 		if (body != null) 
 		{
+			currSpace = body.space;
 			destroyPhysObjects();
 		}
 		
 		NewBody.position.x = x;
 		NewBody.position.y = y;
-		NewBody.space = FlxPhysState.space;
+		NewBody.space = currSpace;
 		body = NewBody;
 		setBodyMaterial();
 	}
@@ -136,15 +141,18 @@ class FlxPhysSprite extends FlxSprite
 	 */
 	public function createCircularBody(Radius:Float = 16, ?_Type:BodyType):Void
 	{
+		var currSpace:Space = null;
+		
 		if (body != null) 
 		{
+			currSpace = body.space;
 			destroyPhysObjects();
 		}
 			
 		centerOffsets(false);
 		body = new Body(_Type != null ? _Type : BodyType.DYNAMIC, Vec2.weak(x, y));
 		body.shapes.add(new Circle(Radius));
-		body.space = FlxPhysState.space;
+		body.space = currSpace;
 		
 		setBodyMaterial();
 	}
@@ -161,8 +169,11 @@ class FlxPhysSprite extends FlxSprite
 	 */
 	public function createRectangularBody(Width:Float = 0, Height:Float = 0, ?_Type:BodyType):Void
 	{
+		var currSpace:Space = null;
+		
 		if (body != null) 
 		{
+			currSpace = body.space;
 			destroyPhysObjects();
 		}
 		
@@ -178,7 +189,7 @@ class FlxPhysSprite extends FlxSprite
 		centerOffsets(false);
 		body = new Body(_Type != null ? _Type : BodyType.DYNAMIC, Vec2.weak(x, y));
 		body.shapes.add(new Polygon(Polygon.box(Width, Height)));
-		body.space = FlxPhysState.space;
+		body.space = currSpace;
 		
 		setBodyMaterial();
 	}
@@ -234,6 +245,22 @@ class FlxPhysSprite extends FlxSprite
 			body.angularVel *= _angularDrag;
 			body.velocity.x *= _linearDrag;
 			body.velocity.y *= _linearDrag;
+		}
+	}
+	
+	/**
+	 * Enables/Disables this sprites physics body in simulations.
+	 * @param	b	
+	 */
+	public function enablePhysics(b:Bool)
+	{
+		if (b)
+		{
+			body.space = FlxPhysState.space;
+		} 
+		else
+		{
+			body.space = null;
 		}
 	}
 

@@ -157,6 +157,8 @@ class FlxPhysState extends FlxState
 		super.destroy();
 		
 		space.clear();
+		
+		FlxPhysState.space = null; // resets atributes like gravity.
 
 		#if !FLX_NO_DEBUG
 		disablePhysDebug();
