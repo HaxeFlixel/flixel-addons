@@ -48,16 +48,19 @@ class FlxPhysSprite extends FlxSprite
 	 * @param	X				The initial X position of the sprite.
 	 * @param	Y				The initial Y position of the sprite.
 	 * @param	SimpleGraphic 	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
+	 * @param	CreateBody		Whether to create a square physics body (with width and height of SimpleGraphic if that's specified).
 	 * @param	EnablePhysics	Whether the phisics of this sprite will be enabled from the start.
 	 */
-	public function new(X:Float = 0, Y:Float = 0, SimpleGraphic:Dynamic = null, EnablePhysics:Bool = true) 
+	public function new(X:Float = 0, Y:Float = 0, SimpleGraphic:Dynamic = null, CreateBody:Bool = true, EnablePhysics:Bool = true) 
 	{
 		super(X, Y, SimpleGraphic);
 		
-		createRectangularBody();
+		if(CreateBody)
+			createRectangularBody();
+		
 		enablePhysics(EnablePhysics);
 	}
-
+	
 	/**
 	 * WARNING: This will remove this sprite entirely. Use <code>kill()</code> if you 
 	 * want to disable it temporarily only and <code>reset()</code> it later to revive it.
@@ -68,7 +71,6 @@ class FlxPhysSprite extends FlxSprite
 	override public function destroy():Void 
 	{
 		destroyPhysObjects();
-		
 		super.destroy();
 	}
 
@@ -79,7 +81,7 @@ class FlxPhysSprite extends FlxSprite
 	{
 		super.update();
 		
-		if (moves)
+		if (moves && body != null)
 		{
 			updatePhysObjects();
 		}
@@ -93,7 +95,10 @@ class FlxPhysSprite extends FlxSprite
 	{
 		super.kill();
 		
-		body.space = null;
+		if (body != null)
+		{
+			body.space = null;
+		}
 	}
 
 	/**
@@ -205,12 +210,10 @@ class FlxPhysSprite extends FlxSprite
 	 */
 	public function setBodyMaterial(Elasticity:Float = 1, DynamicFriction:Float = 0.2, StaticFriction:Float = 0.4, Density:Float = 1, RotationFriction:Float = 0.001):Void
 	{
-		if (body == null) 
+		if (body != null)
 		{
-			return;
+			body.setShapeMaterials(new Material(Elasticity, DynamicFriction, StaticFriction, Density, RotationFriction));
 		}
-			
-		body.setShapeMaterials(new Material(Elasticity, DynamicFriction, StaticFriction, Density, RotationFriction));
 	}
 	
 	/**
@@ -252,15 +255,11 @@ class FlxPhysSprite extends FlxSprite
 	 * Enables/Disables this sprites physics body in simulations.
 	 * @param	b	
 	 */
-	public function enablePhysics(b:Bool)
+	public function enablePhysics(enable:Bool)
 	{
-		if (b)
+		if (body != null)
 		{
-			body.space = FlxPhysState.space;
-		} 
-		else
-		{
-			body.space = null;
+			body.space = enable ? FlxPhysState.space : null;
 		}
 	}
 
@@ -281,7 +280,7 @@ class FlxPhysSprite extends FlxSprite
 	#if !FLX_NO_DEBUG
 	/**
 	 * Hide debug outline on physics sprites if the physics debug shapes are turned on
-	 */	
+	 */
 	override public function drawDebug():Void
 	{
 		if (FlxPhysState.debug == null)
