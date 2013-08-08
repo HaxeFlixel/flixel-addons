@@ -1,14 +1,13 @@
 package flixel.addons.nape;
 
+import flixel.FlxSprite;
 import flixel.util.FlxAngle;
-import haxe.unit.TestRunner;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
 import nape.phys.Material;
 import nape.shape.Circle;
 import nape.shape.Polygon;
-import flixel.FlxSprite;
 import nape.space.Space;
 
 /**
@@ -50,12 +49,12 @@ class FlxPhysSprite extends FlxSprite
 	 * @param	SimpleGraphic 	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
 	 * @param	EnablePhysics	Whether the phisics of this sprite will be enabled from the start.
 	 */
-	public function new(X:Float = 0, Y:Float = 0, SimpleGraphic:Dynamic = null, EnablePhysics:Bool = true) 
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic, EnablePhysics:Bool = true) 
 	{
 		super(X, Y, SimpleGraphic);
 		
 		createRectangularBody();
-		enablePhysics(EnablePhysics);
+		physicsEnabled = EnablePhysics; 
 	}
 
 	/**
@@ -250,11 +249,12 @@ class FlxPhysSprite extends FlxSprite
 	
 	/**
 	 * Enables/Disables this sprites physics body in simulations.
-	 * @param	b	
 	 */
-	public function enablePhysics(b:Bool)
+	public var physicsEnabled(default, set):Bool = true;
+	
+	inline private function set_physicsEnabled(Value:Bool):Bool
 	{
-		if (b)
+		if (Value)
 		{
 			body.space = FlxPhysState.space;
 		} 
@@ -262,6 +262,8 @@ class FlxPhysSprite extends FlxSprite
 		{
 			body.space = null;
 		}
+		
+		return Value;
 	}
 
 	/**
