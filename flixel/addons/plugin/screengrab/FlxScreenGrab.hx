@@ -168,7 +168,7 @@ class FlxScreenGrab extends FlxPlugin
 		#if !FLX_NO_KEYBOARD
 		if (_hotkey != "")
 		{
-			if (FlxG.keys.justReleased(_hotkey))
+			if (FlxG.keyboard.justReleased(_hotkey))
 			{
 				grab();
 			}
