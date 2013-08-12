@@ -2,7 +2,6 @@ package flixel.addons.editors.tiled;
 
 import flash.utils.ByteArray;
 import flash.utils.Endian;
-import flash.Lib;
 import haxe.xml.Fast;
 
 /**
@@ -22,6 +21,8 @@ class TiledLayer
 	public var visible:Bool;
 	public var properties:TiledPropertySet;
 	
+	public var tiles:Array<TiledTile>;
+	
 	inline static private var BASE64_CHARS:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 	
 	private var _xmlData:Fast;
@@ -37,6 +38,7 @@ class TiledLayer
 		height = Std.parseInt(Source.att.height); 
 		visible = (Source.has.visible && Source.att.visible == "1") ? true : false;
 		opacity = (Source.has.opacity) ? Std.parseFloat(Source.att.opacity) : 0;
+		tiles = new Array<TiledTile>();
 		
 		// load properties
 		var node:Fast;
@@ -64,6 +66,8 @@ class TiledLayer
 			var chunk:String = _xmlData.innerData;
 			var compressed:Bool = false;
 			
+			result = base64ToByteArray(chunk);
+			
 			if (_xmlData.has.compression)
 			{
 				switch(_xmlData.att.compression)
@@ -81,7 +85,6 @@ class TiledLayer
 				untyped __js__('var inflated = new Zlib.Inflate($chunk)'); 
 				result = untyped __js__('inflated.DECOMPRESS()');
 				#else
-				result = base64ToByteArray(chunk);
 				result.uncompress();
 				#end
 			}
@@ -146,10 +149,14 @@ class TiledLayer
 	
 	private function resolveTile(GlobalTileID:Int):Int
 	{
+		var tile:TiledTile = new TiledTile(GlobalTileID);
+		
+		GlobalTileID = tile.tilesetID;
 		for (tileset in map.tilesets)
 		{
 			if (tileset.hasGid(GlobalTileID))
 			{
+				tiles.push(tile);
 				return tileset.fromGid(GlobalTileID);
 			}
 		}
@@ -192,7 +199,7 @@ class TiledLayer
 			
 			while (mapData.position < mapData.length)
 			{
-				tileArray.push(resolveTile(mapData.readInt()));
+				tileArray.push(resolveTile(mapData.readUnsignedInt()));
 			}
 		}
 		
