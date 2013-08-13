@@ -85,6 +85,18 @@ class FlxTilemapExt extends FlxTilemap
 		MATRIX = null;
 	}
 	
+	override public function update():Void 
+	{
+		super.update();
+		if (_specialTiles != null && _specialTiles.length > 0) {
+			for (t in _specialTiles) {
+				if(t != null) {
+					t.update();
+				}
+			}
+		}
+	}
+	
 	/**
 	 * THIS IS A COPY FROM <code>FlxTilemap</code> BUT IT DEALS WITH FLIPPED AND ROTATED TILES
 	 * Internal function that actually renders the tilemap to the tilemap buffer.  Called by draw().
@@ -222,6 +234,7 @@ class FlxTilemapExt extends FlxTilemap
 					
 					if (special != null && special.isSpecial()) {
 						MATRIX = special.getMatrix(_tileWidth, _tileHeight);
+						tileID = special.getCurrentTileId() - _startingIndex;
 					}
 					
 					drawX = _helperPoint.x + (columnIndex % widthInTiles) * _tileWidth;

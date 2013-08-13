@@ -5,6 +5,7 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxBasic;
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.system.FlxAnim;
 import flixel.util.FlxAngle;
@@ -15,6 +16,11 @@ class FlxTileSpecial extends FlxBasic
 	public static var ROTATE_0 = 0;
 	public static var ROTATE_90 = 1;
 	public static var ROTATE_270 = 2;
+	
+	/**
+	 * The id of this tile in the tileset
+	 */
+	public var tileID:Int;
 	
 	public var flipHorizontally:Bool = false;
 	public var flipVertically:Bool = false;
@@ -28,11 +34,18 @@ class FlxTileSpecial extends FlxBasic
 	#end
 	
 	private var _matrix:Matrix;
-	private var _animations:Map<String, FlxAnim>;
 	
-	public function new(FlipHorizontal:Bool, FlipVertical:Bool, Rotate:Int) 
+	// Animation stuff
+	private var _animation:FlxAnim;
+	private var _currFrame:Int = 0;
+	private var _currTileId:Int;
+	private var _frameTimer:Float = 0.0;
+	
+	public function new(tilesetID:Int, FlipHorizontal:Bool, FlipVertical:Bool, Rotate:Int) 
 	{
 		super();
+		this.tileID = tilesetID;
+		this._currTileId = this.tileID;
 		this.flipHorizontally = FlipHorizontal;
 		this.flipVertically = FlipVertical;
 		this.rotate = Rotate;
@@ -44,7 +57,7 @@ class FlxTileSpecial extends FlxBasic
 		#end
 		
 		this._matrix = new Matrix();
-		this._animations = new Map<String, FlxAnim>();
+		this._animation = null;
 	}
 	
 	override public function destroy():Void 
@@ -60,22 +73,35 @@ class FlxTileSpecial extends FlxBasic
 		#end
 		
 		
-		if (_animations != null)
-		{
-			for (anim in _animations)
-			{
-				if (anim != null)
-				{
-					anim.destroy();
-				}
-			}
-			_animations = null;
-		}
+		_animation.destroy();
+		_animation = null;
 		_matrix = null;
 	}
 	
+	override public function update():Void 
+	{
+		super.update();
+		// Modified from updateAnimation() in FlxSprite
+		if (_animation != null && _animation.delay > 0) {
+			_frameTimer += FlxG.elapsed;
+			while (_frameTimer > _animation.delay) {
+				_frameTimer = _frameTimer - _animation.delay;
+				if (_currFrame >= _animation.frames.length - 1)
+				{
+					_currFrame = 0;
+				}
+				else
+				{
+					_currFrame++;
+				}
+			}
+			
+			_currTileId = _animation.frames[_currFrame];
+		}
+	}
+	
 	public function isSpecial():Bool {
-		return ((flipHorizontally || flipVertically) || rotate != ROTATE_0);
+		return (((flipHorizontally || flipVertically) || rotate != ROTATE_0) || _animation != null);
 	}
 	
 	#if flash
@@ -102,6 +128,29 @@ class FlxTileSpecial extends FlxBasic
 	}
 	#end
 	
+	/**
+	 * Add an animation to this special tile
+	 * @param	tiles		An array with the tilesetID of each frame
+	 * @param	frameRate	The speed of the animation in frames per second (Default: 30)
+	 */
+	public function addAnimation(tiles:Array<Int>, frameRate:Float = 30):Void {
+		_animation = new FlxAnim("tileAnim", tiles, frameRate, true);
+	}
+	
+	/**
+	 * Returns the current tileID of this tile in the tileset
+	 * @return The current tileID
+	 */
+	public function getCurrentTileId():Int {
+		return _currTileId;
+	}
+	
+	/**
+	 * Calculates and return the matrix
+	 * @param	width	the tile width
+	 * @param	height	the tile height
+	 * @return	The matrix calculated
+	 */
 	public function getMatrix(width:Int, height:Int):Matrix {
 		_matrix.identity();
 		if(flipHorizontally) {
