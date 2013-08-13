@@ -147,7 +147,7 @@ class TiledLayer
 		return output;
 	}
 	
-	private function resolveTile(GlobalTileID:Int):Int
+	private function resolveTile(GlobalTileID:UInt):Int
 	{
 		var tile:TiledTile = new TiledTile(GlobalTileID);
 		
@@ -160,7 +160,7 @@ class TiledLayer
 				return tileset.fromGid(GlobalTileID);
 			}
 		}
-		
+		tiles.push(null);
 		return 0;
 	}
 	

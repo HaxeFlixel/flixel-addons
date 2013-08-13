@@ -17,7 +17,7 @@ class TiledTile
 	/*
 	 * The original ID as described in the mapData
 	 */
-	public var tileID:Int;
+	public var tileID:UInt;
 	
 	/*
 	 * The ID of this tile in its tileset
@@ -38,7 +38,7 @@ class TiledTile
 	 */
 	public var rotate:Int;
 	
-	public function new(OriginalId:Int) {
+	public function new(OriginalId:UInt) {
 		this.tileID = OriginalId;
 		this.tilesetID = resolveTilesetID();
 		this.rotate = ROTATE_0;
@@ -60,9 +60,9 @@ class TiledTile
 				isFlipHorizontally = true;
 				rotate = ROTATE_270;
 			} else if (flipHorizontal) {
-				rotate = ROTATE_270;
-			} else if (flipVertical) {
 				rotate = ROTATE_90;
+			} else if (flipVertical) {
+				rotate = ROTATE_270;
 			} else {
 				isFlipVertically = true;
 				rotate = ROTATE_270;

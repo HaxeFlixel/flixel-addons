@@ -1,16 +1,29 @@
 package flixel.addons.tile;
 
+import flash.display.BitmapData;
+import flash.geom.Matrix;
+import flash.geom.Point;
+import flixel.addons.tile.FlxTilemapExt;
+import flixel.addons.tile.FlxTileSpecial;
+import flixel.FlxCamera;
+import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.tile.FlxTilemap;
+import flixel.system.layer.DrawStackItem;
 import flixel.tile.FlxTile;
+import flixel.tile.FlxTilemap;
+import flixel.tile.FlxTilemapBuffer;
+import flixel.util.FlxColor;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
+
 
 /**
  * Extended <code>FlxTilemap</code> class that provides collision detection against slopes
  * Based on the original by Dirk Bunk.
- * 
+ * ---
+ * Also add support to flipped / rotated tiles.
  * @author Peter Christiansen
+ * @author MrCdK
  * @link https://github.com/TheTurnipMaster/SlopeDemo
  */
 class FlxTilemapExt extends FlxTilemap
@@ -30,6 +43,17 @@ class FlxTilemapExt extends FlxTilemap
 	private var _slopeCeilLeft:Array<Int>;
 	private var _slopeCeilRight:Array<Int>;
 	
+	// Flipped/rotated tiles variables
+	#if flash
+	var _flashNormalTile:BitmapData;
+	var _flashFlippedTile:BitmapData;
+	
+	var POINT:Point;
+	#end
+	
+	var MATRIX:Matrix;
+	private var _specialTiles:Array<FlxTileSpecial>;
+	
 	public function new()
 	{
 		super();
@@ -41,6 +65,13 @@ class FlxTilemapExt extends FlxTilemap
 		_slopeFloorRight = new Array<Int>();
 		_slopeCeilLeft = new Array<Int>();
 		_slopeCeilRight = new Array<Int>();
+		
+		// Flipped/rotated tiles variables
+		_specialTiles = null;
+		MATRIX = new Matrix();
+		#if flash
+		POINT = new Point(0, 0);
+		#end
 	}
 	
 	override public function destroy():Void 
@@ -54,6 +85,226 @@ class FlxTilemapExt extends FlxTilemap
 		_slopeCeilRight = null;
 		
 		super.destroy();
+		
+		if (_specialTiles != null) {
+			for (t in _specialTiles) {
+				t = null;
+			}
+		}
+		_specialTiles = null;
+		MATRIX = null;
+		#if flash
+		_flashFlippedTile = null;
+		_flashNormalTile = null;
+		POINT = null;
+		#end
+	}
+	
+	/**
+	 * THIS IS A COPY FROM <code>FlxTilemap</code> BUT IT DEALS WITH FLIPPED AND ROTATED TILES
+	 * Internal function that actually renders the tilemap to the tilemap buffer.  Called by draw().
+	 * @param	Buffer		The <code>FlxTilemapBuffer</code> you are rendering to.
+	 * @param	Camera		The related <code>FlxCamera</code>, mainly for scroll values.
+	 */
+	override private function drawTilemap(Buffer:FlxTilemapBuffer, Camera:FlxCamera):Void 
+	{
+		#if flash
+		Buffer.fill();
+		#else
+		// Math floor seems to be a better tearing fix
+		_helperPoint.x = x - Math.floor(Camera.scroll.x * scrollFactor.x); //copied from getScreenXY()
+		_helperPoint.y = y - Math.floor(Camera.scroll.y * scrollFactor.y);
+		
+		var tileID:Int;
+		var drawX:Float;
+		var drawY:Float;
+		
+		#if !js
+		var drawItem:DrawStackItem = Camera.getDrawStackItem(_cachedGraphics, false, 0);
+		#else
+		var drawItem:DrawStackItem = Camera.getDrawStackItem(_cachedGraphics, false);
+		#end
+		var currDrawData:Array<Float> = drawItem.drawData;
+		var currIndex:Int = drawItem.position;
+		#end
+		
+		// Copy tile images into the tile buffer
+		_point.x = (Camera.scroll.x * scrollFactor.x) - x; //modified from getScreenXY()
+		_point.y = (Camera.scroll.y * scrollFactor.y) - y;
+		var screenXInTiles:Int = Math.floor(_point.x / _tileWidth);
+		var screenYInTiles:Int = Math.floor(_point.y / _tileHeight);
+		var screenRows:Int = Buffer.rows;
+		var screenColumns:Int = Buffer.columns;
+		
+		// Bound the upper left corner
+		if (screenXInTiles < 0)
+		{
+			screenXInTiles = 0;
+		}
+		if (screenXInTiles > widthInTiles - screenColumns)
+		{
+			screenXInTiles = widthInTiles - screenColumns;
+		}
+		if (screenYInTiles < 0)
+		{
+			screenYInTiles = 0;
+		}
+		if (screenYInTiles > heightInTiles - screenRows)
+		{
+			screenYInTiles = heightInTiles - screenRows;
+		}
+		
+		var rowIndex:Int = screenYInTiles * widthInTiles + screenXInTiles;
+		_flashPoint.y = 0;
+		var row:Int = 0;
+		var column:Int;
+		var columnIndex:Int;
+		var tile:FlxTile;
+		var special:FlxTileSpecial;
+
+		#if !FLX_NO_DEBUG
+		var debugTile:BitmapData;
+		#end 
+		
+		var isSpecial = false;
+		
+		while (row < screenRows)
+		{
+			columnIndex = rowIndex;
+			column = 0;
+			_flashPoint.x = 0;
+			
+			while (column < screenColumns)
+			{
+				#if flash
+				_flashRect = _rects[columnIndex];
+				
+				if (_flashRect != null)
+				{
+					if(_specialTiles != null && _specialTiles[columnIndex] != null) {
+						special = _specialTiles[columnIndex];
+						isSpecial = special.isSpecial();
+						if (isSpecial) {
+							_flashNormalTile = new BitmapData(_tileWidth, _tileHeight, true, FlxColor.TRANSPARENT);
+							_flashFlippedTile = new BitmapData(_tileWidth, _tileHeight, true, FlxColor.TRANSPARENT);
+							
+							_flashNormalTile.copyPixels(_cachedGraphics.bitmap, _flashRect, POINT, null, null, true);
+							
+							
+							_flashFlippedTile.draw(_flashNormalTile, special.getMatrix(_tileWidth, _tileHeight));
+							
+							Buffer.pixels.copyPixels(_flashFlippedTile, _flashFlippedTile.rect, _flashPoint, null, null, true);
+						}
+					} 
+					
+					if (!isSpecial) {
+						Buffer.pixels.copyPixels(_cachedGraphics.bitmap, _flashRect, _flashPoint, null, null, true);
+					} else {
+						isSpecial = false;
+					}
+					
+					#if !FLX_NO_DEBUG
+					if (FlxG.debugger.visualDebug && !ignoreDrawDebug) 
+					{
+						tile = _tileObjects[_data[columnIndex]];
+						
+						if(tile != null)
+						{
+							if (tile.allowCollisions <= FlxObject.NONE)
+							{
+								// Blue
+								debugTile = _debugTileNotSolid; 
+							}
+							else if (tile.allowCollisions != FlxObject.ANY)
+							{
+								// Pink
+								debugTile = _debugTilePartial; 
+							}
+							else
+							{
+								// Green
+								debugTile = _debugTileSolid; 
+							}
+							
+							Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
+						}
+					}
+					#end
+				}
+				#else
+				tileID = _rectIDs[columnIndex];
+				
+				if (tileID != -1)
+				{
+					special = _specialTiles[columnIndex];
+					var a:Float = 1;
+					var b:Float = 0;
+					var c:Float = 0;
+					var d:Float = 1;
+					var tx:Float = 0;
+					var ty:Float = 0;
+					if (special != null && special.isSpecial()) {
+						MATRIX = special.getMatrix(_tileWidth, _tileHeight);
+						a = MATRIX.a;
+						b = MATRIX.b;
+						c = MATRIX.c;
+						d = MATRIX.d;
+						tx = MATRIX.tx;
+						ty = MATRIX.ty;
+					}
+					
+					drawX = _helperPoint.x + (columnIndex % widthInTiles) * _tileWidth;
+					drawY = _helperPoint.y + Math.floor(columnIndex / widthInTiles) * _tileHeight;
+					
+					drawX += tx;
+					drawY += ty;
+					
+					#if !js
+					currDrawData[currIndex++] = drawX;
+					currDrawData[currIndex++] = drawY;
+					#else
+					currDrawData[currIndex++] = Math.floor(drawX);
+					currDrawData[currIndex++] = Math.floor(drawY);
+					#end
+					currDrawData[currIndex++] = tileID;
+					
+					
+					currDrawData[currIndex++] = a; 
+					currDrawData[currIndex++] = b;
+					currDrawData[currIndex++] = c;
+					currDrawData[currIndex++] = d; 
+					
+					#if !js
+					// Alpha
+					currDrawData[currIndex++] = 1.0; 
+					#end
+				}
+				#end
+				
+				_flashPoint.x += _tileWidth;
+				column++;
+				columnIndex++;
+			}
+			
+			rowIndex += widthInTiles;
+			_flashPoint.y += _tileHeight;
+			row++;
+		}
+		
+		#if !flash
+		drawItem.position = currIndex;
+		#end
+		
+		Buffer.x = screenXInTiles * _tileWidth;
+		Buffer.y = screenYInTiles * _tileHeight;
+	}
+	
+	/**
+	 * Set the special tiles (rotated or flipped)
+	 * @param	tiles	An <code>Array</code> with all the <code>FlxTileSpecial</code>
+	 */
+	public function setSpecialTiles(tiles:Array<FlxTileSpecial>):Void {
+		this._specialTiles = tiles;
 	}
 
 	/**
