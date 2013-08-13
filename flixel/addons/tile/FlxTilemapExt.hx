@@ -111,9 +111,9 @@ class FlxTilemapExt extends FlxTilemap
 		#if flash
 		Buffer.fill();
 		#else
-		// Math floor seems to be a better tearing fix
-		_helperPoint.x = x - Math.floor(Camera.scroll.x * scrollFactor.x); //copied from getScreenXY()
-		_helperPoint.y = y - Math.floor(Camera.scroll.y * scrollFactor.y);
+		
+		_helperPoint.x = x - Camera.scroll.x * scrollFactor.x; //copied from getScreenXY()
+		_helperPoint.y = y - Camera.scroll.y * scrollFactor.y;
 		
 		var tileID:Int;
 		var drawX:Float;
@@ -237,12 +237,9 @@ class FlxTilemapExt extends FlxTilemap
 				if (tileID != -1)
 				{
 					special = _specialTiles[columnIndex];
-					var a:Float = 1;
-					var b:Float = 0;
-					var c:Float = 0;
-					var d:Float = 1;
-					var tx:Float = 0;
-					var ty:Float = 0;
+					
+					MATRIX.identity();
+					
 					if (special != null && special.isSpecial()) {
 						MATRIX = special.getMatrix(_tileWidth, _tileHeight);
 						a = MATRIX.a;
@@ -256,8 +253,8 @@ class FlxTilemapExt extends FlxTilemap
 					drawX = _helperPoint.x + (columnIndex % widthInTiles) * _tileWidth;
 					drawY = _helperPoint.y + Math.floor(columnIndex / widthInTiles) * _tileHeight;
 					
-					drawX += tx;
-					drawY += ty;
+					drawX += MATRIX.tx;
+					drawY += MATRIX.ty;
 					
 					#if !js
 					currDrawData[currIndex++] = drawX;
@@ -269,10 +266,10 @@ class FlxTilemapExt extends FlxTilemap
 					currDrawData[currIndex++] = tileID;
 					
 					
-					currDrawData[currIndex++] = a; 
-					currDrawData[currIndex++] = b;
-					currDrawData[currIndex++] = c;
-					currDrawData[currIndex++] = d; 
+					currDrawData[currIndex++] = MATRIX.a; 
+					currDrawData[currIndex++] = MATRIX.b;
+					currDrawData[currIndex++] = MATRIX.c;
+					currDrawData[currIndex++] = MATRIX.d; 
 					
 					#if !js
 					// Alpha

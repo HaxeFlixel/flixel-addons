@@ -151,17 +151,46 @@ class TiledLayer
 	{
 		var tile:TiledTile = new TiledTile(GlobalTileID);
 		
-		GlobalTileID = tile.tilesetID;
+		var tilesetID:Int = tile.tilesetID;
 		for (tileset in map.tilesets)
 		{
-			if (tileset.hasGid(GlobalTileID))
+			if (tileset.hasGid(tilesetID))
 			{
 				tiles.push(tile);
-				return tileset.fromGid(GlobalTileID);
+				return tileset.fromGid(tilesetID);
 			}
 		}
 		tiles.push(null);
 		return 0;
+	}
+	
+	/**
+	 * Function that tries to resolve the tiles gid in the csv data.
+	 * TODO: It fails because I can't find a function to parse an unsigned int from a string :(
+	 * @param	csvData		The csv string to resolve
+	 * @return	The csv string resolved
+	 */
+	private function resolveCsvTiles(csvData:String):String
+	{
+		var buffer:StringBuf = new StringBuf();
+		var rows:Array<String> = csvData.split("\n");
+		var values:Array<String>;
+		for(row in rows) {
+			values = row.split(",");
+			var i:UInt;
+			for (v in values) {
+				if ( v == "") {
+					continue;
+				}
+				i = Std.parseInt(v);
+				buffer.add(resolveTile(i) + ",");
+			}
+			buffer.add("\n");
+		}
+		
+		var result:String = buffer.toString();
+		buffer = null;
+		return result;
 	}
 	
 	public var csvData(get, null):String;
