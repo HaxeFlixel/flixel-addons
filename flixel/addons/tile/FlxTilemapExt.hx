@@ -338,6 +338,71 @@ class FlxTilemapExt extends FlxTilemap
 		}
 		return null;
 	}
+	
+	/**
+	 * THIS IS A COPY FROM <code>FlxTilemap</code>
+	 * I've only swapped lines 386 and 387 to give DrawTilemap() a chance to set the buffer dirty
+	 * ---
+	 * Draws the tilemap buffers to the cameras.
+	 */
+	override public function draw():Void
+	{
+		if (cameras == null)
+		{
+			cameras = FlxG.cameras.list;
+		}
+		
+		var camera:FlxCamera;
+		var buffer:FlxTilemapBuffer;
+		var i:Int = 0;
+		var l:Int = cameras.length;
+		
+		while(i < l)
+		{
+			camera = cameras[i];
+			
+			if (!camera.visible || !camera.exists)
+			{
+				continue;
+			}
+			
+			if (_buffers[i] == null)
+			{
+				_buffers[i] = new FlxTilemapBuffer(_tileWidth, _tileHeight, widthInTiles, heightInTiles, camera);
+				_buffers[i].forceComplexRender = forceComplexRender;
+			}
+			
+			buffer = _buffers[i++];
+			
+			#if flash
+			if (!buffer.dirty)
+			{
+				// Copied from getScreenXY()
+				_point.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
+				_point.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
+				buffer.dirty = (_point.x > 0) || (_point.y > 0) || (_point.x + buffer.width < camera.width) || (_point.y + buffer.height < camera.height);
+			}
+			
+			if (buffer.dirty)
+			{
+				buffer.dirty = false;
+				drawTilemap(buffer, camera);
+			}
+			
+			// Copied from getScreenXY()
+			_flashPoint.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
+			_flashPoint.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
+			buffer.draw(camera, _flashPoint);
+			
+			#else
+			drawTilemap(buffer, camera);
+			#end
+			
+			#if !FLX_NO_DEBUG
+			FlxBasic._VISIBLECOUNT++;
+			#end
+		}
+	}
 
 	/**
 	 * THIS IS A COPY FROM <code>FlxTilemap</code> BUT IT SOLVES SLOPE COLLISION TOO
