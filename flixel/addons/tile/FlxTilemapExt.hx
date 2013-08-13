@@ -3,6 +3,7 @@ package flixel.addons.tile;
 import flash.display.BitmapData;
 import flash.geom.Matrix;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flixel.addons.tile.FlxTilemapExt;
 import flixel.addons.tile.FlxTileSpecial;
 import flixel.FlxCamera;
@@ -186,6 +187,9 @@ class FlxTilemapExt extends FlxTilemap
 								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, _cachedGraphics.bitmap),
 								special.getBitmapDataRect(),
 								_flashPoint, null, null, true);
+							if(special.dirty && !Buffer.dirty) {
+								Buffer.dirty = special.dirty;
+							}
 						}
 					} 
 					
@@ -289,6 +293,50 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	public function setSpecialTiles(tiles:Array<FlxTileSpecial>):Void {
 		this._specialTiles = tiles;
+		
+		#if flash
+		// Update the tile animRects with the animation
+		var t:FlxTileSpecial;
+		var animIds:Array<Int>;
+		for (t in _specialTiles) {
+			if (t != null) {
+				if (t.hasAnimation()) {
+					animIds = t.getAnimationTilesId();
+					if (animIds != null) { 
+						var rectangles:Array<Rectangle> = new Array<Rectangle>();
+						var rectangle:Rectangle;
+						for (id in animIds) {
+							rectangle = getRectangleFromTileset(id);
+							if (rectangle != null) {
+								rectangles.push(rectangle);
+							}
+						}
+						if (rectangles.length > 0) {
+							t.setAnimationRects(rectangles);
+						}
+					}
+				}
+			}
+		}
+		#end
+	}
+	
+	private function getRectangleFromTileset(id:Int):Rectangle {
+		// Copied from FlxTilemap updateTile()
+		var tile:FlxTile = _tileObjects[id];
+		if (tile != null) {
+			var rx:Int = (id - _startingIndex) * _tileWidth + _region.startX;
+			var ry:Int = 0;
+		
+			if (Std.int(rx) >= _region.width)
+			{
+				ry = Std.int(rx / _region.width) * _tileHeight + _region.startY;
+				rx %= _region.width;
+			}
+			
+			return new Rectangle(rx, ry, _tileWidth, _tileHeight);
+		}
+		return null;
 	}
 
 	/**
