@@ -43,13 +43,6 @@ class FlxTilemapExt extends FlxTilemap
 	private var _slopeCeilLeft:Array<Int>;
 	private var _slopeCeilRight:Array<Int>;
 	
-	// Flipped/rotated tiles variables
-	#if flash
-	var _flashNormalTile:BitmapData;
-	var _flashFlippedTile:BitmapData;
-	
-	var POINT:Point;
-	#end
 	
 	var MATRIX:Matrix;
 	private var _specialTiles:Array<FlxTileSpecial>;
@@ -69,9 +62,6 @@ class FlxTilemapExt extends FlxTilemap
 		// Flipped/rotated tiles variables
 		_specialTiles = null;
 		MATRIX = new Matrix();
-		#if flash
-		POINT = new Point(0, 0);
-		#end
 	}
 	
 	override public function destroy():Void 
@@ -93,11 +83,6 @@ class FlxTilemapExt extends FlxTilemap
 		}
 		_specialTiles = null;
 		MATRIX = null;
-		#if flash
-		_flashFlippedTile = null;
-		_flashNormalTile = null;
-		POINT = null;
-		#end
 	}
 	
 	/**
@@ -185,15 +170,10 @@ class FlxTilemapExt extends FlxTilemap
 						special = _specialTiles[columnIndex];
 						isSpecial = special.isSpecial();
 						if (isSpecial) {
-							_flashNormalTile = new BitmapData(_tileWidth, _tileHeight, true, FlxColor.TRANSPARENT);
-							_flashFlippedTile = new BitmapData(_tileWidth, _tileHeight, true, FlxColor.TRANSPARENT);
-							
-							_flashNormalTile.copyPixels(_cachedGraphics.bitmap, _flashRect, POINT, null, null, true);
-							
-							
-							_flashFlippedTile.draw(_flashNormalTile, special.getMatrix(_tileWidth, _tileHeight));
-							
-							Buffer.pixels.copyPixels(_flashFlippedTile, _flashFlippedTile.rect, _flashPoint, null, null, true);
+							Buffer.pixels.copyPixels(
+								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, _cachedGraphics.bitmap),
+								special.getBitmapDataRect(),
+								_flashPoint, null, null, true);
 						}
 					} 
 					
@@ -242,12 +222,6 @@ class FlxTilemapExt extends FlxTilemap
 					
 					if (special != null && special.isSpecial()) {
 						MATRIX = special.getMatrix(_tileWidth, _tileHeight);
-						a = MATRIX.a;
-						b = MATRIX.b;
-						c = MATRIX.c;
-						d = MATRIX.d;
-						tx = MATRIX.tx;
-						ty = MATRIX.ty;
 					}
 					
 					drawX = _helperPoint.x + (columnIndex % widthInTiles) * _tileWidth;
