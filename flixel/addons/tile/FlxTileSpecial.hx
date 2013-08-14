@@ -13,9 +13,9 @@ import flixel.util.FlxColor;
 
 class FlxTileSpecial extends FlxBasic
 {
-	public static var ROTATE_0 = 0;
-	public static var ROTATE_90 = 1;
-	public static var ROTATE_270 = 2;
+	public static inline var ROTATE_0 = 0;
+	public static inline var ROTATE_90 = 1;
+	public static inline var ROTATE_270 = 2;
 	
 	/**
 	 * The id of this tile in the tileset
@@ -47,10 +47,10 @@ class FlxTileSpecial extends FlxBasic
 	public var dirty:Bool = true;
 	#end
 	
-	public function new(tilesetID:Int, FlipHorizontal:Bool, FlipVertical:Bool, Rotate:Int) 
+	public function new(TilesetId:Int, FlipHorizontal:Bool, FlipVertical:Bool, Rotate:Int) 
 	{
 		super();
-		this.tileID = tilesetID;
+		this.tileID = TilesetId;
 		this._currTileId = this.tileID;
 		this.flipHorizontally = FlipHorizontal;
 		this.flipVertically = FlipVertical;
@@ -118,15 +118,15 @@ class FlxTileSpecial extends FlxBasic
 		}
 	}
 	
-	public function isSpecial():Bool {
+	public inline function isSpecial():Bool {
 		return (isFlipped() || hasAnimation());
 	}
 	
-	public function isFlipped():Bool {
+	public inline function isFlipped():Bool {
 		return ((flipHorizontally || flipVertically) || rotate != ROTATE_0);
 	}
 	
-	public function hasAnimation():Bool {
+	public inline function hasAnimation():Bool {
 		#if flash
 		return (_animation != null) || (_animRects != null && _animRects.length > 0);
 		#else

@@ -6,13 +6,13 @@ package flixel.addons.editors.tiled;
  */
 class TiledTile
 {
-	public static var FLIPPED_HORIZONTAL_FLAG:Int = 0x80000000;
-	public static var FLIPPED_VERTICAL_FLAG:Int = 0x40000000;
-	public static var FLIPPED_DIAGONAL_FLAG:Int = 0x20000000;
+	public static inline var FLIPPED_HORIZONTAL:Int = 0x80000000;
+	public static inline var FLIPPED_VERTICAL:Int = 0x40000000;
+	public static inline var FLIPPED_DIAGONAL:Int = 0x20000000;
 	
-	public static var ROTATE_0:Int = 0;
-	public static var ROTATE_90:Int = 1;
-	public static var ROTATE_270:Int = 2;
+	public static inline var ROTATE_0:Int = 0;
+	public static inline var ROTATE_90:Int = 1;
+	public static inline var ROTATE_270:Int = 2;
 	
 	/*
 	 * The original ID as described in the mapData
@@ -48,14 +48,14 @@ class TiledTile
 	private function resolveFlipAndRotation():Void {
 		var flipHorizontal:Bool = false;
 		var flipVertical:Bool = false;
-		if ((tileID & FLIPPED_HORIZONTAL_FLAG) != 0) {
+		if ((tileID & FLIPPED_HORIZONTAL) != 0) {
 			flipHorizontal = true;
 		}
-		if ((tileID & FLIPPED_VERTICAL_FLAG) != 0) {
+		if ((tileID & FLIPPED_VERTICAL) != 0) {
 			flipVertical = true;
 		}
 		
-		if ((tileID & FLIPPED_DIAGONAL_FLAG) != 0) {
+		if ((tileID & FLIPPED_DIAGONAL) != 0) {
 			if (flipHorizontal && flipVertical) {
 				isFlipHorizontally = true;
 				rotate = ROTATE_270;
@@ -74,8 +74,8 @@ class TiledTile
 		
 	}
 	
-	private function resolveTilesetID():Int {
-		return tileID & ~(FLIPPED_HORIZONTAL_FLAG |	FLIPPED_VERTICAL_FLAG |	FLIPPED_DIAGONAL_FLAG);
+	private inline function resolveTilesetID():Int {
+		return tileID & ~(FLIPPED_HORIZONTAL |	FLIPPED_VERTICAL |	FLIPPED_DIAGONAL);
 	}
 	
 }
