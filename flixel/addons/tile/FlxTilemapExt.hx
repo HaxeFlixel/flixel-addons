@@ -268,8 +268,8 @@ class FlxTilemapExt extends FlxTilemap
 					drawY += MATRIX.ty;
 					
 					#if !js
-					currDrawData[currIndex++] = drawX;
-					currDrawData[currIndex++] = drawY;
+					currDrawData[currIndex++] = Math.ffloor(drawX) + 0.01;
+					currDrawData[currIndex++] = Math.ffloor(drawY) + 0.01;
 					#else
 					currDrawData[currIndex++] = Math.floor(drawX);
 					currDrawData[currIndex++] = Math.floor(drawY);
