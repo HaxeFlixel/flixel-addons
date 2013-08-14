@@ -111,7 +111,7 @@ class FlxTilemapExt extends FlxTilemap
 		super.update();
 		if (_specialTiles != null && _specialTiles.length > 0) {
 			for (t in _specialTiles) {
-				if(t != null) {
+				if(t != null && t.hasAnimation()) {
 					t.update();
 				}
 			}
@@ -252,7 +252,11 @@ class FlxTilemapExt extends FlxTilemap
 				
 				if (tileID != -1)
 				{
-					special = _specialTiles[columnIndex];
+					if(_specialTiles != null) {
+						special = _specialTiles[columnIndex];
+					} else {
+						special = null;
+					}
 					
 					MATRIX.identity();
 					
@@ -312,14 +316,19 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param	tiles	An <code>Array</code> with all the <code>FlxTileSpecial</code>
 	 */
 	public function setSpecialTiles(tiles:Array<FlxTileSpecial>):Void {
-		this._specialTiles = tiles;
-		
+		_specialTiles = new Array<FlxTileSpecial>();
+
 		#if flash
-		// Update the tile animRects with the animation
-		var t:FlxTileSpecial;
 		var animIds:Array<Int>;
-		for (t in _specialTiles) {
-			if (t != null) {
+		#end
+		var t:FlxTileSpecial;
+		for (i in 0...tiles.length) {
+			t = tiles[i];
+			if(t != null && t.isSpecial()) {
+				_specialTiles[i] = t;
+				
+				#if flash
+				// Update the tile animRects with the animation
 				if (t.hasAnimation()) {
 					animIds = t.getAnimationTilesId();
 					if (animIds != null) { 
@@ -335,10 +344,12 @@ class FlxTilemapExt extends FlxTilemap
 							t.setAnimationRects(rectangles);
 						}
 					}
-				}
+				}				
+				#end
+			} else {
+				_specialTiles[i] = null;
 			}
 		}
-		#end
 	}
 	
 	private function getRectangleFromTileset(id:Int):Rectangle {
