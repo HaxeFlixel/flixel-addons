@@ -11,14 +11,14 @@ import nape.shape.Polygon;
 import nape.space.Space;
 
 /**
- * FlxPhysSprite consists of an FlxSprite with a physics body.
+ * FlxNapeSprite consists of an FlxSprite with a physics body.
  * During the simulation, the sprite follows the physics body position and rotation.
  * 
  * By default, a rectangular physics body is created upon construction in <code>createRectangularBody()</code>.
  * 
  * @author TiagoLr ( ~~~ProG4mr~~~ )
  */
-class FlxPhysSprite extends FlxSprite
+class FlxNapeSprite extends FlxSprite
 {
 	/**
 	 * <code>body</code> is the physics body associated with this sprite. 
@@ -105,7 +105,7 @@ class FlxPhysSprite extends FlxSprite
 		
 		if (body != null)
 		{
-			body.space = FlxPhysState.space;
+			body.space = FlxNapeState.space;
 		}
 	}
 	
@@ -219,7 +219,7 @@ class FlxPhysSprite extends FlxSprite
 	{
 		if (body != null) 
 		{
-			FlxPhysState.space.bodies.remove(body);
+			FlxNapeState.space.bodies.remove(body);
 			body = null;
 		}
 	}
@@ -256,7 +256,7 @@ class FlxPhysSprite extends FlxSprite
 	{
 		if (Value)
 		{
-			body.space = FlxPhysState.space;
+			body.space = FlxNapeState.space;
 		} 
 		else
 		{
@@ -286,7 +286,7 @@ class FlxPhysSprite extends FlxSprite
 	 */	
 	override public function drawDebug():Void
 	{
-		if (FlxPhysState.debug == null)
+		if (FlxNapeState.debug == null)
 		{
 			super.drawDebug();
 		}

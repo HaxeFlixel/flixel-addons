@@ -14,38 +14,30 @@ import nape.util.ShapeDebug;
 #end
 
 /**
- * <code>FlxPhysState</code> is an <code>FlxState</code> that integrates <code>nape.space.Space</code>
+ * <code>FlxNapeState</code> is an <code>FlxState</code> that integrates <code>nape.space.Space</code>
  * to provide Nape physics simulation in Flixel.
  *
- * Extend this state, add some <code>FlxPhysSprite(s)</code> to start using flixel + nape physics.
+ * Extend this state, add some <code>FlxNapeSprite(s)</code> to start using flixel + nape physics.
  *
- * Note that </code>space</code> is a static variable, use <code>FlxPhysState.space</code>
+ * Note that </code>space</code> is a static variable, use <code>FlxNapeState.space</code>
  * to access it.
  *
  * @author TiagoLr ( ~~~ProG4mr~~~ )
  */
-
-class FlxPhysState extends FlxState
+class FlxNapeState extends FlxState
 {
 	/**
 	 * The space where the nape physics simulation occur.
 	 */
 	static public var space:Space;
 	/**
-	 * The number of iterations used by nape in resolving
-	 * errors in the velocities of objects. This is
-	 * together with collision detection the most
-	 * expensive phase of a simulation update, as well
-	 * as the most important for stable results.
-	 * (default 10)
+	 * The number of iterations used by nape in resolving errors in the velocities of objects. This is together with collision 
+	 * detection the most expensive phase of a simulation update, as well as the most important for stable results. (default 10)
 	 */
 	public var velocityIterations:Int = 10;
 	/**
-	 * The number of iterations used by nape in resolving
-	 * errors in the positions of objects. This is
-	 * far more lightweight than velocity iterations,
-	 * is well as being less important for the
-	 * stability of results. (default 10)
+	 * The number of iterations used by nape in resolving errors in the positions of objects. This is far more lightweight than 
+	 * velocity iterations, is well as being less important for the stability of results. (default 10)
 	 */
 	public var positionIterations:Int = 10;
 	
@@ -61,7 +53,7 @@ class FlxPhysState extends FlxState
 	
 	static private function get_debug():ShapeDebug 
 	{ 
-		return cast(FlxG.state, FlxPhysState)._physDbgSpr; 
+		return cast(FlxG.state, FlxNapeState)._physDbgSpr; 
 	}
 	#end
 
@@ -148,9 +140,8 @@ class FlxPhysState extends FlxState
 	}
 
 	/**
-	 * Override this function to null out variables or manually call
-	 * <code>destroy()</code> on class members if necessary.
-	 * Don't forget to call <code>super.destroy()</code>!
+	 * Override this function to null out variables or manually call <code>destroy()</code> 
+	 * on class members if necessary. Don't forget to call <code>super.destroy()</code>!
 	 */
 	override public function destroy():Void
 	{
@@ -158,7 +149,7 @@ class FlxPhysState extends FlxState
 		
 		space.clear();
 		
-		FlxPhysState.space = null; // resets atributes like gravity.
+		FlxNapeState.space = null; // resets atributes like gravity.
 
 		#if !FLX_NO_DEBUG
 		disablePhysDebug();
