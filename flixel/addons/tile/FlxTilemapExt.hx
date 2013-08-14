@@ -2,6 +2,7 @@ package flixel.addons.tile;
 
 import flash.display.BitmapData;
 import flash.geom.Matrix;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.addons.tile.FlxTilemapExt;
 import flixel.addons.tile.FlxTileSpecial;
@@ -45,6 +46,27 @@ class FlxTilemapExt extends FlxTilemap
 	
 	var MATRIX:Matrix;
 	private var _specialTiles:Array<FlxTileSpecial>;
+	
+	// Alpha stuff
+	#if flash
+	private var _flashAlpha:BitmapData;
+	private var _flashAlphaPoint:Point;
+	#end
+	public var alpha(default, set):Float = 1.0;
+	
+	public function set_alpha(alpha:Float):Float {
+		this.alpha = alpha;
+		#if flash
+		if (_tileWidth == 0 || _tileHeight == 0) {
+			throw "You can't set the alpha of the tilemap before loading it";
+		}
+		var alphaCol:Int = (Math.floor(alpha * 255) << 24);
+		_flashAlpha = new BitmapData(_tileWidth, _tileHeight, true, alphaCol);
+		_flashAlphaPoint = new Point(0, 0);
+		#end
+		
+		return alpha;
+	}
 	
 	public function new()
 	{
@@ -184,7 +206,7 @@ class FlxTilemapExt extends FlxTilemap
 							Buffer.pixels.copyPixels(
 								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, _cachedGraphics.bitmap),
 								special.getBitmapDataRect(),
-								_flashPoint, null, null, true);
+								_flashPoint, _flashAlpha, _flashAlphaPoint, true);
 							if(special.dirty && !Buffer.dirty) {
 								Buffer.dirty = special.dirty;
 							}
@@ -192,7 +214,7 @@ class FlxTilemapExt extends FlxTilemap
 					} 
 					
 					if (!isSpecial) {
-						Buffer.pixels.copyPixels(_cachedGraphics.bitmap, _flashRect, _flashPoint, null, null, true);
+						Buffer.pixels.copyPixels(_cachedGraphics.bitmap, _flashRect, _flashPoint, _flashAlpha, _flashAlphaPoint, true);
 					} else {
 						isSpecial = false;
 					}
@@ -262,7 +284,7 @@ class FlxTilemapExt extends FlxTilemap
 					
 					#if !js
 					// Alpha
-					currDrawData[currIndex++] = 1.0; 
+					currDrawData[currIndex++] = alpha; 
 					#end
 				}
 				#end

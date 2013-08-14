@@ -1,6 +1,5 @@
 package flixel.addons.editors.tiled;
 
-import flash.display.BitmapData;
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 import haxe.xml.Fast;
