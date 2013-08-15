@@ -1,6 +1,5 @@
 package flixel.addons.editors.tiled;
 
-import flash.display.BitmapData;
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 import haxe.xml.Fast;
@@ -25,7 +24,9 @@ class TiledTileSet
 	public var numRows:Int;
 	public var numCols:Int;
 	
-	private var _tileProps:Array<TiledPropertySet>;
+	public var properties:TiledPropertySet;
+	
+	public var tileProps:Array<TiledPropertySet>;
 	
 	public function new(data:Dynamic)
 	{
@@ -84,7 +85,13 @@ class TiledTileSet
 			}
 			
 			// read properties
-			_tileProps = new Array<TiledPropertySet>();
+			properties = new TiledPropertySet();
+			for (prop in source.nodes.properties) {
+				properties.extend(prop);
+			}
+			
+			// read tiles properties
+			tileProps = new Array<TiledPropertySet>();
 			
 			for (node in source.nodes.tile)
 			{
@@ -94,11 +101,11 @@ class TiledTileSet
 				}
 				
 				var id:Int = Std.parseInt(node.att.id);
-				_tileProps[id] = new TiledPropertySet();
+				tileProps[id] = new TiledPropertySet();
 				
 				for (prop in node.nodes.properties)
 				{
-					_tileProps[id].extend(prop);
+					tileProps[id].extend(prop);
 				}
 			}
 			
@@ -128,9 +135,9 @@ class TiledTileSet
 
 	public function getPropertiesByGid(Gid:Int):TiledPropertySet
 	{
-		if (_tileProps != null)
+		if (tileProps != null)
 		{
-			return _tileProps[Gid - firstGID];
+			return tileProps[Gid - firstGID];
 		}
 		
 		return null;
@@ -138,7 +145,7 @@ class TiledTileSet
 	
 	inline public function getProperties(ID:Int):TiledPropertySet
 	{
-		return _tileProps[ID];
+		return tileProps[ID];
 	}
 	
 	inline public function getRect(ID:Int):Rectangle
