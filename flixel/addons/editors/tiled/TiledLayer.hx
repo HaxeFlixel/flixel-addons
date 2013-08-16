@@ -2,7 +2,6 @@ package flixel.addons.editors.tiled;
 
 import flash.utils.ByteArray;
 import flash.utils.Endian;
-import flash.Lib;
 import haxe.xml.Fast;
 
 /**
@@ -22,6 +21,8 @@ class TiledLayer
 	public var visible:Bool;
 	public var properties:TiledPropertySet;
 	
+	public var tiles:Array<TiledTile>;
+	
 	inline static private var BASE64_CHARS:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 	
 	private var _xmlData:Fast;
@@ -36,7 +37,8 @@ class TiledLayer
 		width = Std.parseInt(Source.att.width); 
 		height = Std.parseInt(Source.att.height); 
 		visible = (Source.has.visible && Source.att.visible == "1") ? true : false;
-		opacity = (Source.has.opacity) ? Std.parseFloat(Source.att.opacity) : 0;
+		opacity = (Source.has.opacity) ? Std.parseFloat(Source.att.opacity) : 1.0;
+		tiles = new Array<TiledTile>();
 		
 		// load properties
 		var node:Fast;
@@ -64,6 +66,8 @@ class TiledLayer
 			var chunk:String = _xmlData.innerData;
 			var compressed:Bool = false;
 			
+			result = base64ToByteArray(chunk);
+			
 			if (_xmlData.has.compression)
 			{
 				switch(_xmlData.att.compression)
@@ -81,7 +85,6 @@ class TiledLayer
 				untyped __js__('var inflated = new Zlib.Inflate($chunk)'); 
 				result = untyped __js__('inflated.DECOMPRESS()');
 				#else
-				result = base64ToByteArray(chunk);
 				result.uncompress();
 				#end
 			}
@@ -144,17 +147,50 @@ class TiledLayer
 		return output;
 	}
 	
-	private function resolveTile(GlobalTileID:Int):Int
+	private function resolveTile(GlobalTileID:UInt):Int
 	{
+		var tile:TiledTile = new TiledTile(GlobalTileID);
+		
+		var tilesetID:Int = tile.tilesetID;
 		for (tileset in map.tilesets)
 		{
-			if (tileset.hasGid(GlobalTileID))
+			if (tileset.hasGid(tilesetID))
 			{
-				return tileset.fromGid(GlobalTileID);
+				tiles.push(tile);
+				return tileset.fromGid(tilesetID);
 			}
 		}
-		
+		tiles.push(null);
 		return 0;
+	}
+	
+	/**
+	 * Function that tries to resolve the tiles gid in the csv data.
+	 * TODO: It fails because I can't find a function to parse an unsigned int from a string :(
+	 * @param	csvData		The csv string to resolve
+	 * @return	The csv string resolved
+	 */
+	private function resolveCsvTiles(csvData:String):String
+	{
+		var buffer:StringBuf = new StringBuf();
+		var rows:Array<String> = csvData.split("\n");
+		var values:Array<String>;
+		for(row in rows) {
+			values = row.split(",");
+			var i:UInt;
+			for (v in values) {
+				if ( v == "") {
+					continue;
+				}
+				i = Std.parseInt(v);
+				buffer.add(resolveTile(i) + ",");
+			}
+			buffer.add("\n");
+		}
+		
+		var result:String = buffer.toString();
+		buffer = null;
+		return result;
 	}
 	
 	public var csvData(get, null):String;
@@ -192,7 +228,7 @@ class TiledLayer
 			
 			while (mapData.position < mapData.length)
 			{
-				tileArray.push(resolveTile(mapData.readInt()));
+				tileArray.push(resolveTile(mapData.readUnsignedInt()));
 			}
 		}
 		
