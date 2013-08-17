@@ -157,7 +157,7 @@ class TiledLayer
 			if (tileset.hasGid(tilesetID))
 			{
 				tiles.push(tile);
-				return tileset.fromGid(tilesetID);
+				return tilesetID;
 			}
 		}
 		tiles.push(null);
