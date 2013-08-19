@@ -138,11 +138,7 @@ class FlxTileSpecial extends FlxBasic
 	
 	public inline function hasAnimation():Bool 
 	{
-		#if flash
-		return (_animation != null) || (_animRects != null && _animRects.length > 0);
-		#else
 		return (_animation != null);
-		#end
 	}
 	
 	#if flash
@@ -153,7 +149,7 @@ class FlxTileSpecial extends FlxBasic
 			_normalFrame = new BitmapData(width, height, true, FlxColor.TRANSPARENT);
 			_flippedFrame = new BitmapData(width, height, true, FlxColor.TRANSPARENT);
 			
-			if (hasAnimation() && _animRects[_currFrame] != null) 
+			if (_animRects != null && _animRects[_currFrame] != null) 
 			{
 				rect = _animRects[_currFrame];
 			}

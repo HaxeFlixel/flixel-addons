@@ -394,16 +394,16 @@ class FlxTilemapExt extends FlxTilemap
 		var tile:FlxTile = _tileObjects[id];
 		if (tile != null) 
 		{
-			var rx:Int = (id - _startingIndex) * _tileWidth + _region.startX;
+			var rx:Int = (id - _startingIndex) * (_tileWidth + _region.spacingX);
 			var ry:Int = 0;
 		
 			if (Std.int(rx) >= _region.width)
 			{
-				ry = Std.int(rx / _region.width) * _tileHeight + _region.startY;
+				ry = Std.int(rx / _region.width) * (_tileHeight + _region.spacingY);
 				rx %= _region.width;
 			}
 			
-			return new Rectangle(rx, ry, _tileWidth, _tileHeight);
+			return new Rectangle(rx + _region.startX, ry + _region.startY, _tileWidth, _tileHeight);
 		}
 		return null;
 	}
