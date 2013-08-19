@@ -144,10 +144,21 @@ class FlxTileSpecial extends FlxBasic
 	#if flash
 	public function getBitmapData(width:Int, height:Int, rect:Rectangle, bitmap:BitmapData):BitmapData 
 	{
-		if (_flippedFrame == null || (hasAnimation() && _currFrame != _lastFrame)) 
+		if (_normalFrame == null)
 		{
 			_normalFrame = new BitmapData(width, height, true, FlxColor.TRANSPARENT);
+		}
+		
+		var generateFlipped:Bool = (_flippedFrame == null);
+		if (generateFlipped)
+		{
 			_flippedFrame = new BitmapData(width, height, true, FlxColor.TRANSPARENT);
+		}
+		
+		if (generateFlipped || (hasAnimation() && _currFrame != _lastFrame)) 
+		{
+			_normalFrame.fillRect(_normalFrame.rect, FlxColor.TRANSPARENT);
+			_flippedFrame.fillRect(_flippedFrame.rect, FlxColor.TRANSPARENT);
 			
 			if (_animRects != null && _animRects[_currFrame] != null) 
 			{
@@ -155,8 +166,6 @@ class FlxTileSpecial extends FlxBasic
 			}
 			
 			_normalFrame.copyPixels(bitmap, rect, _point, null, null, true);
-			
-			
 			_flippedFrame.draw(_normalFrame, getMatrix(width, height));	
 			dirty = true;
 		} 
