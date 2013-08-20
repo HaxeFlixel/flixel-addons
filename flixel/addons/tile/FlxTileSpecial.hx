@@ -166,7 +166,8 @@ class FlxTileSpecial extends FlxBasic
 			}
 			
 			_normalFrame.copyPixels(bitmap, rect, _point, null, null, true);
-			_flippedFrame.draw(_normalFrame, getMatrix(width, height));	
+			_flippedFrame.draw(_normalFrame, getMatrix(width, height));
+			_lastFrame = _currFrame;
 			dirty = true;
 		} 
 		else 

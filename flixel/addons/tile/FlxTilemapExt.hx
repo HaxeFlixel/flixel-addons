@@ -225,10 +225,8 @@ class FlxTilemapExt extends FlxTilemap
 								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, _cachedGraphics.bitmap),
 								special.getBitmapDataRect(),
 								_flashPoint, _flashAlpha, _flashAlphaPoint, true);
-							if (special.dirty && !Buffer.dirty) 
-							{
-								Buffer.dirty = special.dirty;
-							}
+							
+							Buffer.dirty = (special.dirty || Buffer.dirty);
 						}
 					} 
 					
