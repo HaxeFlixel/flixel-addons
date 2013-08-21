@@ -4,10 +4,9 @@ import flash.display.BitmapData;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flixel.addons.system.FlxAnimExt;
 import flixel.FlxBasic;
 import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.system.FlxAnim;
 import flixel.util.FlxAngle;
 import flixel.util.FlxColor;
 
@@ -27,6 +26,10 @@ class FlxTileSpecial extends FlxBasic
 	
 	public var rotate:Int;
 	
+	private var _tmp_flipH:Bool;
+	private var _tmp_flipV:Bool;
+	private var _tmp_rot:Int;
+	
 	#if flash
 	private var _normalFrame:BitmapData;
 	private var _flippedFrame:BitmapData;
@@ -36,10 +39,11 @@ class FlxTileSpecial extends FlxBasic
 	private var _matrix:Matrix;
 	
 	// Animation stuff
-	private var _animation:FlxAnim;
+	private var _animation:FlxAnimExt;
 	private var _currFrame:Int = 0;
 	private var _lastFrame:Int = -1;
 	private var _currTileId:Int;
+	private var _currAnimParam:AnimParams;
 	private var _frameTimer:Float = 0.0;
 	
 	#if flash
@@ -95,6 +99,7 @@ class FlxTileSpecial extends FlxBasic
 			_animation.destroy();
 		}
 		_animation = null;
+		_currAnimParam = null;
 		_matrix = null;
 	}
 	
@@ -121,8 +126,11 @@ class FlxTileSpecial extends FlxBasic
 					_currFrame++;
 				}
 			}
-			
 			_currTileId = _animation.frames[_currFrame];
+			if (_animation.framesData != null) 
+			{
+				_currAnimParam = _animation.framesData[_currFrame];
+			}
 		}
 	}
 	
@@ -154,7 +162,7 @@ class FlxTileSpecial extends FlxBasic
 		{
 			_flippedFrame = new BitmapData(width, height, true, FlxColor.TRANSPARENT);
 		}
-		
+
 		if (generateFlipped || (hasAnimation() && _currFrame != _lastFrame)) 
 		{
 			_normalFrame.fillRect(_normalFrame.rect, FlxColor.TRANSPARENT);
@@ -167,7 +175,7 @@ class FlxTileSpecial extends FlxBasic
 			
 			_normalFrame.copyPixels(bitmap, rect, _point, null, null, true);
 			_flippedFrame.draw(_normalFrame, getMatrix(width, height));
-			_lastFrame = _currFrame;
+			//_lastFrame = _currFrame;
 			dirty = true;
 		} 
 		else 
@@ -205,9 +213,9 @@ class FlxTileSpecial extends FlxBasic
 	 * @param	tiles		An array with the tilesetID of each frame
 	 * @param	frameRate	The speed of the animation in frames per second (Default: 30)
 	 */
-	public function addAnimation(tiles:Array<Int>, frameRate:Float = 30):Void 
+	public function addAnimation(tiles:Array<Int>, frameRate:Float = 30, ?framesData:Array<AnimParams>):Void 
 	{
-		_animation = new FlxAnim("tileAnim", tiles, frameRate, true);
+		_animation = new FlxAnimExt("tileAnim", tiles, frameRate, true, framesData);
 	}
 	
 	/**
@@ -241,21 +249,31 @@ class FlxTileSpecial extends FlxBasic
 	 */
 	public function getMatrix(width:Int, height:Int):Matrix 
 	{
+		_tmp_flipH = flipHorizontally;
+		_tmp_flipV = flipVertically;
+		_tmp_rot = rotate;
+		
+		if (_currAnimParam != null) {
+			_tmp_flipH = _currAnimParam.flipHorizontal;
+			_tmp_flipV = _currAnimParam.flipVertical;
+			_tmp_rot = _currAnimParam.rotate;
+		}
+		
 		_matrix.identity();
-		if (flipHorizontally) 
+		if (_tmp_flipH) 
 		{
 			_matrix.scale( -1, 1);
 			_matrix.translate(width, 0);
 		}
-		if (flipVertically) 
+		if (_tmp_flipV) 
 		{
 			_matrix.scale(1, -1);
 			_matrix.translate(0, height);
 		}
 		
-		if (rotate != FlxTileSpecial.ROTATE_0) 
+		if (_tmp_rot != FlxTileSpecial.ROTATE_0) 
 		{
-			switch(rotate) 
+			switch(_tmp_rot) 
 			{
 				case FlxTileSpecial.ROTATE_90:
 					_matrix.rotate(90 * FlxAngle.TO_RAD);
@@ -269,4 +287,12 @@ class FlxTileSpecial extends FlxBasic
 		
 		return _matrix;
 	}
+}
+
+
+typedef AnimParams = 
+{
+	var flipHorizontal:Bool;
+	var flipVertical:Bool;
+	var rotate:Int;
 }
