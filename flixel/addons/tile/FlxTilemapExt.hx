@@ -43,8 +43,8 @@ class FlxTilemapExt extends FlxTilemap
 	private var _slopeCeilLeft:Array<Int>;
 	private var _slopeCeilRight:Array<Int>;
 	
-	
-	var MATRIX:Matrix;
+	// Animated and flipped tiles related variables
+	private var MATRIX:Matrix;
 	private var _specialTiles:Array<FlxTileSpecial>;
 	
 	// Alpha stuff
@@ -54,10 +54,12 @@ class FlxTilemapExt extends FlxTilemap
 	#end
 	public var alpha(default, set):Float = 1.0;
 	
-	public function set_alpha(alpha:Float):Float {
+	public function set_alpha(alpha:Float):Float 
+	{
 		this.alpha = alpha;
 		#if flash
-		if (_tileWidth == 0 || _tileHeight == 0) {
+		if (_tileWidth == 0 || _tileHeight == 0) 
+		{
 			throw "You can't set the alpha of the tilemap before loading it";
 		}
 		var alphaCol:Int = (Math.floor(alpha * 255) << 24);
@@ -97,21 +99,35 @@ class FlxTilemapExt extends FlxTilemap
 		
 		super.destroy();
 		
-		if (_specialTiles != null) {
-			for (t in _specialTiles) {
-				t = null;
+		if (_specialTiles != null) 
+		{
+			for (t in _specialTiles) 
+			{
+				t.destroy();
 			}
 		}
 		_specialTiles = null;
 		MATRIX = null;
+		
+		#if flash
+		if (_flashAlpha != null)
+		{
+			_flashAlpha.dispose();
+		}
+		_flashAlpha = null;
+		_flashAlphaPoint = null;
+		#end
 	}
 	
 	override public function update():Void 
 	{
 		super.update();
-		if (_specialTiles != null && _specialTiles.length > 0) {
-			for (t in _specialTiles) {
-				if(t != null && t.hasAnimation()) {
+		if (_specialTiles != null && _specialTiles.length > 0) 
+		{
+			for (t in _specialTiles) 
+			{
+				if (t != null && t.hasAnimation()) 
+				{
 					t.update();
 				}
 			}
@@ -199,23 +215,27 @@ class FlxTilemapExt extends FlxTilemap
 				
 				if (_flashRect != null)
 				{
-					if(_specialTiles != null && _specialTiles[columnIndex] != null) {
+					if (_specialTiles != null && _specialTiles[columnIndex] != null) 
+					{
 						special = _specialTiles[columnIndex];
 						isSpecial = special.isSpecial();
-						if (isSpecial) {
+						if (isSpecial) 
+						{
 							Buffer.pixels.copyPixels(
 								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, _cachedGraphics.bitmap),
 								special.getBitmapDataRect(),
 								_flashPoint, _flashAlpha, _flashAlphaPoint, true);
-							if(special.dirty && !Buffer.dirty) {
-								Buffer.dirty = special.dirty;
-							}
+							
+							Buffer.dirty = (special.dirty || Buffer.dirty);
 						}
 					} 
 					
-					if (!isSpecial) {
+					if (!isSpecial) 
+					{
 						Buffer.pixels.copyPixels(_cachedGraphics.bitmap, _flashRect, _flashPoint, _flashAlpha, _flashAlphaPoint, true);
-					} else {
+					} 
+					else 
+					{
 						isSpecial = false;
 					}
 					
@@ -224,7 +244,7 @@ class FlxTilemapExt extends FlxTilemap
 					{
 						tile = _tileObjects[_data[columnIndex]];
 						
-						if(tile != null)
+						if (tile != null)
 						{
 							if (tile.allowCollisions <= FlxObject.NONE)
 							{
@@ -252,15 +272,19 @@ class FlxTilemapExt extends FlxTilemap
 				
 				if (tileID != -1)
 				{
-					if(_specialTiles != null) {
+					if (_specialTiles != null) 
+					{
 						special = _specialTiles[columnIndex];
-					} else {
+					} 
+					else 
+					{
 						special = null;
 					}
 					
 					MATRIX.identity();
 					
-					if (special != null && special.isSpecial()) {
+					if (special != null && special.isSpecial()) 
+					{
 						MATRIX = special.getMatrix(_tileWidth, _tileHeight);
 						tileID = special.getCurrentTileId() - _startingIndex;
 					}
@@ -272,8 +296,8 @@ class FlxTilemapExt extends FlxTilemap
 					drawY += MATRIX.ty;
 					
 					#if !js
-					currDrawData[currIndex++] = Math.ffloor(drawX) + 0.01;
-					currDrawData[currIndex++] = Math.ffloor(drawY) + 0.01;
+					currDrawData[currIndex++] = Math.floor(drawX) + 0.01;
+					currDrawData[currIndex++] = Math.floor(drawY) + 0.01;
 					#else
 					currDrawData[currIndex++] = Math.floor(drawX);
 					currDrawData[currIndex++] = Math.floor(drawY);
@@ -315,57 +339,69 @@ class FlxTilemapExt extends FlxTilemap
 	 * Set the special tiles (rotated or flipped)
 	 * @param	tiles	An <code>Array</code> with all the <code>FlxTileSpecial</code>
 	 */
-	public function setSpecialTiles(tiles:Array<FlxTileSpecial>):Void {
+	public function setSpecialTiles(tiles:Array<FlxTileSpecial>):Void 
+	{
 		_specialTiles = new Array<FlxTileSpecial>();
 
 		#if flash
 		var animIds:Array<Int>;
 		#end
 		var t:FlxTileSpecial;
-		for (i in 0...tiles.length) {
+		for (i in 0...tiles.length) 
+		{
 			t = tiles[i];
-			if(t != null && t.isSpecial()) {
+			if (t != null && t.isSpecial()) 
+			{
 				_specialTiles[i] = t;
 				
 				#if flash
 				// Update the tile animRects with the animation
-				if (t.hasAnimation()) {
+				if (t.hasAnimation()) 
+				{
 					animIds = t.getAnimationTilesId();
-					if (animIds != null) { 
+					if (animIds != null) 
+					{
 						var rectangles:Array<Rectangle> = new Array<Rectangle>();
 						var rectangle:Rectangle;
-						for (id in animIds) {
+						for (id in animIds) 
+						{
 							rectangle = getRectangleFromTileset(id);
-							if (rectangle != null) {
+							if (rectangle != null) 
+							{
 								rectangles.push(rectangle);
 							}
 						}
-						if (rectangles.length > 0) {
+						if (rectangles.length > 0) 
+						{
 							t.setAnimationRects(rectangles);
 						}
 					}
 				}				
 				#end
-			} else {
+			} 
+			else 
+			{
 				_specialTiles[i] = null;
 			}
 		}
 	}
 	
-	private function getRectangleFromTileset(id:Int):Rectangle {
+	private function getRectangleFromTileset(id:Int):Rectangle 
+	{
 		// Copied from FlxTilemap updateTile()
 		var tile:FlxTile = _tileObjects[id];
-		if (tile != null) {
-			var rx:Int = (id - _startingIndex) * _tileWidth + _region.startX;
+		if (tile != null) 
+		{
+			var rx:Int = (id - _startingIndex) * (_tileWidth + _region.spacingX);
 			var ry:Int = 0;
 		
 			if (Std.int(rx) >= _region.width)
 			{
-				ry = Std.int(rx / _region.width) * _tileHeight + _region.startY;
+				ry = Std.int(rx / _region.width) * (_tileHeight + _region.spacingY);
 				rx %= _region.width;
 			}
 			
-			return new Rectangle(rx, ry, _tileWidth, _tileHeight);
+			return new Rectangle(rx + _region.startX, ry + _region.startY, _tileWidth, _tileHeight);
 		}
 		return null;
 	}
@@ -388,7 +424,7 @@ class FlxTilemapExt extends FlxTilemap
 		var i:Int = 0;
 		var l:Int = cameras.length;
 		
-		while(i < l)
+		while (i < l)
 		{
 			camera = cameras[i];
 			
