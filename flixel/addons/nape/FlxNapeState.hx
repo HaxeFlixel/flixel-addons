@@ -69,7 +69,7 @@ class FlxNapeState extends FlxState
 		}
 		
 		#if !FLX_NO_DEBUG
-		enablePhysDebug();
+		napeDebugEnabled = true;
 		#end
 	}
 
@@ -123,7 +123,6 @@ class FlxNapeState extends FlxState
 	override public function update():Void
 	{
 		space.step(FlxG.elapsed, velocityIterations, positionIterations);
-		
 		super.update();
 	}
 
@@ -150,44 +149,35 @@ class FlxNapeState extends FlxState
 		space.clear();
 		
 		FlxNapeState.space = null; // resets atributes like gravity.
-
+		
 		#if !FLX_NO_DEBUG
-		disablePhysDebug();
+		napeDebugEnabled = false;
 		#end
 	}
 
 	/**
-	 * Enables debug graphics for nape physics.
+	 * Whether the nape debug graphics are enabled or not.
 	 */
-	public function enablePhysDebug():Void
+	public var napeDebugEnabled(default, set):Bool;
+	
+	public function set_napeDebugEnabled(Value:Bool):Bool
 	{
 		#if !FLX_NO_DEBUG
-		if (_physDbgSpr != null)
+		if (Value)
 		{
-			disablePhysDebug();
+			_physDbgSpr = new ShapeDebug(FlxG.width, FlxG.height);
+			_physDbgSpr.drawConstraints = true;
+			
+			FlxG.stage.addChild(_physDbgSpr.display);
 		}
-		
-		_physDbgSpr = new ShapeDebug(FlxG.width, FlxG.height);
-		_physDbgSpr.drawConstraints = true;
-		
-		FlxG.stage.addChild(_physDbgSpr.display);
-		#end
-	}
-
-	/**
-	 * Disables debug graphics.
-	 */
-	public function disablePhysDebug():Void
-	{
-		#if !FLX_NO_DEBUG
-		if (_physDbgSpr == null)
+		else if (_physDbgSpr != null)
 		{
-			return;
+			FlxG.stage.removeChild(_physDbgSpr.display);
+			_physDbgSpr = null;
 		}
-
-		FlxG.stage.removeChild(_physDbgSpr.display);
-		_physDbgSpr = null;
 		#end
+		
+		return napeDebugEnabled = Value;
 	}
 
 	/**
