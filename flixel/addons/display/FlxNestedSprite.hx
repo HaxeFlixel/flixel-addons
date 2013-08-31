@@ -1,4 +1,4 @@
-package flixel.addons;
+package flixel.addons.display;
 
 import flash.geom.ColorTransform;
 import flixel.FlxBasic;
@@ -130,9 +130,9 @@ class FlxNestedSprite extends FlxSprite
 			Child._parentAlpha = this.alpha;
 			Child.alpha = Child.alpha;
 
-			var thisRed:Float = (_color >> 16) / 255;
-			var thisGreen:Float = (_color >> 8 & 0xff) / 255;
-			var thisBlue:Float = (_color & 0xff) / 255;
+			var thisRed:Float = (color >> 16) / 255;
+			var thisGreen:Float = (color >> 8 & 0xff) / 255;
+			var thisBlue:Float = (color & 0xff) / 255;
 			
 			Child._parentRed = thisRed;
 			Child._parentGreen = thisGreen;
@@ -192,7 +192,7 @@ class FlxNestedSprite extends FlxSprite
 	/**
 	 * All Graphics in this list.
 	 */
-	inline public var children(get, never):Array<FlxNestedSprite>;
+	public var children(get, never):Array<FlxNestedSprite>;
 	
 	inline private function get_children():Array<FlxNestedSprite> 
 	{ 
@@ -217,11 +217,6 @@ class FlxNestedSprite extends FlxSprite
 		
 		last.x = x;
 		last.y = y;
-		
-		if ((path != null) && (pathSpeed != 0) && (path.nodes[_pathNodeIndex] != null))
-		{
-			updatePathMotion();
-		}
 		
 		for (child in _children)
 		{
@@ -353,11 +348,11 @@ class FlxNestedSprite extends FlxSprite
 		alpha = Alpha;
 		alpha *= _parentAlpha;
 		#if flash
-		if ((alpha != 1) || (_color != 0x00ffffff))
+		if ((alpha != 1) || (color != 0x00ffffff))
 		{
-			var red:Float = (_color >> 16) * _parentRed / 255;
-			var green:Float = (_color >> 8 & 0xff) * _parentGreen / 255;
-			var blue:Float = (_color & 0xff) * _parentBlue / 255;
+			var red:Float = (color >> 16) * _parentRed / 255;
+			var green:Float = (color >> 8 & 0xff) * _parentGreen / 255;
+			var blue:Float = (color & 0xff) * _parentBlue / 255;
 			
 			if (_colorTransform == null)
 			{
@@ -370,7 +365,7 @@ class FlxNestedSprite extends FlxSprite
 				_colorTransform.blueMultiplier = blue;
 				_colorTransform.alphaMultiplier = alpha;
 			}
-			_useColorTransform = true;
+			useColorTransform = true;
 		}
 		else
 		{
@@ -381,7 +376,7 @@ class FlxNestedSprite extends FlxSprite
 				_colorTransform.blueMultiplier = 1;
 				_colorTransform.alphaMultiplier = 1;
 			}
-			_useColorTransform = false;
+			useColorTransform = false;
 		}
 		dirty = true;
 		#end
@@ -408,12 +403,12 @@ class FlxNestedSprite extends FlxSprite
 		
 		var combinedColor:Int = Std.int(combinedRed * 255) << 16 | Std.int(combinedGreen * 255) << 8 | Std.int(combinedBlue * 255);
 		
-		if (_color == combinedColor)
+		if (color == combinedColor)
 		{
-			return _color;
+			return color;
 		}
-		_color = combinedColor;
-		if ((alpha != 1) || (_color != 0x00ffffff))
+		color = combinedColor;
+		if ((alpha != 1) || (color != 0x00ffffff))
 		{
 			if (_colorTransform == null)
 			{
@@ -426,7 +421,7 @@ class FlxNestedSprite extends FlxSprite
 				_colorTransform.blueMultiplier = combinedBlue;
 				_colorTransform.alphaMultiplier = alpha;
 			}
-			_useColorTransform = true;
+			useColorTransform = true;
 		}
 		else
 		{
@@ -437,7 +432,7 @@ class FlxNestedSprite extends FlxSprite
 				_colorTransform.blueMultiplier = 1;
 				_colorTransform.alphaMultiplier = 1;
 			}
-			_useColorTransform = false;
+			useColorTransform = false;
 		}
 		
 		dirty = true;
@@ -465,6 +460,6 @@ class FlxNestedSprite extends FlxSprite
 			child._parentBlue = combinedBlue;
 		}
 		
-		return _color;
+		return color;
 	}
 }
