@@ -84,9 +84,8 @@ class TiledLayer
 				result = base64ToByteArray(chunk);
 				result.uncompress();
 				#end
+				result.endian = Endian.LITTLE_ENDIAN;
 			}
-			
-			result.endian = Endian.LITTLE_ENDIAN;
 		}
 		
 		return result;
