@@ -165,10 +165,12 @@ class FlxNapeState extends FlxState
 		#if !FLX_NO_DEBUG
 		if (Value)
 		{
-			_physDbgSpr = new ShapeDebug(FlxG.width, FlxG.height);
-			_physDbgSpr.drawConstraints = true;
-			
-			FlxG.stage.addChild(_physDbgSpr.display);
+			if (_physDbgSpr == null)
+			{
+				_physDbgSpr = new ShapeDebug(FlxG.width, FlxG.height);
+				_physDbgSpr.drawConstraints = true;
+				FlxG.stage.addChild(_physDbgSpr.display);
+			}
 		}
 		else if (_physDbgSpr != null)
 		{

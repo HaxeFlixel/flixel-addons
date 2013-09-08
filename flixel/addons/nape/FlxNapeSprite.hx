@@ -37,24 +37,27 @@ class FlxNapeSprite extends FlxSprite
 	private var _angularDrag:Float = 1;
 
 	/**
-	 * Creates an FlxSprite and a physics body (<code>body</code>).
-	 * The body is then added to the space of the current state.
+	 * Creates an FlxNapeSprite with an optional physics body (<code>body</code>).
 	 * At each step, the physics are updated, and so is the position and rotation of the sprite 
 	 * to match the bodys position and rotation values.
-	 * By default a physics body with rectangle shape will be created around your sprite graphics
-	 * if you change the graphics after this constructor see createRectangularBody().
+	 * By default a physics body with rectangle shape will be created around your sprite graphics.
+	 * You can override this functionality and add a premade body of your own (see <code>addPremadeBody</code>).
 	 * 
-	 * @param	X				The initial X position of the sprite.
-	 * @param	Y				The initial Y position of the sprite.
-	 * @param	SimpleGraphic 	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
-	 * @param	EnablePhysics	Whether the phisics of this sprite will be enabled from the start.
+	 * @param	X						The initial X position of the sprite.
+	 * @param	Y						The initial Y position of the sprite.
+	 * @param	SimpleGraphic 			The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
+	 * @param	CreateRectangularBody	Whether to create a rectangular body for this sprite (use <code>false</code> if you want to add a custom body).
+	 * @param	EnablePhysics			Whether to enable physics simulation on the rectangular body (only relevant if <code>CreateRectangularBody == true</code>).
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic, EnablePhysics:Bool = true) 
+	public function new(X:Float = 0, Y:Float = 0, SimpleGraphic:Dynamic = null, CreateRectangularBody:Bool = true, EnablePhysics:Bool = true) 
 	{
 		super(X, Y, SimpleGraphic);
 		
-		createRectangularBody();
-		physicsEnabled = EnablePhysics; 
+		if (CreateRectangularBody)
+		{
+			createRectangularBody();
+			physicsEnabled = EnablePhysics;
+		}
 	}
 
 	/**
@@ -92,7 +95,10 @@ class FlxNapeSprite extends FlxSprite
 	{
 		super.kill();
 		
-		body.space = null;
+		if (body != null)
+		{
+			body.space = null;
+		}
 	}
 
 	/**
@@ -208,7 +214,7 @@ class FlxNapeSprite extends FlxSprite
 		{
 			return;
 		}
-			
+		
 		body.setShapeMaterials(new Material(Elasticity, DynamicFriction, StaticFriction, Density, RotationFriction));
 	}
 	
@@ -254,16 +260,12 @@ class FlxNapeSprite extends FlxSprite
 	
 	inline private function set_physicsEnabled(Value:Bool):Bool
 	{
-		if (Value)
+		if (body != null)
 		{
-			body.space = FlxNapeState.space;
-		} 
-		else
-		{
-			body.space = null;
+			body.space = Value ? FlxNapeState.space : null;
+			return physicsEnabled = Value;
 		}
-		
-		return Value;
+		return physicsEnabled = false;
 	}
 
 	/**
