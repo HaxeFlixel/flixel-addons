@@ -1,16 +1,29 @@
 package flixel.addons.tile;
 
+import flash.display.BitmapData;
+import flash.geom.Matrix;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+import flixel.addons.tile.FlxTilemapExt;
+import flixel.addons.tile.FlxTileSpecial;
+import flixel.FlxCamera;
+import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.tile.FlxTilemap;
+import flixel.system.layer.DrawStackItem;
 import flixel.tile.FlxTile;
+import flixel.tile.FlxTilemap;
+import flixel.tile.FlxTilemapBuffer;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
+
 
 /**
  * Extended <code>FlxTilemap</code> class that provides collision detection against slopes
  * Based on the original by Dirk Bunk.
- * 
+ * ---
+ * Also add support to flipped / rotated tiles.
  * @author Peter Christiansen
+ * @author MrCdK
  * @link https://github.com/TheTurnipMaster/SlopeDemo
  */
 class FlxTilemapExt extends FlxTilemap
@@ -30,6 +43,33 @@ class FlxTilemapExt extends FlxTilemap
 	private var _slopeCeilLeft:Array<Int>;
 	private var _slopeCeilRight:Array<Int>;
 	
+	// Animated and flipped tiles related variables
+	private var MATRIX:Matrix;
+	private var _specialTiles:Array<FlxTileSpecial>;
+	
+	// Alpha stuff
+	#if flash
+	private var _flashAlpha:BitmapData;
+	private var _flashAlphaPoint:Point;
+	#end
+	public var alpha(default, set):Float = 1.0;
+	
+	public function set_alpha(alpha:Float):Float 
+	{
+		this.alpha = alpha;
+		#if flash
+		if (_tileWidth == 0 || _tileHeight == 0) 
+		{
+			throw "You can't set the alpha of the tilemap before loading it";
+		}
+		var alphaCol:Int = (Math.floor(alpha * 255) << 24);
+		_flashAlpha = new BitmapData(_tileWidth, _tileHeight, true, alphaCol);
+		_flashAlphaPoint = new Point(0, 0);
+		#end
+		
+		return alpha;
+	}
+	
 	public function new()
 	{
 		super();
@@ -41,6 +81,10 @@ class FlxTilemapExt extends FlxTilemap
 		_slopeFloorRight = new Array<Int>();
 		_slopeCeilLeft = new Array<Int>();
 		_slopeCeilRight = new Array<Int>();
+		
+		// Flipped/rotated tiles variables
+		_specialTiles = null;
+		MATRIX = new Matrix();
 	}
 	
 	override public function destroy():Void 
@@ -54,6 +98,377 @@ class FlxTilemapExt extends FlxTilemap
 		_slopeCeilRight = null;
 		
 		super.destroy();
+		
+		if (_specialTiles != null) 
+		{
+			for (t in _specialTiles) 
+			{
+				t.destroy();
+			}
+		}
+		_specialTiles = null;
+		MATRIX = null;
+		
+		#if flash
+		if (_flashAlpha != null)
+		{
+			_flashAlpha.dispose();
+		}
+		_flashAlpha = null;
+		_flashAlphaPoint = null;
+		#end
+	}
+	
+	override public function update():Void 
+	{
+		super.update();
+		if (_specialTiles != null && _specialTiles.length > 0) 
+		{
+			for (t in _specialTiles) 
+			{
+				if (t != null && t.hasAnimation()) 
+				{
+					t.update();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * THIS IS A COPY FROM <code>FlxTilemap</code> BUT IT DEALS WITH FLIPPED AND ROTATED TILES
+	 * Internal function that actually renders the tilemap to the tilemap buffer.  Called by draw().
+	 * @param	Buffer		The <code>FlxTilemapBuffer</code> you are rendering to.
+	 * @param	Camera		The related <code>FlxCamera</code>, mainly for scroll values.
+	 */
+	override private function drawTilemap(Buffer:FlxTilemapBuffer, Camera:FlxCamera):Void 
+	{
+		#if flash
+		Buffer.fill();
+		#else
+		
+		_helperPoint.x = x - Camera.scroll.x * scrollFactor.x; //copied from getScreenXY()
+		_helperPoint.y = y - Camera.scroll.y * scrollFactor.y;
+		
+		var tileID:Int;
+		var drawX:Float;
+		var drawY:Float;
+		
+		#if !js
+		var drawItem:DrawStackItem = Camera.getDrawStackItem(_cachedGraphics, false, 0);
+		#else
+		var drawItem:DrawStackItem = Camera.getDrawStackItem(_cachedGraphics, false);
+		#end
+		var currDrawData:Array<Float> = drawItem.drawData;
+		var currIndex:Int = drawItem.position;
+		#end
+		
+		// Copy tile images into the tile buffer
+		_point.x = (Camera.scroll.x * scrollFactor.x) - x; //modified from getScreenXY()
+		_point.y = (Camera.scroll.y * scrollFactor.y) - y;
+		var screenXInTiles:Int = Math.floor(_point.x / _tileWidth);
+		var screenYInTiles:Int = Math.floor(_point.y / _tileHeight);
+		var screenRows:Int = Buffer.rows;
+		var screenColumns:Int = Buffer.columns;
+		
+		// Bound the upper left corner
+		if (screenXInTiles < 0)
+		{
+			screenXInTiles = 0;
+		}
+		if (screenXInTiles > widthInTiles - screenColumns)
+		{
+			screenXInTiles = widthInTiles - screenColumns;
+		}
+		if (screenYInTiles < 0)
+		{
+			screenYInTiles = 0;
+		}
+		if (screenYInTiles > heightInTiles - screenRows)
+		{
+			screenYInTiles = heightInTiles - screenRows;
+		}
+		
+		var rowIndex:Int = screenYInTiles * widthInTiles + screenXInTiles;
+		_flashPoint.y = 0;
+		var row:Int = 0;
+		var column:Int;
+		var columnIndex:Int;
+		var tile:FlxTile;
+		var special:FlxTileSpecial;
+
+		#if !FLX_NO_DEBUG
+		var debugTile:BitmapData;
+		#end 
+		
+		var isSpecial = false;
+		
+		while (row < screenRows)
+		{
+			columnIndex = rowIndex;
+			column = 0;
+			_flashPoint.x = 0;
+			
+			while (column < screenColumns)
+			{
+				#if flash
+				_flashRect = _rects[columnIndex];
+				
+				if (_flashRect != null)
+				{
+					if (_specialTiles != null && _specialTiles[columnIndex] != null) 
+					{
+						special = _specialTiles[columnIndex];
+						isSpecial = special.isSpecial();
+						if (isSpecial) 
+						{
+							Buffer.pixels.copyPixels(
+								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, _cachedGraphics.bitmap),
+								special.getBitmapDataRect(),
+								_flashPoint, _flashAlpha, _flashAlphaPoint, true);
+							
+							Buffer.dirty = (special.dirty || Buffer.dirty);
+						}
+					} 
+					
+					if (!isSpecial) 
+					{
+						Buffer.pixels.copyPixels(_cachedGraphics.bitmap, _flashRect, _flashPoint, _flashAlpha, _flashAlphaPoint, true);
+					} 
+					else 
+					{
+						isSpecial = false;
+					}
+					
+					#if !FLX_NO_DEBUG
+					if (FlxG.debugger.visualDebug && !ignoreDrawDebug) 
+					{
+						tile = _tileObjects[_data[columnIndex]];
+						
+						if (tile != null)
+						{
+							if (tile.allowCollisions <= FlxObject.NONE)
+							{
+								// Blue
+								debugTile = _debugTileNotSolid; 
+							}
+							else if (tile.allowCollisions != FlxObject.ANY)
+							{
+								// Pink
+								debugTile = _debugTilePartial; 
+							}
+							else
+							{
+								// Green
+								debugTile = _debugTileSolid; 
+							}
+							
+							Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
+						}
+					}
+					#end
+				}
+				#else
+				tileID = _rectIDs[columnIndex];
+				
+				if (tileID != -1)
+				{
+					if (_specialTiles != null) 
+					{
+						special = _specialTiles[columnIndex];
+					} 
+					else 
+					{
+						special = null;
+					}
+					
+					MATRIX.identity();
+					
+					if (special != null && special.isSpecial()) 
+					{
+						MATRIX = special.getMatrix(_tileWidth, _tileHeight);
+						tileID = special.getCurrentTileId() - _startingIndex;
+					}
+					
+					drawX = _helperPoint.x + (columnIndex % widthInTiles) * _tileWidth;
+					drawY = _helperPoint.y + Math.floor(columnIndex / widthInTiles) * _tileHeight;
+					
+					drawX += MATRIX.tx;
+					drawY += MATRIX.ty;
+					
+					#if !js
+					currDrawData[currIndex++] = Math.floor(drawX) + 0.01;
+					currDrawData[currIndex++] = Math.floor(drawY) + 0.01;
+					#else
+					currDrawData[currIndex++] = Math.floor(drawX);
+					currDrawData[currIndex++] = Math.floor(drawY);
+					#end
+					currDrawData[currIndex++] = tileID;
+					
+					
+					currDrawData[currIndex++] = MATRIX.a; 
+					currDrawData[currIndex++] = MATRIX.b;
+					currDrawData[currIndex++] = MATRIX.c;
+					currDrawData[currIndex++] = MATRIX.d; 
+					
+					#if !js
+					// Alpha
+					currDrawData[currIndex++] = alpha; 
+					#end
+				}
+				#end
+				
+				_flashPoint.x += _tileWidth;
+				column++;
+				columnIndex++;
+			}
+			
+			rowIndex += widthInTiles;
+			_flashPoint.y += _tileHeight;
+			row++;
+		}
+		
+		#if !flash
+		drawItem.position = currIndex;
+		#end
+		
+		Buffer.x = screenXInTiles * _tileWidth;
+		Buffer.y = screenYInTiles * _tileHeight;
+	}
+	
+	/**
+	 * Set the special tiles (rotated or flipped)
+	 * @param	tiles	An <code>Array</code> with all the <code>FlxTileSpecial</code>
+	 */
+	public function setSpecialTiles(tiles:Array<FlxTileSpecial>):Void 
+	{
+		_specialTiles = new Array<FlxTileSpecial>();
+
+		#if flash
+		var animIds:Array<Int>;
+		#end
+		var t:FlxTileSpecial;
+		for (i in 0...tiles.length) 
+		{
+			t = tiles[i];
+			if (t != null && t.isSpecial()) 
+			{
+				_specialTiles[i] = t;
+				
+				#if flash
+				// Update the tile animRects with the animation
+				if (t.hasAnimation()) 
+				{
+					animIds = t.getAnimationTilesId();
+					if (animIds != null) 
+					{
+						var rectangles:Array<Rectangle> = new Array<Rectangle>();
+						var rectangle:Rectangle;
+						for (id in animIds) 
+						{
+							rectangle = getRectangleFromTileset(id);
+							if (rectangle != null) 
+							{
+								rectangles.push(rectangle);
+							}
+						}
+						if (rectangles.length > 0) 
+						{
+							t.setAnimationRects(rectangles);
+						}
+					}
+				}				
+				#end
+			} 
+			else 
+			{
+				_specialTiles[i] = null;
+			}
+		}
+	}
+	
+	private function getRectangleFromTileset(id:Int):Rectangle 
+	{
+		// Copied from FlxTilemap updateTile()
+		var tile:FlxTile = _tileObjects[id];
+		if (tile != null) 
+		{
+			var rx:Int = (id - _startingIndex) * (_tileWidth + _region.spacingX);
+			var ry:Int = 0;
+		
+			if (Std.int(rx) >= _region.width)
+			{
+				ry = Std.int(rx / _region.width) * (_tileHeight + _region.spacingY);
+				rx %= _region.width;
+			}
+			
+			return new Rectangle(rx + _region.startX, ry + _region.startY, _tileWidth, _tileHeight);
+		}
+		return null;
+	}
+	
+	/**
+	 * THIS IS A COPY FROM <code>FlxTilemap</code>
+	 * I've only swapped lines 386 and 387 to give DrawTilemap() a chance to set the buffer dirty
+	 * ---
+	 * Draws the tilemap buffers to the cameras.
+	 */
+	override public function draw():Void
+	{
+		if (cameras == null)
+		{
+			cameras = FlxG.cameras.list;
+		}
+		
+		var camera:FlxCamera;
+		var buffer:FlxTilemapBuffer;
+		var i:Int = 0;
+		var l:Int = cameras.length;
+		
+		while (i < l)
+		{
+			camera = cameras[i];
+			
+			if (!camera.visible || !camera.exists)
+			{
+				continue;
+			}
+			
+			if (_buffers[i] == null)
+			{
+				_buffers[i] = new FlxTilemapBuffer(_tileWidth, _tileHeight, widthInTiles, heightInTiles, camera);
+				_buffers[i].forceComplexRender = forceComplexRender;
+			}
+			
+			buffer = _buffers[i++];
+			
+			#if flash
+			if (!buffer.dirty)
+			{
+				// Copied from getScreenXY()
+				_point.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
+				_point.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
+				buffer.dirty = (_point.x > 0) || (_point.y > 0) || (_point.x + buffer.width < camera.width) || (_point.y + buffer.height < camera.height);
+			}
+			
+			if (buffer.dirty)
+			{
+				buffer.dirty = false;
+				drawTilemap(buffer, camera);
+			}
+			
+			// Copied from getScreenXY()
+			_flashPoint.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
+			_flashPoint.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
+			buffer.draw(camera, _flashPoint);
+			
+			#else
+			drawTilemap(buffer, camera);
+			#end
+			
+			#if !FLX_NO_DEBUG
+			FlxBasic._VISIBLECOUNT++;
+			#end
+		}
 	}
 
 	/**

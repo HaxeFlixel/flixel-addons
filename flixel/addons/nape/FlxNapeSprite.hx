@@ -1,25 +1,24 @@
 package flixel.addons.nape;
 
+import flixel.FlxSprite;
 import flixel.util.FlxAngle;
-import haxe.unit.TestRunner;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
 import nape.phys.Material;
 import nape.shape.Circle;
 import nape.shape.Polygon;
-import flixel.FlxSprite;
 import nape.space.Space;
 
 /**
- * FlxPhysSprite consists of an FlxSprite with a physics body.
+ * FlxNapeSprite consists of an FlxSprite with a physics body.
  * During the simulation, the sprite follows the physics body position and rotation.
  * 
  * By default, a rectangular physics body is created upon construction in <code>createRectangularBody()</code>.
  * 
  * @author TiagoLr ( ~~~ProG4mr~~~ )
  */
-class FlxPhysSprite extends FlxSprite
+class FlxNapeSprite extends FlxSprite
 {
 	/**
 	 * <code>body</code> is the physics body associated with this sprite. 
@@ -48,19 +47,16 @@ class FlxPhysSprite extends FlxSprite
 	 * @param	X				The initial X position of the sprite.
 	 * @param	Y				The initial Y position of the sprite.
 	 * @param	SimpleGraphic 	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
-	 * @param	CreateBody		Whether to create a square physics body (with width and height of SimpleGraphic if that's specified).
 	 * @param	EnablePhysics	Whether the phisics of this sprite will be enabled from the start.
 	 */
-	public function new(X:Float = 0, Y:Float = 0, SimpleGraphic:Dynamic = null, CreateBody:Bool = true, EnablePhysics:Bool = true) 
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic, EnablePhysics:Bool = true) 
 	{
 		super(X, Y, SimpleGraphic);
 		
-		if(CreateBody)
-			createRectangularBody();
-		
-		enablePhysics(EnablePhysics);
+		createRectangularBody();
+		physicsEnabled = EnablePhysics; 
 	}
-	
+
 	/**
 	 * WARNING: This will remove this sprite entirely. Use <code>kill()</code> if you 
 	 * want to disable it temporarily only and <code>reset()</code> it later to revive it.
@@ -71,6 +67,7 @@ class FlxPhysSprite extends FlxSprite
 	override public function destroy():Void 
 	{
 		destroyPhysObjects();
+		
 		super.destroy();
 	}
 
@@ -81,7 +78,7 @@ class FlxPhysSprite extends FlxSprite
 	{
 		super.update();
 		
-		if (moves && body != null)
+		if (moves)
 		{
 			updatePhysObjects();
 		}
@@ -95,10 +92,7 @@ class FlxPhysSprite extends FlxSprite
 	{
 		super.kill();
 		
-		if (body != null)
-		{
-			body.space = null;
-		}
+		body.space = null;
 	}
 
 	/**
@@ -111,7 +105,7 @@ class FlxPhysSprite extends FlxSprite
 		
 		if (body != null)
 		{
-			body.space = FlxPhysState.space;
+			body.space = FlxNapeState.space;
 		}
 	}
 	
@@ -210,10 +204,12 @@ class FlxPhysSprite extends FlxSprite
 	 */
 	public function setBodyMaterial(Elasticity:Float = 1, DynamicFriction:Float = 0.2, StaticFriction:Float = 0.4, Density:Float = 1, RotationFriction:Float = 0.001):Void
 	{
-		if (body != null)
+		if (body == null) 
 		{
-			body.setShapeMaterials(new Material(Elasticity, DynamicFriction, StaticFriction, Density, RotationFriction));
+			return;
 		}
+			
+		body.setShapeMaterials(new Material(Elasticity, DynamicFriction, StaticFriction, Density, RotationFriction));
 	}
 	
 	/**
@@ -223,7 +219,7 @@ class FlxPhysSprite extends FlxSprite
 	{
 		if (body != null) 
 		{
-			FlxPhysState.space.bodies.remove(body);
+			FlxNapeState.space.bodies.remove(body);
 			body = null;
 		}
 	}
@@ -253,14 +249,21 @@ class FlxPhysSprite extends FlxSprite
 	
 	/**
 	 * Enables/Disables this sprites physics body in simulations.
-	 * @param	b	
 	 */
-	public function enablePhysics(enable:Bool)
+	public var physicsEnabled(default, set):Bool = true;
+	
+	inline private function set_physicsEnabled(Value:Bool):Bool
 	{
-		if (body != null)
+		if (Value)
 		{
-			body.space = enable ? FlxPhysState.space : null;
+			body.space = FlxNapeState.space;
+		} 
+		else
+		{
+			body.space = null;
 		}
+		
+		return Value;
 	}
 
 	/**
@@ -280,10 +283,10 @@ class FlxPhysSprite extends FlxSprite
 	#if !FLX_NO_DEBUG
 	/**
 	 * Hide debug outline on physics sprites if the physics debug shapes are turned on
-	 */
+	 */	
 	override public function drawDebug():Void
 	{
-		if (FlxPhysState.debug == null)
+		if (FlxNapeState.debug == null)
 		{
 			super.drawDebug();
 		}

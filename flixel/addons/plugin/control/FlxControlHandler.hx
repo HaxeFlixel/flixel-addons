@@ -674,7 +674,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.pressed(_upKey))
+		if (FlxG.keyboard.pressed(_upKey))
 		{
 			move = true;
 			isPressedUp = true;
@@ -706,7 +706,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.pressed(_downKey))
+		if (FlxG.keyboard.pressed(_downKey))
 		{
 			move = true;
 			isPressedDown = true;
@@ -739,7 +739,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.pressed(_leftKey))
+		if (FlxG.keyboard.pressed(_leftKey))
 		{
 			move = true;
 			isPressedLeft = true;
@@ -771,7 +771,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.pressed(_rightKey))
+		if (FlxG.keyboard.pressed(_rightKey))
 		{
 			move = true;
 			isPressedRight = true;
@@ -803,7 +803,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.pressed(_antiClockwiseKey))
+		if (FlxG.keyboard.pressed(_antiClockwiseKey))
 		{
 			move = true;
 			
@@ -830,7 +830,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.pressed(_clockwiseKey))
+		if (FlxG.keyboard.pressed(_clockwiseKey))
 		{
 			move = true;
 			
@@ -857,7 +857,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.pressed(_thrustKey))
+		if (FlxG.keyboard.pressed(_thrustKey))
 		{
 			move = true;
 			
@@ -892,7 +892,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.pressed(_reverseKey))
+		if (FlxG.keyboard.pressed(_reverseKey))
 		{
 			move = true;
 			
@@ -925,7 +925,7 @@ class FlxControlHandler
 		// 0 = Pressed
 		// 1 = Just Down
 		// 2 = Just Released
-		if ((_fireKeyMode == 0 && FlxG.keys.pressed(_fireKey)) || (_fireKeyMode == 1 && FlxG.keys.justPressed(_fireKey)) || (_fireKeyMode == 2 && FlxG.keys.justReleased(_fireKey)))
+		if ((_fireKeyMode == 0 && FlxG.keyboard.pressed(_fireKey)) || (_fireKeyMode == 1 && FlxG.keyboard.justPressed(_fireKey)) || (_fireKeyMode == 2 && FlxG.keyboard.justReleased(_fireKey)))
 		{
 			if (_fireRate > 0)
 			{
@@ -963,7 +963,7 @@ class FlxControlHandler
 			_extraSurfaceTime = FlxG.game.ticks + _jumpFromFallTime;
 		}
 		
-		if ((_jumpKeyMode == KEYMODE_PRESSED && FlxG.keys.pressed(_jumpKey)) || (_jumpKeyMode == KEYMODE_JUST_DOWN && FlxG.keys.justPressed(_jumpKey)) || (_jumpKeyMode == KEYMODE_RELEASED && FlxG.keys.justReleased(_jumpKey)))
+		if ((_jumpKeyMode == KEYMODE_PRESSED && FlxG.keyboard.pressed(_jumpKey)) || (_jumpKeyMode == KEYMODE_JUST_DOWN && FlxG.keyboard.justPressed(_jumpKey)) || (_jumpKeyMode == KEYMODE_RELEASED && FlxG.keyboard.justReleased(_jumpKey)))
 		{
 			// Sprite not touching a valid jump surface
 			if (_entity.isTouching(_jumpSurface) == false)
