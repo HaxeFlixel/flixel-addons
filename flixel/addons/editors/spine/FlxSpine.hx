@@ -7,8 +7,12 @@ import flixel.FlxG;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
 import flixel.FlxObject;
-import flixel.util.loaders.SpriteSheetRegion;
-import flixel.system.frontEnds.BitmapFrontEnd.CachedGraphicsObject;
+import flixel.util.FlxAngle;
+import flixel.util.loaders.CachedGraphics;
+import flixel.util.loaders.TextureRegion;
+
+import flixel.addons.editors.spine.texture.FlixelTexture;
+import flixel.addons.editors.spine.texture.FlixelTextureLoader;
 
 import spinehx.Bone;
 import spinehx.Slot;
@@ -20,10 +24,6 @@ import spinehx.AnimationStateData;
 import spinehx.atlas.TextureAtlas;
 import spinehx.attachments.Attachment;
 import spinehx.attachments.RegionAttachment;
-import spinehx.platform.nme.BitmapDataTexture;
-import spinehx.platform.nme.BitmapDataTextureLoader;
-import spinehx.platform.nme.renderers.SkeletonRenderer;
-import spinehx.platform.nme.renderers.SkeletonRendererDebug;
 
 /**
  * A Sprite that can play animations exported by Spine (http://esotericsoftware.com/)
@@ -31,14 +31,14 @@ import spinehx.platform.nme.renderers.SkeletonRendererDebug;
  * @author Big thanks to the work on spinehx by nitrobin (https://github.com/nitrobin/spinehx).
  * HaxeFlixel Port by: Sasha (Beeblerox), Sam Batista (crazysam), Kuris Makku (xraven13)
  */
-class FlxSpineSprite extends FlxSprite
+class FlxSpine extends FlxSprite
 {
 	public var skeleton:Skeleton;
 	public var skeletonData:SkeletonData;
 	public var state:AnimationState;
 	public var stateData:AnimationStateData;
 	
-	public var renderer:SkeletonRenderer;
+	// TODO: adjust collider's position
 	public var collider:FlxObject;
 	
 	public var wrapperAngles:ObjectMap<RegionAttachment, Float>;
@@ -67,16 +67,71 @@ class FlxSpineSprite extends FlxSprite
 		state = new AnimationState(stateData);
 		
 		skeleton = Skeleton.create(skeletonData);
-		skeleton.setX(X);
-		skeleton.setY(Y);
+		skeleton.setX(0);
+		skeleton.setY(0);
 		skeleton.setFlipY(true);
 		//skeleton.setFlipX(true);
 		
-		renderer = new SkeletonRenderer(skeleton);
-		renderer.visible = false;
-		
-		wrapperAngles = new ObjectMap<RegionAttachment, Float>();
 		cachedSprites = new ObjectMap<RegionAttachment, FlxSprite>();
+		wrapperAngles = new ObjectMap<RegionAttachment, Float>();
+	}
+	
+	override public function destroy():Void
+	{
+		if (collider != null)
+			collider.destroy();
+		collider = null;
+		
+		skeletonData = null;
+		skeleton = null;
+		state = null;
+		stateData = null;
+		wrapperAngles = null;
+		
+		if (cachedSprites != null)
+		{
+			for (key in cachedSprites.keys())
+			{
+				var sprite:FlxSprite = cachedSprites.get(key);
+				cachedSprites.remove(key);
+				if (sprite != null)	
+					sprite.destroy();
+			}
+		}
+		cachedSprites = null;
+		
+		super.destroy();
+	}
+	
+	public var flipX(get, set):Bool;
+	
+	private function get_flipX():Bool
+	{
+		return skeleton.flipX;
+	}
+	
+	private function set_flipX(value:Bool):Bool
+	{
+		if (value != skeleton.flipX)
+			skeleton.setFlipX(value);
+			
+		facing = (value == true) ? FlxObject.LEFT : FlxObject.RIGHT;
+		return value;
+	}
+	
+	public var flipY(get, set):Bool;
+	
+	private function get_flipY():Bool
+	{
+		return skeleton.flipY;
+	}
+	
+	private function set_flipY(value:Bool):Bool
+	{
+		if (value != skeleton.flipY)
+			skeleton.setFlipY(value);
+			
+		return value;
 	}
 	
 	/**
@@ -88,7 +143,7 @@ class FlxSpineSprite extends FlxSprite
 	public static function readSkeletonData(DataName:String, DataPath:String, Scale:Float = 1):SkeletonData
 	{
 		if (DataPath.lastIndexOf("/") < 0) DataPath += "/"; // append / at the end of the folder path
-		var spineAtlas:TextureAtlas = TextureAtlas.create(Assets.getText(DataPath + DataName + ".atlas"), DataPath, new BitmapDataTextureLoader());
+		var spineAtlas:TextureAtlas = TextureAtlas.create(Assets.getText(DataPath + DataName + ".atlas"), DataPath, new FlixelTextureLoader());
 		var json:SkeletonJson = SkeletonJson.create(spineAtlas);
 		json.setScale(Scale);
 		var skeletonData:SkeletonData = json.readSkeletonData(DataName, Assets.getText(DataPath + DataName + ".json"));
@@ -114,7 +169,15 @@ class FlxSpineSprite extends FlxSprite
 		var flipY:Int = (skeleton.flipY) ? 1 : -1;
 		var flip:Int = flipX * flipY;
 		
-		_aabb.set(0,0,0,0);
+		var skeletonX:Float = skeleton.getX();
+		var skeletonY:Float = skeleton.getY();
+		
+		var radians:Float = angle * FlxAngle.TO_RAD;
+		var cos:Float = Math.cos(radians);
+		var sin:Float = Math.sin(radians);
+		
+		var oox:Float = origin.x + offset.x;
+		var ooy:Float = origin.y + offset.y;
 		
 		for (slot in drawOrder) 
 		{
@@ -131,31 +194,23 @@ class FlxSpineSprite extends FlxSprite
 				var x:Float = regionAttachment.x - region.offsetX;
 				var y:Float = regionAttachment.y - region.offsetY;
 				
-				wrapper.x = bone.worldX + x * bone.m00 + y * bone.m01 + this.x - wrapper.frameWidth * 0.5;
-				wrapper.y = bone.worldY + x * bone.m10 + y * bone.m11 + this.y - wrapper.frameHeight * 0.5;
+				var dx:Float = skeletonX + bone.worldX + x * bone.m00 + y * bone.m01 - oox;
+				var dy:Float = skeletonY + bone.worldY + x * bone.m10 + y * bone.m11 - ooy;
 				
-				wrapper.angle = (-(bone.worldRotation + regionAttachment.rotation) + wrapperAngle) * flip;
-				wrapper.scale.x = (bone.worldScaleX + regionAttachment.scaleX - 1) * flipX;
-				wrapper.scale.y = (bone.worldScaleY + regionAttachment.scaleY - 1) * flipY;
+				var relX:Float = (dx * cos * scale.x - dy * sin * scale.y);
+				var relY:Float = (dx * sin * scale.x + dy * cos * scale.y);
+				
+				wrapper.x = this.x + relX - wrapper.frameWidth * 0.5;
+				wrapper.y = this.y + relY - wrapper.frameHeight * 0.5;
+				
+				wrapper.angle = (-(bone.worldRotation + regionAttachment.rotation) + wrapperAngle) * flip + angle;
+				wrapper.scale.x = (bone.worldScaleX + regionAttachment.scaleX - 1) * flipX * scale.x;
+				wrapper.scale.y = (bone.worldScaleY + regionAttachment.scaleY - 1) * flipY * scale.y;
 				wrapper.antialiasing = antialiasing;
 				wrapper.visible = true;
 				wrapper.draw();
-				
-				if (_aabb.width == 0 && _aabb.height == 0)
-				{
-					_aabb.copyFrom(wrapper.aabb);
-				}
-				else
-				{
-					_aabb.union(wrapper.aabb);
-				}
 			}
 		}
-		
-		collider.x = _aabb.x;
-		collider.y = _aabb.y;
-		collider.width = _aabb.width;
-		collider.height = _aabb.height;
 	}
 	
 	override public function drawDebugOnCamera(Camera:FlxCamera = null):Void
@@ -183,10 +238,10 @@ class FlxSpineSprite extends FlxSprite
 			return cachedSprites.get(regionAttachment);
 		
 		var region:AtlasRegion = cast regionAttachment.getRegion();
-		var texture:BitmapDataTexture = cast region.getTexture();
+		var texture:FlixelTexture = cast region.getTexture();
 		
-		var cachedGraphic:CachedGraphicsObject = FlxG.bitmap.add(texture.bd);
-		var atlasRegion:SpriteSheetRegion = new SpriteSheetRegion(cachedGraphic, region.getRegionX(), region.getRegionY());
+		var cachedGraphic:CachedGraphics = FlxG.bitmap.add(texture.bd);
+		var atlasRegion:TextureRegion = new TextureRegion(cachedGraphic, region.getRegionX(), region.getRegionY());
 		
 		if (region.rotate) 
 		{
