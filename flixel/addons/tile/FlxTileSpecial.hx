@@ -131,6 +131,9 @@ class FlxTileSpecial extends FlxBasic
 				_currAnimParam = _animation.framesData[_currFrame];
 			}
 		}
+		#if flash
+		dirty = !(_currFrame == _lastFrame);
+		#end
 	}
 	
 	public inline function isSpecial():Bool 
@@ -162,7 +165,7 @@ class FlxTileSpecial extends FlxBasic
 			_flippedFrame = new BitmapData(width, height, true, FlxColor.TRANSPARENT);
 		}
 
-		if (generateFlipped || (hasAnimation() && _currFrame != _lastFrame)) 
+		if (generateFlipped || dirty) 
 		{
 			_normalFrame.fillRect(_normalFrame.rect, FlxColor.TRANSPARENT);
 			_flippedFrame.fillRect(_flippedFrame.rect, FlxColor.TRANSPARENT);
@@ -174,14 +177,8 @@ class FlxTileSpecial extends FlxBasic
 			
 			_normalFrame.copyPixels(bitmap, rect, _point, null, null, true);
 			_flippedFrame.draw(_normalFrame, getMatrix(width, height));
-			//_lastFrame = _currFrame;
-			dirty = true;
-		} 
-		else 
-		{
-			dirty = false;
 		}
-	
+		
 		return _flippedFrame;
 	}
 	
