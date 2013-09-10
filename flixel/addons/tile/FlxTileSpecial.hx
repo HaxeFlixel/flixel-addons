@@ -105,6 +105,9 @@ class FlxTileSpecial extends FlxBasic
 	override public function update():Void 
 	{
 		super.update();
+		#if flash
+		dirty = false;
+		#end
 		// Modified from updateAnimation() in FlxSprite
 		if (_animation != null && _animation.delay > 0) 
 		{
@@ -130,10 +133,11 @@ class FlxTileSpecial extends FlxBasic
 			{
 				_currAnimParam = _animation.framesData[_currFrame];
 			}
+			
+			#if flash
+			dirty = !(_currFrame == _lastFrame);
+			#end
 		}
-		#if flash
-		dirty = !(_currFrame == _lastFrame);
-		#end
 	}
 	
 	public inline function isSpecial():Bool 
@@ -177,6 +181,7 @@ class FlxTileSpecial extends FlxBasic
 			
 			_normalFrame.copyPixels(bitmap, rect, _point, null, null, true);
 			_flippedFrame.draw(_normalFrame, getMatrix(width, height));
+			dirty = true;
 		}
 		
 		return _flippedFrame;
