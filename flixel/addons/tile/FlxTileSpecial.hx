@@ -4,7 +4,6 @@ import flash.display.BitmapData;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flixel.addons.system.FlxAnimExt;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.util.FlxAngle;
@@ -39,7 +38,7 @@ class FlxTileSpecial extends FlxBasic
 	private var _matrix:Matrix;
 	
 	// Animation stuff
-	private var _animation:FlxAnimExt;
+	private var _animation:FlxTileAnimation;
 	private var _currFrame:Int = 0;
 	private var _lastFrame:Int = -1;
 	private var _currTileId:Int;
@@ -215,7 +214,7 @@ class FlxTileSpecial extends FlxBasic
 	 */
 	public function addAnimation(tiles:Array<Int>, frameRate:Float = 30, ?framesData:Array<AnimParams>):Void 
 	{
-		_animation = new FlxAnimExt("tileAnim", tiles, frameRate, true, framesData);
+		_animation = new FlxTileAnimation("tileAnim", tiles, frameRate, true, framesData);
 	}
 	
 	/**
