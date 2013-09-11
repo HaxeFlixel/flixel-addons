@@ -223,7 +223,7 @@ class FlxTilemapExt extends FlxTilemap
 						{
 							Buffer.pixels.copyPixels(
 								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, _cachedGraphics.bitmap),
-								special.getBitmapDataRect(),
+								special.tileRect,
 								_flashPoint, _flashAlpha, _flashAlphaPoint, true);
 							
 							Buffer.dirty = (special.dirty || Buffer.dirty);

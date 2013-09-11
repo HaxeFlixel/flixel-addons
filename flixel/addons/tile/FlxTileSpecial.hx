@@ -33,6 +33,8 @@ class FlxTileSpecial extends FlxBasic
 	private var _normalFrame:BitmapData;
 	private var _flippedFrame:BitmapData;
 	private var _point:Point;
+	
+	public var tileRect:Rectangle;
 	#end
 	
 	private var _matrix:Matrix;
@@ -65,7 +67,7 @@ class FlxTileSpecial extends FlxBasic
 		this._point = new Point(0, 0);
 		
 		_animRects = null;
-		
+		tileRect = new Rectangle();
 		#end
 		
 		this._matrix = new Matrix();
@@ -91,6 +93,7 @@ class FlxTileSpecial extends FlxBasic
 		
 		_point = null;
 		_animRects = null;
+		tileRect = null;
 		#end
 		
 		if (_animation != null)
@@ -171,8 +174,11 @@ class FlxTileSpecial extends FlxBasic
 
 		if (generateFlipped || dirty) 
 		{
-			_normalFrame.fillRect(_normalFrame.rect, FlxColor.TRANSPARENT);
-			_flippedFrame.fillRect(_flippedFrame.rect, FlxColor.TRANSPARENT);
+			tileRect.width = width;
+			tileRect.height = height;
+			
+			_normalFrame.fillRect(tileRect, FlxColor.TRANSPARENT);
+			_flippedFrame.fillRect(tileRect, FlxColor.TRANSPARENT);
 			
 			if (_animRects != null && _animRects[_currFrame] != null) 
 			{
@@ -185,18 +191,6 @@ class FlxTileSpecial extends FlxBasic
 		}
 		
 		return _flippedFrame;
-	}
-	
-	public function getBitmapDataRect():Rectangle 
-	{
-		if (_flippedFrame == null) 
-		{
-			throw "There is no flipped frame D: D: D:!!!";
-		}
-		else 
-		{
-			return _flippedFrame.rect;
-		}
 	}
 	
 	/**
