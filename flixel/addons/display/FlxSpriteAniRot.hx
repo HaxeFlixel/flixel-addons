@@ -39,8 +39,8 @@ class FlxSpriteAniRot extends FlxSprite
 		{
 			// Create the rotation spritesheet for that frame
 			loadRotatedGraphic(AnimatedGraphic, Rotations, i, true, false);
-			cached.push(_cachedGraphics);
-			framesCache.push(_framesData);
+			cached.push(cachedGraphics);
+			framesCache.push(framesData);
 		}
 		bakedRotation = 0;
 	}
@@ -53,8 +53,10 @@ class FlxSpriteAniRot extends FlxSprite
 		super.destroy();
 	}
 	
-	override private function updateAnimation():Void 
+	override public function update():Void 
 	{
+		super.update();
+		
 		var oldIndex:Int = angleIndex;
 		var angleHelper:Int = Math.floor(angle % 360);
 		
@@ -70,14 +72,12 @@ class FlxSpriteAniRot extends FlxSprite
 		{
 			dirty = true;
 		}
-		
-		super.updateAnimation();
 	}
 
 	override private function calcFrame():Void 
 	{
-		_cachedGraphics = cached[_curIndex];
-		_flxFrame = framesCache[_curIndex].frames[angleIndex];
+		cachedGraphics = cached[animation.frameIndex];
+		frame = framesCache[animation.frameIndex].frames[angleIndex];
 		super.calcFrame();
 	}
 }
