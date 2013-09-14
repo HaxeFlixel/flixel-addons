@@ -222,7 +222,7 @@ class FlxTilemapExt extends FlxTilemap
 						if (isSpecial) 
 						{
 							Buffer.pixels.copyPixels(
-								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, _cachedGraphics.bitmap),
+								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, cachedGraphics.bitmap),
 								special.tileRect,
 								_flashPoint, _flashAlpha, _flashAlphaPoint, true);
 							
@@ -232,7 +232,7 @@ class FlxTilemapExt extends FlxTilemap
 					
 					if (!isSpecial) 
 					{
-						Buffer.pixels.copyPixels(_cachedGraphics.bitmap, _flashRect, _flashPoint, _flashAlpha, _flashAlphaPoint, true);
+						Buffer.pixels.copyPixels(cachedGraphics.bitmap, _flashRect, _flashPoint, _flashAlpha, _flashAlphaPoint, true);
 					} 
 					else 
 					{
@@ -392,16 +392,16 @@ class FlxTilemapExt extends FlxTilemap
 		var tile:FlxTile = _tileObjects[id];
 		if (tile != null) 
 		{
-			var rx:Int = (id - _startingIndex) * (_tileWidth + _region.spacingX);
+			var rx:Int = (id - _startingIndex) * (_tileWidth + region.spacingX);
 			var ry:Int = 0;
 		
-			if (Std.int(rx) >= _region.width)
+			if (Std.int(rx) >= region.width)
 			{
-				ry = Std.int(rx / _region.width) * (_tileHeight + _region.spacingY);
-				rx %= _region.width;
+				ry = Std.int(rx / region.width) * (_tileHeight + region.spacingY);
+				rx %= region.width;
 			}
 			
-			return new Rectangle(rx + _region.startX, ry + _region.startY, _tileWidth, _tileHeight);
+			return new Rectangle(rx + region.startX, ry + region.startY, _tileWidth, _tileHeight);
 		}
 		return null;
 	}
