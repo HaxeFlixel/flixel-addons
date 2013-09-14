@@ -154,9 +154,9 @@ class FlxTilemapExt extends FlxTilemap
 		var drawY:Float;
 		
 		#if !js
-		var drawItem:DrawStackItem = Camera.getDrawStackItem(_cachedGraphics, false, 0);
+		var drawItem:DrawStackItem = Camera.getDrawStackItem(cachedGraphics, false, 0);
 		#else
-		var drawItem:DrawStackItem = Camera.getDrawStackItem(_cachedGraphics, false);
+		var drawItem:DrawStackItem = Camera.getDrawStackItem(cachedGraphics, false);
 		#end
 		var currDrawData:Array<Float> = drawItem.drawData;
 		var currIndex:Int = drawItem.position;
