@@ -81,11 +81,8 @@ class TiledLayer
 			
 			if (compressed)
 			{
-				#if js
-				// FIXME: Zlib doesn't exists in js so it won't work
-				throw "HTML5 doesn't support compressed data!";
-				//untyped __js__('var inflated = new Zlib.Inflate(chunk)'); 
-				//result = untyped __js__('inflated.decompress()');
+				#if (js && !format)
+				throw "HTML5 doesn't support compressed data! Use Base64 (uncompressed) when you save the map or install the library 'format' and use it";
 				#else
 				result.uncompress();
 				#end
