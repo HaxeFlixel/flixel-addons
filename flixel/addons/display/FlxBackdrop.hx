@@ -45,21 +45,21 @@ class FlxBackdrop extends FlxObject
 	{
 		super();
 		
-		setCachedGraphics(FlxG.bitmap.add(Graphic));
+		cachedGraphics = FlxG.bitmap.add(Graphic);
 		
 		if (!Std.is(Graphic, TextureRegion))
 		{
-			_region = new Region(0, 0, _cachedGraphics.bitmap.width, _cachedGraphics.bitmap.height);
-			_region.width = _cachedGraphics.bitmap.width;
-			_region.height = _cachedGraphics.bitmap.height;
+			region = new Region(0, 0, cachedGraphics.bitmap.width, cachedGraphics.bitmap.height);
+			region.width = cachedGraphics.bitmap.width;
+			region.height = cachedGraphics.bitmap.height;
 		}
 		else
 		{
-			_region = cast(Graphic, TextureRegion).region.clone();
+			region = cast(Graphic, TextureRegion).region.clone();
 		}
 		
-		var w:Int = _region.width;
-		var h:Int = _region.height;
+		var w:Int = region.width;
+		var h:Int = region.height;
 		
 		if (RepeatX) 
 		{
@@ -74,9 +74,9 @@ class FlxBackdrop extends FlxObject
 		_data = new BitmapData(w, h);
 		#end
 		_ppoint = new Point();
-
-		_scrollW = _region.width;
-		_scrollH = _region.height;
+		
+		_scrollW = region.width;
+		_scrollH = region.height;
 		_repeatX = RepeatX;
 		_repeatY = RepeatY;
 		
@@ -84,24 +84,24 @@ class FlxBackdrop extends FlxObject
 		_tileInfo = [];
 		_numTiles = 0;
 		#else
-		var regionRect:Rectangle = new Rectangle(_region.startX, _region.startY, _region.width, _region.height);
+		var regionRect:Rectangle = new Rectangle(region.startX, region.startY, region.width, region.height);
 		#end
 		
-		while (_ppoint.y < h + _region.height)
+		while (_ppoint.y < h + region.height)
 		{
-			while (_ppoint.x < w + _region.width)
+			while (_ppoint.x < w + region.width)
 			{
 				#if flash
-				_data.copyPixels(_cachedGraphics.bitmap, regionRect, _ppoint);
+				_data.copyPixels(cachedGraphics.bitmap, regionRect, _ppoint);
 				#else
 				_tileInfo.push(_ppoint.x);
 				_tileInfo.push(_ppoint.y);
 				_numTiles++;
 				#end
-				_ppoint.x += _region.width;
+				_ppoint.x += region.width;
 			}
 			_ppoint.x = 0;
-			_ppoint.y += _region.height;
+			_ppoint.y += region.height;
 		}
 		
 		scrollFactor.x = ScrollX;
@@ -170,7 +170,7 @@ class FlxBackdrop extends FlxObject
 			#if flash
 			camera.buffer.copyPixels(_data, _data.rect, _ppoint, null, null, true);
 			#else
-			if (_cachedGraphics == null)
+			if (cachedGraphics == null)
 			{
 				return;
 			}
@@ -178,9 +178,9 @@ class FlxBackdrop extends FlxObject
 			var currDrawData:Array<Float>;
 			var currIndex:Int;
 			#if !js
-			var drawItem:DrawStackItem = camera.getDrawStackItem(_cachedGraphics, false, 0);
+			var drawItem:DrawStackItem = camera.getDrawStackItem(cachedGraphics, false, 0);
 			#else
-			var drawItem:DrawStackItem = camera.getDrawStackItem(_cachedGraphics, false);
+			var drawItem:DrawStackItem = camera.getDrawStackItem(cachedGraphics, false);
 			#end
 			
 			currDrawData = drawItem.drawData;
@@ -220,12 +220,12 @@ class FlxBackdrop extends FlxObject
 		}
 	}
 	
-	override public function updateFrameData():Void
+	public function updateFrameData():Void
 	{
 		#if !flash
-		if (_cachedGraphics != null)
+		if (cachedGraphics != null)
 		{
-			_tileID = _cachedGraphics.tilesheet.addTileRect(new Rectangle(_region.startX, _region.startY, _scrollW, _scrollH), new Point());
+			_tileID = cachedGraphics.tilesheet.addTileRect(new Rectangle(region.startX, region.startY, _scrollW, _scrollH), new Point());
 		}
 		#end
 	}
