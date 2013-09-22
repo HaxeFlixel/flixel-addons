@@ -16,7 +16,7 @@ import flixel.util.FlxPoint;
  */
 class FlxSkewedSprite extends FlxSprite
 {
-	public var skew:FlxPoint;
+	public var skew:IFlxPoint;
 	
 	private var _skewMatrix:Matrix;
 	
@@ -91,10 +91,10 @@ class FlxSkewedSprite extends FlxSprite
 			
 		#if !flash
 			#if !js
-			drawItem = camera.getDrawStackItem(_cachedGraphics, isColored, _blendInt, antialiasing);
+			drawItem = camera.getDrawStackItem(cachedGraphics, isColored, _blendInt, antialiasing);
 			#else
 			var useAlpha:Bool = (alpha < 1);
-			drawItem = camera.getDrawStackItem(_cachedGraphics, useAlpha);
+			drawItem = camera.getDrawStackItem(cachedGraphics, useAlpha);
 			#end
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
@@ -208,7 +208,7 @@ class FlxSkewedSprite extends FlxSprite
 			
 			currDrawData[currIndex++] = _point.x - x2;
 			currDrawData[currIndex++] = _point.y - y2;
-			currDrawData[currIndex++] = _flxFrame.tileID;
+			currDrawData[currIndex++] = frame.tileID;
 			
 			currDrawData[currIndex++] = csx;
 			currDrawData[currIndex++] = ssy;
