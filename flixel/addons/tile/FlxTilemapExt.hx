@@ -103,7 +103,10 @@ class FlxTilemapExt extends FlxTilemap
 		{
 			for (t in _specialTiles) 
 			{
-				t.destroy();
+				if (t != null)
+				{
+					t.destroy();
+				}
 			}
 		}
 		_specialTiles = null;
