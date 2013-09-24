@@ -125,6 +125,9 @@ class FlxBitmapFont extends FlxSprite
 	private var _charsInFont:String;
 	private var _textWidth:Int;
 	private var _textHeight:Int;
+
+    public var characterWidth(default, null):UInt;
+    public var characterHeight(default, null):UInt;
 	
 	/**
 	 * Loads 'font' and prepares it for use by future calls to .text
@@ -149,6 +152,9 @@ class FlxBitmapFont extends FlxSprite
 		// Take a copy of the font for internal use
 		setFontGraphics(FlxG.bitmap.add(Font));
 		
+        characterWidth = CharacterWidth;
+        characterHeight = CharacterHeight;
+
 		if (!Std.is(Font, TextureRegion))
 		{
 			_fontRegion = new Region(OffsetX, OffsetY, CharacterWidth, CharacterHeight, SpacingX, SpacingY);
