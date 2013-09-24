@@ -596,7 +596,7 @@ class FlxBitmapFont extends FlxSprite
 		}
 		
 		#if flash
-		var key:String = _cachedGraphics.key;
+		var key:String = cachedGraphics.key;
 		FlxG.bitmap.remove(key);
 		pixels = temp;
 		#else
