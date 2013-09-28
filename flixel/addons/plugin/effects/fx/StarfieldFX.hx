@@ -372,10 +372,10 @@ private class StarSprite extends FlxSprite
 		super(X, Y);
 		
 		bakedRotation = 0;
-		_cachedGraphics = FlxG.bitmap.whitePixel;
-		_region = new Region(0, 0, 1, 1);
-		_region.width = _cachedGraphics.bitmap.width;
-		_region.height = _cachedGraphics.bitmap.height;
+		cachedGraphics = FlxG.bitmap.whitePixel;
+		region = new Region(0, 0, 1, 1);
+		region.width = cachedGraphics.bitmap.width;
+		region.height = cachedGraphics.bitmap.height;
 		updateFrameData();
 		
 		setBackgroundColor(bgColor);
@@ -437,9 +437,9 @@ private class StarSprite extends FlxSprite
 			}
 			
 			#if !js
-			drawItem = camera.getDrawStackItem(_cachedGraphics, true, _blendInt, antialiasing);
+			drawItem = camera.getDrawStackItem(cachedGraphics, true, _blendInt, antialiasing);
 			#else
-			drawItem = camera.getDrawStackItem(_cachedGraphics, true);
+			drawItem = camera.getDrawStackItem(cachedGraphics, true);
 			#end
 			
 			currDrawData = drawItem.drawData;
@@ -487,7 +487,7 @@ private class StarSprite extends FlxSprite
 			currDrawData[currIndex++] = _point.x;
 			currDrawData[currIndex++] = _point.y;
 			
-			currDrawData[currIndex++] = _flxFrame.tileID;
+			currDrawData[currIndex++] = frame.tileID;
 			
 			currDrawData[currIndex++] = csx * width;
 			currDrawData[currIndex++] = ssx * width;
@@ -516,7 +516,7 @@ private class StarSprite extends FlxSprite
 				currDrawData[currIndex++] = _point.x + relativeX + x1;
 				currDrawData[currIndex++] = _point.y + relativeY + y1;
 				
-				currDrawData[currIndex++] = _flxFrame.tileID;
+				currDrawData[currIndex++] = frame.tileID;
 				
 				currDrawData[currIndex++] = csx;
 				currDrawData[currIndex++] = ssx;
@@ -549,17 +549,6 @@ private class StarSprite extends FlxSprite
 			FlxBasic._VISIBLECOUNT++;
 			#end
 		}
-	}
-	
-	override public function updateFrameData():Void
-	{
-		if (_cachedGraphics == null)
-		{
-			return;
-		}
-		
-		_framesData = _cachedGraphics.tilesheet.getSpriteSheetFrames(_region, null);
-		_flxFrame = _framesData.frames[0];
 	}
 }
 
