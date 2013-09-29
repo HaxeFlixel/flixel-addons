@@ -18,6 +18,8 @@ import flixel.FlxBasic;
 /**
  * Creates a 2D or 3D Star Field effect on an FlxSprite for use in your game.
  * 
+ * //todo Neko target is unsupported, possible issue with tilesize
+ *
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
