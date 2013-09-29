@@ -82,15 +82,15 @@ class TiledLayer
 			
 			if (compressed)
 			{
-				#if js
-				untyped __js__('var inflated = new Zlib.Inflate($chunk)'); 
-				result = untyped __js__('inflated.DECOMPRESS()');
+				#if (js && !format)
+				throw "HTML5 doesn't support compressed data! Use Base64 (uncompressed) when you save the map or install the library 'format' and use it";
 				#else
 				result.uncompress();
 				#end
 			}
 		}
-		
+		// Compressed or uncompressed, the endian must be little endian
+		result.endian = Endian.LITTLE_ENDIAN;
 		return result;
 	}
 	
