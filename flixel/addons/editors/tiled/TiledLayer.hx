@@ -67,6 +67,7 @@ class TiledLayer
 			var compressed:Bool = false;
 			
 			result = base64ToByteArray(chunk);
+			result.endian = Endian.LITTLE_ENDIAN;
 			
 			if (_xmlData.has.compression)
 			{
@@ -87,7 +88,6 @@ class TiledLayer
 				#else
 				result.uncompress();
 				#end
-				result.endian = Endian.LITTLE_ENDIAN;
 			}
 		}
 		
