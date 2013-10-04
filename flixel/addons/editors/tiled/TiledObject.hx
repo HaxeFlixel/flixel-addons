@@ -1,10 +1,10 @@
 package flixel.addons.editors.tiled;
 
-import flixel.util.FlxPoint;
 import haxe.xml.Fast;
+import flixel.util.FlxPoint;
 
 /**
- * Copyright (c) 2013 by Samuel Batista
+ * Last modified 10/3/2013 by Samuel Batista
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
  * This content is released under the MIT License.
  */
@@ -25,30 +25,45 @@ class TiledObject
 	public static inline var POLYLINE = 3;
 	public static inline var TILE = 4;
 	
-	public var group:TiledObjectGroup;
-	public var xmlData:Fast;
-	public var name:String;
-	public var type:String;
 	public var x:Int;
 	public var y:Int;
 	public var width:Int;
 	public var height:Int;
+	public var name:String;
+	public var type:String;
+	public var xmlData:Fast;
 	/** 
 	 * In degrees
-	 */ 
-	public var angle:Float; 
+	 */
+	public var angle:Float;
+	/**
+	 * Global identifier for this object
+	 */
 	public var gid:Int;
+	/**
+	 * Custom properties that users can set on this object
+	 */
 	public var custom:TiledPropertySet;
 	/** 
 	 * Shared properties are tileset properties added on object tile
 	 */ 
-	public var shared:TiledPropertySet; 
-	
+	public var shared:TiledPropertySet;
+	/**
+	 * Information on the group or "Layer" that contains this object
+	 */
+	public var group:TiledObjectGroup;
 	/**
 	 * The type of the object (RECTANGLE, ELLIPSE, POLYGON, POLYLINE, TILE)
 	 */
 	public var objectType(default, null):Int;
-	
+	/**
+	 * Whether the object is flipped horizontally.
+	 */
+	public var flippedHorizontally(get, null):Bool;
+	/**
+	 * Whether the object is flipped vertically.
+	 */
+	public var flippedVertically(get, null):Bool;
 	/**
 	 * An array with points if the object is a POLYGON or POLYLINE
 	 */
@@ -121,5 +136,17 @@ class TiledObject
 			pair = p.split(",");
 			points.push(new FlxPoint(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
 		}
+	}
+	
+	/**
+	 * Property accessors
+	 */
+	public function get_flippedHorizontally():Bool
+	{
+		return cast (gid & FLIPPED_HORIZONTALLY_FLAG);
+	}
+	public function get_flippedVertically():Bool
+	{
+		return cast (gid & FLIPPED_VERTICALLY_FLAG);
 	}
 }
