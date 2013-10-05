@@ -41,20 +41,6 @@ class FlxSkewedSprite extends FlxSprite
 		super.destroy();
 	}
 	
-	override private function get_simpleRender():Bool
-	{ 
-		return simpleRenderSkewedSprite();
-	}
-	
-	inline private function simpleRenderSkewedSprite():Bool
-	{
-		#if !flash
-		return (((angle == 0) || (bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
-		#else
-		return (((angle == 0) || (bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && (forceComplexRender == false));
-		#end
-	}
-	
 	override public function draw():Void 
 	{
 		if (dirty)	//rarely 
@@ -115,7 +101,7 @@ class FlxSkewedSprite extends FlxSprite
 		#end
 		
 #if flash
-			if (simpleRenderSkewedSprite())
+			if (simpleRenderSprite())
 			{
 				_flashPoint.x = _point.x;
 				_flashPoint.y = _point.y;
@@ -152,7 +138,7 @@ class FlxSkewedSprite extends FlxSprite
 			
 			var isFlipped:Bool = (flipped != 0) && (facing == FlxObject.LEFT);
 			
-			if (simpleRenderSkewedSprite())
+			if (simpleRenderSprite())
 			{
 				if (isFlipped)
 				{
@@ -236,5 +222,14 @@ class FlxSkewedSprite extends FlxSprite
 			FlxBasic._VISIBLECOUNT++;
 			#end
 		}
+	}
+	
+	private override function simpleRenderSprite():Bool
+	{
+		#if !flash
+		return (((angle == 0) || (bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
+		#else
+		return (((angle == 0) || (bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && (forceComplexRender == false));
+		#end
 	}
 }
