@@ -1,7 +1,7 @@
 package flixel.addons.tile;
 
-import flixel.tile.FlxTilemap;
-import flixel.util.FlxPoint;
+import org.flixel.tile.FlxTilemap;
+import org.flixel.util.FlxPoint;
 
 /**
  * @author greglieberman
@@ -34,72 +34,72 @@ class FlxRayCastTilemap extends FlxTilemap
 	{
 		// Current x, y, in tiles
 		var cx:Float;
-		var cy:Float;	
+		var cy:Float;
 		// Starting tile cell bounds, in pixels
 		var cbx:Float;
-		var cby:Float;   
+		var cby:Float;
 		// Maximum time the ray has traveled so far (not distance!)
 		var tMaxX:Float;
-		var tMaxY:Float;   
+		var tMaxY:Float;
 		// The time that the ray needs to travel to cross a single tile (not distance!)
 		var tDeltaX:Float = 0;
-		var tDeltaY:Float = 0;  
+		var tDeltaY:Float = 0;
 		// Step direction, either 1 or -1
 		var stepX:Float;
-		var stepY:Float;   
+		var stepY:Float;
 		// Bounds of the tileMap where the ray would exit
 		var outX:Float;
-		var outY:Float;   
-		var hitTile:Bool = false;  
+		var outY:Float;
+		var hitTile:Bool = false;
 		var tResult:Float = 0;
-  
+
 		if (Start == null)
 		{
 			return false;
 		}
-  
+
 		if (Result == null)
 		{
 			Result = new FlxPoint();
 		}
-		
+
 		if (Direction == null || (Direction.x == 0 && Direction.y == 0))
 		{
 			// No direction, no ray
 			Result.x = Start.x;
 			Result.y = Start.y;
-			
+
 			return false;
 		}
-		
+
 		// Find the tile at the start position of the ray
 		cx = coordsToTileX(Start.x);
 		cy = coordsToTileY(Start.y);
-		
+
 		if (!inTileRange(cx, cy))
 		{
 			// Outside of the tilemap
 			Result.x = Start.x;
 			Result.y = Start.y;
-			
-			return false;   
+
+			return false;
 		}
-		
+
 		if (getTile(Std.int(cx), Std.int(cy)) > 0)
 		{
 			// start point is inside a block
 			Result.x = Start.x;
 			Result.y = Start.y;
-			
+
 			return true;
 		}
-		
+
 		if (MaxTilesToCheck == -1)
 		{
 			// This number is large enough to guarantee that the ray will pass through the entire tile map
 			MaxTilesToCheck = widthInTiles * heightInTiles;
 		}
-		
+
 		// Determine step direction, and initial starting block
 		if (Direction.x > 0)
 		{
@@ -113,7 +113,7 @@ class FlxRayCastTilemap extends FlxTilemap
 			outX = -1;
 			cbx = x + cx * _tileWidth;
 		}
-		
+
 		if (Direction.y > 0)
 		{
 			stepY = 1;
@@ -126,7 +126,7 @@ class FlxRayCastTilemap extends FlxTilemap
 			outY = -1;
 			cby = y + cy * _tileHeight;
 		}
-		
+
 		// Determine tMaxes and deltas
 		if (Direction.x != 0)
 		{
@@ -137,7 +137,7 @@ class FlxRayCastTilemap extends FlxTilemap
 		{
 			tMaxX = 1000000;
 		}
-		
+
 		if (Direction.y != 0)
 		{
 			tMaxY = (cby - Start.y) / Direction.y;
@@ -147,8 +147,8 @@ class FlxRayCastTilemap extends FlxTilemap
 		{
 			tMaxY = 1000000;
 		}
-		
-		// Step through each block  
+
+		// Step through each block
 		for (tileCount in 0...MaxTilesToCheck)
 		{
 			if (tMaxX < tMaxY)
@@ -159,69 +159,69 @@ class FlxRayCastTilemap extends FlxTilemap
 					hitTile = true;
 					break;
 				}
-				
+
 				if (cx == outX)
 				{
 					hitTile = false;
 					break;
 				}
-				
+
 				tMaxX = tMaxX + tDeltaX;
 			}
 			else
 			{
 				cy = cy + stepY;
-				
+
 				if (getTile(Std.int(cx), Std.int(cy)) > 0)
 				{
 					hitTile = true;
 					break;
 				}
-				
+
 				if (cy == outY)
 				{
 					hitTile = false;
 					break;
 				}
-				
+
 				tMaxY = tMaxY + tDeltaY;
 			}
 		}
-		
+
 		// Result time
 		tResult = (tMaxX < tMaxY) ? tMaxX : tMaxY;
-		
+
 		// Store the result
 		Result.x = Start.x + (Direction.x * tResult);
 		Result.y = Start.y + (Direction.y * tResult);
-		
+
 		if (ResultInTiles != null)
 		{
 			ResultInTiles.x = cx;
 			ResultInTiles.y = cy;
 		}
-		
+
 		return hitTile;
 	}
-   
+
 	public function inTileRange(TileX:Float, TileY:Float):Bool
 	{
 		return (TileX >= 0 && TileX < widthInTiles && TileY >= 0 && TileY < heightInTiles);
 	}
-   
+
 	public function tileAt(CoordX:Float, CoordY:Float):Int
 	{
 		return getTile(Std.int((CoordX - x) / _tileWidth), Std.int((CoordY - y) / _tileHeight));
 	}
-  
+
 	public function tileIndexAt(CoordX:Float, CoordY:Float):Int
 	{
 		var X:Int = Std.int((CoordX - x) / _tileWidth);
 		var Y:Int = Std.int((CoordY - y) / _tileHeight);
-		
+
 		return Y * widthInTiles + X;
 	}
- 
+
 	/**
 	* @param X in tiles
 	* @param Y in tiles
@@ -229,9 +229,9 @@ class FlxRayCastTilemap extends FlxTilemap
 	*/
 	public function getTileIndex(X:Int, Y:Int):Int
 	{
-		return Y * widthInTiles + X;   
+		return Y * widthInTiles + X;
 	}
-   
+
 	public function coordsToTileX(CoordX:Float):Float
 	{
 	return Std.int((CoordX - x) / _tileWidth);

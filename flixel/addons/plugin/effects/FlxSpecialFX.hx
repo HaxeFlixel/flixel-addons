@@ -2,26 +2,26 @@ package flixel.addons.plugin.effects;
 
 import flixel.addons.plugin.effects.fx.BaseFX;
 import flixel.addons.plugin.effects.fx.StarfieldFX;
-import flixel.FlxBasic;
-import flixel.FlxG;
-import flixel.plugin.FlxPlugin;
+import org.flixel.FlxBasic;
+import org.flixel.FlxG;
+import org.flixel.plugin.FlxPlugin;
 import haxe.ds.ObjectMap;
 
 /**
  * FlxSpecialFX is a single point of access to all of the FX Plugins available in the Flixel Power Tools
- * 
+ *
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
 class FlxSpecialFX extends FlxPlugin
 {
 	static private var members:ObjectMap<BaseFX, BaseFX> = new ObjectMap<BaseFX, BaseFX>();
-	
+
 	// THE SPECIAL FX PLUGINS AVAILABLE
-	
+
 	/**
 	 * Creates a Glitch Effect
-	 * 
+	 *
 	 * @return	GlitchFX
 	 */
 	/*public static function glitch():GlitchFX
@@ -30,10 +30,10 @@ class FlxSpecialFX extends FlxPlugin
 		members.set(temp, temp);
 		return temp;
 	}*/
-	
+
 	/**
 	 * Creates a 2D or 3D Starfield Effect
-	 * 
+	 *
 	 * @return	StarfieldFX
 	 */
 	public static function starfield():StarfieldFX
@@ -43,12 +43,12 @@ class FlxSpecialFX extends FlxPlugin
 
 		return temp;
 	}
-	
+
 	//	GLOBAL FUNCTIONS
-	
+
 	/**
 	 * Starts the given FX Plugin running
-	 * 
+	 *
 	 * @param	Effect	A reference to the FX Plugin you wish to run. If null it will start all currently added FX Plugins
 	 */
 	public static function startFX(?Effect:BaseFX):Void
@@ -65,10 +65,10 @@ class FlxSpecialFX extends FlxPlugin
 			}
 		}
 	}
-	
+
 	/**
 	 * Stops the given FX Plugin running
-	 * 
+	 *
 	 * @param	Effect	A reference to the FX Plugin you wish to stop. If null it will stop all currently added FX Plugins
 	 */
 	public static function stopFX(?Effect:BaseFX):Void
@@ -85,10 +85,10 @@ class FlxSpecialFX extends FlxPlugin
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the active state of the given FX Plugin running
-	 * 
+	 *
 	 * @param	Effect	A reference to the FX Plugin you wish to run. If null it will start all currently added FX Plugins
 	 * @return	Boolean	true if the FX Plugin is active, false if not
 	 */
@@ -98,10 +98,10 @@ class FlxSpecialFX extends FlxPlugin
 		{
 			return members.get(Effect).active;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Called automatically by Flixels Plugin handler
 	 */
@@ -111,7 +111,7 @@ class FlxSpecialFX extends FlxPlugin
 		{
 			return;
 		}
-		
+
 		for (obj in members)
 		{
 			if (obj.active)
@@ -120,10 +120,10 @@ class FlxSpecialFX extends FlxPlugin
 			}
 		}
 	}
-	
+
 	/**
 	 * Removes a FX Plugin from the Special FX Handler
-	 * 
+	 *
 	 * @param	Effect	The FX Plugin to remove
 	 * @return	Boolean	true if the plugin was removed, otherwise false.
 	 */
@@ -133,15 +133,15 @@ class FlxSpecialFX extends FlxPlugin
 		{
 			members.get(Effect).destroy();
 			members.remove(Effect);
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
-	 * Removes all FX Plugins. This is called automatically if the plugin is destroyed, 
+	 * Removes all FX Plugins. This is called automatically if the plugin is destroyed,
 	 * but should be called manually by you if you change states.
 	 */
 	public static function clear():Void
@@ -151,7 +151,7 @@ class FlxSpecialFX extends FlxPlugin
 			remove(obj);
 		}
 	}
-	
+
 	/**
 	 * Destroys all FX Plugins currently added and then destroys this instance of the FlxSpecialFX Plugin
 	 */
