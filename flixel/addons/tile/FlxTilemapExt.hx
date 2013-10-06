@@ -6,15 +6,15 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.addons.tile.FlxTilemapExt;
 import flixel.addons.tile.FlxTileSpecial;
-import flixel.FlxCamera;
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.system.layer.DrawStackItem;
-import flixel.tile.FlxTile;
-import flixel.tile.FlxTilemap;
-import flixel.tile.FlxTilemapBuffer;
-import flixel.util.FlxMath;
-import flixel.util.FlxPoint;
+import org.flixel.FlxCamera;
+import org.flixel.FlxG;
+import org.flixel.FlxObject;
+import org.flixel.system.layer.DrawStackItem;
+import org.flixel.tile.FlxTile;
+import org.flixel.tile.FlxTilemap;
+import org.flixel.tile.FlxTilemapBuffer;
+import org.flixel.util.FlxMath;
+import org.flixel.util.FlxPoint;
 
 
 /**
@@ -32,33 +32,33 @@ class FlxTilemapExt extends FlxTilemap
 	inline static public var SLOPE_FLOOR_RIGHT:Int = 1;
 	inline static public var SLOPE_CEIL_LEFT:Int = 2;
 	inline static public var SLOPE_CEIL_RIGHT:Int = 3;
-	
+
 	// Slope related variables
 	private var _snapping:Int = 2;
 	private var _slopePoint:FlxPoint;
 	private var _objPoint:FlxPoint;
-	
+
 	private var _slopeFloorLeft:Array<Int>;
 	private var _slopeFloorRight:Array<Int>;
 	private var _slopeCeilLeft:Array<Int>;
 	private var _slopeCeilRight:Array<Int>;
-	
+
 	// Animated and flipped tiles related variables
 	private var MATRIX:Matrix;
 	private var _specialTiles:Array<FlxTileSpecial>;
-	
+
 	// Alpha stuff
 	#if flash
 	private var _flashAlpha:BitmapData;
 	private var _flashAlphaPoint:Point;
 	#end
 	public var alpha(default, set):Float = 1.0;
-	
-	public function set_alpha(alpha:Float):Float 
+
+	public function set_alpha(alpha:Float):Float
 	{
 		this.alpha = alpha;
 		#if flash
-		if (_tileWidth == 0 || _tileHeight == 0) 
+		if (_tileWidth == 0 || _tileHeight == 0)
 		{
 			throw "You can't set the alpha of the tilemap before loading it";
 		}
@@ -66,42 +66,42 @@ class FlxTilemapExt extends FlxTilemap
 		_flashAlpha = new BitmapData(_tileWidth, _tileHeight, true, alphaCol);
 		_flashAlphaPoint = new Point(0, 0);
 		#end
-		
+
 		return alpha;
 	}
-	
+
 	public function new()
 	{
 		super();
-		
+
 		_slopePoint = new FlxPoint();
 		_objPoint = new FlxPoint();
-		
+
 		_slopeFloorLeft = new Array<Int>();
 		_slopeFloorRight = new Array<Int>();
 		_slopeCeilLeft = new Array<Int>();
 		_slopeCeilRight = new Array<Int>();
-		
+
 		// Flipped/rotated tiles variables
 		_specialTiles = null;
 		MATRIX = new Matrix();
 	}
-	
-	override public function destroy():Void 
+
+	override public function destroy():Void
 	{
 		_slopePoint = null;
 		_objPoint = null;
-		
+
 		_slopeFloorLeft = null;
 		_slopeFloorRight = null;
 		_slopeCeilLeft = null;
 		_slopeCeilRight = null;
-		
+
 		super.destroy();
-		
-		if (_specialTiles != null) 
+
+		if (_specialTiles != null)
 		{
-			for (t in _specialTiles) 
+			for (t in _specialTiles)
 			{
 				if (t != null)
 				{
@@ -111,7 +111,7 @@ class FlxTilemapExt extends FlxTilemap
 		}
 		_specialTiles = null;
 		MATRIX = null;
-		
+
 		#if flash
 		if (_flashAlpha != null)
 		{
@@ -121,41 +121,41 @@ class FlxTilemapExt extends FlxTilemap
 		_flashAlphaPoint = null;
 		#end
 	}
-	
-	override public function update():Void 
+
+	override public function update():Void
 	{
 		super.update();
-		if (_specialTiles != null && _specialTiles.length > 0) 
+		if (_specialTiles != null && _specialTiles.length > 0)
 		{
-			for (t in _specialTiles) 
+			for (t in _specialTiles)
 			{
-				if (t != null && t.hasAnimation()) 
+				if (t != null && t.hasAnimation())
 				{
 					t.update();
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * THIS IS A COPY FROM <code>FlxTilemap</code> BUT IT DEALS WITH FLIPPED AND ROTATED TILES
 	 * Internal function that actually renders the tilemap to the tilemap buffer.  Called by draw().
 	 * @param	Buffer		The <code>FlxTilemapBuffer</code> you are rendering to.
 	 * @param	Camera		The related <code>FlxCamera</code>, mainly for scroll values.
 	 */
-	override private function drawTilemap(Buffer:FlxTilemapBuffer, Camera:FlxCamera):Void 
+	override private function drawTilemap(Buffer:FlxTilemapBuffer, Camera:FlxCamera):Void
 	{
 		#if flash
 		Buffer.fill();
 		#else
-		
+
 		_helperPoint.x = x - Camera.scroll.x * scrollFactor.x; //copied from getScreenXY()
 		_helperPoint.y = y - Camera.scroll.y * scrollFactor.y;
-		
+
 		var tileID:Int;
 		var drawX:Float;
 		var drawY:Float;
-		
+
 		#if !js
 		var drawItem:DrawStackItem = Camera.getDrawStackItem(cachedGraphics, false, 0);
 		#else
@@ -164,7 +164,7 @@ class FlxTilemapExt extends FlxTilemap
 		var currDrawData:Array<Float> = drawItem.drawData;
 		var currIndex:Int = drawItem.position;
 		#end
-		
+
 		// Copy tile images into the tile buffer
 		_point.x = (Camera.scroll.x * scrollFactor.x) - x; //modified from getScreenXY()
 		_point.y = (Camera.scroll.y * scrollFactor.y) - y;
@@ -172,7 +172,7 @@ class FlxTilemapExt extends FlxTilemap
 		var screenYInTiles:Int = Math.floor(_point.y / _tileHeight);
 		var screenRows:Int = Buffer.rows;
 		var screenColumns:Int = Buffer.columns;
-		
+
 		// Bound the upper left corner
 		if (screenXInTiles < 0)
 		{
@@ -190,7 +190,7 @@ class FlxTilemapExt extends FlxTilemap
 		{
 			screenYInTiles = heightInTiles - screenRows;
 		}
-		
+
 		var rowIndex:Int = screenYInTiles * widthInTiles + screenXInTiles;
 		_flashPoint.y = 0;
 		var row:Int = 0;
@@ -201,70 +201,70 @@ class FlxTilemapExt extends FlxTilemap
 
 		#if !FLX_NO_DEBUG
 		var debugTile:BitmapData;
-		#end 
-		
+		#end
+
 		var isSpecial = false;
-		
+
 		while (row < screenRows)
 		{
 			columnIndex = rowIndex;
 			column = 0;
 			_flashPoint.x = 0;
-			
+
 			while (column < screenColumns)
 			{
 				#if flash
 				_flashRect = _rects[columnIndex];
-				
+
 				if (_flashRect != null)
 				{
-					if (_specialTiles != null && _specialTiles[columnIndex] != null) 
+					if (_specialTiles != null && _specialTiles[columnIndex] != null)
 					{
 						special = _specialTiles[columnIndex];
 						isSpecial = special.isSpecial();
-						if (isSpecial) 
+						if (isSpecial)
 						{
 							Buffer.pixels.copyPixels(
 								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, cachedGraphics.bitmap),
 								special.tileRect,
 								_flashPoint, _flashAlpha, _flashAlphaPoint, true);
-							
+
 							Buffer.dirty = (special.dirty || Buffer.dirty);
 						}
-					} 
-					
-					if (!isSpecial) 
+					}
+
+					if (!isSpecial)
 					{
 						Buffer.pixels.copyPixels(cachedGraphics.bitmap, _flashRect, _flashPoint, _flashAlpha, _flashAlphaPoint, true);
-					} 
-					else 
+					}
+					else
 					{
 						isSpecial = false;
 					}
-					
+
 					#if !FLX_NO_DEBUG
-					if (FlxG.debugger.visualDebug && !ignoreDrawDebug) 
+					if (FlxG.debugger.visualDebug && !ignoreDrawDebug)
 					{
 						tile = _tileObjects[_data[columnIndex]];
-						
+
 						if (tile != null)
 						{
 							if (tile.allowCollisions <= FlxObject.NONE)
 							{
 								// Blue
-								debugTile = _debugTileNotSolid; 
+								debugTile = _debugTileNotSolid;
 							}
 							else if (tile.allowCollisions != FlxObject.ANY)
 							{
 								// Pink
-								debugTile = _debugTilePartial; 
+								debugTile = _debugTilePartial;
 							}
 							else
 							{
 								// Green
-								debugTile = _debugTileSolid; 
+								debugTile = _debugTileSolid;
 							}
-							
+
 							Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
 						}
 					}
@@ -272,32 +272,32 @@ class FlxTilemapExt extends FlxTilemap
 				}
 				#else
 				tileID = _rectIDs[columnIndex];
-				
+
 				if (tileID != -1)
 				{
-					if (_specialTiles != null) 
+					if (_specialTiles != null)
 					{
 						special = _specialTiles[columnIndex];
-					} 
-					else 
+					}
+					else
 					{
 						special = null;
 					}
-					
+
 					MATRIX.identity();
-					
-					if (special != null && special.isSpecial()) 
+
+					if (special != null && special.isSpecial())
 					{
 						MATRIX = special.getMatrix(_tileWidth, _tileHeight);
 						tileID = special.getCurrentTileId() - _startingIndex;
 					}
-					
+
 					drawX = _helperPoint.x + (columnIndex % widthInTiles) * _tileWidth;
 					drawY = _helperPoint.y + Math.floor(columnIndex / widthInTiles) * _tileHeight;
-					
+
 					drawX += MATRIX.tx;
 					drawY += MATRIX.ty;
-					
+
 					#if !js
 					currDrawData[currIndex++] = Math.floor(drawX) + 0.01;
 					currDrawData[currIndex++] = Math.floor(drawY) + 0.01;
@@ -306,43 +306,43 @@ class FlxTilemapExt extends FlxTilemap
 					currDrawData[currIndex++] = Math.floor(drawY);
 					#end
 					currDrawData[currIndex++] = tileID;
-					
-					
-					currDrawData[currIndex++] = MATRIX.a; 
+
+
+					currDrawData[currIndex++] = MATRIX.a;
 					currDrawData[currIndex++] = MATRIX.b;
 					currDrawData[currIndex++] = MATRIX.c;
-					currDrawData[currIndex++] = MATRIX.d; 
-					
+					currDrawData[currIndex++] = MATRIX.d;
+
 					#if !js
 					// Alpha
-					currDrawData[currIndex++] = alpha; 
+					currDrawData[currIndex++] = alpha;
 					#end
 				}
 				#end
-				
+
 				_flashPoint.x += _tileWidth;
 				column++;
 				columnIndex++;
 			}
-			
+
 			rowIndex += widthInTiles;
 			_flashPoint.y += _tileHeight;
 			row++;
 		}
-		
+
 		#if !flash
 		drawItem.position = currIndex;
 		#end
-		
+
 		Buffer.x = screenXInTiles * _tileWidth;
 		Buffer.y = screenYInTiles * _tileHeight;
 	}
-	
+
 	/**
 	 * Set the special tiles (rotated or flipped)
 	 * @param	tiles	An <code>Array</code> with all the <code>FlxTileSpecial</code>
 	 */
-	public function setSpecialTiles(tiles:Array<FlxTileSpecial>):Void 
+	public function setSpecialTiles(tiles:Array<FlxTileSpecial>):Void
 	{
 		_specialTiles = new Array<FlxTileSpecial>();
 
@@ -350,65 +350,65 @@ class FlxTilemapExt extends FlxTilemap
 		var animIds:Array<Int>;
 		#end
 		var t:FlxTileSpecial;
-		for (i in 0...tiles.length) 
+		for (i in 0...tiles.length)
 		{
 			t = tiles[i];
-			if (t != null && t.isSpecial()) 
+			if (t != null && t.isSpecial())
 			{
 				_specialTiles[i] = t;
-				
+
 				#if flash
 				// Update the tile animRects with the animation
-				if (t.hasAnimation()) 
+				if (t.hasAnimation())
 				{
 					animIds = t.getAnimationTilesId();
-					if (animIds != null) 
+					if (animIds != null)
 					{
 						var rectangles:Array<Rectangle> = new Array<Rectangle>();
 						var rectangle:Rectangle;
-						for (id in animIds) 
+						for (id in animIds)
 						{
 							rectangle = getRectangleFromTileset(id);
-							if (rectangle != null) 
+							if (rectangle != null)
 							{
 								rectangles.push(rectangle);
 							}
 						}
-						if (rectangles.length > 0) 
+						if (rectangles.length > 0)
 						{
 							t.setAnimationRects(rectangles);
 						}
 					}
-				}				
+				}
 				#end
-			} 
-			else 
+			}
+			else
 			{
 				_specialTiles[i] = null;
 			}
 		}
 	}
-	
-	private function getRectangleFromTileset(id:Int):Rectangle 
+
+	private function getRectangleFromTileset(id:Int):Rectangle
 	{
 		// Copied from FlxTilemap updateTile()
 		var tile:FlxTile = _tileObjects[id];
-		if (tile != null) 
+		if (tile != null)
 		{
 			var rx:Int = (id - _startingIndex) * (_tileWidth + region.spacingX);
 			var ry:Int = 0;
-		
+
 			if (Std.int(rx) >= region.width)
 			{
 				ry = Std.int(rx / region.width) * (_tileHeight + region.spacingY);
 				rx %= region.width;
 			}
-			
+
 			return new Rectangle(rx + region.startX, ry + region.startY, _tileWidth, _tileHeight);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * THIS IS A COPY FROM <code>FlxTilemap</code>
 	 * I've only swapped lines 386 and 387 to give DrawTilemap() a chance to set the buffer dirty
@@ -421,53 +421,53 @@ class FlxTilemapExt extends FlxTilemap
 		{
 			cameras = FlxG.cameras.list;
 		}
-		
+
 		var camera:FlxCamera;
 		var buffer:FlxTilemapBuffer;
 		var i:Int = 0;
 		var l:Int = cameras.length;
-		
+
 		while (i < l)
 		{
 			camera = cameras[i];
-			
+
 			if (!camera.visible || !camera.exists)
 			{
 				continue;
 			}
-			
+
 			if (_buffers[i] == null)
 			{
 				_buffers[i] = new FlxTilemapBuffer(_tileWidth, _tileHeight, widthInTiles, heightInTiles, camera);
 				_buffers[i].forceComplexRender = forceComplexRender;
 			}
-			
+
 			buffer = _buffers[i++];
-			
+
 			#if flash
 			if (!buffer.dirty)
 			{
 				// Copied from getScreenXY()
-				_point.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
+				_point.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x;
 				_point.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
 				buffer.dirty = (_point.x > 0) || (_point.y > 0) || (_point.x + buffer.width < camera.width) || (_point.y + buffer.height < camera.height);
 			}
-			
+
 			if (buffer.dirty)
 			{
 				buffer.dirty = false;
 				drawTilemap(buffer, camera);
 			}
-			
+
 			// Copied from getScreenXY()
-			_flashPoint.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
+			_flashPoint.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x;
 			_flashPoint.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
 			buffer.draw(camera, _flashPoint);
-			
+
 			#else
 			drawTilemap(buffer, camera);
 			#end
-			
+
 			#if !FLX_NO_DEBUG
 			FlxBasic._VISIBLECOUNT++;
 			#end
@@ -490,22 +490,22 @@ class FlxTilemapExt extends FlxTilemap
 	override public function overlapsWithCallback(Object:FlxObject, ?Callback:FlxObject->FlxObject->Bool, FlipCallbackParams:Bool = false, ?Position:FlxPoint):Bool
 	{
 		var results:Bool = false;
-		
+
 		var X:Float = x;
 		var Y:Float = y;
-		
+
 		if (Position != null)
 		{
 			X = Position.x;
 			Y = Position.y;
 		}
-		
+
 		//Figure out what tiles we need to check against
 		var selectionX:Int = Math.floor((Object.x - X) / _tileWidth);
 		var selectionY:Int = Math.floor((Object.y - Y) / _tileHeight);
 		var selectionWidth:Int = selectionX + (Math.ceil(Object.width / _tileWidth)) + 1;
 		var selectionHeight:Int = selectionY + Math.ceil(Object.height / _tileHeight) + 1;
-		
+
 		//Then bound these coordinates by the map edges
 		if (selectionX < 0)
 		{
@@ -523,7 +523,7 @@ class FlxTilemapExt extends FlxTilemap
 		{
 			selectionHeight = heightInTiles;
 		}
-		
+
 		// Then loop through this selection of tiles and call FlxObject.separate() accordingly
 		var rowStart:Int = selectionY * widthInTiles;
 		var row:Int = selectionY;
@@ -532,23 +532,23 @@ class FlxTilemapExt extends FlxTilemap
 		var overlapFound:Bool;
 		var deltaX:Float = X - last.x;
 		var deltaY:Float = Y - last.y;
-		
+
 		while (row < selectionHeight)
 		{
 			column = selectionX;
-			
+
 			while (column < selectionWidth)
 			{
 				overlapFound = false;
 				tile = _tileObjects[_data[rowStart + column]];
-				
+
 				if (tile.allowCollisions != 0)
 				{
 					tile.x = X + column * _tileWidth;
 					tile.y = Y + row * _tileHeight;
 					tile.last.x = tile.x - deltaX;
 					tile.last.y = tile.y - deltaY;
-					
+
 					if (Callback != null)
 					{
 						if (FlipCallbackParams)
@@ -564,13 +564,13 @@ class FlxTilemapExt extends FlxTilemap
 					{
 						overlapFound = (Object.x + Object.width > tile.x) && (Object.x < tile.x + tile.width) && (Object.y + Object.height > tile.y) && (Object.y < tile.y + tile.height);
 					}
-					
+
 					// Solve slope collisions if no overlap was found
 					/*
 					if (overlapFound
 						|| (!overlapFound && (tile.index == SLOPE_FLOOR_LEFT || tile.index == SLOPE_FLOOR_RIGHT || tile.index == SLOPE_CEIL_LEFT || tile.index == SLOPE_CEIL_RIGHT)))
 					*/
-					
+
 					// New generalized slope collisions
 					if (overlapFound || (!overlapFound && checkArrays(tile.index)))
 					{
@@ -589,17 +589,17 @@ class FlxTilemapExt extends FlxTilemap
 				}
 				column++;
 			}
-			
+
 			rowStart += widthInTiles;
 			row++;
 		}
-		
+
 		return results;
 	}
-	
+
 	/**
 	 * Sets the tiles that are treated as "clouds" or blocks that are only solid from the top.
-	 * 
+	 *
 	 * @param 	Clouds	An array containing the numbers of the tiles to be treated as clouds.
 	 */
 	public function setClouds(?Clouds:Array<Int>):Void
@@ -608,14 +608,14 @@ class FlxTilemapExt extends FlxTilemap
 		{
 			for (i in 0...(Clouds.length))
 			{
-				setTileProperties(Clouds[i], FlxObject.CEILING);			
+				setTileProperties(Clouds[i], FlxObject.CEILING);
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the slope arrays, which define which tiles are treated as slopes.
-	 * 
+	 *
 	 * @param 	LeftFloorSlopes 	An array containing the numbers of the tiles to be treated as left floor slopes.
 	 * @param 	RightFloorSlopes	An array containing the numbers of the tiles to be treated as right floor slopes.
 	 * @param 	LeftCeilSlopes		An array containing the numbers of the tiles to be treated as left ceiling slopes.
@@ -639,13 +639,13 @@ class FlxTilemapExt extends FlxTilemap
 		{
 			_slopeCeilRight = RightCeilSlopes;
 		}
-		
+
 		setSlopeProperties();
 	}
-	
+
 	/**
 	 * Bounds the slope point to the slope
-	 * 
+	 *
 	 * @param 	Slope 	The slope to fix the slopePoint for
 	 */
 	private function fixSlopePoint(Slope:FlxTile):Void
@@ -653,10 +653,10 @@ class FlxTilemapExt extends FlxTilemap
 		_slopePoint.x = FlxMath.bound(_slopePoint.x, Slope.x, Slope.x + _tileWidth);
 		_slopePoint.y = FlxMath.bound(_slopePoint.y, Slope.y, Slope.y + _tileHeight);
 	}
-	
+
 	/**
 	 * Ss called if an object collides with a floor slope
-	 * 
+	 *
 	 * @param 	Slope	The floor slope
 	 * @param	Object 	The object that collides with that slope
 	 */
@@ -664,22 +664,22 @@ class FlxTilemapExt extends FlxTilemap
 	{
 		// Set the object's touching flag
 		Object.touching = FlxObject.FLOOR;
-		
+
 		// Adjust the object's velocity
 		Object.velocity.y = 0;
-		
+
 		// Reposition the object
 		Object.y = _slopePoint.y - Object.height;
-		
-		if (Object.y < Slope.y - Object.height) 
-		{ 
-			Object.y = Slope.y - Object.height; 
+
+		if (Object.y < Slope.y - Object.height)
+		{
+			Object.y = Slope.y - Object.height;
 		}
 	}
-	
+
 	/**
 	 * Is called if an object collides with a ceiling slope
-	 * 
+	 *
 	 * @param 	Slope 	The ceiling slope
 	 * @param 	Object 	The object that collides with that slope
 	 */
@@ -687,22 +687,22 @@ class FlxTilemapExt extends FlxTilemap
 	{
 		// Set the object's touching flag
 		Object.touching = FlxObject.CEILING;
-		
+
 		// Adjust the object's velocity
 		Object.velocity.y = 0;
-		
+
 		// Reposition the object
 		Object.y = _slopePoint.y;
-		
-		if (Object.y > Slope.y + _tileHeight) 
-		{ 
-			Object.y = Slope.y + _tileHeight; 
+
+		if (Object.y > Slope.y + _tileHeight)
+		{
+			Object.y = Slope.y + _tileHeight;
 		}
 	}
-	
+
 	/**
 	 * Solves collision against a left-sided floor slope
-	 * 
+	 *
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Object 	The object that collides with the slope
 	 */
@@ -711,15 +711,15 @@ class FlxTilemapExt extends FlxTilemap
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x + Object.width + _snapping);
 		_objPoint.y = Math.floor(Object.y + Object.height);
-		
+
 		// Calculate position of the point on the slope that the object might overlap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
 		_slopePoint.y = (Slope.y + _tileHeight) - (_slopePoint.x - Slope.x);
-		
+
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
-		
+
 		// Check if the object is inside the slope
 		if (_objPoint.x > Slope.x + _snapping && _objPoint.x < Slope.x + _tileWidth + Object.width + _snapping && _objPoint.y >= _slopePoint.y && _objPoint.y <= Slope.y + _tileHeight)
 		{
@@ -727,10 +727,10 @@ class FlxTilemapExt extends FlxTilemap
 			onCollideFloorSlope(Slope, Object);
 		}
 	}
-	
+
 	/**
 	 * Solves collision against a right-sided floor slope
-	 * 
+	 *
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Object 	The object that collides with the slope
 	 */
@@ -739,15 +739,15 @@ class FlxTilemapExt extends FlxTilemap
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x - _snapping);
 		_objPoint.y = Math.floor(Object.y + Object.height);
-		
+
 		// Calculate position of the point on the slope that the object might overlap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
 		_slopePoint.y = (Slope.y + _tileHeight) - (Slope.x - _slopePoint.x + _tileWidth);
-		
+
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
-		
+
 		// Check if the object is inside the slope
 		if (_objPoint.x > Slope.x - Object.width - _snapping && _objPoint.x < Slope.x + _tileWidth + _snapping && _objPoint.y >= _slopePoint.y && _objPoint.y <= Slope.y + _tileHeight)
 		{
@@ -755,10 +755,10 @@ class FlxTilemapExt extends FlxTilemap
 			onCollideFloorSlope(Slope, Object);
 		}
 	}
-	
+
 	/**
 	 * Solves collision against a left-sided ceiling slope
-	 * 
+	 *
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Obj 	The object that collides with the slope
 	 */
@@ -767,15 +767,15 @@ class FlxTilemapExt extends FlxTilemap
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Obj.x + Obj.width + _snapping);
 		_objPoint.y = Math.ceil(Obj.y);
-		
+
 		// Calculate position of the point on the slope that the object might overlap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
 		_slopePoint.y = (Slope.y) + (_slopePoint.x - Slope.x);
-		
+
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
-		
+
 		// Check if the object is inside the slope
 		if (_objPoint.x > Slope.x + _snapping && _objPoint.x < Slope.x + _tileWidth + Obj.width + _snapping && _objPoint.y <= _slopePoint.y && _objPoint.y >= Slope.y)
 		{
@@ -783,10 +783,10 @@ class FlxTilemapExt extends FlxTilemap
 			onCollideCeilSlope(Slope, Obj);
 		}
 	}
-	
+
 	/**
 	 * Solves collision against a right-sided ceiling slope
-	 * 
+	 *
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Obj 	The object that collides with the slope
 	 */
@@ -795,15 +795,15 @@ class FlxTilemapExt extends FlxTilemap
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Obj.x - _snapping);
 		_objPoint.y = Math.ceil(Obj.y);
-		
+
 		// Calculate position of the point on the slope that the object might overlap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
 		_slopePoint.y = (Slope.y) + (Slope.x - _slopePoint.x + _tileWidth);
-		
+
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
-		
+
 		// Check if the object is inside the slope
 		if (_objPoint.x > Slope.x - Obj.width - _snapping && _objPoint.x < Slope.x + _tileWidth + _snapping && _objPoint.y <= _slopePoint.y && _objPoint.y >= Slope.y)
 		{
@@ -811,7 +811,7 @@ class FlxTilemapExt extends FlxTilemap
 			onCollideCeilSlope(Slope, Obj);
 		}
 	}
-	
+
 	/**
 	 * Internal helper function for setting the tiles currently held in the slope arrays to use slope collision.
 	 * Note that if you remove items from a slope, this function will not unset the slope property.
@@ -820,7 +820,7 @@ class FlxTilemapExt extends FlxTilemap
 	{
 		for (i in 0..._slopeFloorLeft.length)
 		{
-			setTileProperties(_slopeFloorLeft[i], FlxObject.RIGHT | FlxObject.FLOOR, solveCollisionSlopeFloorLeft);			
+			setTileProperties(_slopeFloorLeft[i], FlxObject.RIGHT | FlxObject.FLOOR, solveCollisionSlopeFloorLeft);
 		}
 		for (i in 0..._slopeFloorRight.length)
 		{
@@ -828,17 +828,17 @@ class FlxTilemapExt extends FlxTilemap
 		}
 		for (i in 0..._slopeCeilLeft.length)
 		{
-			setTileProperties(_slopeCeilLeft[i], FlxObject.RIGHT | FlxObject.CEILING, solveCollisionSlopeCeilLeft);			
+			setTileProperties(_slopeCeilLeft[i], FlxObject.RIGHT | FlxObject.CEILING, solveCollisionSlopeCeilLeft);
 		}
 		for (i in 0..._slopeCeilRight.length)
 		{
 			setTileProperties(_slopeCeilRight[i], FlxObject.LEFT | FlxObject.CEILING, solveCollisionSlopeCeilRight);
 		}
 	}
-	
+
 	/**
 	 * Internal helper function for comparing a tile to the slope arrays to see if a tile should be treated as a slope.
-	 * 
+	 *
 	 * @param 	TileIndex	The Tile Index number of the Tile you want to check.
 	 * @return	Returns true if the tile is listed in one of the slope arrays. Otherwise returns false.
 	 */
@@ -850,29 +850,29 @@ class FlxTilemapExt extends FlxTilemap
 			{
 				return true;
 			}
-		}	
+		}
 		for (i in 0..._slopeFloorRight.length)
 		{
 			if (_slopeFloorRight[i] == TileIndex)
 			{
 				return true;
 			}
-		}	
+		}
 		for (i in 0..._slopeCeilLeft.length)
 		{
 			if (_slopeCeilLeft[i] == TileIndex)
 			{
 				return true;
 			}
-		}	
+		}
 		for (i in 0..._slopeCeilRight.length)
 		{
 			if (_slopeCeilRight[i] == TileIndex)
 			{
 				return true;
 			}
-		}	
-		
+		}
+
 		return false;
 	}
 }

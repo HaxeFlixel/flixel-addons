@@ -2,16 +2,16 @@ package flixel.addons.plugin;
 
 #if !FLX_NO_MOUSE
 import flixel.addons.display.FlxExtendedSprite;
-import flixel.FlxBasic;
-import flixel.FlxG;
-import flixel.plugin.FlxPlugin;
-import flixel.util.FlxMath;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRect;
+import org.flixel.FlxBasic;
+import org.flixel.FlxG;
+import org.flixel.plugin.FlxPlugin;
+import org.flixel.util.FlxMath;
+import org.flixel.util.FlxPoint;
+import org.flixel.util.FlxRect;
 
 /**
  * FlxMouseControl
- * 
+ *
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -63,20 +63,20 @@ class FlxMouseControl extends FlxPlugin
 	 * Note that this takes priority over the mouseZone above. If the mouseZone and deadzone are set, the deadzone is used.
 	 */
 	static public var linkToDeadZone:Bool = false;
-	
+
 	/**
 	 * The FlxExtendedSprite that currently has the mouse button pressed on it
 	 */
 	static private var _clickStack:Array<FlxExtendedSprite> = new Array<FlxExtendedSprite>();
 	static private var _clickCoords:FlxPoint;
 	static private var _hasClickTarget:Bool = false;
-	
+
 	static private var _oldX:Int = 0;
 	static private var _oldY:Int = 0;
-	
+
 	/**
 	 * Adds the given FlxExtendedSprite to the stack of potential sprites that were clicked, the stack is then sorted and the final sprite is selected from that
-	 * 
+	 *
 	 * @param	Item	The FlxExtendedSprite that was clicked by the mouse
 	 */
 	static public function addToStack(Item:FlxExtendedSprite):Void
@@ -93,7 +93,7 @@ class FlxMouseControl extends FlxPlugin
 			_clickStack.push(Item);
 		}
 	}
-	
+
 	/**
 	 * Main Update Loop - checks mouse status and updates FlxExtendedSprites accordingly
 	 */
@@ -102,10 +102,10 @@ class FlxMouseControl extends FlxPlugin
 		// Update mouse speed
 		speedX = FlxG.mouse.screenX - _oldX;
 		speedY = FlxG.mouse.screenY - _oldY;
-		
+
 		_oldX = FlxG.mouse.screenX;
 		_oldY = FlxG.mouse.screenY;
-		
+
 		// Is the mouse currently pressed down on a target?
 		if (_hasClickTarget)
 		{
@@ -116,9 +116,9 @@ class FlxMouseControl extends FlxPlugin
 				{
 					// Drag on
 					isDragging = true;
-					
+
 					dragTarget = clickTarget;
-					
+
 					dragTarget.startDrag();
 				}
 			}
@@ -126,7 +126,7 @@ class FlxMouseControl extends FlxPlugin
 			{
 				releaseMouse();
 			}
-			
+
 			if (linkToDeadZone == true)
 			{
 				if (FlxMath.mouseInFlxRect(false, FlxG.camera.deadzone) == false)
@@ -150,7 +150,7 @@ class FlxMouseControl extends FlxPlugin
 			}
 		}
 	}
-	
+
 	/**
 	 * Internal function used to release the click / drag targets and reset the mouse state
 	 */
@@ -158,14 +158,14 @@ class FlxMouseControl extends FlxPlugin
 	{
 		//	Mouse is no longer down, so tell the click target it's free - this will also stop dragging if happening
 		clickTarget.mouseReleasedHandler();
-		
+
 		_hasClickTarget = false;
 		clickTarget = null;
-		
+
 		isDragging = false;
 		dragTarget = null;
 	}
-	
+
 	/**
 	 * Once the clickStack is created this sorts it and then picks the sprite with the highest priority (based on sortIndex and sortOrder)
 	 */
@@ -176,31 +176,31 @@ class FlxMouseControl extends FlxPlugin
 		{
 			_clickStack.sort(sortHandler);
 		}
-		
+
 		clickTarget = _clickStack.pop();
-		
+
 		_clickCoords = clickTarget.point;
-		
+
 		_hasClickTarget = true;
-		
+
 		clickTarget.mousePressedHandler();
-		
+
 		_clickStack = [];
 	}
-	
+
 	/**
 	 * Helper function for the sort process.
-	 * 
+	 *
 	 * @param 	Item1	The first object being sorted.
 	 * @param	Item2	The second object being sorted.
-	 * 
+	 *
 	 * @return	An integer value: -1 (item1 before item2), 0 (same), or 1 (item1 after item2)
 	 */
 	private function sortHandler(Item1:FlxExtendedSprite, Item2:FlxExtendedSprite):Int
 	{
 		var prop1 = Reflect.getProperty(Item1, sortIndex);
 		var prop2 = Reflect.getProperty(Item2, sortIndex);
-		
+
 		if (prop1 < prop2)
 		{
 			return sortOrder;
@@ -209,38 +209,38 @@ class FlxMouseControl extends FlxPlugin
 		{
 			return - sortOrder;
 		}
-		
+
 		return 0;
 	}
-	
+
 	/**
 	 * Removes all references to any click / drag targets and resets this class
 	 */
 	public static function clear():Void
 	{
 		_hasClickTarget = false;
-		
+
 		if (clickTarget != null)
 		{
 			clickTarget.mouseReleasedHandler();
 		}
-		
+
 		clickTarget = null;
-		
+
 		isDragging = false;
-		
+
 		if (dragTarget != null)
 		{
 			dragTarget.stopDrag();
 		}
-		
+
 		speedX = 0;
 		speedY = 0;
 		dragTarget = null;
 		mouseZone = null;
 		linkToDeadZone = false;
 	}
-	
+
 	/**
 	 * Runs when this plugin is destroyed
 	 */
