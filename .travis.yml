@@ -20,7 +20,7 @@ before_script:
   - haxelib install nape
   - haxelib install task
   - haxelib git firetongue https://github.com/larsiusprime/firetongue
-  - haxelib git flixel-addons https://github.com/HaxeFlixel/flixel-addons
+  - haxelib dev flixel-addons .
   - haxelib git flixel-demos https://github.com/HaxeFlixel/flixel-demos
   - haxelib git flixel-tools https://github.com/HaxeFlixel/flixel-tools
   - haxelib git flixel-ui https://github.com/HaxeFlixel/flixel-ui dev
