@@ -333,7 +333,7 @@ class FlxBitmapFont extends FlxSprite
 			var ssx:Float = 0;
 			var csy:Float = 1;
 
-			if (!simpleRender)
+			if (!simpleRenderSprite())
 			{
 				if (_angleChanged)
 				{
@@ -397,7 +397,7 @@ class FlxBitmapFont extends FlxSprite
 		}
 	}
 	
-	override private function get_simpleRender():Bool
+	override private function simpleRenderSprite():Bool
 	{ 
 		return ((angle == 0) && (scale.x == 1) && (scale.y == 1));
 	}
