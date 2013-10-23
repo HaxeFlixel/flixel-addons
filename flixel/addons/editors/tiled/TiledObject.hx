@@ -13,8 +13,9 @@ class TiledObject
 	/**
 	 * Use these to determine whether a sprite should be flipped, for example:
 	 * 
-		 * var flipped:Bool = cast (oject.gid & TiledObject.FLIPPED_HORIZONTALLY_FLAG);
-		 * sprite.facing = flipped ? FlxObject.LEFT : FlxObject.RIGHT;
+	 * var flipped:Bool = cast (oject.gid & TiledObject.FLIPPED_HORIZONTALLY_FLAG);
+	 * sprite.facing = flipped ? FlxObject.LEFT : FlxObject.RIGHT;
+	 * 
 	 */
 	public static inline var FLIPPED_VERTICALLY_FLAG = 0x40000000;
 	public static inline var FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
