@@ -49,9 +49,9 @@ class FlxBullet extends FlxSprite
 	 * @param	FrameRate	The speed in frames per second that the animation should play at (e.g. 40 fps).
 	 * @param	Looped		Whether or not the animation is looped or just plays once.
 	 */
-	override public function addAnimation(Name:String, Frames:Array<Int>, FrameRate:Int = 0, Looped:Bool = true):Void
+	public function addAnimation(Name:String, Frames:Array<Int>, FrameRate:Int = 0, Looped:Bool = true):Void
 	{
-		super.addAnimation(Name, Frames, FrameRate, Looped);
+		animation.add(Name, Frames, FrameRate, Looped);
 		
 		_animated = true;
 	}
