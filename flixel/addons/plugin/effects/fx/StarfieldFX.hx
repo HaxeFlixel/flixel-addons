@@ -76,8 +76,8 @@ class StarfieldFX extends BaseFX
 	public function create(X:Int, Y:Int, Width:Int, Height:Int, Quantity:Int = 200, FieldType:Int = 1, UpdateInterval:Int = 20):FlxSprite
 	{
 		#if flash
-		sprite = new FlxSprite(X, Y).makeGraphic(Width, Height, _backgroundColor);
-		canvas = new BitmapData(Std.int(sprite.width), Std.int(sprite.height), true, _backgroundColor);
+		sprite = new FlxSprite(X, Y).makeGraphic(Width, Height, _backgroundColor, true);
+		canvas = sprite.pixels;
 		#else
 		sprite = new StarSprite(X, Y, Width, Height, _backgroundColor);
 		var starDefs:Array<StarDef> = cast(sprite, StarSprite).starData;
@@ -341,6 +341,7 @@ class StarfieldFX extends BaseFX
 			#if flash
 			canvas.unlock();
 			sprite.pixels = canvas;
+			sprite.resetFrameBitmapDatas();
 			#end
 			
 			if (_updateSpeed > 0)
