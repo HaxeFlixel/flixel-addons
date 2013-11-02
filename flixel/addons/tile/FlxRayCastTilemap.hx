@@ -105,33 +105,33 @@ class FlxRayCastTilemap extends FlxTilemap
 		{
 			stepX = 1;
 			outX = widthInTiles;
-			cbx = x + (cx + 1) * _tileWidth;
+			cbx = x + (cx + 1) * _scaledTileWidth;
 		}
 		else
 		{
 			stepX = -1;
 			outX = -1;
-			cbx = x + cx * _tileWidth;
+			cbx = x + cx * _scaledTileWidth;
 		}
 		
 		if (Direction.y > 0)
 		{
 			stepY = 1;
 			outY = heightInTiles;
-			cby = y + (cy+1) * _tileHeight;
+			cby = y + (cy + 1) * _scaledTileHeight;
 		}
 		else
 		{
 			stepY = -1;
 			outY = -1;
-			cby = y + cy * _tileHeight;
+			cby = y + cy * _scaledTileHeight;
 		}
 		
 		// Determine tMaxes and deltas
 		if (Direction.x != 0)
 		{
 			tMaxX = (cbx - Start.x) / Direction.x;
-			tDeltaX = _tileWidth * stepX / Direction.x;
+			tDeltaX = _scaledTileWidth * stepX / Direction.x;
 		}
 		else
 		{
@@ -141,7 +141,7 @@ class FlxRayCastTilemap extends FlxTilemap
 		if (Direction.y != 0)
 		{
 			tMaxY = (cby - Start.y) / Direction.y;
-			tDeltaY = _tileHeight * stepY / Direction.y;
+			tDeltaY = _scaledTileHeight * stepY / Direction.y;
 		}
 		else
 		{
@@ -211,13 +211,13 @@ class FlxRayCastTilemap extends FlxTilemap
    
 	public function tileAt(CoordX:Float, CoordY:Float):Int
 	{
-		return getTile(Std.int((CoordX - x) / _tileWidth), Std.int((CoordY - y) / _tileHeight));
+		return getTile(Std.int((CoordX - x) / _scaledTileWidth), Std.int((CoordY - y) / _scaledTileHeight));
 	}
   
 	public function tileIndexAt(CoordX:Float, CoordY:Float):Int
 	{
-		var X:Int = Std.int((CoordX - x) / _tileWidth);
-		var Y:Int = Std.int((CoordY - y) / _tileHeight);
+		var X:Int = Std.int((CoordX - x) / _scaledTileWidth);
+		var Y:Int = Std.int((CoordY - y) / _scaledTileHeight);
 		
 		return Y * widthInTiles + X;
 	}
@@ -234,21 +234,21 @@ class FlxRayCastTilemap extends FlxTilemap
    
 	public function coordsToTileX(CoordX:Float):Float
 	{
-	return Std.int((CoordX - x) / _tileWidth);
+		return Std.int((CoordX - x) / _scaledTileWidth);
 	}
 
 	public function coordsToTileY(CoordY:Float):Float
 	{
-		return Std.int((CoordY - y) / _tileHeight);
+		return Std.int((CoordY - y) / _scaledTileHeight);
 	}
 
 	public function indexToCoordX(Index:Int):Float
 	{
-		return (Index % widthInTiles) * _tileWidth + _tileWidth / 2;
+		return (Index % widthInTiles) * _scaledTileWidth + _scaledTileWidth / 2;
 	}
 
 	public function indexToCoordY(Index:Int):Float
 	{
-		return Std.int(Index / widthInTiles) * _tileHeight + _tileHeight / 2;
+		return Std.int(Index / widthInTiles) * _scaledTileHeight + _scaledTileHeight / 2;
 	}
 }
