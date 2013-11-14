@@ -1,3 +1,11 @@
+package flixel.addons.plugin;
+
+import flash.display.BitmapData;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+import flixel.*;
+import flixel.plugin.FlxPlugin;
+import flixel.addons.text.FlxBitmapFont;
 /**
  * FlxScrollingText
  * -- Part of the Flixel Power Tools set
@@ -9,14 +17,6 @@
  * @author Richard Davey / Photon Storm
  * @co-author Ungar Djordje / ArtBIT (HaXe port)
 */
-
-package plugins;
-import flash.display.BitmapData;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flixel.*;
-import flixel.plugin.FlxPlugin;
-import flixel.addons.text.FlxBitmapFont;
 
 class FlxScrollingText extends FlxPlugin
 {

@@ -49,9 +49,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 	 */
 	public var onColor:Array<Int>;
 	
-	public var width:Int;
-	public var height:Int;
-	
 	/**
 	 * Set this to true if you want this button to function even while the game is paused.
 	 */
@@ -180,7 +177,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 	 * @param	Normal		The FlxSprite to use when the button is in-active (not hovered over)
 	 * @param	Highlight	The FlxSprite to use when the button is hovered-over by the mouse
 	 */
-	public function loadGraphic(Normal:FlxSprite, Highlight:FlxSprite):Void
+	public function loadButtonGraphic(Normal:FlxSprite, Highlight:FlxSprite):Void
 	{
 		buttonNormal.pixels = Normal.pixels;
 		buttonHighlight.pixels = Highlight.pixels;
@@ -361,7 +358,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		offColor = Colors;
 		
 		#if flash
-		buttonNormal.stamp(FlxGradient.createGradientFlxSprite(width - 2, height - 2, offColor), 1, 1);
+		buttonNormal.stamp(FlxGradient.createGradientFlxSprite(Std.int(width - 2), Std.int(height - 2), offColor), 1, 1);
 		#else
 		var colA:Int;
 		var colRGB:Int;
@@ -399,7 +396,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		onColor = Colors;
 		
 		#if flash
-		buttonHighlight.stamp(FlxGradient.createGradientFlxSprite(width - 2, height - 2, onColor), 1, 1);
+		buttonHighlight.stamp(FlxGradient.createGradientFlxSprite(Std.int(width - 2), Std.int(height - 2), onColor), 1, 1);
 		#else
 		
 		var colA:Int;

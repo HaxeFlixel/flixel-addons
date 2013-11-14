@@ -245,7 +245,7 @@ class FlxNestedSprite extends FlxSprite
 		
 		wasTouching = touching;
 		touching = FlxObject.NONE;
-		updateAnimation();
+		animation.update();
 		
 		
 		var delta:Float;
