@@ -12,6 +12,7 @@ import flixel.util.FlxMisc;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import flixel.util.FlxVelocity;
+import flixel.system.layer.frames.FlxFrame;
 
 /**
  * A Weapon can only fire 1 type of bullet. But it can fire many of them at once (in different directions if needed) via createBulletPattern
@@ -210,7 +211,7 @@ class FlxWeapon
 			}
 			#else
 			tempBullet.loadGraphic(Image);
-			tempBullet.frame = Frame;
+			tempBullet.animation.frameIndex = Frame;
 			tempBullet.antialiasing = AntiAliasing;
 			#end
 			group.add(tempBullet);

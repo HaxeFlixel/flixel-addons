@@ -182,7 +182,7 @@ class FlxBullet extends FlxSprite
 	{
 		if (_animated)
 		{
-			play("fire");
+			animation.play("fire");
 		}
 		
 		if (_weapon.bulletElasticity > 0)
