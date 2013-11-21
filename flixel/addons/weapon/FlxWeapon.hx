@@ -53,6 +53,17 @@ class FlxWeapon
 	 */
 	public var group:FlxTypedGroup<FlxBullet>;
 	
+	/**
+	 * The bullet class associated with this weapon
+	 */
+	private var bulletType:Class<FlxBullet>;
+	
+	/**
+	 * Optional ID applied to the bullets. Useful for determining 
+	 * what kind of bullet it is in collision functions
+	 */
+	private var bulletID:Int;
+	
 	// Internal variables, use with caution
 	public var nextFire:Int = 0;
 	public var fireRate:Int = 0;
@@ -136,8 +147,10 @@ class FlxWeapon
 	 * 
 	 * @param	Name		The name of your weapon (i.e. "lazer" or "shotgun"). For your internal reference really, but could be displayed in-game.
 	 * @param	ParentRef	If this weapon belongs to a parent sprite, specify it here (bullets will fire from the sprites x/y vars as defined below).
+	 * @param	BulletType	Class of the bullet to be associated with this FlxWeapon, must inherit FlxBullet
+	 * @param	BulletID	An optional ID for the bullet. Can be accessed through FlxBullet.ID
 	 */
-	public function new(Name:String, ?ParentRef:FlxSprite)
+	public function new(Name:String, ?ParentRef:FlxSprite, ?BulletType:Class<FlxBullet>, ?BulletID:Int = 0)
 	{
 		rndFactorPosition = new FlxPoint();
 		bounds = new FlxRect(0, 0, FlxG.width, FlxG.height);
@@ -145,6 +158,12 @@ class FlxWeapon
 		_velocity = new FlxPoint();
 		
 		name = Name;
+		
+		if (BulletType == null)
+			BulletType = FlxBullet;
+			
+		bulletType = BulletType;
+		bulletID = BulletID;
 		
 		if (ParentRef != null)
 		{
@@ -168,7 +187,7 @@ class FlxWeapon
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:FlxBullet = new FlxBullet(this, b);
+			var tempBullet:FlxBullet = Type.createInstance(bulletType, [this, bulletID]);
 			tempBullet.makeGraphic(Width, Height, Color);
 			group.add(tempBullet);
 		}
@@ -198,7 +217,7 @@ class FlxWeapon
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:FlxBullet = new FlxBullet(this, b);
+			var tempBullet:FlxBullet = Type.createInstance(bulletType, [this, bulletID]);
 			
 			#if flash
 			if (AutoRotate)
@@ -240,7 +259,7 @@ class FlxWeapon
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:FlxBullet = new FlxBullet(this, b);
+			var tempBullet:FlxBullet = Type.createInstance(bulletType, [this, bulletID]);
 			
 			tempBullet.loadGraphic(ImageSequence, true, false, FrameWidth, FrameHeight);
 			tempBullet.addAnimation("fire", Frames, FrameRate, Looped);
