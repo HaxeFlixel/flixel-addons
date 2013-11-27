@@ -177,7 +177,7 @@ class FlxBitmapFont extends FlxSprite
 		#end
 	}
 	
-	private function setFontGraphics(value:CachedGraphics):Void
+	public function setFontGraphics(value:CachedGraphics):Void
 	{
 		if (_fontSet != null && _fontSet != value)
 		{
