@@ -1,6 +1,5 @@
 package flixel.addons.display;
 
-#if flash
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -74,11 +73,22 @@ class FlxSpriteAniRot extends FlxSprite
 		}
 	}
 
+	#if flash
 	override private function calcFrame():Void 
+	#else
+	override private function calcFrame(AreYouSure:Bool = false):Void
+	#end
 	{
+		#if !flash
+		// TODO: Maybe remove 'AreYouSure' parameter
+		if (AreYouSure)
+		{
+		#end
 		cachedGraphics = cached[animation.frameIndex];
 		frame = framesCache[animation.frameIndex].frames[angleIndex];
 		super.calcFrame();
+		#if !flash
+		}
+		#end
 	}
 }
-#end
