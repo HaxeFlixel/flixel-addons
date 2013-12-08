@@ -1,6 +1,7 @@
 package flixel.addons.api;
 
 import flash.events.Event;
+import flash.events.IOErrorEvent;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
@@ -12,10 +13,12 @@ import flash.Lib;
 #end
 
 /**
- * Similar to FlxKongregate, this allows access to the GameJolt API. Based on the AS3 version by SumYungGai: http://gamejolt.com/community/forums/topics/as3-trophy-api/305/
+ * Similar to FlxKongregate, this allows access to the GameJolt API. Based on the AS3 version by SumYungGai. Will always return Map<String,String> to callback functions.
  * 
- * @author SumYungGai
- * @author Steve Richey (STVR)
+ * @see 	http://gamejolt.com/community/forums/topics/as3-trophy-api/305/
+ * @see 	http://gamejolt.com/api/doc/game/
+ * @author 	SumYungGai
+ * @author 	Steve Richey (STVR)
  */
 class FlxGameJolt
 {
@@ -34,17 +37,7 @@ class FlxGameJolt
 	 * Trophy data return types. As an alternative to these, can just pass in the ID of the trophy to see if it's unlocked.
 	 */
 	inline static public var TROPHIES_MISSING:Int = -1;
-	inline static public var TROPHIES_ACHIEVED:Int = 0;
-	
-	/**
-	 * A URLLoader object to send data to the GameJolt API.
-	 */
-	private static var _apiLoader:URLLoader = new URLLoader();
-	
-	/**
-	 * An array for storing retrieved data.
-	 */
-	private static var _dataArray:Array = [];
+	inline static public var TROPHIES_ACHIEVED:Int = -2;
 	
 	/**
 	 * Internal storage for a callback function, used when _apiLoader is complete.
@@ -81,25 +74,40 @@ class FlxGameJolt
 	 */
 	private static var _initialized:Bool;
 	
+	public static var initialized(get, null):Bool;
+	
+	private static function get_initialized():Bool
+	{
+		return _initialized;
+	}
+	
 	/**
 	 * Various strings required by the API's HTTP values.
 	 */
 	inline private static var URL_ACHIEVED:String = "&achieved=";
+	inline private static var URL_ACTIVE:String = "&active=";
 	inline private static var URL_ADD:String = "add/";
 	inline private static var URL_API:String = "http://gamejolt.com/api/game/v1/";
+	inline private static var URL_CLOSE:String = "close/";
 	inline private static var URL_DATA_STORE:String = "data-store/";
 	inline private static var URL_DATA:String = "&data=";
-	inline private static var URL_GAME:String = "game_id=";
+	inline private static var URL_EXTRA_DATA:String = "&extra_data=";
+	inline private static var URL_GAME:String = "&game_id=";
+	inline private static var URL_GET_KEYS:String = "get-keys/";
 	inline private static var URL_GUEST:String = "&guest=";
 	inline private static var URL_KEY:String = "&key=";
 	inline private static var URL_LIMIT:String = "&limit=";
-	inline private static var URL_QUERY:String = "?";
+	inline private static var URL_OPEN:String = "open/";
+	inline private static var URL_PING:String = "ping/";
 	inline private static var URL_REMOVE:String = "remove/";
+	inline private static var URL_RETURN_TYPE:String = "?format=keypair";
 	inline private static var URL_SCORE:String = "&score=";
 	inline private static var URL_SCORES:String = "scores/";
+	inline private static var URL_SESSIONS:String = "sessions/";
 	inline private static var URL_SET:String = "set/";
 	inline private static var URL_SIGNATURE:String = "&signature=";
 	inline private static var URL_SORT:String = "&sort=";
+	inline private static var URL_TABLE_ID:String = "&table_id=";
 	inline private static var URL_TIME:String = "&time=";
 	inline private static var URL_TROPHY:String = "trophies/";
 	inline private static var URL_TROPHY_ADD:String = "add-achieved/";
@@ -113,7 +121,7 @@ class FlxGameJolt
 	 * Initialize this class to enable API usage. MUST be called before anything else! Automatically attempts to pull user info and authorize it.
 	 * 
 	 * @param	GameID		The unique game ID associated with this game on GameJolt. You must create a game profile on GameJolt to get this number.
-	 * @param	PrivateKey	Your private key. You must have a developer account on GameJolt to have this number.
+	 * @param	PrivateKey	Your private key. You must have a developer account on GameJolt to have this number. Do NOT store this as plaintext in your game!
 	 * @param 	UserName	This user's name. Not needed for GameJolt-embedded Flash or desktop targets run through QuickPlay. Otherwise, you'll need to set these manually.
 	 * @param 	UserToken	This user's token. Each user's token is a unique string similar to a password, that is used for trophies and achievements.
 	 * @return 	Whether or not user authorization was successful.
@@ -123,16 +131,34 @@ class FlxGameJolt
 		_gameID = GameID;
 		_privateKey = PrivateKey;
 		
-		#if desktop
-		for ( arg in Sys.args() ) {
-            trace( "GameJolt passed arg:" + arg );
+		if ( UserName == null ) {
+			#if desktop
+			for ( arg in Sys.args() ) {
+				var argArray = arg.split( "=" );
+				
+				if ( argArray[0] == "gjapi_username" ) {
+					_userName = argArray[1];
+				}
+				
+				if ( argArray[0] == "gjapi_token" ) {
+					_userToken = argArray[1];
+				}
+			}
+			#elseif flash
+			var parameters = Lib.current.loaderInfo.parameters;
+			
+			if ( parameters.gjapi_username != null ) {
+				_userName = parameters.gjapi_username;
+			}
+			
+			if ( parameters.gjapi_token != null ) {
+				_userToken = parameters.gjapi_token;
+			}
+			#end
+		} else {
+			_userName = UserName;
+			_userToken = UserToken;
 		}
-		#elseif flash
-			trace( "Flashvars: " + Lib.current.loaderInfo.parameters );
-		#end
-		
-		_userName = "test";
-		_userToken = "test";
 		
 		_idURL = URL_GAME + _gameID + URL_USER_NAME + _userName + URL_USER_TOKEN + _userToken;
 		
@@ -147,7 +173,7 @@ class FlxGameJolt
 	 */
 	public static function addTrophyAchieved( TrophyID:Int, ?Callback:Dynamic ):Void
 	{
-		sendLoaderRequest( URL_API + URL_TROPHY + URL_TROPHY_ADD + _idURL + URL_TROPHY_ID + TrophyID, Callback );
+		sendLoaderRequest( URL_API + URL_TROPHY + URL_TROPHY_ADD + URL_RETURN_TYPE + _idURL + URL_TROPHY_ID + TrophyID, Callback );
 	}
 	
 	/**
@@ -156,24 +182,22 @@ class FlxGameJolt
 	 * @param	DataType	Pass either FlxGameJolt.TROPHIES_MISSING or FlxGameJolt.TROPHIES_ACHIEVED to get the trophies this user is missing or already has, respectively.  Or, pass in a trophy ID # to see if this user has that trophy or not.  If unused, will return all trophies.
 	 * @param	?Callback	An optional callback function.
 	 */
-	public static function getTrophyData( ?DataType:Int, ?Callback:Dynamic ):Void
+	public static function getTrophyData( DataType:Int = 0, ?Callback:Dynamic ):Void
 	{
-		_callBack = CallBack;
-		
-		var tempURL:String = URL_API + URL_TROPHY + _idURL;
+		var tempURL:String = URL_API + URL_TROPHY + URL_RETURN_TYPE + _idURL;
 		
 		switch( DataType ) {
-			case null:
-				// do nothing, will retrieve all trophies using just URL above.
+			case 0:
+				// do nothing, will load all trophies
 			case TROPHIES_MISSING:
-				tempURL += URL_ACHIEVED += "false";
+				tempURL += URL_ACHIEVED + "false";
 			case TROPHIES_ACHIEVED:
-				tempURL += URL_ACHIEVED += "true";
+				tempURL += URL_ACHIEVED + "true";
 			default:
 				tempURL += URL_TROPHY_ID + Std.string( DataType );
 		}
 		
-		sendLoaderRequest( tempURL );
+		sendLoaderRequest( tempURL, Callback );
 	}
 	
 	/**
@@ -182,11 +206,9 @@ class FlxGameJolt
 	 * @param	Limit		The maximum number of scores to retrieve. Leave null to retrieve only this user's scores.
 	 * @param	?CallBack	An optional callback function.
 	 */
-	public static function getHighscores( ?Limit:Int, ?CallBack:Dynamic ):Void
+	public static function getHighscores( ?Limit:Int, ?Callback:Dynamic ):Void
 	{
-		_callBack = CallBack;
-		
-		var tempURL = URL_API + URL_SCORES;
+		var tempURL = URL_API + URL_SCORES + URL_RETURN_TYPE;
 		
 		if ( Limit != null ) {
 			tempURL += URL_GAME + _gameID + URL_LIMIT + Limit;
@@ -194,7 +216,7 @@ class FlxGameJolt
 			tempURL += _idURL;
 		}
 		
-		sendLoaderRequest( tempURL );
+		sendLoaderRequest( tempURL, Callback );
 	}
 	
 	/**
@@ -210,7 +232,7 @@ class FlxGameJolt
 	 */
 	public static function setHighscore( Score:String, Sort:Float, AllowGuest:Bool, ?GuestName:String, ?ExtraData:String, ?TableID:Int, ?Callback:Dynamic ):Void
 	{
-		var tempURL = URL_API + URL_SCORES + URL_ADD;
+		var tempURL = URL_API + URL_SCORES + URL_ADD + URL_RETURN_TYPE;
 		
 		// Will still post data if we have a valid game ID but not user data, if AllowGuest is true.
 		
@@ -241,11 +263,15 @@ class FlxGameJolt
 	 */
 	public static function setKeyData( Key:String, Data:String, User:Bool = true, ?Callback:Dynamic ):Void
 	{
+		var tempURL = URL_API + URL_DATA + URL_SET + URL_RETURN_TYPE;
+		
 		if ( User ) {
-			sendLoaderRequest( URL_API + URL_DATA + URL_SET + _idURL + URL_KEY + Key + URL_DATA + Data, Callback );
+			tempURL += _idURL + URL_KEY + Key + URL_DATA + Data;
 		} else {
-			sendLoaderRequest( URL_API + URL_DATA + URL_SET + URL_GAME + _gameID + URL_KEY + Key + URL_DATA + Data, Callback );
+			tempURL += URL_GAME + _gameID + URL_KEY + Key + URL_DATA + Data;
 		}
+		
+		sendLoaderRequest( tempURL, Callback );
 	}
 	
 	/**
@@ -257,11 +283,15 @@ class FlxGameJolt
 	 */
 	public static function getKeyData( Key:String, User:Bool = true, ?Callback:Dynamic ):Void
 	{
+		var tempURL = URL_API + URL_DATA + URL_RETURN_TYPE;
+		
 		if ( User ) {
-			sendLoaderRequest( URL_API + URL_DATA + _idURL + URL_KEY + Key + URL_DATA + Data );
+			tempURL += _idURL + URL_KEY + Key;
 		} else {
-			sendLoaderRequest( URL_API + URL_DATA + URL_GAME + _gameID + URL_KEY + Key + URL_DATA + Data );
+			tempURL += URL_GAME + _gameID + URL_KEY + Key;
 		}
+		
+		sendLoaderRequest( tempURL, Callback );
 	}
 	
 	/**
@@ -273,122 +303,74 @@ class FlxGameJolt
 	 */
 	public static function removeKeyData( Key:String, User:Bool = true, ?Callback:Dynamic ):Void
 	{
+		var tempURL = URL_API + URL_DATA + URL_REMOVE + URL_RETURN_TYPE;
+		
 		if ( User ) {
-			sendLoaderRequest( URL_API + URL_DATA + URL_REMOVE + _idURL + URL_KEY + Key + URL_DATA + Data );
+			tempURL += _idURL + URL_KEY + Key;
 		} else {
-			sendLoaderRequest( URL_API + URL_DATA + URL_REMOVE + URL_GAME + _gameID + URL_KEY + Key + URL_DATA + Data );
+			tempURL += URL_GAME + _gameID + URL_KEY + Key;
 		}
+		
+		sendLoaderRequest( tempURL, Callback );
 	}
 	
-	public function getAllKeys(gameID:int, privKey:String, callBack:Function, userName:String = "", userToken:String = ""):void {
-		var keysData:URLRequest = new URLRequest(getAllKeysURL(gameID, privKey, userName, userToken));
-		keysData.method = URLRequestMethod.POST;
-		clearLoaderEvents();
-		loader.load(keysData);
-		loader.addEventListener(Event.COMPLETE, returnKeys);
-		this.callBack = callBack;
-	}
-	
-	private function getAllKeysURL(gameID:int, privKey:String, userName:String = "", userToken:String = ""):String {
-		today = new Date();
-		var tempURL:String;
-		if (userName == "") {
-			tempURL = "http://gamejolt.com/api/game/v1/data-store/get-keys/" + "?game_id=" + gameID + "&time=" + today.time;
-		} else {
-			tempURL = "http://gamejolt.com/api/game/v1/data-store/get-keys/" + "?game_id=" + gameID + "&username=" + userName + "&user_token=" + userToken + "&time=" + today.time;
-		}
-		var signature:String = encryptURL(tempURL, privKey);
-		var finalURL:String = tempURL + "&signature=" + signature;
-		return finalURL;
-	}
-	
-	private function returnKeys(e:Event):void {
-		var dataArray:Array;
-		dataArray = separateCode(e.target.data.substr(16), "key:");
-		dataArray.splice(0,1);
-		for (var i:int = 0; i < dataArray.length; i++) {
-			dataArray[i] = dataArray[i].substr(1, dataArray[i].length - 4);
-		}
-		callBack(dataArray);
-	}
-	
-	public function sessionOpen(gameID:int, privKey:String, key:String, callBack:Function, userName:String, userToken:String):void {
-		today = new Date();
-		
-		var str:String = "http://gamejolt.com/api/game/v1/session/open/?game_id=" + gameID + "&username=" + userName + "&user_token=" + userToken + "&time=" + today.time;
-		var signature:String = encryptURL(str, privKey);
-		str += ("&signature=" + signature);
-		
-		var req:URLRequest = new URLRequest(str);
-		req.method = URLRequestMethod.POST;
-		clearLoaderEvents();
-		loader.load(req);
-		
-		loader.addEventListener(Event.COMPLETE, booleanResponseData);
-		this.callBack = callBack;
-	}
-	
-	public function sessionPing(gameID:int, privKey:String, key:String, callBack:Function, userName:String, userToken:String):void {
-		today = new Date();
-		
-		var str:String = "http://gamejolt.com/api/game/v1/session/ping/?game_id=" + gameID + "&username=" + userName + "&user_token=" + userToken + "&time=" + today.time;
-		var signature:String = encryptURL(str, privKey);
-		str += ("&signature=" + signature);
-		
-		var req:URLRequest = new URLRequest(str);
-		req.method = URLRequestMethod.POST;
-		clearLoaderEvents();
-		loader.load(req);
-		
-		loader.addEventListener(Event.COMPLETE, booleanResponseData);
-		this.callBack = callBack;
-	}
-	
-	public function sessionClose(gameID:int, privKey:String, key:String, callBack:Function, userName:String, userToken:String):void {
-		today = new Date();
-		
-		var str:String = "http://gamejolt.com/api/game/v1/session/close/?game_id=" + gameID + "&username=" + userName + "&user_token=" + userToken + "&time=" + today.time;
-		var signature:String = encryptURL(str, privKey);
-		str += ("&signature=" + signature);
-		
-		var req:URLRequest = new URLRequest(str);
-		req.method = URLRequestMethod.POST;
-		clearLoaderEvents();
-		loader.load(req);
-		
-		loader.addEventListener(Event.COMPLETE, booleanResponseData);
-		this.callBack = callBack;
-	}
-	
-	private static function booleanResponseData( e:Event ):Void
+	/**
+	 * Get all keys in the data store.
+	 * 
+	 * @param	User		Whether or not to get the keys associated with this user. True by default.
+	 * @param	?Callback	An optional callback function.
+	 */
+	public static function getAllKeys( User:Bool = true, ?Callback:Dynamic ):Void
 	{
-		if (e.target.data.substr(0,7) == "SUCCESS") {
-			callBack(true);
+		var tempURL = URL_API + URL_DATA + URL_REMOVE + URL_GET_KEYS;
+		
+		if ( User ) {
+			tempURL += _idURL;
 		} else {
-			callBack(false);
-		}
-	}
-	
-	private static function separateCode( Code:String, Separator:String ):Array
-	{
-		if ( Code.substr(-separator.length, separator.length ) == separator ) {
-			code = code.substr(0, code.length - separator.length);
-		}
-		var codeSegment:String;
-		var codeArray:Array = [];
-		for (var i:Number = 0; i < code.length; i++) {
-			if (code.substr(i, separator.length) == separator) {
-				codeSegment = code.substr(0, i);
-				code = code.substr(i + separator.length, code.length - i + separator.length);
-				codeArray.push(codeSegment);
-				i = 0;
-			}
+			tempURL += URL_GAME + _gameID;
 		}
 		
-		codeArray.push(code);
-		return codeArray;
+		sendLoaderRequest( tempURL, Callback );
 	}
 	
+	/**
+	 * Begin a new session.
+	 * 
+	 * ?Callback 	An optional callback function.
+	 */
+	public static function openSession( ?Callback:Dynamic ):Void
+	{
+		sendLoaderRequest( URL_API + URL_SESSIONS + URL_OPEN + URL_RETURN_TYPE + _idURL, Callback );
+	}
+	
+	/**
+	 * Ping the current session. The API states that a session will be closed after 120 seconds without a ping, and recommends pinging every 30 seconds or so.
+	 * 
+	 * @param	Active		Leave true to set the session to active, or set to false to set the session to idle.
+	 * @param	?Callback	An optional callback function.
+	 */
+	public function pingSession( Active:Bool = true, ?Callback:Dynamic ):Void
+	{
+		var tempURL = URL_API + URL_SESSIONS + URL_PING + URL_RETURN_TYPE + _idURL + URL_ACTIVE;
+		
+		if ( Active ) {
+			tempURL += "active";
+		} else {
+			tempURL += "idle";
+		}
+		
+		sendLoaderRequest( tempURL, Callback );
+	}
+	
+	/**
+	 * Close the current session.
+	 * 
+	 * @param	?Callback	An optional callback function.
+	 */
+	public function sessionClose( ?Callback:Dynamic ):Void
+	{
+		sendLoaderRequest( URL_API + URL_SESSIONS + URL_CLOSE + URL_RETURN_TYPE + _idURL, Callback );
+	}
 	
 	/**
 	 * A generic function to setup and send a URLRequest via _apiLoader.
@@ -396,10 +378,15 @@ class FlxGameJolt
 	 * @param	URLString	The URL to send to. Usually formatted as the API url, section of the API (e.g. "trophies/") and then variables to pass (e.g. user name, trophy ID).
 	 * @param	?Callback	A function to call when loading is done. If null, no function is called when loading is done.
 	 */
-	private static function sendLoaderRequest( URLString:String, ?Callback:Dynamic -> Void ):Dynamic
+	private static function sendLoaderRequest( URLString:String, ?Callback:Dynamic -> Void ):Void
 	{
-		checkInit();
-		clearLoaderEvents();
+		if ( !_initialized && URLString != URL_API + URL_USERS + URL_USER_AUTH + URL_RETURN_TYPE + _idURL ) {
+			#if debug
+			trace( "FlxGameJolt is not initialized!" );
+			#end
+			return;
+		}
+		
 		var request:URLRequest = new URLRequest( URLString + URL_SIGNATURE + encryptURL( URLString ) );
 		request.method = URLRequestMethod.POST;
 		
@@ -407,15 +394,39 @@ class FlxGameJolt
 			_callBack = Callback;
 		}
 		
-		_apiLoader.addEventListener( Event.COMPLETE, parseData );
-		_apiLoader.load( request );
+		var loader = new URLLoader();
+		
+		if ( !_initialized ) {
+			loader.addEventListener( Event.COMPLETE, authorizationCheck );
+		} else {
+			loader.addEventListener( Event.COMPLETE, parseData );
+		}
+		
+		#if debug
+		trace( "FlxGameJolt is about to contact " + request.url );
+		#end
+		loader.load( request );
 	}
 	
 	private static function parseData( e:Event ):Void
 	{
-		trace( e.current.data );
+		_callBack( keypairToMap( e.currentTarget.data ) );
+	}
+	
+	/**
+	 * Internal method to split a keypair string into a map of <String,String>. Removes double quotes from values.
+	 */
+	private static function keypairToMap( s:String ):Map<String,String>
+	{
+		var array = s.split( "/r" );
+		var returnMap = new Map<String,String>();
 		
-		//_callBack( e.current.data );
+		for ( e in array ) {
+			var tempArray = e.split( ":" );
+			returnMap.set( tempArray[0], tempArray[1].substring( 1, tempArray[1].indexOf( String.fromCharCode( 34 ), 1 ) ) );
+		}
+		
+		return returnMap;
 	}
 	
 	/**
@@ -425,30 +436,29 @@ class FlxGameJolt
 	 */
 	private static function authorizeUser():Void  
 	{
-		sendLoaderRequest( URL_API + URL_USERS + URL_USER_AUTH + _idURL, authorizationCheck );
+		sendLoaderRequest( URL_API + URL_USERS + URL_USER_AUTH + URL_RETURN_TYPE + _idURL, authorizationCheck );
 	}
 	
 	/**
 	 * Internal function to evaluate whether or not a user was successfully authorized and store the result in _initialized.
 	 */
-	private static function authorizationCheck( e:Event ):Bool
+	private static function authorizationCheck( e:Event ):Void
 	{
-		_initialized = ( e.target.data.success == "true" );
+		var data = keypairToMap( Std.string( e.currentTarget.data ) );
 		
-		return _initialized;
-	}
-	
-	/**
-	 * Internal function to remove unneeded event listeners from the URLLoader.
-	 */
-	private static function clearLoaderEvents():Void
-	{
-		_apiLoader.removeEventListener( Event.COMPLETE, authorizationCheck );
-		_apiLoader.removeEventListener( Event.COMPLETE, outputData );
-		_apiLoader.removeEventListener( Event.COMPLETE, returnKeyData );
-		_apiLoader.removeEventListener( Event.COMPLETE, returnKeys );
-		_apiLoader.removeEventListener( Event.COMPLETE, outputHighscoreData );
-		_apiLoader.removeEventListener( Event.COMPLETE, booleanResponseData );
+		if ( data.exists( "success" ) ) {
+			if ( data.get( "success" ) == "true" ) {
+				_initialized = true;
+				
+				#if debug
+				trace( "FlxGameJolt was successfully initialized for user " + _userName + ", with token " + _userToken + "!" );
+				#end
+			} else {
+				#if debug
+				trace( "FlxGameJolt initialization not successful for user " + _userName + ", with token " + _userToken );
+				#end
+			}
+		}
 	}
 	
 	/**
@@ -459,10 +469,10 @@ class FlxGameJolt
 	 */
 	private static function encryptURL( Url:String ):String
 	{
-		if ( hashType == HASH_MD5 ) {
-			return Md5.encode( Url + _privateKey );
-		} else if ( hashType == HASH_SHA1 ) {
+		if ( hashType == HASH_SHA1 ) {
 			return Sha1.encode( Url + _privateKey );
+		} else {
+			return Md5.encode( Url + _privateKey );
 		}
 	}
 }
