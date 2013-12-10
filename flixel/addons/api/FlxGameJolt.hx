@@ -118,12 +118,18 @@ class FlxGameJolt
 	 * 
 	 * @param	GameID		The unique game ID associated with this game on GameJolt. You must create a game profile on GameJolt to get this number.	
 	 * @param	PrivateKey	Your private key. You must have a developer account on GameJolt to have this number. Do NOT store this as plaintext in your game!
-	 * @param	?Callback	An optional callback function.
+	 * @param	AutoAuth	Call authUser after init() has run to authenticate user data.
+	 * @param 	?UserName	The username to authenticate, if AutoAuth is true. If you set AutoAuth to true but don't put a value here, FlxGameJolt will attempt to get the user data automatically, which will only work for Flash embedded on GameJolt, or desktop games run via Quick Play.
+	 * @param 	?UserToken	The user token to authenticate, if AutoAuth is true. If you set AutoAuth to true but don't put a value here, FlxGameJolt will attempt to get the user data automatically, which will only work for Flash embedded on GameJolt, or desktop games run via Quick Play.
 	 */
-	public static function init( GameID:Int, PrivateKey:String ):Void
+	public static function init( GameID:Int, PrivateKey:String, AutoAuth:Bool = false, ?UserName:String, ?UserToken:String ):Void
 	{
 		_gameID = GameID;
 		_privateKey = PrivateKey;
+		
+		if ( AutoAuth ) {
+			authUser( UserName, UserToken );
+		}
 	}
 	
 	/**
@@ -170,7 +176,7 @@ class FlxGameJolt
 	{
 		if ( !gameInit ) return;
 		
-		if ( UserName == null ) {
+		if ( UserName == null || UserToken == null ) {
 			#if desktop
 			for ( arg in Sys.args() ) {
 				var argArray = arg.split( "=" );
