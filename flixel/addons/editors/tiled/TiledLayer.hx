@@ -112,7 +112,7 @@ class TiledLayer
 		while (i < data.length - 3)
 		{
 			// Ignore whitespace
-			if (data.charAt(i) == " " || data.charAt(i) == "\n")
+			if (data.charAt(i) == " " || data.charAt(i) == "\n" || data.charAt(i) == "\r")
 			{
 				i++; continue;
 			}
