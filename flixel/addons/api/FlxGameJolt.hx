@@ -1,5 +1,7 @@
 package flixel.addons.api;
 
+import flash.display.Loader;
+import flash.display.BitmapData;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.net.URLLoader;
@@ -108,6 +110,11 @@ class FlxGameJolt
 	 * Internal variable that simply remembers if we're currently trying to authenticate user data.
 	 */
 	private static var _verifyAuth:Bool = false;
+	
+	/**
+	 * Internal tracker for getting bitmapdata for a trophy image.
+	 */
+	private static var _getImage:Bool = false;
 	
 	/**
 	 * Various common strings required by the API's HTTP values.
@@ -566,6 +573,11 @@ class FlxGameJolt
 			}
 		}
 		
+		if ( _getImage ) {
+			retrieveImage( returnMap );
+			return;
+		}
+		
 		if ( _callBack != null && !_verifyAuth ) {
 			_callBack( returnMap );
 		} else if ( _verifyAuth ) {
@@ -595,10 +607,46 @@ class FlxGameJolt
 	}
 	
 	/**
-	 * Generate a valid MD5 hash signature, required by the API to verify game data is valid. Passed to the API as "&signature=".
+	 * An easy-to-use function that returns the image associated with a trophy as BitmapData.
 	 * 
-	 * @param	Url		The URL to encrypt. This, along with the private key, form the string which is encoded.
-	 * @return	An encoded MD5 or SHA1 hash.
+	 * @param	ID			The ID of the trophy whose image you want to get.
+	 * @param	?Callback	An optional callback function. Must take a BitmapData object as a parameter.
+	 */
+	public static function fetchTrophyImage( ID:Int, ?Callback:BitmapData -> Void ):Void
+	{
+		_getImage = true;
+		fetchTrophy( ID, Callback );
+	}
+	
+	private static function retrieveImage( TrophyMap:Map<String,String> ):Void
+	{
+		if ( TrophyMap.exists( "image_url" ) ) {
+			var request:URLRequest = new URLRequest( TrophyMap.get( "image_url" ) );
+			var loader = new Loader();
+			loader.contentLoaderInfo.addEventListener( Event.COMPLETE, returnImage );
+			loader.load( request );
+		} else {
+			#if debug
+			FlxG.log.warn( "FlxGameJolt: Failed to load trophy image" );
+			#end
+		}
+	}
+	
+	private static function returnImage( e:Event ):Void
+	{
+		if ( _callBack != null ) {
+			_callBack( e.currentTarget.content.bitmapData );
+		}
+		
+		_getImage = false;
+	}
+	
+	/**
+	 * Generate an MD5 or SHA1 hash signature, required by the API to verify game data is valid. Passed to the API as "&signature=".
+	 * 
+	 * @see		http://gamejolt.com/api/doc/game/ 	Section titled "Signature".
+	 * @param	Url		The URL to encrypt. This and the private key form the string which is encoded.
+	 * @return	An encoded MD5 or SHA1 hash. By default, will be MD5; set FlxGameJolt.hashType = FlxGameJolt.HASH_SHA1 to use SHA1 encoding.
 	 */
 	private static function encryptURL( Url:String ):String
 	{
