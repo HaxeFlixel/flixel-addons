@@ -4,6 +4,7 @@ import flash.display.Loader;
 import flash.display.BitmapData;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
+import flash.events.EventDispatcher;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
@@ -34,7 +35,7 @@ import flash.Lib;
 		 * var gameid = 1; // Replace "1" with your game ID, visible if you go to http://gamejolt.com/dashboard/ -> Click on your game under "Manage Games" -> Click on "Achievements" in the menu.
 		 * FlxGameJolt.init( gameid, keystring ); // Use this if your game is embedded as Flash on GameJolt's site, or run via Quick Play. If 
  */
-class FlxGameJolt
+class FlxGameJolt extends EventDispatcher
 {
 	/**
 	 * The hash type to be used for private key encryption. Set to FlxGameJolt.HASH_MD5 or FlxGameJolt.HASH_SHA1. Default is MD5. See http://gamejolt.com/api/doc/game/ section "Signature".
@@ -117,6 +118,11 @@ class FlxGameJolt
 	private static var _getImage:Bool = false;
 	
 	/**
+	 * URLLoader object for sending URL requests.
+	 */
+	private static var _loader:URLLoader;
+	
+	/**
 	 * Various common strings required by the API's HTTP values.
 	 */
 	inline private static var URL_API:String = "http://gamejolt.com/api/game/v1/";
@@ -140,8 +146,10 @@ class FlxGameJolt
 		_gameID = GameID;
 		_privateKey = PrivateKey;
 		
-		if ( AutoAuth ) {
+		if ( AutoAuth && ( isEmbeddedFlash || isQuickPlay ) ) {
 			authUser( UserName, UserToken, Callback );
+		} else {
+			Callback( false );
 		}
 	}
 	
@@ -150,7 +158,7 @@ class FlxGameJolt
 	 * 
 	 * @see 	http://gamejolt.com/api/doc/game/users/fetch/
 	 * @param	?UserID		An integer user ID value. If this is passed, UserName and UserIDs are ignored. Pass 0 to ignore.
-	 * @param	?UserName	A string user name. If this is passed, UserIDs is ignored. Pass "" or nothing to ignore.
+	 * @param	?UserName	A string user name. If this is passed, UserIDs is ignored. Pass "" or nothing to ignore. Usernames can only have letters, numbers, hyphens (-) and underscores (_), and must be 3-30 characters long.
 	 * @param	?UserIDs	An array of integers representing user IDs. Pass [] or nothing to ignore.
 	 * @param	?Callback	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
 	 */
@@ -181,8 +189,8 @@ class FlxGameJolt
 	 * Verify user data. Must be called before any user-specific functions, and after init(). Will set initialized to true if successful.
 	 * 
 	 * @see 	http://gamejolt.com/api/doc/game/users/auth/
-	 * @param	?UserName	A user name. Leave null to automatically pull user data (only works for embedded Flash on GameJolt or Quick Play).
-	 * @param	?UserToken	A user token. Players enter this instead of a password to enable highscores, trophies, etc. Leave null to automatically pull user data (only works for embedded Flash on GameJolt or Quick Play).
+	 * @param	?UserName	A user name. Leave null to automatically pull user data (only works for embedded Flash on GameJolt or Quick Play). Usernames can only have letters, numbers, hyphens (-) and underscores (_), and must be 3-30 characters long.
+	 * @param	?UserToken	A user token. Players enter this instead of a password to enable highscores, trophies, etc. Leave null to automatically pull user data (only works for embedded Flash on GameJolt or Quick Play). User tokens can only have letters and numbers, and must be 4-30 characters long.
 	 * @param	?Callback	An optional callback function. Will return true if authentication was successful, false otherwise.
 	 */
 	public static function authUser( ?UserName:String, ?UserToken:String, ?Callback:Dynamic ):Void
@@ -355,9 +363,9 @@ class FlxGameJolt
 	 * @param	Score		A string representation of the score, such as "234 Jumps".
 	 * @param	Sort		A numerical representation of the score, such as 234. Used for sorting of data.
 	 * @param 	AllowGuest	Whether or not to allow guest scores. If true is passed, and user data is not present (i.e. authUser() was not successful), GuestName will be used if present. If false, the score will only be added if user data is authenticated.
-	 * @param	?GuestName	The guest name to use, if AllowGuest is true. Ignored otherwise.
-	 * @param	?ExtraData	Optional extra data associated with the score, which will NOT be visible on the site but can be retrieved by the API.
-	 * @param 	?TableID	Optional: the ID of the table you'd lke to send data to. If null, score will be sent to the primary high score table.
+	 * @param	?GuestName	The guest name to use, if AllowGuest is true. Ignored otherwise, or if "".
+	 * @param	?ExtraData	Optional extra data associated with the score, which will NOT be visible on the site but can be retrieved by the API. Ignored if "".
+	 * @param 	?TableID	Optional: the ID of the table you'd lke to send data to. If null, score will be sent to the primary high score table. Ignored if zero.
 	 * @param 	?Callback 	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
 	 */
 	public static function addScore( Score:String, Sort:Float, AllowGuest:Bool = false, ?GuestName:String, ?ExtraData:String, ?TableID:Int, ?Callback:Dynamic ):Void
@@ -370,17 +378,17 @@ class FlxGameJolt
 		
 		// If AllowGuest is true
 		
-		if ( AllowGuest && GuestName != null ) {
+		if ( AllowGuest && GuestName != null && GuestName != "" ) {
 			tempURL += "&guest=" + GuestName;
 		} else {
 			tempURL += URL_USER_NAME + _userName + URL_USER_TOKEN + _userToken;
 		}
 		
-		if ( ExtraData != null ) {
+		if ( ExtraData != null && ExtraData != "" ) {
 			tempURL += "&extra_data=" + ExtraData;
 		}
 		
-		if ( TableID != null ) {
+		if ( TableID != null && TableID != 0 ) {
 			tempURL += "&table_id=" + TableID;
 		}
 		
@@ -397,7 +405,7 @@ class FlxGameJolt
 	{
 		if ( !gameInit ) return;
 		
-		sendLoaderRequest( URL_API + RETURN_TYPE + URL_GAME_ID + _gameID, Callback );
+		sendLoaderRequest( URL_API + "scores/tables/" + RETURN_TYPE + URL_GAME_ID + _gameID, Callback );
 	}
 	
 	/**
@@ -537,9 +545,12 @@ class FlxGameJolt
 			_callBack = Callback;
 		}
 		
-		var loader = new URLLoader();
-		loader.addEventListener( Event.COMPLETE, parseData );
-		loader.load( request );
+		if ( _loader == null ) {
+			_loader = new URLLoader();
+		}
+		
+		_loader.addEventListener( Event.COMPLETE, parseData );
+		_loader.load( request );
 	}
 	
 	/**
@@ -549,6 +560,8 @@ class FlxGameJolt
 	 */
 	private static function parseData( e:Event ):Void
 	{
+		_loader.removeEventListener( Event.COMPLETE, parseData );
+		
 		if ( Std.string( e.currentTarget.data ) == "" ) {
 			#if debug
 			FlxG.log.warn( "FlxGameJolt received no data back. This is probably because one of the values it was passed is wrong." );
@@ -560,7 +573,7 @@ class FlxGameJolt
 		var returnMap:Map<String,String> = new Map<String,String>();
 		var stringArray:Array<String> = Std.string( e.currentTarget.data ).split( "\r" );
 		
-		// this regex will remove line breaks down below
+		// this regex will remove line breaks and quotes down below
 		var r:EReg = ~/[\r\n\t"]+/g;
 		
 		for ( string in stringArray ) {
@@ -607,17 +620,22 @@ class FlxGameJolt
 	}
 	
 	/**
-	 * An easy-to-use function that returns the image associated with a trophy as BitmapData.
+	 * An easy-to-use function that returns the image associated with a trophy as BitmapData. All trophy images will be 75px by 75px.
 	 * 
 	 * @param	ID			The ID of the trophy whose image you want to get.
 	 * @param	?Callback	An optional callback function. Must take a BitmapData object as a parameter.
 	 */
 	public static function fetchTrophyImage( ID:Int, ?Callback:BitmapData -> Void ):Void
 	{
+		if ( !gameInit ) return;
+		
 		_getImage = true;
 		fetchTrophy( ID, Callback );
 	}
 	
+	/**
+	 * Internal function that uses the image_url element from GameJolt to start a Loader that will retrieve the trophy image.
+	 */
 	private static function retrieveImage( TrophyMap:Map<String,String> ):Void
 	{
 		if ( TrophyMap.exists( "image_url" ) ) {
@@ -632,6 +650,9 @@ class FlxGameJolt
 		}
 	}
 	
+	/**
+	 * Internal function to send the image_url content to the callback function as BitmapData.
+	 */
 	private static function returnImage( e:Event ):Void
 	{
 		if ( _callBack != null ) {
