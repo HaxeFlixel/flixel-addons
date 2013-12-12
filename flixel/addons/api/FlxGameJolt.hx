@@ -143,6 +143,8 @@ class FlxGameJolt extends EventDispatcher
 	 */
 	public static function init( GameID:Int, PrivateKey:String, AutoAuth:Bool = false, ?UserName:String, ?UserToken:String, ?Callback:Dynamic ):Void
 	{
+		if ( gameInit ) return;
+		
 		_gameID = GameID;
 		_privateKey = PrivateKey;
 		
@@ -195,7 +197,10 @@ class FlxGameJolt extends EventDispatcher
 	 */
 	public static function authUser( ?UserName:String, ?UserToken:String, ?Callback:Dynamic ):Void
 	{
-		if ( !gameInit ) return;
+		if ( !gameInit || ( _userName != null && _userToken != null ) ) {
+			Callback( false );
+			return;
+		}
 		
 		if ( UserName == null || UserToken == null ) {
 			#if desktop
@@ -617,6 +622,23 @@ class FlxGameJolt extends EventDispatcher
 		if ( _callBack != null ) {
 			_callBack( _initialized );
 		}
+	}
+	
+	/**
+	 * Function to authenticate a new user, to be used when a user has already been authenticated but you'd like to authenticate a new one. If you try to run authUser after a user has been authenticated, it will fail.
+	 * 
+	 * @param	UserName	The user's name.
+	 * @param	UserToken	The user's token.
+	 * @param	?Callback	An optional callback function. Will return true if authentication was successful, false otherwise.
+	 */
+	public static function resetUser( UserName:String, UserToken:String, ?Callback:Dynamic ):Void
+	{
+		_userName = UserName;
+		_userToken = UserToken;
+		
+		_idURL = URL_GAME_ID + _gameID + URL_USER_NAME + _userName + URL_USER_TOKEN + _userToken;
+		_verifyAuth = true;
+		sendLoaderRequest( URL_API + "users/auth/" + RETURN_TYPE + _idURL, Callback );
 	}
 	
 	/**
