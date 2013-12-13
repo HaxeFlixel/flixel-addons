@@ -166,7 +166,7 @@ class FlxGameJolt extends EventDispatcher
 	 */
 	public static function fetchUser( ?UserID:Int, ?UserName:String, ?UserIDs:Array<Int>, ?Callback:Dynamic ):Void
 	{
-		var tempURL:String = URL_API + "users/" + RETURN_TYPE;
+		var tempURL:String = URL_API + "users/" + RETURN_TYPE + URL_GAME_ID + _gameID;
 		
 		if ( UserID != null && UserID != 0 ) {
 			tempURL += "&user_id=" + Std.string( UserID );
@@ -344,7 +344,7 @@ class FlxGameJolt extends EventDispatcher
 	{
 		if ( !gameInit ) return;
 		
-		var tempURL = URL_API + "scores/" + RETURN_TYPE;
+		var tempURL = URL_API + "scores/" + RETURN_TYPE + URL_GAME_ID + _gameID;
 		
 		if ( !_initialized ) {
 			if ( Limit == null ) {
