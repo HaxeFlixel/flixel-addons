@@ -49,6 +49,8 @@ class FlxGameJolt extends EventDispatcher
 	 */
 	public static var verbose:Bool = false;
 	
+	private static var veryverbose:Bool = true;
+	
 	/**
 	 * Whether or not the API has been fully initialized by passing game id, private key, and authenticating user name and token.
 	 */
@@ -376,7 +378,9 @@ class FlxGameJolt extends EventDispatcher
 	}
 	
 	/**
-	 * Set a new high score, either globally or for this particular user. Requires game initialization. If user data is not authenticated, GuestName is required.
+	 * Set a new high score, either globally or for this particular user. Requires game initialization.
+	 * If user data is not authenticated, GuestName is required.
+	 * Please note: On native platforms, having spaces in your Sort, GuestName, or ExtraData values will break this function.
 	 * 
 	 * @see		http://gamejolt.com/api/doc/game/scores/add/
 	 * @param	Score		A string representation of the score, such as "234 Jumps".
@@ -453,6 +457,7 @@ class FlxGameJolt extends EventDispatcher
 	
 	/**
 	 * Set data in the remote data store.
+	 * Please note: On native platforms, having spaces in your Value parameter will break this function.
 	 * 
 	 * @see 	http://gamejolt.com/api/doc/game/data-store/set/
 	 * @param	Key			The key for this data.
@@ -478,6 +483,7 @@ class FlxGameJolt extends EventDispatcher
 	
 	/**
 	 * Update data which is in the data store.
+	 * Please note: On native platforms, having spaces in your Value parameter will break this function.
 	 * 
 	 * @see		http://gamejolt.com/api/doc/game/data-store/update/
 	 * @param	Key			The key of the data you'd like to manipulate.
@@ -550,7 +556,7 @@ class FlxGameJolt extends EventDispatcher
 	}
 	
 	/**
-	 * A generic function to setup and send a URLRequest. All of the functions that interact with the API use this.
+	 * A generic internal function to setup and send a URLRequest. All of the functions that interact with the API use this.
 	 * 
 	 * @param	URLString	The URL to send to. Usually formatted as the API url, section of the API (e.g. "trophies/") and then variables to pass (e.g. user name, trophy ID).
 	 * @param	?Callback	A function to call when loading is done and data is parsed.
@@ -577,7 +583,10 @@ class FlxGameJolt extends EventDispatcher
 	}
 	
 	/**
-	 * Called when the URLLoader has received data back. Will call _callBack() with the data received from GameJolt as Map<String,String> when done.
+	 * Called when the URLLoader has received data back.
+	 * Will call _callBack() with the data received from GameJolt as Map<String,String> when done.
+	 * However, if we're getting an image, a second URLRequest is called, and that will be done first.
+	 * Or, if we're authenticating the user, the verifyAuthentication function will be called instead.
 	 * 
 	 * @param	The URLLoader complete event.
 	 */
@@ -612,6 +621,8 @@ class FlxGameJolt extends EventDispatcher
 		#if debug
 		if ( returnMap.exists( "message" ) && verbose ) {
 			FlxG.log.add( "FlxGameJolt: GameJolt returned the following message: " + returnMap.get( "message" ) );
+		} else if ( veryverbose ) {
+			FlxG.log.add( returnMap );
 		}
 		#end
 		
