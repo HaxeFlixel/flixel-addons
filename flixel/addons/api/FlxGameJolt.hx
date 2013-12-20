@@ -43,6 +43,13 @@ class FlxGameJolt extends EventDispatcher
 	public static var hashType:Int = HASH_MD5;
 	
 	/**
+	 * Whether or not to log the URL that is contacted and messages returned from GameJolt.
+	 * Useful if you're not getting the right data back.
+	 * Only works in debug mode.
+	 */
+	public static var verbose:Bool = false;
+	
+	/**
 	 * Whether or not the API has been fully initialized by passing game id, private key, and authenticating user name and token.
 	 */
 	public static var initialized(get, null):Bool;
@@ -143,15 +150,22 @@ class FlxGameJolt extends EventDispatcher
 	 */
 	public static function init( GameID:Int, PrivateKey:String, AutoAuth:Bool = false, ?UserName:String, ?UserToken:String, ?Callback:Dynamic ):Void
 	{
-		if ( gameInit ) return;
+		if ( _gameID != 0 && _privateKey != "" ) return;
 		
 		_gameID = GameID;
 		_privateKey = PrivateKey;
 		
-		if ( AutoAuth && ( isEmbeddedFlash || isQuickPlay ) ) {
-			authUser( UserName, UserToken, Callback );
-		} else {
-			Callback( false );
+		// If the user wants to automatically authenticate the user, must have both username and usertoken passed
+		// OR it must be embedded flash or quickplay.
+		
+		if ( AutoAuth ) {
+			if ( UserName != null && UserToken != null ) {
+				authUser( UserName, UserToken, Callback );
+			} else if ( ( UserName == null || UserToken == null ) && ( isEmbeddedFlash || isQuickPlay ) ) {
+				authUser( null, null, Callback );
+			} else {
+				Callback( false );
+			}
 		}
 	}
 	
@@ -367,10 +381,10 @@ class FlxGameJolt extends EventDispatcher
 	 * @see		http://gamejolt.com/api/doc/game/scores/add/
 	 * @param	Score		A string representation of the score, such as "234 Jumps".
 	 * @param	Sort		A numerical representation of the score, such as 234. Used for sorting of data.
+	 * @param 	?TableID	Optional: the ID of the table you'd lke to send data to. If null, score will be sent to the primary high score table. Ignored if zero.
 	 * @param 	AllowGuest	Whether or not to allow guest scores. If true is passed, and user data is not present (i.e. authUser() was not successful), GuestName will be used if present. If false, the score will only be added if user data is authenticated.
 	 * @param	?GuestName	The guest name to use, if AllowGuest is true. Ignored otherwise, or if "".
 	 * @param	?ExtraData	Optional extra data associated with the score, which will NOT be visible on the site but can be retrieved by the API. Ignored if "".
-	 * @param 	?TableID	Optional: the ID of the table you'd lke to send data to. If null, score will be sent to the primary high score table. Ignored if zero.
 	 * @param 	?Callback 	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
 	 */
 	public static function addScore( Score:String, Sort:Float, AllowGuest:Bool = false, ?GuestName:String, ?ExtraData:String, ?TableID:Int, ?Callback:Dynamic ):Void
@@ -554,6 +568,12 @@ class FlxGameJolt extends EventDispatcher
 			_loader = new URLLoader();
 		}
 		
+		#if debug
+		if ( verbose ) {
+			FlxG.log.add( "FlxGameJolt: Contacting " + request.url );
+		}
+		#end
+		
 		_loader.addEventListener( Event.COMPLETE, parseData );
 		_loader.load( request );
 	}
@@ -591,6 +611,12 @@ class FlxGameJolt extends EventDispatcher
 			}
 		}
 		
+		#if debug
+		if ( returnMap.exists( "message" ) && verbose ) {
+			FlxG.log.add( "FlxGameJolt: GameJolt returned the following message: " + returnMap.get( "message" ) );
+		}
+		#end
+		
 		if ( _getImage ) {
 			retrieveImage( returnMap );
 			return;
@@ -625,7 +651,8 @@ class FlxGameJolt extends EventDispatcher
 	}
 	
 	/**
-	 * Function to authenticate a new user, to be used when a user has already been authenticated but you'd like to authenticate a new one. If you try to run authUser after a user has been authenticated, it will fail.
+	 * Function to authenticate a new user, to be used when a user has already been authenticated but you'd like to authenticate a new one.
+	 * If you just try to run authUser after a user has been authenticated, it will fail.
 	 * 
 	 * @param	UserName	The user's name.
 	 * @param	UserToken	The user's token.
@@ -642,7 +669,8 @@ class FlxGameJolt extends EventDispatcher
 	}
 	
 	/**
-	 * An easy-to-use function that returns the image associated with a trophy as BitmapData. All trophy images will be 75px by 75px.
+	 * An easy-to-use function that returns the image associated with a trophy as BitmapData.
+	 * All trophy images will be 75px by 75px.
 	 * 
 	 * @param	ID			The ID of the trophy whose image you want to get.
 	 * @param	?Callback	An optional callback function. Must take a BitmapData object as a parameter.
@@ -650,30 +678,48 @@ class FlxGameJolt extends EventDispatcher
 	public static function fetchTrophyImage( ID:Int, ?Callback:BitmapData -> Void ):Void
 	{
 		if ( !gameInit ) return;
-		
 		_getImage = true;
 		fetchTrophy( ID, Callback );
 	}
 	
 	/**
-	 * Internal function that uses the image_url element from GameJolt to start a Loader that will retrieve the trophy image.
+	 * An easy-to-use function that returns the user's avatar image as BitmapData.
+	 * Requires that you've authenticated the user's data.
+	 * All user images will be 60px by 60px.
+	 * 
+	 * @param	?Callback	An optional callback function. Must take a BitmapData object as a parameter.
 	 */
-	private static function retrieveImage( TrophyMap:Map<String,String> ):Void
+	public static function fetchAvatarImage( ?Callback:BitmapData -> Void ):Void
 	{
-		if ( TrophyMap.exists( "image_url" ) ) {
-			var request:URLRequest = new URLRequest( TrophyMap.get( "image_url" ) );
+		if ( !gameInit ) return;
+		_getImage = true;
+		fetchUser( 0, _userName, null, Callback );
+	}
+	
+	/**
+	 * Internal function that uses the image_url or avatar_url element from GameJolt to start a Loader that will retrieve the desired image.
+	 */
+	private static function retrieveImage( ImageMap:Map<String,String> ):Void
+	{
+		if ( ImageMap.exists( "image_url" ) ) {
+			var request:URLRequest = new URLRequest( ImageMap.get( "image_url" ) );
+			var loader = new Loader();
+			loader.contentLoaderInfo.addEventListener( Event.COMPLETE, returnImage );
+			loader.load( request );
+		} else if ( ImageMap.exists( "avatar_url" ) ) {
+			var request:URLRequest = new URLRequest( ImageMap.get( "avatar_url" ) );
 			var loader = new Loader();
 			loader.contentLoaderInfo.addEventListener( Event.COMPLETE, returnImage );
 			loader.load( request );
 		} else {
 			#if debug
-			FlxG.log.warn( "FlxGameJolt: Failed to load trophy image" );
+			FlxG.log.warn( "FlxGameJolt: Failed to load image" );
 			#end
 		}
 	}
 	
 	/**
-	 * Internal function to send the image_url content to the callback function as BitmapData.
+	 * Internal function to send the image_url or avatar_url content to the callback function as BitmapData.
 	 */
 	private static function returnImage( e:Event ):Void
 	{
@@ -751,6 +797,21 @@ class FlxGameJolt extends EventDispatcher
 			return "No user";
 		} else {
 			return _userName;
+		}
+	}
+	
+	/**
+	 * The user's GameJolt user token. Only works if you've called authUser() and/or init(), otherwise will return "No token".
+	 * Generally you should not need to mess with this.
+	 */
+	public static var usertoken(get, null):String;
+	
+	private static function get_usertoken():String
+	{
+		if ( !_initialized || _userToken == null || _userToken == "" ) {
+			return "No token";
+		} else {
+			return _userToken;
 		}
 	}
 	
