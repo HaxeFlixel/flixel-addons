@@ -387,7 +387,7 @@ class FlxGameJolt extends EventDispatcher
 	 * @param	?ExtraData	Optional extra data associated with the score, which will NOT be visible on the site but can be retrieved by the API. Ignored if "".
 	 * @param 	?Callback 	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
 	 */
-	public static function addScore( Score:String, Sort:Float, AllowGuest:Bool = false, ?GuestName:String, ?ExtraData:String, ?TableID:Int, ?Callback:Dynamic ):Void
+	public static function addScore( Score:String, Sort:Float, ?TableID:Int, AllowGuest:Bool = false, ?GuestName:String, ?ExtraData:String, ?Callback:Dynamic ):Void
 	{
 		if ( !gameInit ) return;
 		
@@ -560,9 +560,7 @@ class FlxGameJolt extends EventDispatcher
 		var request:URLRequest = new URLRequest( URLString + "&signature=" + encryptURL( URLString ) );
 		request.method = URLRequestMethod.POST;
 		
-		if ( Callback != null ) {
-			_callBack = Callback;
-		}
+		_callBack = Callback;
 		
 		if ( _loader == null ) {
 			_loader = new URLLoader();
