@@ -825,7 +825,7 @@ class FlxGameJolt extends EventDispatcher
 		#if !desktop
 		return false;
 		#else
-		var argmap:Map < String, String > = new Map < String, String > { };
+		var argmap:Map <String,String> = new Map <String,String>();
 		
 		for ( arg in Sys.args() ) {
 			var argArray = arg.split( "=" );
