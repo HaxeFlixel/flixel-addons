@@ -4,7 +4,6 @@ import flash.display.Loader;
 import flash.display.BitmapData;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
-import flash.events.EventDispatcher;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
@@ -35,7 +34,7 @@ import flash.Lib;
 		 * var gameid = 1; // Replace "1" with your game ID, visible if you go to http://gamejolt.com/dashboard/ -> Click on your game under "Manage Games" -> Click on "Achievements" in the menu.
 		 * FlxGameJolt.init( gameid, keystring ); // Use this if your game is embedded as Flash on GameJolt's site, or run via Quick Play. If 
  */
-class FlxGameJolt extends EventDispatcher
+class FlxGameJolt
 {
 	/**
 	 * The hash type to be used for private key encryption. Set to FlxGameJolt.HASH_MD5 or FlxGameJolt.HASH_SHA1. Default is MD5. See http://gamejolt.com/api/doc/game/ section "Signature".
