@@ -17,7 +17,7 @@ import flash.Lib;
 #end
 
 /**
- * Similar to FlxKongregate, this allows access to the GameJolt API. Based on the AS3 version by SumYungGai. Will always return Map<String,String> to callback functions.
+ * Similar to FlxKongregate, this allows access to the GameJolt API. Based loosely on the AS3 version by SumYungGai with many changes.
  * 
  * @see 	http://gamejolt.com/community/forums/topics/as3-trophy-api/305/
  * @see 	http://gamejolt.com/api/doc/game/
@@ -48,8 +48,6 @@ class FlxGameJolt extends EventDispatcher
 	 * Only works in debug mode.
 	 */
 	public static var verbose:Bool = false;
-	
-	private static var veryverbose:Bool = true;
 	
 	/**
 	 * Whether or not the API has been fully initialized by passing game id, private key, and authenticating user name and token.
@@ -92,7 +90,10 @@ class FlxGameJolt extends EventDispatcher
 	private static var _gameID:Int = 0;
 	
 	/**
-	 * Internal storage for this game's private key. Do NOT store your private key as a string literal in your game! This can be found at http://gamejolt.com/dashboard/developer/games/achievements/GAME_ID/ where GAME_ID is your unique game ID number.
+	 * Internal storage for this game's private key.
+	 * Do NOT store your private key as a string literal in your game!
+	 * This can be found at http://gamejolt.com/dashboard/developer/games/achievements/GAME_ID/ where GAME_ID is your unique game ID number.
+	 * Each game has a unique private key; you cannot use one key for all of your games.
 	 */
 	private static var _privateKey:String = "";
 	
@@ -112,12 +113,12 @@ class FlxGameJolt extends EventDispatcher
 	private static var _idURL:String;
 	
 	/**
-	 * Set to true once game ID, user name, user token have been set and user name and token has been verified.
+	 * Set to true once game ID, user name, user token have been set and user name and token have been verified.
 	 */
 	private static var _initialized:Bool = false;
 	
 	/**
-	 * Internal variable that simply remembers if we're currently trying to authenticate user data.
+	 * Internal tracker for authenticating user data.
 	 */
 	private static var _verifyAuth:Bool = false;
 	
@@ -141,7 +142,9 @@ class FlxGameJolt extends EventDispatcher
 	inline private static var URL_USER_TOKEN:String = "&user_token=";
 	
 	/**
-	 * Initialize this class by storing the GameID and private key. You must call this function first. To enable user-specific functions, call authUser() afterward.
+	 * Initialize this class by storing the GameID and private key.
+	 * You must call this function first for many of the other functions to work.
+	 * To enable user-specific functions, call authUser() afterward, or set AutoAuth to true.
 	 * 
 	 * @param	GameID		The unique game ID associated with this game on GameJolt. You must create a game profile on GameJolt to get this number.	
 	 * @param	PrivateKey	Your private key. You must have a developer account on GameJolt to have this number. Do NOT store this as plaintext in your game!
@@ -157,7 +160,7 @@ class FlxGameJolt extends EventDispatcher
 		_gameID = GameID;
 		_privateKey = PrivateKey;
 		
-		// If the user wants to automatically authenticate the user, must have both username and usertoken passed
+		// If we want to automatically authenticate the user, must have both username and usertoken passed
 		// OR it must be embedded flash or quickplay.
 		
 		if ( AutoAuth ) {
@@ -296,7 +299,7 @@ class FlxGameJolt extends EventDispatcher
 	}
 	
 	/**
-	 * Close the current session. Requires user author authentication.
+	 * Close the current session. Requires user data authentication.
 	 * 
 	 * @see 	http://gamejolt.com/api/doc/game/sessions/close/
 	 * @param	?Callback	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
@@ -621,8 +624,6 @@ class FlxGameJolt extends EventDispatcher
 		#if debug
 		if ( returnMap.exists( "message" ) && verbose ) {
 			FlxG.log.add( "FlxGameJolt: GameJolt returned the following message: " + returnMap.get( "message" ) );
-		} else if ( veryverbose ) {
-			FlxG.log.add( returnMap );
 		}
 		#end
 		
