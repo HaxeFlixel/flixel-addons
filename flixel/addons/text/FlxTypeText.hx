@@ -13,11 +13,15 @@ import flixel.util.FlxRandom;
 
 class FlxTypeText extends FlxText
 {
+	/**
+	 * The delay between each character, in seconds.
+	 */
+	public var delay:Float = 0.05;
 	
 	/**
-	 * The speed of this text, in letters per second.
+	 * The delay between each character erasure, in seconds.
 	 */
-	public var speed:Float = 1.0;
+	public var eraseDelay:Float = 0.02;
 	
 	/**
 	 * Set to true to show a blinking cursor at the end of the text.
@@ -47,12 +51,17 @@ class FlxTypeText extends FlxText
 	/**
 	 * How long to pause after finishing the text before erasing it. Only used if autoErase is true.
 	 */
-	public var eraseDelay:Float = 1.0;
+	public var waitTime:Float = 1.0;
+	
+	/**
+	 * Whether or not to animate the text. Set to false by start() and erase().
+	 */
+	public var paused:Bool = false;
 	
 	/**
 	 * The text that will ultimately be displayed.
 	 */
-	private var _finalText:String;
+	private var _finalText:String = "";
 	
 	/**
 	 * This function is called when the message is done typing.
@@ -60,12 +69,22 @@ class FlxTypeText extends FlxText
 	private var _onComplete:Dynamic;
 	
 	/**
+	 * Optional parameters that will be passed to the _onComplete function.
+	 */
+	private var _onCompleteParams:Array<Dynamic>;
+	
+	/**
 	 * This function is called when the message is done erasing, if that is enabled.
 	 */
 	private var _onErase:Dynamic;
 	
 	/**
-	 * This is incremented every frame by FlxG.elapsed, and when greater than _speed, adds the next letter.
+	 * Optional parameters that will be passed to the _onErase function.
+	 */
+	private var _onEraseParams:Array<Dynamic>;
+	
+	/**
+	 * This is incremented every frame by FlxG.elapsed, and when greater than delay, adds the next letter.
 	 */
 	private var _timer:Float = 0.0;
 	
@@ -77,27 +96,22 @@ class FlxTypeText extends FlxText
 	/**
 	 * Internal tracker for current string length, not counting the prefix.
 	 */
-	private var _length:Int;
+	private var _length:Int = 0;
 	
 	/**
 	 * Whether or not to type the text. Set to true by start() and false by pause().
 	 */
-	private var _typing:Bool;
+	private var _typing:Bool = false;
 	
 	/**
 	 * Whether or not to erase the text. Set to true by erase() and false by pause().
 	 */
-	private var _erasing:Bool;
+	private var _erasing:Bool = false;
 	
 	/**
 	 * Whether or not we're waiting between the type and erase phases.
 	 */
-	private var _waiting:Bool;
-	
-	/**
-	 * Whether or not to change the text. Set to false by start() and erase() and true by pause().
-	 */
-	private var _paused:Bool;
+	private var _waiting:Bool = false;
 	
 	/**
 	 * Key(s) that will advance the text when pressed.
@@ -115,12 +129,12 @@ class FlxTypeText extends FlxText
 	private var _cursorTimer:Float = 0.0;
 	
 	/**
-	 * Whether or not to add a "natural" uneven rhythm to the typing speed
+	 * Whether or not to add a "natural" uneven rhythm to the typing speed.
 	 */
 	private var _typingVariation:Bool = false;
 	
 	/**
-	 * How much to vary typing speed, as a percent. So, at 0.5, each letter will be "typed" up to 50% sooner or later than the speed variable is set.
+	 * How much to vary typing speed, as a percent. So, at 0.5, each letter will be "typed" up to 50% sooner or later than the delay variable is set.
 	 */
 	private var _typeVarPercent:Float = 0.5;
 	
@@ -144,45 +158,72 @@ class FlxTypeText extends FlxText
 	{
 		super(X, Y, Width, "", Size, EmbeddedFont);
 		_finalText = Text;
+		
+		_onComplete = null;
+		_onErase = null;
+		_onCompleteParams = [];
+		_onEraseParams = [];
+		_skipKeys = [];
 	}
 	
 	/**
 	 * Set a function to be called when typing the message is complete.
 	 * 
-	 * @param	OnCompleteCallback	The function to call.
+	 * @param	Callback	The callback function.
+	 * @param	Params		Any params you want to pass to the function. Optional!
 	 */
-	public function setCompleteCallback( OnCompleteCallback:Dynamic ):Void
+	public function setCompleteCallback( Callback:Dynamic, Params:Array<Dynamic> = null ):Void
 	{
-		_onComplete = OnCompleteCallback;
+		_onComplete = Callback;
+		
+		if ( Params == null )
+		{
+			Params = [];
+		}
+		
+		_onCompleteParams = Params;
 	}
 	
 	/**
 	 * Set a function to be called when erasing is complete.
 	 * Make sure to set erase = true or else this will never be called!
 	 * 
-	 * @param	OnEraseCallback		The function to call.
+	 * @param	Callback		The callback function.
+	 * @param	Params			Any params you want to pass to the function. Optional!
 	 */
-	public function setEraseCallback( OnEraseCallback:Dynamic ):Void
+	public function setEraseCallback( Callback:Dynamic, Params:Array<Dynamic> = null ):Void
 	{
-		_onErase = OnEraseCallback;
+		_onErase = Callback;
+		
+		if ( Params == null )
+		{
+			Params = [];
+		}
+		
+		_onEraseParams = Params;
 	}
 	
 	/**
 	 * Start the text animation.
 	 * 
-	 * @param	ForceRestart	Whether or not to restart the animation if it's already going.
-	 * @param	Speed			Optionally, you can pass a variable here to set the speed instead of setting speed separately.
+	 * @param	?Delay			Optionally, set the delay between characters. Can also be set separately.
+	 * @param	ForceRestart	Whether or not to start this animation over if currently animating; false by default.
+	 * @param	AutoErase		Whether or not to begin the erase animation when the typing animation is complete. Can also be set separately.
+	 * @param	Sound			A FlxSound object to play when a character is typed. Can also be set separately.
+	 * @param	SkipKeys		An array of keys as string values (e.g. "SPACE", "L") that will advance the text. Can also be set separately.
+	 * @param	Callback		An optional callback function, to be called when the typing animation is complete.
+	 * @param 	Params			Optional parameters to pass to the callback function.
 	 */
-	public function start( ForceRestart:Bool = false, ?Speed:Float ):Void
+	public function start( ?Delay:Float, ForceRestart:Bool = false, AutoErase:Bool = false, Sound:FlxSound = null, SkipKeys:Array<String> = null, Callback:Dynamic = null, Params:Array<Dynamic> = null ):Void
 	{
-		if ( Speed != null )
+		if ( Delay != null )
 		{
-			speed = Speed;
+			delay = Delay;
 		}
 		
 		_typing = true;
 		_erasing = false;
-		_paused = false;
+		paused = false;
 		_waiting = false;
 		
 		if ( ForceRestart )
@@ -190,33 +231,77 @@ class FlxTypeText extends FlxText
 			text = "";
 			_length = 0;
 		}
-	}
-	
-	/**
-	 * Pause the text animation.
-	 */
-	public function pause():Void
-	{
-		_paused = true;
-	}
-	
-	/**
-	 * Resume the text animation, if paused.
-	 */
-	public function resume():Void
-	{
-		_paused = false;
+		
+		autoErase = AutoErase;
+		
+		if ( Sound != null )
+		{
+			_sound = Sound;
+		}
+		
+		if ( SkipKeys != null )
+		{
+			_skipKeys = SkipKeys;
+		}
+		
+		if ( Callback != null )
+		{
+			_onComplete = Callback;
+		}
+		
+		if ( Params != null )
+		{
+			_onCompleteParams = Params;
+		}
 	}
 	
 	/**
 	 * Begin an animated erase of this text.
+	 * 
+	 * @param	?Delay			Optionally, set the delay between characters. Can also be set separately.
+	 * @param	ForceRestart	Whether or not to start this animation over if currently animating; false by default.
+	 * @param	Sound			A FlxSound object to play when a character is typed. Can also be set separately.
+	 * @param	SkipKeys		An array of keys as string values (e.g. "SPACE", "L") that will advance the text. Can also be set separately.
+	 * @param	Callback		An optional callback function, to be called when the erasing animation is complete.
+	 * @param	Params			Optional parameters to pass to the callback function.
 	 */
-	public function erase():Void
+	public function erase( ?Delay:Float, ForceRestart:Bool = false, Sound:FlxSound = null, SkipKeys:Array<String> = null, Callback:Dynamic = null, Params:Array<Dynamic> = null ):Void
 	{
 		_erasing = true;
 		_typing = false;
-		_paused = false;
+		paused = false;
 		_waiting = false;
+		
+		if ( Delay != null )
+		{
+			eraseDelay = Delay;
+		}
+		
+		if ( ForceRestart )
+		{
+			_length = _finalText.length;
+			text = _finalText;
+		}
+		
+		if ( Sound != null )
+		{
+			_sound = Sound;
+		}
+		
+		if ( SkipKeys != null )
+		{
+			_skipKeys = SkipKeys;
+		}
+		
+		if ( Callback != null )
+		{
+			_onErase = Callback;
+		}
+		
+		if ( Params != null )
+		{
+			_onEraseParams = Params;
+		}
 	}
 	
 	/**
@@ -230,7 +315,7 @@ class FlxTypeText extends FlxText
 		_finalText = Text;
 		_typing = false;
 		_erasing = false;
-		_paused = false;
+		paused = false;
 		_waiting = false;
 	}
 	
@@ -257,11 +342,12 @@ class FlxTypeText extends FlxText
 	/**
 	 * If called with On set to true, a random variation will be added to the rate of typing.
 	 * Especially with sound enabled, this can give a more "natural" feel to the typing.
+	 * Much more noticable with longer text delays.
 	 * 
-	 * @param	On			Whether or not to add the random variation.
-	 * @param	Amount		How much variation to add, as a percentage of speed (0.5 = 50% is the maximum amount that will be added or subtracted from the speed variable). Only valid if >0 and <1.
+	 * @param	Amount		How much variation to add, as a percentage of delay (0.5 = 50% is the maximum amount that will be added or subtracted from the delay variable). Only valid if >0 and <1.
+	 * @param	On			Whether or not to add the random variation. True by default.
 	 */
-	public function setTypingVariation( On:Bool, Amount:Float = 0.5 ):Void
+	public function setTypingVariation( Amount:Float = 0.5, On:Bool = true ):Void
 	{
 		_typingVariation = On;
 		
@@ -285,16 +371,16 @@ class FlxTypeText extends FlxText
 		
 		if ( _onComplete != null )
 		{
-			Reflect.callMethod( null, _onComplete, null );
+			Reflect.callMethod( null, _onComplete, _onCompleteParams );
 		}
 		
-		if ( autoErase && eraseDelay <= 0 )
+		if ( autoErase && waitTime <= 0 )
 		{
 			_erasing = true;
 		}
 		else if ( autoErase )
 		{
-			_waitTimer = eraseDelay;
+			_waitTimer = waitTime;
 			_waiting = true;
 		}
 	}
@@ -306,7 +392,7 @@ class FlxTypeText extends FlxText
 		
 		if ( _onErase != null )
 		{
-			Reflect.callMethod( null, _onComplete, null );
+			Reflect.callMethod( null, _onErase, _onEraseParams );
 		}
 	}
 	
@@ -329,7 +415,7 @@ class FlxTypeText extends FlxText
 		}
 		#end
 		
-		if ( _waiting && !_paused )
+		if ( _waiting && !paused )
 		{
 			_waitTimer -= FlxG.elapsed;
 			
@@ -342,7 +428,7 @@ class FlxTypeText extends FlxText
 		
 		// So long as we should be animating, increment the timer by time elapsed.
 		
-		if ( !_waiting && !_paused )
+		if ( !_waiting && !paused )
 		{
 			if ( _length < _finalText.length && _typing )
 			{
@@ -357,29 +443,40 @@ class FlxTypeText extends FlxText
 		
 		// If the timer value is higher than the rate at which we should be changing letters, increase or decrease desired string length.
 		
-		if ( _timer >= speed )
+		if ( _typing || _erasing )
 		{
-			if ( _typing )
+			if ( _typing && _timer >= delay )
 			{
 				_length ++;
 			}
-			else if ( _erasing )
+			
+			if ( _erasing && _timer >= eraseDelay )
 			{
 				_length --;
 			}
 			
-			if ( _typingVariation )
+			if ( ( _typing && _timer >= delay ) || ( _erasing && _timer >= eraseDelay ) )
 			{
-				_timer = FlxRandom.floatRanged( -speed * _typeVarPercent / 2, speed * _typeVarPercent / 2 );
-			}
-			else
-			{
-				_timer = 0;
-			}
-			
-			if ( _sound != null )
-			{
-				_sound.play( true );
+				if ( _typingVariation  )
+				{
+					if ( _typing )
+					{
+						_timer = FlxRandom.floatRanged( -delay * _typeVarPercent / 2, delay * _typeVarPercent / 2 );
+					}
+					else
+					{
+						_timer = FlxRandom.floatRanged( -eraseDelay * _typeVarPercent / 2, eraseDelay * _typeVarPercent / 2 );
+					}
+				}
+				else
+				{
+					_timer = 0;
+				}
+				
+				if ( _sound != null )
+				{
+					_sound.play( true );
+				}
 			}
 		}
 		
@@ -410,12 +507,14 @@ class FlxTypeText extends FlxText
 		{
 			text = helperString;
 			
-			// If we're done animating, call the complete() function
+			// If we're done typing, call the onComplete() function
 			
 			if ( _length >= _finalText.length && !_waiting && !_erasing )
 			{
 				onComplete();
 			}
+			
+			// If we're done erasing, call the onErased() function
 			
 			if ( _length == 0 && _erasing )
 			{
