@@ -1,13 +1,13 @@
 package flixel.addons.nape;
 
+import flixel.FlxG;
+import flixel.FlxState;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
 import nape.phys.Material;
 import nape.shape.Polygon;
 import nape.space.Space;
-import flixel.FlxG;
-import flixel.FlxState;
 
 #if !FLX_NO_DEBUG
 import nape.util.ShapeDebug;
@@ -169,6 +169,7 @@ class FlxNapeState extends FlxState
 			{
 				_physDbgSpr = new ShapeDebug(FlxG.width, FlxG.height);
 				_physDbgSpr.drawConstraints = true;
+				_physDbgSpr.display.scrollRect = null;
 				FlxG.stage.addChild(_physDbgSpr.display);
 			}
 		}
@@ -198,21 +199,18 @@ class FlxNapeState extends FlxState
 		
 		var cam = FlxG.camera;
 		var zoom = cam.zoom;
+		var sprite = _physDbgSpr.display;
 		
-		_physDbgSpr.display.scaleX = zoom;
-		_physDbgSpr.display.scaleY = zoom;
+		sprite.scaleX = zoom;
+		sprite.scaleY = zoom;
 		
-		if (cam.target == null)
+		sprite.x = -cam.scroll.x * zoom;
+		sprite.y = -cam.scroll.y * zoom;
+
+		if (cam.target != null)
 		{
-			_physDbgSpr.display.x = cam.scroll.x * zoom;
-			_physDbgSpr.display.y = cam.scroll.y * zoom;
-		}
-		else
-		{
-			_physDbgSpr.display.x = -cam.scroll.x * zoom;
-			_physDbgSpr.display.y = -cam.scroll.y * zoom;
-			_physDbgSpr.display.x += (FlxG.width - FlxG.width * zoom) / 2;
-			_physDbgSpr.display.y += (FlxG.height - FlxG.height * zoom) / 2;
+			sprite.x += (FlxG.width - FlxG.width * zoom) / 2;
+			sprite.y += (FlxG.height - FlxG.height * zoom) / 2;
 		}
 		#end
 	}
