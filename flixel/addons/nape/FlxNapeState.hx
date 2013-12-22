@@ -2,6 +2,7 @@ package flixel.addons.nape;
 
 import flixel.FlxG;
 import flixel.FlxState;
+import flixel.system.ui.FlxSystemButton;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -14,7 +15,7 @@ import nape.util.ShapeDebug;
 #end
 
 /**
- * <code>FlxNapeState</code> is an <code>FlxState</code> that integrates <code>nape.space.Space</code>
+ * <code>FlxNapeState</code> is a <code>FlxState</code> that integrates <code>nape.space.Space</code>
  * to provide Nape physics simulation in Flixel.
  *
  * Extend this state, add some <code>FlxNapeSprite(s)</code> to start using flixel + nape physics.
@@ -55,6 +56,11 @@ class FlxNapeState extends FlxState
 	{ 
 		return cast(FlxG.state, FlxNapeState)._physDbgSpr; 
 	}
+	
+	/**
+	 * Contains a reference to the Nape button in the debugger.
+	 */
+	private var _button:FlxSystemButton;
 	#end
 
 	/**
@@ -69,6 +75,8 @@ class FlxNapeState extends FlxState
 		}
 		
 		#if !FLX_NO_DEBUG
+		// Add a button to toggle Nape debug shapes to the debugger
+		_button = FlxG.debugger.addButton(RIGHT, "flixel/img/napeDebug.png", toggleDebug, true, true);
 		napeDebugEnabled = true;
 		#end
 	}
@@ -152,6 +160,8 @@ class FlxNapeState extends FlxState
 		
 		#if !FLX_NO_DEBUG
 		napeDebugEnabled = false;
+		FlxG.debugger.removeButton(_button);
+		_button = null;
 		#end
 	}
 
@@ -163,6 +173,8 @@ class FlxNapeState extends FlxState
 	public function set_napeDebugEnabled(Value:Bool):Bool
 	{
 		#if !FLX_NO_DEBUG
+		_button.toggled = !Value;
+		
 		if (Value)
 		{
 			if (_physDbgSpr == null)
@@ -214,4 +226,11 @@ class FlxNapeState extends FlxState
 		}
 		#end
 	}
+	
+	#if !FLX_NO_DEBUG
+	private function toggleDebug():Void
+	{
+		napeDebugEnabled = !napeDebugEnabled;
+	}
+	#end
 }
