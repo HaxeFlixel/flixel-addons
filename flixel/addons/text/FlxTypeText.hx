@@ -59,6 +59,11 @@ class FlxTypeText extends FlxText
 	public var paused:Bool = false;
 	
 	/**
+	 * If this is set to true, this class will use typetext.wav from flixel-addons for the type sound unless you specify another.
+	 */
+	public var useDefaultSound:Bool = false;
+	
+	/**
 	 * The text that will ultimately be displayed.
 	 */
 	private var _finalText:String = "";
@@ -66,7 +71,7 @@ class FlxTypeText extends FlxText
 	/**
 	 * This function is called when the message is done typing.
 	 */
-	private var _onComplete:Dynamic;
+	private var _onComplete:Dynamic = null;
 	
 	/**
 	 * Optional parameters that will be passed to the _onComplete function.
@@ -76,7 +81,7 @@ class FlxTypeText extends FlxText
 	/**
 	 * This function is called when the message is done erasing, if that is enabled.
 	 */
-	private var _onErase:Dynamic;
+	private var _onErase:Dynamic = null;
 	
 	/**
 	 * Optional parameters that will be passed to the _onErase function.
@@ -172,7 +177,7 @@ class FlxTypeText extends FlxText
 	 * @param	Callback	The callback function.
 	 * @param	Params		Any params you want to pass to the function. Optional!
 	 */
-	public function setCompleteCallback( Callback:Dynamic, Params:Array<Dynamic> = null ):Void
+	public function setCompleteCallback( Callback:Dynamic, ?Params:Array<Dynamic> ):Void
 	{
 		_onComplete = Callback;
 		
@@ -191,7 +196,7 @@ class FlxTypeText extends FlxText
 	 * @param	Callback		The callback function.
 	 * @param	Params			Any params you want to pass to the function. Optional!
 	 */
-	public function setEraseCallback( Callback:Dynamic, Params:Array<Dynamic> = null ):Void
+	public function setEraseCallback( Callback:Dynamic, ?Params:Array<Dynamic> ):Void
 	{
 		_onErase = Callback;
 		
@@ -214,7 +219,7 @@ class FlxTypeText extends FlxText
 	 * @param	Callback		An optional callback function, to be called when the typing animation is complete.
 	 * @param 	Params			Optional parameters to pass to the callback function.
 	 */
-	public function start( ?Delay:Float, ForceRestart:Bool = false, AutoErase:Bool = false, Sound:FlxSound = null, SkipKeys:Array<String> = null, Callback:Dynamic = null, Params:Array<Dynamic> = null ):Void
+	public function start( ?Delay:Float, ForceRestart:Bool = false, AutoErase:Bool = false, ?Sound:FlxSound, ?SkipKeys:Array<String>, ?Callback:Dynamic, ?Params:Array<Dynamic> ):Void
 	{
 		if ( Delay != null )
 		{
@@ -237,6 +242,11 @@ class FlxTypeText extends FlxText
 		if ( Sound != null )
 		{
 			_sound = Sound;
+		}
+		else if ( useDefaultSound )
+		{
+			_sound = new FlxSound();
+			_sound.loadEmbedded( "flixel/snd/typetext.wav" );
 		}
 		
 		if ( SkipKeys != null )
@@ -265,7 +275,7 @@ class FlxTypeText extends FlxText
 	 * @param	Callback		An optional callback function, to be called when the erasing animation is complete.
 	 * @param	Params			Optional parameters to pass to the callback function.
 	 */
-	public function erase( ?Delay:Float, ForceRestart:Bool = false, Sound:FlxSound = null, SkipKeys:Array<String> = null, Callback:Dynamic = null, Params:Array<Dynamic> = null ):Void
+	public function erase( ?Delay:Float, ForceRestart:Bool = false, ?Sound:FlxSound, ?SkipKeys:Array<String>, ?Callback:Dynamic, ?Params:Array<Dynamic> ):Void
 	{
 		_erasing = true;
 		_typing = false;
@@ -286,6 +296,11 @@ class FlxTypeText extends FlxText
 		if ( Sound != null )
 		{
 			_sound = Sound;
+		}
+		else if ( useDefaultSound )
+		{
+			_sound = new FlxSound();
+			_sound.loadEmbedded( "flixel/snd/typetext.wav" );
 		}
 		
 		if ( SkipKeys != null )
@@ -509,14 +524,14 @@ class FlxTypeText extends FlxText
 			
 			// If we're done typing, call the onComplete() function
 			
-			if ( _length >= _finalText.length && !_waiting && !_erasing )
+			if ( _length >= _finalText.length && _typing && !_waiting && !_erasing )
 			{
 				onComplete();
 			}
 			
 			// If we're done erasing, call the onErased() function
 			
-			if ( _length == 0 && _erasing )
+			if ( _length == 0 && _erasing && !_typing && !_waiting )
 			{
 				onErased();
 			}
