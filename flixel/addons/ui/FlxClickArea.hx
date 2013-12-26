@@ -6,8 +6,7 @@ import flash.events.TouchEvent;
 import flash.Lib;
 import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.FlxSprite;
-import flixel.system.FlxAssets;
+import flixel.ui.FlxButton;
 import flixel.util.FlxPoint;
 
 /**
