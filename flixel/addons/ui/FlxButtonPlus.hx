@@ -14,6 +14,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 import flixel.util.FlxMath;
+import flixel.util.FlxSpriteUtil;
 import flixel.util.loaders.CachedGraphics;
 
 //TODO: Port to use touch as well
@@ -112,8 +113,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		x = X;
 		y = Y;
-		width = Width;
-		height = Height;
 		_onClick = Callback;
 		
 		buttonNormal = new FlxExtendedSprite();
@@ -181,9 +180,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 	{
 		buttonNormal.pixels = Normal.pixels;
 		buttonHighlight.pixels = Highlight.pixels;
-		
-		width = Std.int(buttonNormal.width);
-		height = Std.int(buttonNormal.height);
 
 		if (_pressed)
 		{
@@ -357,13 +353,16 @@ class FlxButtonPlus extends FlxSpriteGroup
 	{
 		offColor = Colors;
 		
+		var w = buttonNormal.width;
+		var h = buttonNormal.height;
+		
 		#if flash
-		buttonNormal.stamp(FlxGradient.createGradientFlxSprite(Std.int(width - 2), Std.int(height - 2), offColor), 1, 1);
+		buttonNormal.stamp(FlxGradient.createGradientFlxSprite(Std.int(w - 2), Std.int(h - 2), offColor), 1, 1);
 		#else
 		var colA:Int;
 		var colRGB:Int;
 		
-		var normalKey:String = "Gradient: " + width + " x " + height + ", colors: [";
+		var normalKey:String = "Gradient: " + w + " x " + h + ", colors: [";
 		
 		for (col in offColor)
 		{
@@ -377,9 +376,9 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		if (FlxG.bitmap.checkCache(normalKey) == false)
 		{
-			var normalGraphics:CachedGraphics = FlxG.bitmap.create(width, height, FlxColor.TRANSPARENT, false, normalKey);
-			normalGraphics.bitmap.fillRect(new Rectangle(0, 0, width, height), borderColor);
-			FlxGradient.overlayGradientOnBitmapData(normalGraphics.bitmap, width - 2, height - 2, offColor, 1, 1);
+			var normalGraphics:CachedGraphics = FlxG.bitmap.create(Std.int(w), Std.int(h), FlxColor.TRANSPARENT, false, normalKey);
+			normalGraphics.bitmap.fillRect(new Rectangle(0, 0, w, h), borderColor);
+			FlxGradient.overlayGradientOnBitmapData(normalGraphics.bitmap, Std.int(w - 2), Std.int(h - 2), offColor, 1, 1);
 		}
 		
 		buttonNormal.pixels = FlxG.bitmap.get(normalKey).bitmap;
@@ -395,14 +394,17 @@ class FlxButtonPlus extends FlxSpriteGroup
 	{
 		onColor = Colors;
 		
+		var w = buttonHighlight.width;
+		var h = buttonHighlight.height;
+		
 		#if flash
-		buttonHighlight.stamp(FlxGradient.createGradientFlxSprite(Std.int(width - 2), Std.int(height - 2), onColor), 1, 1);
+		buttonHighlight.stamp(FlxGradient.createGradientFlxSprite(Std.int(w - 2), Std.int(h - 2), onColor), 1, 1);
 		#else
 		
 		var colA:Int;
 		var colRGB:Int;
 		
-		var highlightKey:String = "Gradient: " + width + " x " + height + ", colors: [";
+		var highlightKey:String = "Gradient: " + w + " x " + h + ", colors: [";
 		
 		for (col in onColor)
 		{
@@ -416,9 +418,9 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		if (FlxG.bitmap.checkCache(highlightKey) == false)
 		{
-			var highlightGraphics:CachedGraphics = FlxG.bitmap.create(width, height, FlxColor.TRANSPARENT, false, highlightKey);
-			highlightGraphics.bitmap.fillRect(new Rectangle(0, 0, width, height), borderColor);
-			FlxGradient.overlayGradientOnBitmapData(highlightGraphics.bitmap, width - 2, height - 2, onColor, 1, 1);
+			var highlightGraphics:CachedGraphics = FlxG.bitmap.create(Std.int(w), Std.int(h), FlxColor.TRANSPARENT, false, highlightKey);
+			highlightGraphics.bitmap.fillRect(new Rectangle(0, 0, w, h), borderColor);
+			FlxGradient.overlayGradientOnBitmapData(highlightGraphics.bitmap, Std.int(w - 2), Std.int(h - 2), onColor, 1, 1);
 		}
 		
 		buttonHighlight.pixels = FlxG.bitmap.get(highlightKey).bitmap;
@@ -440,22 +442,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 		
 		return NewText;
-	}
-	
-	/**
-	 * Center this button (on the X axis) Uses <code>FlxG.width / 2 - button width / 2</code>
-	 * to achieve this. Doesn't take scrolling into consideration.
-	 */
-	public function screenCenter():Void
-	{
-		buttonNormal.x = (FlxG.width / 2) - (width / 2);
-		buttonHighlight.x = (FlxG.width / 2) - (width / 2);
-		
-		if (textNormal != null)
-		{
-			textNormal.x = buttonNormal.x;
-			textHighlight.x = buttonHighlight.x;
-		}
 	}
 	
 	/**
