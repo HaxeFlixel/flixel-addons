@@ -104,7 +104,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 	 * @param	Width		The width of the button.
 	 * @param	Height		The height of the button.
 	 */
-	public function new(X:Int, Y:Int, Callback:Dynamic, ?Params:Array<Dynamic>, ?Label:String, Width:Int = 100, Height:Int = 20)
+	public function new(X:Int = 0, Y:Int = 0, ?Callback:Dynamic, ?Params:Array<Dynamic>, ?Label:String, Width:Int = 100, Height:Int = 20)
 	{
 		offColor = [0xff008000, 0xff00ff00];
 		onColor = [0xff800000, 0xffff0000];
