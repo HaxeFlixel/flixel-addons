@@ -119,6 +119,8 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		#if flash
 		buttonNormal.makeGraphic(Width, Height, borderColor);
+		#else
+		buttonNormal.setSize(Width, Height);
 		#end
 		
 		updateInactiveButtonColors(offColor);
@@ -130,6 +132,8 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		#if flash
 		buttonHighlight.makeGraphic(Width, Height, borderColor);
+		#else
+		buttonHighlight.setSize(Width, Height);
 		#end
 		
 		updateActiveButtonColors(onColor);
