@@ -616,10 +616,10 @@ class FlxTilemapExt extends FlxTilemap
 	/**
 	 * Sets the slope arrays, which define which tiles are treated as slopes.
 	 * 
-	 * @param 	LeftFloorSlopes 	An array containing the numbers of the tiles to be treated as left floor slopes.
-	 * @param 	RightFloorSlopes	An array containing the numbers of the tiles to be treated as right floor slopes.
-	 * @param 	LeftCeilSlopes		An array containing the numbers of the tiles to be treated as left ceiling slopes.
-	 * @param 	RightCeilSlopes		An array containing the numbers of the tiles to be treated as right ceiling slopes.
+	 * @param 	LeftFloorSlopes 	An array containing the numbers of the tiles to be treated as floor tiles with a slope on the left.
+	 * @param 	RightFloorSlopes	An array containing the numbers of the tiles to be treated as floor tiles with a slope on the right.
+	 * @param 	LeftCeilSlopes		An array containing the numbers of the tiles to be treated as ceiling tiles with a slope on the left.
+	 * @param 	RightCeilSlopes		An array containing the numbers of the tiles to be treated as ceiling tiles with a slope on the right.
 	 */
 	public function setSlopes(?LeftFloorSlopes:Array<Int>, ?RightFloorSlopes:Array<Int>, ?LeftCeilSlopes:Array<Int>, ?RightCeilSlopes:Array<Int>):Void
 	{
