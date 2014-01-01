@@ -1,4 +1,4 @@
-![](http://haxeflixel.com/images/flixel-addons.png)
+![](https://raw.github.com/HaxeFlixel/haxeflixel.com/master/src/files/images/flixel-logos/flixel-addons.png)
 =============
 ###Related: [flixel](https://github.com/HaxeFlixel/flixel) | [flixel-demos](https://github.com/HaxeFlixel/flixel-demos) | [flixel-tools](https://github.com/HaxeFlixel/flixel-tools) | [flixel-ui](https://github.com/HaxeFlixel/flixel-ui)
 ______________________________________________________
