@@ -1,18 +1,12 @@
 package flixel.addons.plugin.effects.fx;
 
-import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.util.FlxAngle;
 import flixel.util.FlxColor;
 import flixel.util.FlxColorUtil;
 import flixel.util.FlxGradient;
-import flixel.util.FlxMisc;
-import flixel.system.layer.DrawStackItem;
-import flixel.system.layer.Region;
-import flixel.FlxBasic;
 
 
 /**

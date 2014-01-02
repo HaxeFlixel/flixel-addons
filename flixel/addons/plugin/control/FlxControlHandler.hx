@@ -4,11 +4,9 @@ package flixel.addons.plugin.control;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.util.FlxAngle;
-import flixel.util.FlxPoint;
-import flixel.system.FlxSound;
 import flixel.FlxSprite;
-import flixel.util.FlxMisc;
+import flixel.system.FlxSound;
+import flixel.util.FlxPoint;
 import flixel.util.FlxVelocity;
 
 /**
