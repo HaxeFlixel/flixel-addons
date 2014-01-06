@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<assets path="assets/sounds" rename="flixel/snd" />
 	<assets path="assets/images" rename="flixel/img" />
 </project>

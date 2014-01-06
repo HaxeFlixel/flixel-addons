@@ -5,12 +5,16 @@ import flixel.text.FlxText;
 import flixel.system.FlxSound;
 import flixel.util.FlxRandom;
 
+#if !FLX_NO_SOUND_SYSTEM
+import flash.media.Sound;
+@:sound("assets/sounds/typetext.wav") class TypeSound extends Sound {}
+#end
+
 /**
  * This is loosely based on the TypeText class by Noel Berry, who wrote it for his Ludum Dare 22 game - Abandoned
  * http://www.ludumdare.com/compo/ludum-dare-22/?action=preview&uid=1527
  * @author Noel Berry
  */
-
 class FlxTypeText extends FlxText
 {
 	/**
@@ -62,6 +66,16 @@ class FlxTypeText extends FlxText
 	 * If this is set to true, this class will use typetext.wav from flixel-addons for the type sound unless you specify another.
 	 */
 	public var useDefaultSound:Bool = false;
+	
+	/**
+	 * The sound that is played when letters are added; optional.
+	 */
+	public var sound:FlxSound;
+	
+	/**
+	 * An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
+	 */
+	public var skipKeys:Array<String>;
 	
 	/**
 	 * The text that will ultimately be displayed.
@@ -119,16 +133,6 @@ class FlxTypeText extends FlxText
 	private var _waiting:Bool = false;
 	
 	/**
-	 * Key(s) that will advance the text when pressed.
-	 */
-	private var _skipKeys:Array<String>;
-	
-	/**
-	 * The sound that is played when letters are added; optional.
-	 */
-	private var _sound:FlxSound;
-	
-	/**
 	 * Internal tracker for cursor blink time.
 	 */
 	private var _cursorTimer:Float = 0.0;
@@ -168,7 +172,7 @@ class FlxTypeText extends FlxText
 		_onErase = null;
 		_onCompleteParams = [];
 		_onEraseParams = [];
-		_skipKeys = [];
+		skipKeys = [];
 	}
 	
 	/**
@@ -211,7 +215,7 @@ class FlxTypeText extends FlxText
 	/**
 	 * Start the text animation.
 	 * 
-	 * @param	?Delay			Optionally, set the delay between characters. Can also be set separately.
+	 * @param	Delay			Optionally, set the delay between characters. Can also be set separately.
 	 * @param	ForceRestart	Whether or not to start this animation over if currently animating; false by default.
 	 * @param	AutoErase		Whether or not to begin the erase animation when the typing animation is complete. Can also be set separately.
 	 * @param	Sound			A FlxSound object to play when a character is typed. Can also be set separately.
@@ -239,19 +243,20 @@ class FlxTypeText extends FlxText
 		
 		autoErase = AutoErase;
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if ( Sound != null )
 		{
-			_sound = Sound;
+			sound = Sound;
 		}
 		else if ( useDefaultSound )
 		{
-			_sound = new FlxSound();
-			_sound.loadEmbedded( "flixel/snd/typetext.wav" );
+			sound = FlxG.sound.load( new TypeSound() );
 		}
+		#end
 		
 		if ( SkipKeys != null )
 		{
-			_skipKeys = SkipKeys;
+			skipKeys = SkipKeys;
 		}
 		
 		if ( Callback != null )
@@ -268,7 +273,7 @@ class FlxTypeText extends FlxText
 	/**
 	 * Begin an animated erase of this text.
 	 * 
-	 * @param	?Delay			Optionally, set the delay between characters. Can also be set separately.
+	 * @param	Delay			Optionally, set the delay between characters. Can also be set separately.
 	 * @param	ForceRestart	Whether or not to start this animation over if currently animating; false by default.
 	 * @param	Sound			A FlxSound object to play when a character is typed. Can also be set separately.
 	 * @param	SkipKeys		An array of keys as string values (e.g. "SPACE", "L") that will advance the text. Can also be set separately.
@@ -293,19 +298,20 @@ class FlxTypeText extends FlxText
 			text = _finalText;
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if ( Sound != null )
 		{
-			_sound = Sound;
+			sound = Sound;
 		}
 		else if ( useDefaultSound )
 		{
-			_sound = new FlxSound();
-			_sound.loadEmbedded( "flixel/snd/typetext.wav" );
+			sound = FlxG.sound.load( new TypeSound() );
 		}
+		#end
 		
 		if ( SkipKeys != null )
 		{
-			_skipKeys = SkipKeys;
+			skipKeys = SkipKeys;
 		}
 		
 		if ( Callback != null )
@@ -332,26 +338,6 @@ class FlxTypeText extends FlxText
 		_erasing = false;
 		paused = false;
 		_waiting = false;
-	}
-	
-	/**
-	 * Define the keys that can be used to advance text.
-	 * 
-	 * @param	Keys	An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
-	 */
-	public function setSkipKeys( Keys:Array<String> ):Void
-	{
-		_skipKeys = Keys;
-	}
-	
-	/**
-	 * Set a sound that will be played each time a letter is added to the text.
-	 * 
-	 * @param	Sound	A FlxSound object.
-	 */
-	public function setSound( Sound:FlxSound ):Void
-	{
-		_sound = Sound;
 	}
 	
 	/**
@@ -416,7 +402,7 @@ class FlxTypeText extends FlxText
 		// If the skip key was pressed, complete the animation.
 		
 		#if !FLX_NO_KEYBOARD
-		if ( FlxG.keyboard.anyJustPressed( _skipKeys ) )
+		if ( FlxG.keyboard.anyJustPressed( skipKeys ) )
 		{
 			if ( _erasing || _waiting )
 			{
@@ -488,10 +474,12 @@ class FlxTypeText extends FlxText
 					_timer = 0;
 				}
 				
-				if ( _sound != null )
+				#if !FLX_NO_SOUND_SYSTEM
+				if ( sound != null )
 				{
-					_sound.play( true );
+					sound.play( true );
 				}
+				#end
 			}
 		}
 		
