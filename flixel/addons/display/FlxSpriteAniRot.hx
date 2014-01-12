@@ -73,22 +73,22 @@ class FlxSpriteAniRot extends FlxSprite
 		}
 	}
 
-	#if flash
-	override private function calcFrame():Void 
-	#else
-	override private function calcFrame(AreYouSure:Bool = false):Void
-	#end
+	/**
+	 * Internal function to update the current animation frame.
+	 * 
+	 * @param	CPP		Whether the frame should also be recalculated if we're on a non-flash target
+	 */
+	override private function calcFrame(CPP:Bool = false):Void
 	{
 		#if !flash
-		// TODO: Maybe remove 'AreYouSure' parameter
-		if (AreYouSure)
+		if (!CPP)
 		{
+			return;
+		}
 		#end
+		
 		cachedGraphics = cached[animation.frameIndex];
 		frame = framesCache[animation.frameIndex].frames[angleIndex];
 		super.calcFrame();
-		#if !flash
-		}
-		#end
 	}
 }
