@@ -342,7 +342,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 	 */
 	function onMouseUp(E:MouseEvent):Void
 	{
-		if (exists && visible && active && (_status == PRESSED) && (_onClick != null) && (pauseProof || !FlxG.paused))
+		if (exists && visible && active && (_status == PRESSED) && (_onClick != null) && (pauseProof))
 		{
 			Reflect.callMethod(this, Reflect.getProperty(this, "_onClick"), _onClickParams);
 		}
