@@ -44,6 +44,11 @@ class FlxTypeText extends FlxText
 	public var prefix:String = "";
 	
 	/**
+	 * Key(s) that will advance the text when pressed.
+	 */
+	public var skipKeys:Array<String>;
+	
+	/**
 	 * Whether or not to erase this message when it is complete.
 	 */
 	public var autoErase:Bool = false;
@@ -119,11 +124,6 @@ class FlxTypeText extends FlxText
 	private var _waiting:Bool = false;
 	
 	/**
-	 * Key(s) that will advance the text when pressed.
-	 */
-	private var _skipKeys:Array<String>;
-	
-	/**
 	 * The sound that is played when letters are added; optional.
 	 */
 	private var _sound:FlxSound;
@@ -168,7 +168,7 @@ class FlxTypeText extends FlxText
 		_onErase = null;
 		_onCompleteParams = [];
 		_onEraseParams = [];
-		_skipKeys = [];
+		skipKeys = [];
 	}
 	
 	/**
@@ -251,7 +251,7 @@ class FlxTypeText extends FlxText
 		
 		if ( SkipKeys != null )
 		{
-			_skipKeys = SkipKeys;
+			skipKeys = SkipKeys;
 		}
 		
 		if ( Callback != null )
@@ -305,7 +305,7 @@ class FlxTypeText extends FlxText
 		
 		if ( SkipKeys != null )
 		{
-			_skipKeys = SkipKeys;
+			skipKeys = SkipKeys;
 		}
 		
 		if ( Callback != null )
@@ -341,7 +341,7 @@ class FlxTypeText extends FlxText
 	 */
 	public function setSkipKeys( Keys:Array<String> ):Void
 	{
-		_skipKeys = Keys;
+		skipKeys = Keys;
 	}
 	
 	/**
@@ -416,7 +416,7 @@ class FlxTypeText extends FlxText
 		// If the skip key was pressed, complete the animation.
 		
 		#if !FLX_NO_KEYBOARD
-		if ( FlxG.keyboard.anyJustPressed( _skipKeys ) )
+		if ( skipKeys != null && skipKeys.length > 0 && FlxG.keyboard.anyJustPressed( skipKeys ) )
 		{
 			if ( _erasing || _waiting )
 			{
