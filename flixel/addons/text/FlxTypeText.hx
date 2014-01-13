@@ -341,6 +341,26 @@ class FlxTypeText extends FlxText
 	}
 	
 	/**
+	 * Define the keys that can be used to advance text.
+	 * 
+	 * @param	Keys	An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
+	 */
+	public function setSkipKeys( Keys:Array<String> ):Void
+	{
+		skipKeys = Keys;
+	}
+	
+	/**
+	 * Set a sound that will be played each time a letter is added to the text.
+	 * 
+	 * @param	Sound	A FlxSound object.
+	 */
+	public function setSound( Sound:FlxSound ):Void
+	{
+		sound = Sound;
+	}
+	
+	/**
 	 * If called with On set to true, a random variation will be added to the rate of typing.
 	 * Especially with sound enabled, this can give a more "natural" feel to the typing.
 	 * Much more noticable with longer text delays.
@@ -402,7 +422,7 @@ class FlxTypeText extends FlxText
 		// If the skip key was pressed, complete the animation.
 		
 		#if !FLX_NO_KEYBOARD
-		if ( FlxG.keyboard.anyJustPressed( skipKeys ) )
+		if ( skipKeys != null && skipKeys.length > 0 && FlxG.keyboard.anyJustPressed( skipKeys ) )
 		{
 			if ( _erasing || _waiting )
 			{

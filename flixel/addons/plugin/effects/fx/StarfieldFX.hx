@@ -1,13 +1,15 @@
 package flixel.addons.plugin.effects.fx;
 
-import flash.geom.Point;
-import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+import flixel.util.FlxAngle;
 import flixel.util.FlxColor;
 import flixel.util.FlxColorUtil;
 import flixel.util.FlxGradient;
-
+import flixel.system.layer.Region;
+import flixel.system.layer.DrawStackItem;
 
 /**
  * Creates a 2D or 3D Star Field effect on an FlxSprite for use in your game.
