@@ -206,10 +206,12 @@ class FlxBullet extends FlxSprite
 			_weapon.onFireCallback();
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if (_weapon.onFireSound != null)
 		{
 			_weapon.onFireSound.play();
 		}
+		#end
 	}
 	
 	public var xGravity(never, set):Float;

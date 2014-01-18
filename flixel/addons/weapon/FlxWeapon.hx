@@ -297,10 +297,12 @@ class FlxWeapon
 			onPreFireCallback();
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if (onPreFireSound != null)
 		{
 			onPreFireSound.play();
 		}
+		#end
 
 		// Clear any velocity that may have been previously set from the pool
 		currentBullet.velocity.x = 0;
@@ -367,10 +369,12 @@ class FlxWeapon
 			onPostFireCallback();
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if (onPostFireSound != null)
 		{
 			onPostFireSound.play();
 		}
+		#end
 		
 		_bulletsFired++;
 		

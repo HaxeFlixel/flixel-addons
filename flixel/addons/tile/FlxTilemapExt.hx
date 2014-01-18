@@ -243,7 +243,7 @@ class FlxTilemapExt extends FlxTilemap
 					}
 					
 					#if !FLX_NO_DEBUG
-					if (FlxG.debugger.visualDebug && !ignoreDrawDebug) 
+					if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
 					{
 						tile = _tileObjects[_data[columnIndex]];
 						
