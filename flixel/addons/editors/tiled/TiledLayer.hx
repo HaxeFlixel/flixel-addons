@@ -146,7 +146,7 @@ class TiledLayer
 		return output;
 	}
 	
-	private function resolveTile(GlobalTileID:UInt):Int
+	private function resolveTile(GlobalTileID:Int):Int
 	{
 		var tile:TiledTile = new TiledTile(GlobalTileID);
 		
@@ -177,7 +177,7 @@ class TiledLayer
 		var values:Array<String>;
 		for(row in rows) {
 			values = row.split(",");
-			var i:UInt;
+			var i:Int;
 			for (v in values) {
 				if ( v == "") {
 					continue;

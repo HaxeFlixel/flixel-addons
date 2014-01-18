@@ -126,8 +126,8 @@ class FlxBitmapFont extends FlxSprite
 	private var _textWidth:Int;
 	private var _textHeight:Int;
 
-    public var characterWidth(default, null):UInt;
-    public var characterHeight(default, null):UInt;
+    public var characterWidth(default, null):Int;
+    public var characterHeight(default, null):Int;
 	
 	/**
 	 * Loads 'font' and prepares it for use by future calls to .text
@@ -665,7 +665,7 @@ class FlxBitmapFont extends FlxSprite
 	 * @param	CustomSpacingX
 	 */
 	#if flash
-	private function pasteLine(Output:BitmapData, Line:String, X:UInt = 0, Y:UInt = 0, CustomSpacingX:UInt = 0):Void
+	private function pasteLine(Output:BitmapData, Line:String, X:Int = 0, Y:Int = 0, CustomSpacingX:Int = 0):Void
 	#else
 	private function pasteLine(Line:String, X:Int = 0, Y:Int = 0, CustomSpacingX:Int = 0):Void
 	#end
