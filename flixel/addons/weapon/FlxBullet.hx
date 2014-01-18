@@ -2,7 +2,7 @@ package flixel.addons.weapon;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.system.input.touch.FlxTouch;
+import flixel.input.touch.FlxTouch;
 import flixel.util.FlxAngle;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;

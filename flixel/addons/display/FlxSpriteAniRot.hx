@@ -81,7 +81,7 @@ class FlxSpriteAniRot extends FlxSprite
 	override private function calcFrame(RunOnCpp:Bool = false):Void
 	{
 		#if !(flash || js)
-		if (!CPP)
+		if (!RunOnCpp)
 		{
 			return;
 		}
