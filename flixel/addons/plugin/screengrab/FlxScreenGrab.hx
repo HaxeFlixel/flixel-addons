@@ -23,7 +23,7 @@ class FlxScreenGrab extends FlxPlugin
 {
 	static public var screenshot:Bitmap;
 	
-	static private var _hotkey:String = "";
+	static private var _hotkeys:Array<String>;
 	static private var _autoSave:Bool = false;
 	static private var _autoHideMouse:Bool = false;
 	static private var _region:Rectangle;
@@ -55,13 +55,13 @@ class FlxScreenGrab extends FlxPlugin
 	 * Specify which key will capture a screen shot. Use the String value of the key in the same way FlxG.keys does (so "F1" for example)
 	 * Optionally save the image to a file immediately. This uses the file systems "Save as" dialog window and pauses your game during the process.
 	 * 
-	 * @param	Key			String The key you press to capture the screen (i.e. "F1", "SPACE", etc - see system.input.Keyboard.as source for reference)
-	 * @param	SaveToFile	Boolean If set to true it will immediately encodes the grab to a PNG and open a "Save As" dialog window when the hotkey is pressed
-	 * @param	HideMouse	Boolean If set to true the mouse will be hidden before capture and displayed afterwards when the hotkey is pressed
+	 * @param	Key			The key(s) you press to capture the screen (i.e. <code>["F1", "SPACE"]</code>)
+	 * @param	SaveToFile	If true it will immediately encodes the grab to a PNG and open a "Save As" dialog window when the hotkey is pressed
+	 * @param	HideMouse	If true the mouse will be hidden before capture and displayed afterwards when the hotkey is pressed
 	 */
-	static public function defineHotKey(Key:String, SaveToFile:Bool = false, HideMouse:Bool = false):Void
+	static public function defineHotKeys(Keys:Array<String>, SaveToFile:Bool = false, HideMouse:Bool = false):Void
 	{
-		_hotkey = Key;
+		_hotkeys = Key;
 		_autoSave = SaveToFile;
 		_autoHideMouse = HideMouse;
 	}
@@ -69,9 +69,9 @@ class FlxScreenGrab extends FlxPlugin
 	/**
 	 * Clears a previously defined hotkey
 	 */
-	static public function clearHotKey():Void
+	static public function clearHotKeys():Void
 	{
-		_hotkey = "";
+		_hotkeys = [];
 		_autoSave = false;
 		_autoHideMouse = false;
 	}
@@ -166,9 +166,9 @@ class FlxScreenGrab extends FlxPlugin
 	override public function update():Void
 	{
 		#if !FLX_NO_KEYBOARD
-		if (_hotkey != "")
+		if (_hotkeys != null)
 		{
-			if (FlxG.keyboard.justReleased(_hotkey))
+			if (FlxG.keyboard.anyJustReleased(_hotkeys))
 			{
 				grab();
 			}
