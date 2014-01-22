@@ -422,7 +422,7 @@ class FlxTypeText extends FlxText
 		// If the skip key was pressed, complete the animation.
 		
 		#if !FLX_NO_KEYBOARD
-		if ( skipKeys != null && skipKeys.length > 0 && FlxG.keyboard.anyJustPressed( skipKeys ) )
+		if ( skipKeys != null && skipKeys.length > 0 && FlxG.keys.anyJustPressed( skipKeys ) )
 		{
 			if ( _erasing || _waiting )
 			{
