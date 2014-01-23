@@ -9,7 +9,6 @@ import flixel.util.FlxAngle;
 import flixel.util.FlxColor;
 import flixel.util.FlxColorUtil;
 import flixel.util.FlxGradient;
-import flixel.util.FlxMisc;
 import flixel.system.layer.DrawStackItem;
 import flixel.system.layer.Region;
 import flixel.FlxBasic;
@@ -225,13 +224,13 @@ class StarfieldFX extends BaseFX
 			canvas.setPixel32(star.x, star.y, _depthColours[Std.int(star.speed - 1)]);
 			#else
 			var starColor:Int = _depthColours[Std.int(star.speed - 1)];
-			var rgba:RGBA = FlxColorUtil.getRGBA(starColor);
+			var argb:ARGB = FlxColorUtil.getARGB(starColor);
 			
 			var starDef:StarDef = starArray[i];
-			starDef.red = rgba.red / 255;
-			starDef.green = rgba.green / 255;
-			starDef.blue = rgba.blue / 255;
-			starDef.alpha = rgba.alpha;
+			starDef.red = argb.red / 255;
+			starDef.green = argb.green / 255;
+			starDef.blue = argb.blue / 255;
+			starDef.alpha = argb.alpha;
 			#end
 			
 			if (star.x > sprite.width)
@@ -285,15 +284,15 @@ class StarfieldFX extends BaseFX
 			#if flash
 			canvas.setPixel32(star.x, star.y, 0xffffffff);
 			#else
-			var rgba:RGBA = FlxColorUtil.getRGBA(FlxColor.WHITE);
+			var argb:ARGB = FlxColorUtil.getARGB(FlxColor.WHITE);
 			#end
 			
 			#if !flash
 			var starDef:StarDef = starArray[i];
-			starDef.red = rgba.red / 255;
-			starDef.green = rgba.green / 255;
-			starDef.blue = rgba.blue / 255;
-			starDef.alpha = rgba.alpha;
+			starDef.red = argb.red / 255;
+			starDef.green = argb.green / 255;
+			starDef.blue = argb.blue / 255;
+			starDef.alpha = argb.alpha;
 			#end
 			// canvas.setPixel32(star.x, star.y, FlxColorUtil.getColor32(255, star.alpha, star.alpha, star.alpha));
 			
@@ -394,11 +393,11 @@ private class StarSprite extends FlxSprite
 	
 	public function setBackgroundColor(bgColor:Int):Void
 	{
-		var rgba:RGBA = FlxColorUtil.getRGBA(bgColor);
-		bgRed = rgba.red / 255;
-		bgGreen = rgba.green / 255;
-		bgBlue = rgba.blue / 255;
-		bgAlpha = rgba.alpha;
+		var argb:ARGB = FlxColorUtil.getARGB(bgColor);
+		bgRed = argb.red / 255;
+		bgGreen = argb.green / 255;
+		bgBlue = argb.blue / 255;
+		bgAlpha = argb.alpha;
 	}
 	
 	override public function destroy():Void 

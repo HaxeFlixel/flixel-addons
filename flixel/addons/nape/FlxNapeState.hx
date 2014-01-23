@@ -1,20 +1,21 @@
 package flixel.addons.nape;
 
+import flixel.FlxG;
+import flixel.FlxState;
+import flixel.system.ui.FlxSystemButton;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
 import nape.phys.Material;
 import nape.shape.Polygon;
 import nape.space.Space;
-import flixel.FlxG;
-import flixel.FlxState;
 
 #if !FLX_NO_DEBUG
 import nape.util.ShapeDebug;
 #end
 
 /**
- * <code>FlxNapeState</code> is an <code>FlxState</code> that integrates <code>nape.space.Space</code>
+ * <code>FlxNapeState</code> is a <code>FlxState</code> that integrates <code>nape.space.Space</code>
  * to provide Nape physics simulation in Flixel.
  *
  * Extend this state, add some <code>FlxNapeSprite(s)</code> to start using flixel + nape physics.
@@ -55,6 +56,11 @@ class FlxNapeState extends FlxState
 	{ 
 		return cast(FlxG.state, FlxNapeState)._physDbgSpr; 
 	}
+	
+	/**
+	 * Contains a reference to the Nape button in the debugger.
+	 */
+	private var _button:FlxSystemButton;
 	#end
 
 	/**
@@ -69,6 +75,8 @@ class FlxNapeState extends FlxState
 		}
 		
 		#if !FLX_NO_DEBUG
+		// Add a button to toggle Nape debug shapes to the debugger
+		_button = FlxG.debugger.addButton(RIGHT, "flixel/img/napeDebug.png", toggleDebug, true, true);
 		napeDebugEnabled = true;
 		#end
 	}
@@ -152,6 +160,8 @@ class FlxNapeState extends FlxState
 		
 		#if !FLX_NO_DEBUG
 		napeDebugEnabled = false;
+		FlxG.debugger.removeButton(_button);
+		_button = null;
 		#end
 	}
 
@@ -163,18 +173,21 @@ class FlxNapeState extends FlxState
 	public function set_napeDebugEnabled(Value:Bool):Bool
 	{
 		#if !FLX_NO_DEBUG
+		_button.toggled = !Value;
+		
 		if (Value)
 		{
 			if (_physDbgSpr == null)
 			{
 				_physDbgSpr = new ShapeDebug(FlxG.width, FlxG.height);
 				_physDbgSpr.drawConstraints = true;
-				FlxG.stage.addChild(_physDbgSpr.display);
+				_physDbgSpr.display.scrollRect = null;
+				FlxG.addChildBelowMouse(_physDbgSpr.display);
 			}
 		}
 		else if (_physDbgSpr != null)
 		{
-			FlxG.stage.removeChild(_physDbgSpr.display);
+			FlxG.removeChild(_physDbgSpr.display);
 			_physDbgSpr = null;
 		}
 		#end
@@ -198,22 +211,26 @@ class FlxNapeState extends FlxState
 		
 		var cam = FlxG.camera;
 		var zoom = cam.zoom;
+		var sprite = _physDbgSpr.display;
 		
-		_physDbgSpr.display.scaleX = zoom;
-		_physDbgSpr.display.scaleY = zoom;
+		sprite.scaleX = zoom;
+		sprite.scaleY = zoom;
 		
-		if (cam.target == null)
+		sprite.x = -cam.scroll.x * zoom;
+		sprite.y = -cam.scroll.y * zoom;
+
+		if (cam.target != null)
 		{
-			_physDbgSpr.display.x = cam.scroll.x * zoom;
-			_physDbgSpr.display.y = cam.scroll.y * zoom;
-		}
-		else
-		{
-			_physDbgSpr.display.x = -cam.scroll.x * zoom;
-			_physDbgSpr.display.y = -cam.scroll.y * zoom;
-			_physDbgSpr.display.x += (FlxG.width - FlxG.width * zoom) / 2;
-			_physDbgSpr.display.y += (FlxG.height - FlxG.height * zoom) / 2;
+			sprite.x += (FlxG.width - FlxG.width * zoom) / 2;
+			sprite.y += (FlxG.height - FlxG.height * zoom) / 2;
 		}
 		#end
 	}
+	
+	#if !FLX_NO_DEBUG
+	private function toggleDebug():Void
+	{
+		napeDebugEnabled = !napeDebugEnabled;
+	}
+	#end
 }
