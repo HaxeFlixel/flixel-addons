@@ -9,7 +9,7 @@ import flixel.FlxBasic;
 
 class FlxAsyncLoop extends FlxBasic
 {
-
+	
 	private var _started:Bool;
 	private var _finished:Bool;
 	private var _curNo:Int;
@@ -19,7 +19,14 @@ class FlxAsyncLoop extends FlxBasic
 	private var _function:Dynamic;
 	private var _object:Dynamic;
 	
-	
+	/**
+	 * Creates an instance of the FlxAsyncLoop class, used to do a loop while still allowing update() to get called and the screen to refresh.
+	 * 
+	 * @param	Iterations				How many total times should it loop
+	 * @param	LoopFunction			The function that should be called each loop
+	 * @param	?LoopObject				Optional: an object to pass to the function
+	 * @param	?IterationsPerUpdate	Optional: how many loops before we allow an update() - defaults to 100.
+	 */
 	public function new(Iterations:Int, LoopFunction:Dynamic, ?LoopObject:Dynamic = null, ?IterationsPerUpdate:Int = 100) 
 	{
 		super();
@@ -35,9 +42,12 @@ class FlxAsyncLoop extends FlxBasic
 	
 	override public function draw():Void 
 	{
-		
+		// we don't want to draw anything here.
 	}
 	
+	/**
+	 * Start the loop (if it's not already started or finished)
+	 */
 	public function start():Void
 	{
 		if (_finished || _started) return;
@@ -52,7 +62,7 @@ class FlxAsyncLoop extends FlxBasic
 		var startNo:Int = _curNo;
 		for (i in startNo...Std.int(Math.min(startNo + _iterationsPer, _iterations)))
 		{
-			
+			// call our function
 			_function(_object);
 			_curNo++;
 		}
@@ -61,6 +71,7 @@ class FlxAsyncLoop extends FlxBasic
 			
 		super.update();
 	}
+	
 	
 	override public function destroy():Void 
 	{
@@ -73,14 +84,18 @@ class FlxAsyncLoop extends FlxBasic
 	{
 		return _finished;
 	}
-	
+	/**
+	 * will be true once the loop has finished
+	 */
 	public var finished(get_finished, null):Bool;
 	
 	function get_started():Bool 
 	{
 		return _started;
 	}
-	
+	/**
+	 * will be true once start() is called and the loop starts
+	 */
 	public var started(get_started, null):Bool;
 	
 }
