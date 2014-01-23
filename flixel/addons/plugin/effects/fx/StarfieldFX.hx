@@ -10,6 +10,7 @@ import flixel.util.FlxColorUtil;
 import flixel.util.FlxGradient;
 import flixel.system.layer.Region;
 import flixel.system.layer.DrawStackItem;
+import flixel.util.FlxRandom;
 
 /**
  * Creates a 2D or 3D Star Field effect on an FlxSprite for use in your game.
@@ -96,20 +97,20 @@ class StarfieldFX extends BaseFX
 			var star:StarObject = new StarObject();
 			
 			star.index = i;
-			star.x = Std.int(Math.random() * Width);
-			star.y = Std.int(Math.random() * Height);
+			star.x = FlxRandom.intRanged(0, Width);
+			star.y = FlxRandom.intRanged(0, Height);
 			star.d = 1;
 			
 			if (FieldType == STARFIELD_TYPE_2D)
 			{
-				star.speed = 1 + Std.int(Math.random() * 5);
+				star.speed = FlxRandom.intRanged(1, 6);
 			}
 			else
 			{
-				star.speed = Math.random();
+				star.speed = FlxRandom.float();
 			}
 			
-			star.r = Math.random() * Math.PI * 2;
+			star.r = FlxRandom.float() * Math.PI * 2;
 			star.alpha = 0;
 			
 			_stars.push(star);
@@ -165,7 +166,7 @@ class StarfieldFX extends BaseFX
 		// Run through the stars array, making sure the depths are all within range
 		for (star in _stars)
 		{
-			star.speed = 1 + Std.int(Math.random() * Depth);
+			star.speed = FlxRandom.intRanged(1, Depth + 1);
 		}
 	}
 	
@@ -296,10 +297,10 @@ class StarfieldFX extends BaseFX
 			if (star.x < 0 || star.x > sprite.width || star.y < 0 || star.y > sprite.height)
 			{
 				star.d = 1;
-				star.r = Math.random() * Math.PI * 2;
+				star.r = FlxRandom.float() * Math.PI * 2;
 				star.x = 0;
 				star.y = 0;
-				star.speed = Math.random();
+				star.speed = FlxRandom.float();
 				star.alpha = 0;
 				
 				_stars[star.index] = star;

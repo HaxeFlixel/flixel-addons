@@ -5,6 +5,7 @@ import flash.filters.GlowFilter;
 import flash.geom.Matrix;
 import flixel.FlxG;
 import flixel.util.FlxPoint;
+import flixel.util.FlxRandom;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
 import flixel.util.FlxVector;
@@ -67,8 +68,8 @@ class FlxShapeLightning extends FlxShapeLine
 			var mid:FlxPoint = new FlxPoint();
 			mid.x = (A.x + B.x) / 2;
 			mid.y = (A.y + B.y) / 2;
-			var dispX:Float = Math.random() - 0.5;
-			var dispY:Float = Math.random() - 0.5;
+			var dispX:Float = FlxRandom.floatRanged( -0.5, 0.5); 
+			var dispY:Float = FlxRandom.floatRanged( -0.5, 0.5);
 			mid.x += dispX * Displacement;
 			mid.y += dispY * Displacement;
 			calculate(A, mid, Displacement / 2, Iteration);
