@@ -1,4 +1,4 @@
-package flixel.util.async;
+package flixel.addons.util;
 
 import flixel.FlxBasic;
 
