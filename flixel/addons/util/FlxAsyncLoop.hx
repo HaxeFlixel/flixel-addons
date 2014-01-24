@@ -24,7 +24,7 @@ class FlxAsyncLoop extends FlxBasic
 	 * @param	Callback				The function that should be called each loop
 	 * @param	?IterationsPerUpdate	Optional: how many loops before we allow an update() - defaults to 100.
 	 */
-	public function new(Iterations:Int, Callback:Void->Void, ?LoopObject:Dynamic = null, ?IterationsPerUpdate:Int = 100) 
+	public function new(Iterations:Int, Callback:Void->Void, ?IterationsPerUpdate:Int = 100) 
 	{
 		super();
 		visible = false;
