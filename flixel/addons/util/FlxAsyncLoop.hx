@@ -55,7 +55,7 @@ class FlxAsyncLoop extends FlxBasic
 		for (i in startNo...Std.int(Math.min(startNo + _iterationsPerUpdate, _iterations)))
 		{
 			// call our function
-			_curIndex();
+			_callback();
 			_curIndex++;
 		}
 		if (_curIndex >= _iterations)
