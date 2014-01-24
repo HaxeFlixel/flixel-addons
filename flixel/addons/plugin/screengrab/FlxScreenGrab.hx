@@ -108,7 +108,7 @@ class FlxScreenGrab extends FlxPlugin
 		#if !FLX_NO_MOUSE
 		if (_autoHideMouse || HideMouse)
 		{
-			FlxG.mouse.hide();
+			FlxG.mouse.visible = false;
 		}
 		#end
 		
@@ -117,7 +117,7 @@ class FlxScreenGrab extends FlxPlugin
 		#if !FLX_NO_MOUSE
 		if (_autoHideMouse || HideMouse)
 		{
-			FlxG.mouse.show();
+			FlxG.mouse.visible = true;
 		}
 		#end
 		
