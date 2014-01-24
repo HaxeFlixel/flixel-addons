@@ -4,11 +4,9 @@ package flixel.addons.plugin.control;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxObject;
-import flixel.util.FlxAngle;
-import flixel.util.FlxPoint;
-import flixel.system.FlxSound;
 import flixel.FlxSprite;
-import flixel.util.FlxMisc;
+import flixel.system.FlxSound;
+import flixel.util.FlxPoint;
 import flixel.util.FlxVelocity;
 
 /**
@@ -674,7 +672,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keyboard.pressed(_upKey))
+		if (FlxG.keys.anyPressed([_upKey]))
 		{
 			move = true;
 			isPressedUp = true;
@@ -706,7 +704,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keyboard.pressed(_downKey))
+		if (FlxG.keys.anyPressed([_downKey]))
 		{
 			move = true;
 			isPressedDown = true;
@@ -739,7 +737,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keyboard.pressed(_leftKey))
+		if (FlxG.keys.anyPressed([_leftKey]))
 		{
 			move = true;
 			isPressedLeft = true;
@@ -771,7 +769,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keyboard.pressed(_rightKey))
+		if (FlxG.keys.anyPressed([_rightKey]))
 		{
 			move = true;
 			isPressedRight = true;
@@ -803,7 +801,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keyboard.pressed(_antiClockwiseKey))
+		if (FlxG.keys.anyPressed([_antiClockwiseKey]))
 		{
 			move = true;
 			
@@ -830,7 +828,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keyboard.pressed(_clockwiseKey))
+		if (FlxG.keys.anyPressed([_clockwiseKey]))
 		{
 			move = true;
 			
@@ -857,7 +855,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keyboard.pressed(_thrustKey))
+		if (FlxG.keys.anyPressed([_thrustKey]))
 		{
 			move = true;
 			
@@ -880,10 +878,12 @@ class FlxControlHandler
 			}
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if (move && _thrustSound != null)
 		{
 			_thrustSound.play(false);
 		}
+		#end
 		
 		return move;
 	}
@@ -892,7 +892,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keyboard.pressed(_reverseKey))
+		if (FlxG.keys.anyPressed([_reverseKey]))
 		{
 			move = true;
 			
@@ -925,7 +925,9 @@ class FlxControlHandler
 		// 0 = Pressed
 		// 1 = Just Down
 		// 2 = Just Released
-		if ((_fireKeyMode == 0 && FlxG.keyboard.pressed(_fireKey)) || (_fireKeyMode == 1 && FlxG.keyboard.justPressed(_fireKey)) || (_fireKeyMode == 2 && FlxG.keyboard.justReleased(_fireKey)))
+		if (((_fireKeyMode == 0) && FlxG.keys.anyPressed([_fireKey])) || 
+			_fireKeyMode == 1 && FlxG.keys.anyJustPressed([_fireKey])) || 
+			(_fireKeyMode == 2 && FlxG.keys.anyJustReleased([_fireKey])))
 		{
 			if (_fireRate > 0)
 			{
@@ -945,10 +947,12 @@ class FlxControlHandler
 			}
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if (fired && _fireSound != null)
 		{
 			_fireSound.play(true);
 		}
+		#end
 		
 		return fired;
 	}
@@ -963,7 +967,9 @@ class FlxControlHandler
 			_extraSurfaceTime = FlxG.game.ticks + _jumpFromFallTime;
 		}
 		
-		if ((_jumpKeyMode == KEYMODE_PRESSED && FlxG.keyboard.pressed(_jumpKey)) || (_jumpKeyMode == KEYMODE_JUST_DOWN && FlxG.keyboard.justPressed(_jumpKey)) || (_jumpKeyMode == KEYMODE_RELEASED && FlxG.keyboard.justReleased(_jumpKey)))
+		if ((_jumpKeyMode == KEYMODE_PRESSED && FlxG.keys.anyPressed([_jumpKey])) || 
+			(_jumpKeyMode == KEYMODE_JUST_DOWN && FlxG.keys.anyJustPressed([_jumpKey])) || 
+			(_jumpKeyMode == KEYMODE_RELEASED && FlxG.keys.anyJustReleased([_jumpKey])))
 		{
 			// Sprite not touching a valid jump surface
 			if (_entity.isTouching(_jumpSurface) == false)
@@ -1019,10 +1025,12 @@ class FlxControlHandler
 			jumped = true;
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if (jumped && _jumpSound != null)
 		{
 			_jumpSound.play(true);
 		}
+		#end
 		
 		return jumped;
 	}
@@ -1183,6 +1191,7 @@ class FlxControlHandler
 			}
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if (_walkSound != null)
 		{
 			if ((_movement == MOVEMENT_INSTANT && _entity.velocity.x != 0) || (_movement == MOVEMENT_ACCELERATES && _entity.acceleration.x != 0))
@@ -1194,6 +1203,7 @@ class FlxControlHandler
 				_walkSound.stop();
 			}
 		}
+		#end
 	}
 	
 	/**

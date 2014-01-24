@@ -38,7 +38,7 @@ class FlxScrollingText extends FlxPlugin
      * 
      * @return	An FlxSprite of size region.width/height, positioned at region.x/y, that auto-updates its contents while this plugin runs
      */
-    public static function add(bitmapFont:FlxBitmapFont, region:Rectangle, pixels:UInt = 1, steps:UInt = 0, text:String = "FLIXEL ROCKS!", onlyScrollOnscreen:Bool = true, loopOnWrap:Bool = true):FlxSprite
+    public static function add(bitmapFont:FlxBitmapFont, region:Rectangle, pixels:Int = 1, steps:Int = 0, text:String = "FLIXEL ROCKS!", onlyScrollOnscreen:Bool = true, loopOnWrap:Bool = true):FlxSprite
     {
         var data:Dynamic = {};
         

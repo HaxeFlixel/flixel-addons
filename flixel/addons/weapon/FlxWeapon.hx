@@ -6,13 +6,11 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
 import flixel.system.FlxSound;
-import flixel.system.input.touch.FlxTouch;
+import flixel.input.touch.FlxTouch;
 import flixel.tile.FlxTilemap;
-import flixel.util.FlxMisc;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import flixel.util.FlxVelocity;
-import flixel.system.layer.frames.FlxFrame;
 
 /**
  * A Weapon can only fire 1 type of bullet. But it can fire many of them at once (in different directions if needed) via createBulletPattern
@@ -299,10 +297,12 @@ class FlxWeapon
 			onPreFireCallback();
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if (onPreFireSound != null)
 		{
 			onPreFireSound.play();
 		}
+		#end
 
 		// Clear any velocity that may have been previously set from the pool
 		currentBullet.velocity.x = 0;
@@ -369,10 +369,12 @@ class FlxWeapon
 			onPostFireCallback();
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if (onPostFireSound != null)
 		{
 			onPostFireSound.play();
 		}
+		#end
 		
 		_bulletsFired++;
 		

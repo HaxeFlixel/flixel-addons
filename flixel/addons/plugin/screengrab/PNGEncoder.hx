@@ -70,7 +70,7 @@ class PNGEncoder
 		{
 			// no filter
 			IDAT.writeByte(0);
-			var p:UInt;
+			var p:Int;
 			if (!img.transparent) 
 			{
 				for (j in 0...img.width) 
@@ -96,13 +96,13 @@ class PNGEncoder
 		return png;
 	}
 	
-	private static var crcTable:Array<UInt>;
+	private static var crcTable:Array<Int>;
 	
 	private static var crcTableComputed:Bool;
 	
-	private static function writeChunk(png:ByteArray, type:UInt, data:ByteArray):Void 
+	private static function writeChunk(png:ByteArray, type:Int, data:ByteArray):Void 
 	{
-		var c:UInt;
+		var c:Int;
 		
 		if (!crcTableComputed) 
 		{
@@ -126,19 +126,19 @@ class PNGEncoder
 				crcTable[n] = c;
 			}
 		}
-		var len:UInt = 0;
+		var len:Int = 0;
 		if (data != null) 
 		{
 			len = data.length;
 		}
 		png.writeUnsignedInt(len);
-		var p:UInt = png.position;
+		var p:Int = png.position;
 		png.writeUnsignedInt(type);
 		if (data != null) 
 		{
 			png.writeBytes(data);
 		}
-		var e:UInt = png.position;
+		var e:Int = png.position;
 		png.position = p;
 		c = 0xffffffff;
 		for (i in 0...(e-p)) 

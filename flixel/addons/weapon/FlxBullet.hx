@@ -2,7 +2,7 @@ package flixel.addons.weapon;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.system.input.touch.FlxTouch;
+import flixel.input.touch.FlxTouch;
 import flixel.util.FlxAngle;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
@@ -206,10 +206,12 @@ class FlxBullet extends FlxSprite
 			_weapon.onFireCallback();
 		}
 		
+		#if !FLX_NO_SOUND_SYSTEM
 		if (_weapon.onFireSound != null)
 		{
 			_weapon.onFireSound.play();
 		}
+		#end
 	}
 	
 	public var xGravity(never, set):Float;

@@ -107,11 +107,6 @@ class FlxSpecialFX extends FlxPlugin
 	 */
 	override public function draw():Void
 	{
-		if (FlxG.paused)
-		{
-			return;
-		}
-		
 		for (obj in members)
 		{
 			if (obj.active)

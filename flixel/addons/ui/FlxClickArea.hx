@@ -212,7 +212,7 @@ class FlxClickArea extends FlxObject
 	
 		
 	/**
-	 * Internal function for handling the actual callback call (for UI thread dependent calls like <code>FlxMisc.openURL()</code>).
+	 * Internal function for handling the actual callback call (for UI thread dependent calls like <code>FlxStringUtil.openURL()</code>).
 	 */
 	private function onMouseUp(event:Event):Void
 	{

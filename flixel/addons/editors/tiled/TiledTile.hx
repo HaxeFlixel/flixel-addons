@@ -17,7 +17,7 @@ class TiledTile
 	/*
 	 * The original ID as described in the mapData
 	 */
-	public var tileID:UInt;
+	public var tileID:Int;
 	
 	/*
 	 * The ID of this tile in its tileset
@@ -38,7 +38,7 @@ class TiledTile
 	 */
 	public var rotate:Int;
 	
-	public function new(OriginalId:UInt) {
+	public function new(OriginalId:Int) {
 		this.tileID = OriginalId;
 		this.tilesetID = resolveTilesetID();
 		this.rotate = ROTATE_0;

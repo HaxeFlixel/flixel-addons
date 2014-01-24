@@ -213,7 +213,8 @@ class FlxSpine extends FlxSprite
 		}
 	}
 	
-	override public function drawDebugOnCamera(Camera:FlxCamera = null):Void
+	#if !FLX_NO_DEBUG
+	override public function drawDebugOnCamera(?Camera:FlxCamera):Void
 	{
 		super.drawDebugOnCamera(Camera);
 		
@@ -231,6 +232,7 @@ class FlxSpine extends FlxSprite
 			}
 		}
 	}
+	#end
 	
 	public function get(regionAttachment:RegionAttachment):FlxSprite 
 	{
