@@ -10,8 +10,8 @@ import flixel.FlxBasic;
 class FlxAsyncLoop extends FlxBasic
 {
 	
-	public var _started(default, null):Bool = false;
-	public var _finished(default, null):Bool = false;
+	public var started(default, null):Bool = false;
+	public var finished(default, null):Bool = false;
 	private var _curIndex:Int = 0;
 	private var _iterationsPerUpdate:Int;
 	private var _iterations:Int;
@@ -28,7 +28,6 @@ class FlxAsyncLoop extends FlxBasic
 	{
 		super();
 		visible = false;
-		_object = LoopObject;
 		_iterations = Iterations;
 		_callback = Callback;
 		_iterationsPerUpdate = IterationsPerUpdate;
@@ -40,15 +39,15 @@ class FlxAsyncLoop extends FlxBasic
 	 */
 	public function start():Void
 	{
-		if (_finished || _started)
+		if (finished || started)
 			return;
 		_curIndex = 0;
-		_started = true;
+		started = true;
 	}
 	
 	override public function update():Void 
 	{
-		if (!_started || _finished)
+		if (!started || finished)
 			return;
 		
 		var startNo:Int = _curIndex;
@@ -59,7 +58,7 @@ class FlxAsyncLoop extends FlxBasic
 			_curIndex++;
 		}
 		if (_curIndex >= _iterations)
-			_finished = true;
+			finished = true;
 		
 		super.update();
 	}
@@ -67,7 +66,7 @@ class FlxAsyncLoop extends FlxBasic
 	
 	override public function destroy():Void 
 	{
-		_curIndex = null;
+		_callback = null;
 		super.destroy();
 	}
 	
