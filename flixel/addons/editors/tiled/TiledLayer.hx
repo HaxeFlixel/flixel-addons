@@ -36,7 +36,7 @@ class TiledLayer
 		y = (Source.has.y) ? Std.parseInt(Source.att.y) : 0;
 		width = Std.parseInt(Source.att.width); 
 		height = Std.parseInt(Source.att.height); 
-		visible = (Source.has.visible && Source.att.visible == "1") ? true : false;
+		visible = (Source.has.visible && Source.att.visible == "0") ? false : true;
 		opacity = (Source.has.opacity) ? Std.parseFloat(Source.att.opacity) : 1.0;
 		tiles = new Array<TiledTile>();
 		
