@@ -61,7 +61,7 @@ class FlxScreenGrab extends FlxPlugin
 	 */
 	static public function defineHotKeys(Keys:Array<String>, SaveToFile:Bool = false, HideMouse:Bool = false):Void
 	{
-		_hotkeys = Key;
+		_hotkeys = Keys;
 		_autoSave = SaveToFile;
 		_autoHideMouse = HideMouse;
 	}
@@ -179,7 +179,7 @@ class FlxScreenGrab extends FlxPlugin
 	override public function destroy():Void
 	{
 		clearCaptureRegion();
-		clearHotKey();
+		clearHotKeys();
 	}
 }
 #end

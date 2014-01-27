@@ -926,7 +926,7 @@ class FlxControlHandler
 		// 1 = Just Down
 		// 2 = Just Released
 		if (((_fireKeyMode == 0) && FlxG.keys.anyPressed([_fireKey])) || 
-			_fireKeyMode == 1 && FlxG.keys.anyJustPressed([_fireKey])) || 
+			(_fireKeyMode == 1 && FlxG.keys.anyJustPressed([_fireKey])) || 
 			(_fireKeyMode == 2 && FlxG.keys.anyJustReleased([_fireKey])))
 		{
 			if (_fireRate > 0)
