@@ -20,11 +20,11 @@ class FlxAsyncLoop extends FlxBasic
 	/**
 	 * Creates an instance of the FlxAsyncLoop class, used to do a loop while still allowing update() to get called and the screen to refresh.
 	 * 
-	 * @param	Iterations				How many total times should it loop
-	 * @param	Callback				The function that should be called each loop
-	 * @param	?IterationsPerUpdate	Optional: how many loops before we allow an update() - defaults to 100.
+	 * @param	Iterations		How many total times should it loop
+	 * @param	Callback		The function that should be called each loop
+	 * @param	IterationsPerUpdate	Optional: how many loops before we allow an update() - defaults to 100.
 	 */
-	public function new(Iterations:Int, Callback:Void->Void, ?IterationsPerUpdate:Int = 100) 
+	public function new(Iterations:Int, Callback:Void->Void, IterationsPerUpdate:Int = 100) 
 	{
 		super();
 		visible = false;
@@ -50,8 +50,7 @@ class FlxAsyncLoop extends FlxBasic
 		if (!started || finished)
 			return;
 		
-		var startNo:Int = _curIndex;
-		for (i in startNo...Std.int(Math.min(startNo + _iterationsPerUpdate, _iterations)))
+		for (i in _curIndex...Std.int(Math.min(_curIndex + _iterationsPerUpdate, _iterations)))
 		{
 			// call our function
 			_callback();
