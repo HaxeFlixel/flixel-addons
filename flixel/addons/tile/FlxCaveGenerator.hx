@@ -15,7 +15,7 @@ class FlxCaveGenerator
 	 * @param 	Matrix		A matrix of data
 	 * @return 	A string that is usuable for <code>FlxTilemap.loadMap()</code>
 	 */
-	static public function convertMatrixToString(Matrix:Array<Array<Int>>):String
+	public static function convertMatrixToString(Matrix:Array<Array<Int>>):String
 	{
 		var mapString:String = "";
 		
@@ -41,7 +41,7 @@ class FlxCaveGenerator
 	 * @param	WallRatio 				Chance for a tile to become a wall - the closer the value is to 1.0, the more walls there are
 	 * @return	Returns a matrix of a cave!
 	 */
-	static public function generateCaveMatrix(Columns:Int, Rows:Int, SmoothingIterations:Int = 6, WallRatio:Float = 0.5):Array<Array<Int>>
+	public static function generateCaveMatrix(Columns:Int, Rows:Int, SmoothingIterations:Int = 6, WallRatio:Float = 0.5):Array<Array<Int>>
 	{
 		// Initialize random array
 		var matrix:Array<Array<Int>> = generateInitialMatrix(Columns, Rows);

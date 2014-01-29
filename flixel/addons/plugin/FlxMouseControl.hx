@@ -79,7 +79,7 @@ class FlxMouseControl extends FlxPlugin
 	 * 
 	 * @param	Item	The FlxExtendedSprite that was clicked by the mouse
 	 */
-	static public function addToStack(Item:FlxExtendedSprite):Void
+	public static function addToStack(Item:FlxExtendedSprite):Void
 	{
 		if (mouseZone != null)
 		{

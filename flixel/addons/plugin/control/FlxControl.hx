@@ -35,7 +35,7 @@ class FlxControl extends FlxPlugin
 	 * @param	EnableArrowKeys	If true it will enable all arrow keys (default) - see setCursorControl for more fine-grained control
 	 * @return	The new FlxControlHandler
 	 */
-	static public function create(Sprite:FlxSprite, MovementType:Int, StoppingType:Int, Player:Int = 1, UpdateFacing:Bool = false, EnableArrowKeys:Bool = true):FlxControlHandler
+	public static function create(Sprite:FlxSprite, MovementType:Int, StoppingType:Int, Player:Int = 1, UpdateFacing:Bool = false, EnableArrowKeys:Bool = true):FlxControlHandler
 	{
 		var result:FlxControlHandler;
 		
@@ -79,7 +79,7 @@ class FlxControl extends FlxPlugin
 	 * @param	ControlHandler	The <code>FlxControlHandler</code> to delete
 	 * @return	Boolean	true if the <code>FlxControlHandler</code> was removed, otherwise false.
 	 */
-	static public function remove(ControlHandler:FlxControlHandler):Bool
+	public static function remove(ControlHandler:FlxControlHandler):Bool
 	{
 		if (_members.exists(ControlHandler))
 		{
@@ -94,7 +94,7 @@ class FlxControl extends FlxPlugin
 	 * Removes all FlxControlHandlers.
 	 * This is called automatically if this plugin is ever destroyed.
 	 */
-	static public function clear():Void
+	public static function clear():Void
 	{
 		for (handler in _members)
 		{
@@ -108,7 +108,7 @@ class FlxControl extends FlxPlugin
 	 * 
 	 * @param	ControlHandler	The <code>FlxControlHandler</code> to start updating on. If left as null it will start updating all handlers.
 	 */
-	static public function start(?ControlHandler:FlxControlHandler):Void
+	public static function start(?ControlHandler:FlxControlHandler):Void
 	{
 		if (ControlHandler != null)
 		{
@@ -129,7 +129,7 @@ class FlxControl extends FlxPlugin
 	 * 
 	 * @param	ControlHandler	The FlxControlHandler to stop updating. If left as null it will stop updating all handlers.
 	 */
-	static public function stop(?ControlHandler:FlxControlHandler):Void
+	public static function stop(?ControlHandler:FlxControlHandler):Void
 	{
 		if (ControlHandler != null)
 		{
