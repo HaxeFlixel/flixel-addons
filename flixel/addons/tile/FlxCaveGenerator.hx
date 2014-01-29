@@ -81,7 +81,7 @@ class FlxCaveGenerator
 	 * @param	WallRatio 				Chance for a tile to become a wall - the closer the value is to 1.0, the more walls there are
 	 * @return	A cave string that is usable by <code>FlxTilemap.loadMap()</code>
 	 */
-	inline static public function generateCaveString(Columns:Int, Rows:Int, SmoothingIterations:Int = 6, WallRatio:Float = 0.5):String
+	public static inline function generateCaveString(Columns:Int, Rows:Int, SmoothingIterations:Int = 6, WallRatio:Float = 0.5):String
 	{
 		return convertMatrixToString(generateCaveMatrix(Columns, Rows, SmoothingIterations, WallRatio));
 	}
