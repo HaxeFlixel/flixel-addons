@@ -52,7 +52,7 @@ class FlxNapeState extends FlxState
 	 */
 	static public var debug(get, never):ShapeDebug;
 	
-	static private function get_debug():ShapeDebug 
+	private static function get_debug():ShapeDebug
 	{ 
 		return cast(FlxG.state, FlxNapeState)._physDbgSpr; 
 	}

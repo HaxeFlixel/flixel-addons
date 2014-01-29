@@ -131,7 +131,7 @@ class FlxScreenGrab extends FlxPlugin
 		return theBitmap;
 	}
 	
-	static private function save(Filename:String = ""):Void
+	private static function save(Filename:String = ""):Void
 	{
 		if (screenshot.bitmapData == null)
 		{

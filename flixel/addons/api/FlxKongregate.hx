@@ -95,7 +95,7 @@ class FlxKongregate
         FlxG.stage.removeChild(_apiLoader);
     }
 
-    static private function apiLoadComplete(E:Event):Void
+    private static function apiLoadComplete(E:Event):Void
     {
         api = E.target.content;
 		
@@ -109,7 +109,7 @@ class FlxKongregate
         }
     }
 
-    static private function apiLoadError(E:IOError):Void
+    private static function apiLoadError(E:IOError):Void
     {
         FlxG.log.add("Error loading Kongregate API:" + E);
     }
