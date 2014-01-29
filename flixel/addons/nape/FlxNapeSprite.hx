@@ -272,7 +272,7 @@ class FlxNapeSprite extends FlxSprite
 	 * @param	LinearDrag		Typical value 0.96 (1 = no drag).
 	 * @param	AngularDrag		Typical value 0.96 (1 = no drag);
 	 */
-	inline public function setDrag(LinearDrag:Float = 1, AngularDrag:Float = 1):Void 
+	public inline function setDrag(LinearDrag:Float = 1, AngularDrag:Float = 1):Void
 	{
 		_linearDrag	= LinearDrag;
 		_angularDrag = AngularDrag;

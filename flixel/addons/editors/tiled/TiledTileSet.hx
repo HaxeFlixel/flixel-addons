@@ -118,17 +118,17 @@ class TiledTileSet
 		}
 	}
 	
-	inline public function hasGid(Gid:Int):Bool
+	public inline function hasGid(Gid:Int):Bool
 	{
 		return (Gid >= firstGID) && Gid < (firstGID + numTiles);
 	}
 	
-	inline public function fromGid(Gid:Int):Int
+	public inline function fromGid(Gid:Int):Int
 	{
 		return Gid - (firstGID - 1);
 	}
 	
-	inline public function toGid(ID:Int):Int
+	public inline function toGid(ID:Int):Int
 	{
 		return firstGID + ID;
 	}
@@ -143,12 +143,12 @@ class TiledTileSet
 		return null;
 	}
 	
-	inline public function getProperties(ID:Int):TiledPropertySet
+	public inline function getProperties(ID:Int):TiledPropertySet
 	{
 		return tileProps[ID];
 	}
 	
-	inline public function getRect(ID:Int):Rectangle
+	public inline function getRect(ID:Int):Rectangle
 	{
 		// TODO: consider spacing & margin
 		return new Rectangle((ID % numCols) * tileWidth, (ID / numCols) * tileHeight);
