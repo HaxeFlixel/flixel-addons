@@ -194,7 +194,7 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public var children(get, never):Array<FlxNestedSprite>;
 	
-	inline private function get_children():Array<FlxNestedSprite> 
+	private inline function get_children():Array<FlxNestedSprite>
 	{ 
 		return _children; 
 	}

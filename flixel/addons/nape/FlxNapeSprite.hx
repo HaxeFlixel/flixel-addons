@@ -258,7 +258,7 @@ class FlxNapeSprite extends FlxSprite
 	 */
 	public var physicsEnabled(default, set):Bool = true;
 	
-	inline private function set_physicsEnabled(Value:Bool):Bool
+	private inline function set_physicsEnabled(Value:Bool):Bool
 	{
 		body.space = Value ? FlxNapeState.space : null;
 		return physicsEnabled = Value;
