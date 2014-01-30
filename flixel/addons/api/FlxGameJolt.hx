@@ -134,11 +134,11 @@ class FlxGameJolt
 	/**
 	 * Various common strings required by the API's HTTP values.
 	 */
-	inline private static var URL_API:String = "http://gamejolt.com/api/game/v1/";
-	inline private static var RETURN_TYPE:String = "?format=keypair";
-	inline private static var URL_GAME_ID:String = "&game_id=";
-	inline private static var URL_USER_NAME:String = "&username=";
-	inline private static var URL_USER_TOKEN:String = "&user_token=";
+	private static inline var URL_API:String = "http://gamejolt.com/api/game/v1/";
+	private static inline var RETURN_TYPE:String = "?format=keypair";
+	private static inline var URL_GAME_ID:String = "&game_id=";
+	private static inline var URL_USER_NAME:String = "&username=";
+	private static inline var URL_USER_TOKEN:String = "&user_token=";
 	
 	/**
 	 * Initialize this class by storing the GameID and private key.
