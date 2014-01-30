@@ -22,8 +22,8 @@ import flixel.util.FlxRandom;
  */
 class StarfieldFX extends BaseFX
 {
-	inline static public var STARFIELD_TYPE_2D:Int = 1;
-	inline static public var STARFIELD_TYPE_3D:Int = 2;
+	inline public static var STARFIELD_TYPE_2D:Int = 1;
+	inline public static var STARFIELD_TYPE_3D:Int = 2;
 	
 	/**
 	 * In a 3D starfield this controls the X coordinate the stars emit from, can be updated in real-time!

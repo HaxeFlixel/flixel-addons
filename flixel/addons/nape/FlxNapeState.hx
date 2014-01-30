@@ -30,7 +30,7 @@ class FlxNapeState extends FlxState
 	/**
 	 * The space where the nape physics simulation occur.
 	 */
-	static public var space:Space;
+	public static var space:Space;
 	/**
 	 * The number of iterations used by nape in resolving errors in the velocities of objects. This is together with collision 
 	 * detection the most expensive phase of a simulation update, as well as the most important for stable results. (default 10)
@@ -50,7 +50,7 @@ class FlxNapeState extends FlxState
 	/**
 	 * Contains the sprite used for nape debug graphics.
 	 */
-	static public var debug(get, never):ShapeDebug;
+	public static var debug(get, never):ShapeDebug;
 	
 	private static function get_debug():ShapeDebug
 	{ 

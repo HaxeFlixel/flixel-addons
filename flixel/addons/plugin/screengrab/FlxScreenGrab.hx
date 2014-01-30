@@ -21,7 +21,7 @@ import flash.net.FileReference;
  */
 class FlxScreenGrab extends FlxPlugin
 {
-	static public var screenshot:Bitmap;
+	public static var screenshot:Bitmap;
 	
 	static private var _hotkeys:Array<String>;
 	static private var _autoSave:Bool = false;

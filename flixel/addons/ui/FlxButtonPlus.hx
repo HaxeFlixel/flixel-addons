@@ -27,9 +27,9 @@ import flixel.util.loaders.CachedGraphics;
  */
 class FlxButtonPlus extends FlxSpriteGroup
 {
-	inline static public var NORMAL:Int = 0;
-	inline static public var HIGHLIGHT:Int = 1;
-	inline static public var PRESSED:Int = 2;
+	inline public static var NORMAL:Int = 0;
+	inline public static var HIGHLIGHT:Int = 1;
+	inline public static var PRESSED:Int = 2;
 	
 	public var buttonNormal:FlxExtendedSprite;
 	public var buttonHighlight:FlxExtendedSprite;

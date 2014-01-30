@@ -23,17 +23,17 @@ class FlxKongregate
     /**
      * The Kongregate API object. You can make calls directly to this once the API has connected.
      */
-    static public var api:Dynamic;
+    public static var api:Dynamic;
 
     /**
      * True if the API has loaded otherwise false. Loaded is not the same thing as connected, it just means it's ready for the connection.
      */
-    static public var hasLoaded:Bool = false;
+    public static var hasLoaded:Bool = false;
 
     /**
      * Is the game running locally in Shadow API mode (true) or from Kongregates servers (false)
      */
-    static public var isLocal:Bool = false;
+    public static var isLocal:Bool = false;
 
 	inline static private var SHADOW_API:String = "http://www.kongregate.com/flash/API_AS3_Local.swf";
     static private var _apiLoader:Loader;

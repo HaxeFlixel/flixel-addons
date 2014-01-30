@@ -15,10 +15,10 @@ import haxe.ds.ObjectMap;
 class FlxControl extends FlxPlugin
 {
 	//	Quick references
-	static public var player1:FlxControlHandler;
-	static public var player2:FlxControlHandler;
-	static public var player3:FlxControlHandler;
-	static public var player4:FlxControlHandler;
+	public static var player1:FlxControlHandler;
+	public static var player2:FlxControlHandler;
+	public static var player3:FlxControlHandler;
+	public static var player4:FlxControlHandler;
 	
 	//	Additional control handlers
 	static private var _members:ObjectMap<FlxControlHandler, FlxControlHandler> = new ObjectMap<FlxControlHandler, FlxControlHandler>();

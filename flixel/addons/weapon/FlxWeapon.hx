@@ -33,14 +33,14 @@ import flixel.util.FlxVelocity;
 class FlxWeapon 
 {
 	// Quick firing direction angle constants
-	inline static public var BULLET_UP:Int = -90;
-	inline static public var BULLET_DOWN:Int = 90;
-	inline static public var BULLET_LEFT:Int = 180;
-	inline static public var BULLET_RIGHT:Int = 0;
-	inline static public var BULLET_NORTH_EAST:Int = -45;
-	inline static public var BULLET_NORTH_WEST:Int = -135;
-	inline static public var BULLET_SOUTH_EAST:Int = 45;
-	inline static public var BULLET_SOUTH_WEST:Int = 135;
+	inline public static var BULLET_UP:Int = -90;
+	inline public static var BULLET_DOWN:Int = 90;
+	inline public static var BULLET_LEFT:Int = 180;
+	inline public static var BULLET_RIGHT:Int = 0;
+	inline public static var BULLET_NORTH_EAST:Int = -45;
+	inline public static var BULLET_NORTH_WEST:Int = -135;
+	inline public static var BULLET_SOUTH_EAST:Int = 45;
+	inline public static var BULLET_SOUTH_WEST:Int = 135;
 	
 	/**
 	 * Internal name for this weapon (i.e. "pulse rifle")
