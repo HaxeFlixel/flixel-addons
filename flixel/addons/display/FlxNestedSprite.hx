@@ -220,7 +220,10 @@ class FlxNestedSprite extends FlxSprite
 		
 		for (child in _children)
 		{
-			child.preUpdate();
+			if (child.active && child.exists)
+			{
+				child.preUpdate();
+			}
 		}
 	}
 	
@@ -230,7 +233,10 @@ class FlxNestedSprite extends FlxSprite
 		
 		for (child in _children)
 		{
-			child.update();
+			if (child.active && child.exists)
+			{
+				child.update();
+			}
 		}
 		
 		postUpdate();
@@ -272,40 +278,43 @@ class FlxNestedSprite extends FlxSprite
 		
 		for (child in _children)
 		{
-			child.velocity.x = child.velocity.y = 0;
-			child.acceleration.x = child.acceleration.y = 0;
-			child.angularVelocity = child.angularAcceleration = 0;
-			child.postUpdate();
-			
-			if (simpleRenderSprite())
+			if (child.active && child.exists)
 			{
-				child.x = x + child.relativeX - offset.x;
-				child.y = y + child.relativeY - offset.y;
+				child.velocity.x = child.velocity.y = 0;
+				child.acceleration.x = child.acceleration.y = 0;
+				child.angularVelocity = child.angularAcceleration = 0;
+				child.postUpdate();
+				
+				if (simpleRenderSprite())
+				{
+					child.x = x + child.relativeX - offset.x;
+					child.y = y + child.relativeY - offset.y;
+				}
+				else
+				{
+					var radians:Float = angle * FlxAngle.TO_RAD;
+					var cos:Float = Math.cos(radians);
+					var sin:Float = Math.sin(radians);
+					
+					var dx:Float = child.relativeX - offset.x;
+					var dy:Float = child.relativeY - offset.y;
+					
+					var relX:Float = (dx * cos * scale.x - dy * sin * scale.y);
+					var relY:Float = (dx * sin * scale.x + dy * cos * scale.y);
+					
+					child.x = x + relX;
+					child.y = y + relY;
+				}
+				
+				child.angle = angle + child.relativeAngle;
+				child.scale.x = scale.x * child.relativeScaleX;
+				child.scale.y = scale.y * child.relativeScaleY;
+				
+				child.velocity.x = velocity.x;
+				child.velocity.y = velocity.y;
+				child.acceleration.x = acceleration.x;
+				child.acceleration.y = acceleration.y;
 			}
-			else
-			{
-				var radians:Float = angle * FlxAngle.TO_RAD;
-				var cos:Float = Math.cos(radians);
-				var sin:Float = Math.sin(radians);
-				
-				var dx:Float = child.relativeX - offset.x;
-				var dy:Float = child.relativeY - offset.y;
-				
-				var relX:Float = (dx * cos * scale.x - dy * sin * scale.y);
-				var relY:Float = (dx * sin * scale.x + dy * cos * scale.y);
-				
-				child.x = x + relX;
-				child.y = y + relY;
-			}
-			
-			child.angle = angle + child.relativeAngle;
-			child.scale.x = scale.x * child.relativeScaleX;
-			child.scale.y = scale.y * child.relativeScaleY;
-			
-			child.velocity.x = velocity.x;
-			child.velocity.y = velocity.y;
-			child.acceleration.x = acceleration.x;
-			child.acceleration.y = acceleration.y;
 		}
 	}
 	
@@ -315,7 +324,10 @@ class FlxNestedSprite extends FlxSprite
 		
 		for (child in _children)
 		{
-			child.draw();
+			if (child.exists && child.visible)
+			{
+				child.draw();
+			}
 		}
 	}
 	
@@ -326,7 +338,10 @@ class FlxNestedSprite extends FlxSprite
 		
 		for (child in _children)
 		{
-			child.drawDebug();
+			if (child.exists && child.visible)
+			{
+				child.drawDebug();
+			}
 		}
 	}
 	#end
