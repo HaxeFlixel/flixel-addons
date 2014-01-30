@@ -23,10 +23,10 @@ class FlxScreenGrab extends FlxPlugin
 {
 	public static var screenshot:Bitmap;
 	
-	static private var _hotkeys:Array<String>;
-	static private var _autoSave:Bool = false;
-	static private var _autoHideMouse:Bool = false;
-	static private var _region:Rectangle;
+	private static var _hotkeys:Array<String>;
+	private static var _autoSave:Bool = false;
+	private static var _autoHideMouse:Bool = false;
+	private static var _region:Rectangle;
 	
 	/**
 	 * Defines the region of the screen that should be captured. If you need it to be a fixed location then use this.

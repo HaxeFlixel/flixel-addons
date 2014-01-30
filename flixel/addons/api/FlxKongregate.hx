@@ -36,8 +36,8 @@ class FlxKongregate
     public static var isLocal:Bool = false;
 
 	private static inline var SHADOW_API:String = "http://www.kongregate.com/flash/API_AS3_Local.swf";
-    static private var _apiLoader:Loader;
-    static private var _loadCallback:Dynamic;
+    private static var _apiLoader:Loader;
+    private static var _loadCallback:Dynamic;
 
     /**
      * Loads the Kongregate API and if successful connects to the service.

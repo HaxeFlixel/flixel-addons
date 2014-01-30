@@ -21,7 +21,7 @@ class FlxControl extends FlxPlugin
 	public static var player4:FlxControlHandler;
 	
 	//	Additional control handlers
-	static private var _members:ObjectMap<FlxControlHandler, FlxControlHandler> = new ObjectMap<FlxControlHandler, FlxControlHandler>();
+	private static var _members:ObjectMap<FlxControlHandler, FlxControlHandler> = new ObjectMap<FlxControlHandler, FlxControlHandler>();
 	
 	/**
 	 * Creates a new FlxControlHandler. You can have as many FlxControlHandlers as you like, but you usually only have one per player. The first handler you make

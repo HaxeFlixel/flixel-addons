@@ -67,12 +67,12 @@ class FlxMouseControl extends FlxPlugin
 	/**
 	 * The FlxExtendedSprite that currently has the mouse button pressed on it
 	 */
-	static private var _clickStack:Array<FlxExtendedSprite> = new Array<FlxExtendedSprite>();
-	static private var _clickCoords:FlxPoint;
-	static private var _hasClickTarget:Bool = false;
+	private static var _clickStack:Array<FlxExtendedSprite> = new Array<FlxExtendedSprite>();
+	private static var _clickCoords:FlxPoint;
+	private static var _hasClickTarget:Bool = false;
 	
-	static private var _oldX:Int = 0;
-	static private var _oldY:Int = 0;
+	private static var _oldX:Int = 0;
+	private static var _oldY:Int = 0;
 	
 	/**
 	 * Adds the given FlxExtendedSprite to the stack of potential sprites that were clicked, the stack is then sorted and the final sprite is selected from that
