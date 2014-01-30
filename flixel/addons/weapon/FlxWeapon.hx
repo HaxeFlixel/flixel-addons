@@ -98,13 +98,13 @@ class FlxWeapon
 	public var onFireSound:FlxSound;
 	public var onPostFireSound:FlxSound;
 	
-	inline static private var FIRE:Int = 0;
-	inline static private var FIRE_AT_MOUSE:Int = 1;
-	inline static private var FIRE_AT_POSITION:Int = 2;
-	inline static private var FIRE_AT_TARGET:Int = 3;
-	inline static private var FIRE_FROM_ANGLE:Int = 4;
-	inline static private var FIRE_FROM_PARENT_ANGLE:Int = 5;
-	inline static private var FIRE_AT_TOUCH:Int = 6;
+	private static inline var FIRE:Int = 0;
+	private static inline var FIRE_AT_MOUSE:Int = 1;
+	private static inline var FIRE_AT_POSITION:Int = 2;
+	private static inline var FIRE_AT_TARGET:Int = 3;
+	private static inline var FIRE_FROM_ANGLE:Int = 4;
+	private static inline var FIRE_FROM_PARENT_ANGLE:Int = 5;
+	private static inline var FIRE_AT_TOUCH:Int = 6;
 	
 	private var _rotateToAngle:Bool;
 	private var _velocity:FlxPoint;

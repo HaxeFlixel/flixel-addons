@@ -35,7 +35,7 @@ class FlxKongregate
      */
     public static var isLocal:Bool = false;
 
-	inline static private var SHADOW_API:String = "http://www.kongregate.com/flash/API_AS3_Local.swf";
+	private static inline var SHADOW_API:String = "http://www.kongregate.com/flash/API_AS3_Local.swf";
     static private var _apiLoader:Loader;
     static private var _loadCallback:Dynamic;
 

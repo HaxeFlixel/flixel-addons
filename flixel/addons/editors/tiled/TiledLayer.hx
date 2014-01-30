@@ -23,7 +23,7 @@ class TiledLayer
 	
 	public var tiles:Array<TiledTile>;
 	
-	inline static private var BASE64_CHARS:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	private static inline var BASE64_CHARS:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 	
 	private var _xmlData:Fast;
 	
