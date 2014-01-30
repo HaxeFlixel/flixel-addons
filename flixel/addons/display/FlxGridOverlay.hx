@@ -30,7 +30,7 @@ class FlxGridOverlay
 	 * @param	Color2			The second fill colour in 0xAARRGGBB format
 	 * @return	FlxSprite of given width/height
 	 */
-	static public function create(CellWidth:Int, CellHeight:Int, Width:Int = -1, Height:Int = -1, AddLegend:Bool = false, Alternate:Bool = true, Color1:Int = 0xffe7e6e6, Color2:Int = 0xffd9d5d5):FlxSprite
+	public static function create(CellWidth:Int, CellHeight:Int, Width:Int = -1, Height:Int = -1, AddLegend:Bool = false, Alternate:Bool = true, Color1:Int = 0xffe7e6e6, Color2:Int = 0xffd9d5d5):FlxSprite
 	{
 		if (Width == -1)
 		{
@@ -74,7 +74,7 @@ class FlxGridOverlay
 	 * @param	Color2			The second fill colour in 0xAARRGGBB format
 	 * @return	The modified source FlxSprite
 	 */
-	static public function overlay(Sprite:FlxSprite, CellWidth:Int, CellHeight:Int, Width:Int = -1, Height:Int = -1, AddLegend:Bool = false, Alternate:Bool = true, Color1:Int = 0x88e7e6e6, Color2:Int = 0x88d9d5d5):FlxSprite
+	public static function overlay(Sprite:FlxSprite, CellWidth:Int, CellHeight:Int, Width:Int = -1, Height:Int = -1, AddLegend:Bool = false, Alternate:Bool = true, Color1:Int = 0x88e7e6e6, Color2:Int = 0x88d9d5d5):FlxSprite
 	{
 		if (Width == -1)
 		{
@@ -102,7 +102,7 @@ class FlxGridOverlay
 		return Sprite;
 	}
 	
-	static public function addLegend(Sprite:FlxSprite, CellWidth:Int, CellHeight:Int, AxisX:Bool = true, AxisY:Bool = true):FlxSprite
+	public static function addLegend(Sprite:FlxSprite, CellWidth:Int, CellHeight:Int, AxisX:Bool = true, AxisY:Bool = true):FlxSprite
 	{
 		if (CellWidth > Sprite.width)
 		{
@@ -127,7 +127,7 @@ class FlxGridOverlay
 		return Sprite;
 	}
 	
-	static public function createGrid(CellWidth:Int, CellHeight:Int, Width:Int, Height:Int, Alternate:Bool, Color1:Int, Color2:Int):BitmapData
+	public static function createGrid(CellWidth:Int, CellHeight:Int, Width:Int, Height:Int, Alternate:Bool, Color1:Int, Color2:Int):BitmapData
 	{
 		// How many cells can we fit into the width/height? (round it UP if not even, then trim back)
 		var rowColor:Int = Color1;

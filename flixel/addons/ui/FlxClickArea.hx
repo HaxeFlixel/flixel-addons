@@ -198,7 +198,7 @@ class FlxClickArea extends FlxObject
 	 * @param	Callback	The callback function.
 	 * @param	Params		Any params you want to pass to the function. Optional!
 	 */
-	inline public function setOnUpCallback(Callback:Dynamic, Params:Array<Dynamic> = null):Void
+	public inline function setOnUpCallback(Callback:Dynamic, Params:Array<Dynamic> = null):Void
 	{
 		_onUp = Callback;
 		

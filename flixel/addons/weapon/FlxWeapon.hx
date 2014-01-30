@@ -33,14 +33,14 @@ import flixel.util.FlxVelocity;
 class FlxWeapon 
 {
 	// Quick firing direction angle constants
-	inline static public var BULLET_UP:Int = -90;
-	inline static public var BULLET_DOWN:Int = 90;
-	inline static public var BULLET_LEFT:Int = 180;
-	inline static public var BULLET_RIGHT:Int = 0;
-	inline static public var BULLET_NORTH_EAST:Int = -45;
-	inline static public var BULLET_NORTH_WEST:Int = -135;
-	inline static public var BULLET_SOUTH_EAST:Int = 45;
-	inline static public var BULLET_SOUTH_WEST:Int = 135;
+	public static inline var BULLET_UP:Int = -90;
+	public static inline var BULLET_DOWN:Int = 90;
+	public static inline var BULLET_LEFT:Int = 180;
+	public static inline var BULLET_RIGHT:Int = 0;
+	public static inline var BULLET_NORTH_EAST:Int = -45;
+	public static inline var BULLET_NORTH_WEST:Int = -135;
+	public static inline var BULLET_SOUTH_EAST:Int = 45;
+	public static inline var BULLET_SOUTH_WEST:Int = 135;
 	
 	/**
 	 * Internal name for this weapon (i.e. "pulse rifle")
@@ -98,13 +98,13 @@ class FlxWeapon
 	public var onFireSound:FlxSound;
 	public var onPostFireSound:FlxSound;
 	
-	inline static private var FIRE:Int = 0;
-	inline static private var FIRE_AT_MOUSE:Int = 1;
-	inline static private var FIRE_AT_POSITION:Int = 2;
-	inline static private var FIRE_AT_TARGET:Int = 3;
-	inline static private var FIRE_FROM_ANGLE:Int = 4;
-	inline static private var FIRE_FROM_PARENT_ANGLE:Int = 5;
-	inline static private var FIRE_AT_TOUCH:Int = 6;
+	private static inline var FIRE:Int = 0;
+	private static inline var FIRE_AT_MOUSE:Int = 1;
+	private static inline var FIRE_AT_POSITION:Int = 2;
+	private static inline var FIRE_AT_TARGET:Int = 3;
+	private static inline var FIRE_FROM_ANGLE:Int = 4;
+	private static inline var FIRE_FROM_PARENT_ANGLE:Int = 5;
+	private static inline var FIRE_AT_TOUCH:Int = 6;
 	
 	private var _rotateToAngle:Bool;
 	private var _velocity:FlxPoint;
@@ -386,7 +386,7 @@ class FlxWeapon
 	 * 
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fire():Bool
+	public inline function fire():Bool
 	{
 		return runFire(FlxWeapon.FIRE);
 	}
@@ -397,7 +397,7 @@ class FlxWeapon
 	 * 
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fireAtMouse():Bool
+	public inline function fireAtMouse():Bool
 	{
 		return runFire(FlxWeapon.FIRE_AT_MOUSE);
 	}
@@ -440,7 +440,7 @@ class FlxWeapon
 	 * @param	Y	The y coordinate (in game world pixels) to fire at
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fireAtPosition(X:Int, Y:Int):Bool
+	public inline function fireAtPosition(X:Int, Y:Int):Bool
 	{
 		return runFire(FlxWeapon.FIRE_AT_POSITION, X, Y);
 	}
@@ -451,7 +451,7 @@ class FlxWeapon
 	 * @param	Target	The FlxSprite you wish to fire the bullet at
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fireAtTarget(Target:FlxSprite):Bool
+	public inline function fireAtTarget(Target:FlxSprite):Bool
 	{
 		return runFire(FlxWeapon.FIRE_AT_TARGET, 0, 0, Target);
 	}
@@ -462,7 +462,7 @@ class FlxWeapon
 	 * @param	Angle	The angle (in degrees) calculated in clockwise positive direction (down = 90 degrees positive, right = 0 degrees positive, up = 90 degrees negative)
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fireFromAngle(Angle:Int):Bool
+	public inline function fireFromAngle(Angle:Int):Bool
 	{
 		return runFire(FlxWeapon.FIRE_FROM_ANGLE, 0, 0, null, Angle);
 	}
@@ -472,7 +472,7 @@ class FlxWeapon
 	 * 
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fireFromParentAngle():Bool
+	public inline function fireFromParentAngle():Bool
 	{
 		return runFire(FlxWeapon.FIRE_FROM_PARENT_ANGLE);
 	}
@@ -746,7 +746,7 @@ class FlxWeapon
 	 * @param  NotifyCallBack  	A function that will get called if a bullet overlaps an object
 	 * @param  SkipParent    	Don't trigger colision notifies with the parent of this object
 	*/
-	inline public function bulletsOverlap(ObjectOrGroup:FlxBasic, ?NotifyCallBack:FlxObject->FlxObject->Void, SkipParent:Bool = true):Void
+	public inline function bulletsOverlap(ObjectOrGroup:FlxBasic, ?NotifyCallBack:FlxObject->FlxObject->Void, SkipParent:Bool = true):Void
 	{
 		if (group != null && group.length > 0)
 		{

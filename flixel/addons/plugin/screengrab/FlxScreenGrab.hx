@@ -21,12 +21,12 @@ import flash.net.FileReference;
  */
 class FlxScreenGrab extends FlxPlugin
 {
-	static public var screenshot:Bitmap;
+	public static var screenshot:Bitmap;
 	
-	static private var _hotkeys:Array<String>;
-	static private var _autoSave:Bool = false;
-	static private var _autoHideMouse:Bool = false;
-	static private var _region:Rectangle;
+	private static var _hotkeys:Array<String>;
+	private static var _autoSave:Bool = false;
+	private static var _autoHideMouse:Bool = false;
+	private static var _region:Rectangle;
 	
 	/**
 	 * Defines the region of the screen that should be captured. If you need it to be a fixed location then use this.
@@ -38,7 +38,7 @@ class FlxScreenGrab extends FlxPlugin
 	 * @param	Width	The width of the grab region
 	 * @param	Height	The height of the grab region
 	 */
-	static public function defineCaptureRegion(X:Int, Y:Int, Width:Int, Height:Int):Void
+	public static function defineCaptureRegion(X:Int, Y:Int, Width:Int, Height:Int):Void
 	{
 		_region = new Rectangle(X, Y, Width, Height);
 	}
@@ -46,7 +46,7 @@ class FlxScreenGrab extends FlxPlugin
 	/**
 	 * Clears a previously defined capture region
 	 */
-	static public function clearCaptureRegion():Void
+	public static function clearCaptureRegion():Void
 	{
 		_region = null;
 	}
@@ -59,7 +59,7 @@ class FlxScreenGrab extends FlxPlugin
 	 * @param	SaveToFile	If true it will immediately encodes the grab to a PNG and open a "Save As" dialog window when the hotkey is pressed
 	 * @param	HideMouse	If true the mouse will be hidden before capture and displayed afterwards when the hotkey is pressed
 	 */
-	static public function defineHotKeys(Keys:Array<String>, SaveToFile:Bool = false, HideMouse:Bool = false):Void
+	public static function defineHotKeys(Keys:Array<String>, SaveToFile:Bool = false, HideMouse:Bool = false):Void
 	{
 		_hotkeys = Keys;
 		_autoSave = SaveToFile;
@@ -69,7 +69,7 @@ class FlxScreenGrab extends FlxPlugin
 	/**
 	 * Clears a previously defined hotkey
 	 */
-	static public function clearHotKeys():Void
+	public static function clearHotKeys():Void
 	{
 		_hotkeys = [];
 		_autoSave = false;
@@ -84,7 +84,7 @@ class FlxScreenGrab extends FlxPlugin
 	 * @param	HideMouse		Boolean If set to true the mouse will be hidden before capture and displayed again afterwards
 	 * @return	Bitmap			The screen grab as a Flash Bitmap image
 	 */
-	static public function grab(?CaptureRegion:Rectangle, ?SaveToFile:Bool = false, HideMouse:Bool = false):Bitmap
+	public static function grab(?CaptureRegion:Rectangle, ?SaveToFile:Bool = false, HideMouse:Bool = false):Bitmap
 	{
 		var bounds:Rectangle;
 		
@@ -131,7 +131,7 @@ class FlxScreenGrab extends FlxPlugin
 		return theBitmap;
 	}
 	
-	static private function save(Filename:String = ""):Void
+	private static function save(Filename:String = ""):Void
 	{
 		if (screenshot.bitmapData == null)
 		{

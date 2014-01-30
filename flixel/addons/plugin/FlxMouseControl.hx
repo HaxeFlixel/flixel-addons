@@ -20,66 +20,66 @@ class FlxMouseControl extends FlxPlugin
 	/**
 	 * Use with <code>sort()</code> to sort in ascending order.
 	 */
-	inline static public var ASCENDING:Int = -1;
+	public static inline var ASCENDING:Int = -1;
 	/**
 	 * Use with <code>sort()</code> to sort in descending order.
 	 */
-	inline static public var DESCENDING:Int = 1;
+	public static inline var DESCENDING:Int = 1;
 	/**
 	 * The value that the FlxExtendedSprites are sorted by before deciding which is "on-top" for click select
 	 */
-	static public var sortIndex:String = "y";
+	public static var sortIndex:String = "y";
 	/**
 	 * The sorting order. If the sortIndex is "y" and the order is ASCENDING then a sprite with a Y value of 200 would be "on-top" of one with a Y value of 100.
 	 */
-	static public var sortOrder:Int = ASCENDING;
+	public static var sortOrder:Int = ASCENDING;
 	/**
 	 * Is the mouse currently dragging a sprite? If you have just clicked but NOT yet moved the mouse then this might return false.
 	 */
-	static public var isDragging:Bool = false;
+	public static var isDragging:Bool = false;
 	/**
 	 * The FlxExtendedSprite that is currently being dragged, if any.
 	 */
-	static public var dragTarget:FlxExtendedSprite;
-	static public var clickTarget:FlxExtendedSprite;
+	public static var dragTarget:FlxExtendedSprite;
+	public static var clickTarget:FlxExtendedSprite;
 	/**
 	 * The speed the mouse is moving on the X axis in pixels per frame
 	 */
-	static public var speedX:Int;
+	public static var speedX:Int;
 	/**
 	 * The speed the mouse is moving on the Y axis in pixels per frame
 	 */
-	static public var speedY:Int;
+	public static var speedY:Int;
 	/**
 	 * The mouse can be set to only be active within a specific FlxRect region of the game world.
 	 * If outside this FlxRect no clicks, drags or throws will be processed.
 	 * If the mouse leaves this region while still dragging then the sprite is automatically dropped and its release handler is called.
 	 * Set the FlxRect to null to disable the zone.
 	 */
-	static public var mouseZone:FlxRect;
+	public static var mouseZone:FlxRect;
 	/**
 	 * Instead of using a mouseZone (which is calculated in world coordinates) you can limit the mouse to the FlxG.camera.deadzone area instead.
 	 * If set to true the mouse will use the camera deadzone. If false (or the deadzone is null) no check will take place.
 	 * Note that this takes priority over the mouseZone above. If the mouseZone and deadzone are set, the deadzone is used.
 	 */
-	static public var linkToDeadZone:Bool = false;
+	public static var linkToDeadZone:Bool = false;
 	
 	/**
 	 * The FlxExtendedSprite that currently has the mouse button pressed on it
 	 */
-	static private var _clickStack:Array<FlxExtendedSprite> = new Array<FlxExtendedSprite>();
-	static private var _clickCoords:FlxPoint;
-	static private var _hasClickTarget:Bool = false;
+	private static var _clickStack:Array<FlxExtendedSprite> = new Array<FlxExtendedSprite>();
+	private static var _clickCoords:FlxPoint;
+	private static var _hasClickTarget:Bool = false;
 	
-	static private var _oldX:Int = 0;
-	static private var _oldY:Int = 0;
+	private static var _oldX:Int = 0;
+	private static var _oldY:Int = 0;
 	
 	/**
 	 * Adds the given FlxExtendedSprite to the stack of potential sprites that were clicked, the stack is then sorted and the final sprite is selected from that
 	 * 
 	 * @param	Item	The FlxExtendedSprite that was clicked by the mouse
 	 */
-	static public function addToStack(Item:FlxExtendedSprite):Void
+	public static function addToStack(Item:FlxExtendedSprite):Void
 	{
 		if (mouseZone != null)
 		{

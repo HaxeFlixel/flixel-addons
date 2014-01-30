@@ -21,7 +21,7 @@ class AntTaskManager extends FlxPlugin
 	 */
 	public var onComplete:Void->Void;
 	
-	static private var _COUNTER:Int = 0;
+	private static var _COUNTER:Int = 0;
 	
 	/**
 	 * The list of active tasks

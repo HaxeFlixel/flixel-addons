@@ -150,7 +150,7 @@ class FlxTypeText extends FlxText
 	/**
 	 * Helper string to reduce garbage generation.
 	 */
-	static private var helperString:String = "";
+	private static var helperString:String = "";
 	
 	/**
 	 * Create a FlxTypeText object, which is very similar to FlxText except that the text is initially hidden and can be

@@ -15,7 +15,7 @@ import haxe.ds.ObjectMap;
  */
 class FlxSpecialFX extends FlxPlugin
 {
-	static private var members:ObjectMap<BaseFX, BaseFX> = new ObjectMap<BaseFX, BaseFX>();
+	private static var members:ObjectMap<BaseFX, BaseFX> = new ObjectMap<BaseFX, BaseFX>();
 	
 	// THE SPECIAL FX PLUGINS AVAILABLE
 	

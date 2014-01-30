@@ -61,22 +61,22 @@ class FlxGameJolt
 	/**
 	 * Hash types for the cryptography function. Use this or HASH_SHA1 for encryptURL(). MD5 is used by default.
 	 */
-	inline public static var HASH_MD5:Int = 0;
+	public static inline var HASH_MD5:Int = 0;
 	
 	/**
 	 * Hash types for the cryptography function. Use this or HASH_MD5 for encryptURL(). MD5 is used by default.
 	 */
-	inline public static var HASH_SHA1:Int = 1;
+	public static inline var HASH_SHA1:Int = 1;
 	
 	/**
 	 * Trophy data return type, will return only non-unlocked trophies. As an alternative, can just pass in the ID of the trophy to see if it's unlocked.
 	 */
-	inline public static var TROPHIES_MISSING:Int = -1;
+	public static inline var TROPHIES_MISSING:Int = -1;
 	
 	/**
 	 * Trophy data return type, will return only unlocked trophies. As an alternative, can just pass in the ID of the trophy to see if it's unlocked.
 	 */
-	inline public static var TROPHIES_ACHIEVED:Int = -2;
+	public static inline var TROPHIES_ACHIEVED:Int = -2;
 	
 	/**
 	 * Internal storage for a callback function, used when the URLLoader is complete.
@@ -134,11 +134,11 @@ class FlxGameJolt
 	/**
 	 * Various common strings required by the API's HTTP values.
 	 */
-	inline private static var URL_API:String = "http://gamejolt.com/api/game/v1/";
-	inline private static var RETURN_TYPE:String = "?format=keypair";
-	inline private static var URL_GAME_ID:String = "&game_id=";
-	inline private static var URL_USER_NAME:String = "&username=";
-	inline private static var URL_USER_TOKEN:String = "&user_token=";
+	private static inline var URL_API:String = "http://gamejolt.com/api/game/v1/";
+	private static inline var RETURN_TYPE:String = "?format=keypair";
+	private static inline var URL_GAME_ID:String = "&game_id=";
+	private static inline var URL_USER_NAME:String = "&username=";
+	private static inline var URL_USER_TOKEN:String = "&user_token=";
 	
 	/**
 	 * Initialize this class by storing the GameID and private key.
