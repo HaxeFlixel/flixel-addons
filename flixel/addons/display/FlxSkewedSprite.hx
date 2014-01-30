@@ -70,7 +70,7 @@ class FlxSkewedSprite extends FlxSprite
 		{
 			camera = cameras[i++];
 			
-			if (!onScreen(camera) || !camera.visible || !camera.exists)
+			if (!isOnScreen(camera) || !camera.visible || !camera.exists)
 			{
 				continue;
 			}
@@ -101,7 +101,7 @@ class FlxSkewedSprite extends FlxSprite
 		#end
 		
 #if flash
-			if (simpleRenderSprite())
+			if (isSimpleRender())
 			{
 				_flashPoint.x = _point.x;
 				_flashPoint.y = _point.y;
@@ -138,7 +138,7 @@ class FlxSkewedSprite extends FlxSprite
 			
 			var isFlipped:Bool = (flipped != 0) && (facing == FlxObject.LEFT);
 			
-			if (simpleRenderSprite())
+			if (isSimpleRender())
 			{
 				if (isFlipped)
 				{
@@ -224,7 +224,7 @@ class FlxSkewedSprite extends FlxSprite
 		}
 	}
 	
-	private override function simpleRenderSprite():Bool
+	public override function isSimpleRender():Bool
 	{
 		#if !flash
 		return (((angle == 0) || (bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
