@@ -29,59 +29,59 @@ class FlxControlHandler
 	/**
 	 * The "Instant" Movement Type means the sprite will move at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
 	 */
-	inline public static var MOVEMENT_INSTANT:Int = 0;
+	public static inline var MOVEMENT_INSTANT:Int = 0;
 	/**
 	 * The "Accelerates" Movement Type means the sprite will accelerate until it reaches maximum speed.
 	 */
-	inline public static var MOVEMENT_ACCELERATES:Int = 1;
+	public static inline var MOVEMENT_ACCELERATES:Int = 1;
 	/**
 	 * The "Instant" Stopping Type means the sprite will stop immediately when no direction keys are being pressed, there will be no deceleration.
 	 */
-	inline public static var STOPPING_INSTANT:Int = 0;
+	public static inline var STOPPING_INSTANT:Int = 0;
 	/**
 	 * The "Decelerates" Stopping Type means the sprite will start decelerating when no direction keys are being pressed. Deceleration continues until the speed reaches zero.
 	 */
-	inline public static var STOPPING_DECELERATES:Int = 1;
+	public static inline var STOPPING_DECELERATES:Int = 1;
 	/**
 	 * The "Never" Stopping Type means the sprite will never decelerate, any speed built up will be carried on and never reduce.
 	 */
-	inline public static var STOPPING_NEVER:Int = 2;
+	public static inline var STOPPING_NEVER:Int = 2;
 	
 	/**
 	 * The "Instant" Movement Type means the sprite will rotate at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
 	 */
-	inline public static var ROTATION_INSTANT:Int = 0;
+	public static inline var ROTATION_INSTANT:Int = 0;
 	/**
 	 * The "Accelerates" Rotaton Type means the sprite will accelerate until it reaches maximum rotation speed.
 	 */
-	inline public static var ROTATION_ACCELERATES:Int = 1;
+	public static inline var ROTATION_ACCELERATES:Int = 1;
 	/**
 	 * The "Instant" Stopping Type means the sprite will stop rotating immediately when no rotation keys are being pressed, there will be no deceleration.
 	 */
-	inline public static var ROTATION_STOPPING_INSTANT:Int = 0;
+	public static inline var ROTATION_STOPPING_INSTANT:Int = 0;
 	/**
 	 * The "Decelerates" Stopping Type means the sprite will start decelerating when no rotation keys are being pressed. Deceleration continues until rotation speed reaches zero.
 	 */
-	inline public static var ROTATION_STOPPING_DECELERATES:Int = 1;
+	public static inline var ROTATION_STOPPING_DECELERATES:Int = 1;
 	/**
 	 * The "Never" Stopping Type means the sprite will never decelerate, any speed built up will be carried on and never reduce.
 	 */
-	inline public static var ROTATION_STOPPING_NEVER:Int = 2;
+	public static inline var ROTATION_STOPPING_NEVER:Int = 2;
 	
 	/**
 	 * This keymode fires for as long as the key is held down
 	 */
-	inline public static var KEYMODE_PRESSED:Int = 0;
+	public static inline var KEYMODE_PRESSED:Int = 0;
 	
 	/**
 	 * This keyboard fires when the key has just been pressed down, and not again until it is released and re-pressed
 	 */
-	inline public static var KEYMODE_JUST_DOWN:Int = 1;
+	public static inline var KEYMODE_JUST_DOWN:Int = 1;
 	
 	/**
 	 * This keyboard fires only when the key has been pressed and then released again
 	 */
-	inline public static var KEYMODE_RELEASED:Int = 2;
+	public static inline var KEYMODE_RELEASED:Int = 2;
 	
 	// Helpers
 	public var isPressedUp:Bool = false;

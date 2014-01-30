@@ -28,10 +28,10 @@ import flixel.util.FlxPoint;
  */
 class FlxTilemapExt extends FlxTilemap
 {
-	inline public static var SLOPE_FLOOR_LEFT:Int = 0;
-	inline public static var SLOPE_FLOOR_RIGHT:Int = 1;
-	inline public static var SLOPE_CEIL_LEFT:Int = 2;
-	inline public static var SLOPE_CEIL_RIGHT:Int = 3;
+	public static inline var SLOPE_FLOOR_LEFT:Int = 0;
+	public static inline var SLOPE_FLOOR_RIGHT:Int = 1;
+	public static inline var SLOPE_CEIL_LEFT:Int = 2;
+	public static inline var SLOPE_CEIL_RIGHT:Int = 3;
 	
 	// Slope related variables
 	private var _snapping:Int = 2;
