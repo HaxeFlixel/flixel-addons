@@ -1,5 +1,6 @@
 package flixel.addons.nape;
 
+import flash.display.BitmapData;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.system.ui.FlxSystemButton;
@@ -13,6 +14,8 @@ import nape.space.Space;
 #if !FLX_NO_DEBUG
 import nape.util.ShapeDebug;
 #end
+
+@:bitmap("assets/images/napeDebug.png") class GraphicNapeDebug extends BitmapData {}
 
 /**
  * <code>FlxNapeState</code> is a <code>FlxState</code> that integrates <code>nape.space.Space</code>
@@ -76,7 +79,7 @@ class FlxNapeState extends FlxState
 		
 		#if !FLX_NO_DEBUG
 		// Add a button to toggle Nape debug shapes to the debugger
-		_button = FlxG.debugger.addButton(RIGHT, "flixel/img/napeDebug.png", toggleDebug, true, true);
+		_button = FlxG.debugger.addButton(RIGHT, new GraphicNapeDebug(0, 0), toggleDebug, true, true);
 		napeDebugEnabled = true;
 		#end
 	}
