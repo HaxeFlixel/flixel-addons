@@ -145,8 +145,8 @@ class FlxSkewedSprite extends FlxSprite
 				ssx = sin * scale.x;
 				csy = cos * scale.y;
 				
-				var x1:Float = (_origin.x - frame.center.x);
-				var y1:Float = (_origin.y - frame.center.y);
+				var x1:Float = (origin.x - frame.center.x);
+				var y1:Float = (origin.y - frame.center.y);
 				
 				x2 = (x1 * csx) + (y1 * ssy);
 				y2 = (-x1 * ssx) + (y1 * csy);
