@@ -20,9 +20,9 @@ class FlxSkewedSprite extends FlxSprite
 	
 	private var _skewMatrix:Matrix;
 	
-	public function new(X:Float = 0, Y:Float = 0) 
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic)
 	{
-		super(X, Y);
+		super(X, Y, SimpleGraphic);
 		
 		skew = new FlxPoint();
 		_skewMatrix = new Matrix();
