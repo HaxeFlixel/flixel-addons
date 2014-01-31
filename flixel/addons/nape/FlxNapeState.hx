@@ -13,9 +13,8 @@ import nape.space.Space;
 
 #if !FLX_NO_DEBUG
 import nape.util.ShapeDebug;
-#end
-
 @:bitmap("assets/images/napeDebug.png") class GraphicNapeDebug extends BitmapData {}
+#end
 
 /**
  * <code>FlxNapeState</code> is a <code>FlxState</code> that integrates <code>nape.space.Space</code>
