@@ -41,7 +41,7 @@ class FlxSpriteAniRot extends FlxSprite
 			cached.push(cachedGraphics);
 			framesCache.push(framesData);
 		}
-		bakedRotation = 0;
+		bakedRotationAngle = 0;
 	}
 	
 	override public function destroy():Void 

@@ -106,7 +106,7 @@ class FlxSkewedSprite extends FlxSprite
 			{
 				_matrix.identity();
 				_matrix.translate( -origin.x, -origin.y);
-				if ((angle != 0) && (bakedRotation <= 0))
+				if ((angle != 0) && (bakedRotationAngle <= 0))
 				{
 					_matrix.rotate(angle * FlxAngle.TO_RAD);
 				}
@@ -222,9 +222,9 @@ class FlxSkewedSprite extends FlxSprite
 	public override function isSimpleRender():Bool
 	{
 		#if !flash
-		return (((angle == 0) || (bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
+		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
 		#else
-		return (((angle == 0) || (bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && (forceComplexRender == false));
+		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && (forceComplexRender == false));
 		#end
 	}
 }
