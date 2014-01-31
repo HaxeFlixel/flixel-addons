@@ -371,7 +371,7 @@ private class StarSprite extends FlxSprite
 	{
 		super(X, Y);
 		
-		bakedRotation = 0;
+		bakedRotationAngle = 0;
 		cachedGraphics = FlxG.bitmap.whitePixel;
 		region = new Region(0, 0, 1, 1);
 		region.width = cachedGraphics.bitmap.width;
@@ -431,7 +431,7 @@ private class StarSprite extends FlxSprite
 		while (i < l)
 		{
 			camera = cameras[i++];
-			if (!camera.visible || !camera.exists || !onScreen(camera))
+			if (!camera.visible || !camera.exists || !isOnScreen(camera))
 			{
 				continue;
 			}
@@ -461,7 +461,7 @@ private class StarSprite extends FlxSprite
 			var x1 : Float = 0.5; 
 			var y1 : Float = 0.5; 
 			
-			if (!simpleRenderSprite ())
+			if (!isSimpleRender())
 			{
 				if (_angleChanged)
 				{

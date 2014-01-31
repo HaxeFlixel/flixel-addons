@@ -312,7 +312,7 @@ class FlxBitmapFont extends FlxSprite
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
 			
-			if (!onScreen(camera) || !camera.visible || !camera.exists)
+			if (!isOnScreen(camera) || !camera.visible || !camera.exists)
 			{
 				continue;
 			}
@@ -333,7 +333,7 @@ class FlxBitmapFont extends FlxSprite
 			var ssx:Float = 0;
 			var csy:Float = 1;
 
-			if (!simpleRenderSprite())
+			if (!isSimpleRender())
 			{
 				if (_angleChanged)
 				{
@@ -397,7 +397,7 @@ class FlxBitmapFont extends FlxSprite
 		}
 	}
 	
-	override private function simpleRenderSprite():Bool
+	override public function isSimpleRender():Bool
 	{ 
 		return ((angle == 0) && (scale.x == 1) && (scale.y == 1));
 	}
