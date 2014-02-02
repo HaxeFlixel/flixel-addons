@@ -360,8 +360,9 @@ class FlxNestedSprite extends FlxSprite
 		{
 			return alpha;
 		}
+		
 		alpha = Alpha;
-		alpha *= _parentAlpha;
+		
 		#if flash
 		if ((alpha != 1) || (color != 0x00ffffff))
 		{
@@ -400,7 +401,7 @@ class FlxNestedSprite extends FlxSprite
 		{
 			for (child in _children)
 			{
-				child.alpha *= alpha;
+				child.alpha = (child.alpha * alpha) / child._parentAlpha;
 				child._parentAlpha = alpha;
 			}
 		}
