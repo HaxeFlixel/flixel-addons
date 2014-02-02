@@ -11,7 +11,7 @@ import flixel.util.FlxMath;
 
 /**
  * Some sort of DisplayObjectContainer but very limited.
- * It can contain only other <code>FlxNestedSprites</code>.
+ * It can contain only other FlxNestedSprites.
  * @author Zaphod
  */
 class FlxNestedSprite extends FlxSprite
@@ -96,8 +96,8 @@ class FlxNestedSprite extends FlxSprite
 	}
 	
 	/**
-	 * WARNING: This will remove this sprite entirely. Use <code>kill()</code> if you 
-	 * want to disable it temporarily only and <code>reset()</code> it later to revive it.
+	 * WARNING: This will remove this sprite entirely. Use kill() if you 
+	 * want to disable it temporarily only and reset() it later to revive it.
 	 * Used to clean up memory.
 	 */
 	override public function destroy():Void
@@ -113,9 +113,9 @@ class FlxNestedSprite extends FlxSprite
 	}
 	
 	/**
-	 * Adds the <code>FlxNestedSprite</code> to the children list.
-	 * @param	Child	The <code>FlxNestedSprite</code> to add.
-	 * @return	The added <code>FlxNestedSprite</code>.
+	 * Adds the FlxNestedSprite to the children list.
+	 * @param	Child	The FlxNestedSprite to add.
+	 * @return	The added FlxNestedSprite.
 	 */
 	public function add(Child:FlxNestedSprite):FlxNestedSprite
 	{
@@ -144,9 +144,9 @@ class FlxNestedSprite extends FlxSprite
 	}
 	
 	/**
-	 * Removes the <code>FlxNestedSprite</code> from the children list.
-	 * @param	Child	The <code>FlxNestedSprite</code> to remove.
-	 * @return	The removed <code>FlxNestedSprite</code>.
+	 * Removes the FlxNestedSprite from the children list.
+	 * @param	Child	The FlxNestedSprite to remove.
+	 * @return	The removed FlxNestedSprite.
 	 */
 	public function remove(Child:FlxNestedSprite):FlxNestedSprite
 	{
@@ -161,7 +161,7 @@ class FlxNestedSprite extends FlxSprite
 	}
 	
 	/**
-	 * Removes the <code>FlxNestedSprite</code> from the position in the children list.
+	 * Removes the FlxNestedSprite from the position in the children list.
 	 * @param	Index	Index to remove.
 	 */
 	public function removeAt(Index:Int = 0):FlxNestedSprite

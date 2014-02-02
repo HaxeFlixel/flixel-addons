@@ -9,11 +9,11 @@ import flixel.util.FlxRandom;
 class FlxCaveGenerator
 {
 	/**
-	 * Convert a matrix generated via <code>generateCaveMatrix()</code> into data 
-	 * that is usable by <code>FlxTilemap</code>.
+	 * Convert a matrix generated via generateCaveMatrix() into data 
+	 * that is usable by FlxTilemap.
 	 * 
 	 * @param 	Matrix		A matrix of data
-	 * @return 	A string that is usuable for <code>FlxTilemap.loadMap()</code>
+	 * @return 	A string that is usuable for FlxTilemap.loadMap()
 	 */
 	public static function convertMatrixToString(Matrix:Array<Array<Int>>):String
 	{
@@ -72,14 +72,14 @@ class FlxCaveGenerator
 	}
 	
 	/**
-	 * Generates a new cave matrix via <code>generateCaveMatrix()</code> and returns it in a format 
-	 * usable by <code>FlxTilemap.load()</code> via <code>convertMatrixToString()</code>.
+	 * Generates a new cave matrix via generateCaveMatrix() and returns it in a format 
+	 * usable by FlxTilemap.load() via convertMatrixToString().
 	 * 
 	 * @param	Columns 				Number of columns for the matrix
 	 * @param	Rows					Number of rows for the matrix
 	 * @param	SmoothingIterations 	How many times do you want to "smooth" the caev - the higher the smoother, but slower
 	 * @param	WallRatio 				Chance for a tile to become a wall - the closer the value is to 1.0, the more walls there are
-	 * @return	A cave string that is usable by <code>FlxTilemap.loadMap()</code>
+	 * @return	A cave string that is usable by FlxTilemap.loadMap()
 	 */
 	public static inline function generateCaveString(Columns:Int, Rows:Int, SmoothingIterations:Int = 6, WallRatio:Float = 0.5):String
 	{

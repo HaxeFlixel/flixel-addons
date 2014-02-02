@@ -77,7 +77,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 	private var _initialized:Bool;
 	
 	/**
-	 * Creates a new <code>FlxButton</code> object with a gray background
+	 * Creates a new FlxButton object with a gray background
 	 * and a callback function on the UI thread.
 	 * 
 	 * @param	X			The X position of the button.
@@ -146,8 +146,8 @@ class FlxButtonPlus extends FlxSpriteGroup
 	}
 	
 	/**
-	 * If you wish to replace the two buttons (normal and hovered-over) with FlxSprites, then pass them here.<br />
-	 * Note: The pixel data is extract from the passed FlxSprites and assigned locally, it doesn't actually use the sprites<br />
+	 * If you wish to replace the two buttons (normal and hovered-over) with FlxSprites, then pass them here.
+	 * Note: The pixel data is extract from the passed FlxSprites and assigned locally, it doesn't actually use the sprites
 	 * or keep a reference to them.
 	 * 
 	 * @param	Normal		The FlxSprite to use when the button is in-active (not hovered over)
@@ -268,8 +268,8 @@ class FlxButtonPlus extends FlxSpriteGroup
 	}
 	
 	/**
-	 * WARNING: This will remove this object entirely. Use <code>kill()</code> if you 
-	 * want to disable it temporarily only and <code>reset()</code> it later to revive it.
+	 * WARNING: This will remove this object entirely. Use kill() if you 
+	 * want to disable it temporarily only and reset() it later to revive it.
 	 * Called by the game state when state is changed (if this object belongs to the state)
 	 */
 	override public function destroy():Void
@@ -311,7 +311,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 	}
 	
 	/**
-	 * Internal function for handling the actual callback call (for UI thread dependent calls like <code>FlxStringUtil.openURL()</code>).
+	 * Internal function for handling the actual callback call (for UI thread dependent calls like FlxStringUtil.openURL()).
 	 */
 	function onMouseUp(E:MouseEvent):Void
 	{

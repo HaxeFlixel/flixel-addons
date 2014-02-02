@@ -74,10 +74,10 @@ class FlxControl extends FlxPlugin
 	}
 	
 	/**
-	 * Removes a <code>FlxControlHandler</code> 
+	 * Removes a FlxControlHandler 
 	 * 
-	 * @param	ControlHandler	The <code>FlxControlHandler</code> to delete
-	 * @return	Boolean	true if the <code>FlxControlHandler</code> was removed, otherwise false.
+	 * @param	ControlHandler	The FlxControlHandler to delete
+	 * @return	Boolean	true if the FlxControlHandler was removed, otherwise false.
 	 */
 	public static function remove(ControlHandler:FlxControlHandler):Bool
 	{
@@ -104,9 +104,9 @@ class FlxControl extends FlxPlugin
 	
 	/**
 	 * Starts updating the given FlxControlHandler, enabling keyboard actions for it. If no FlxControlHandler is given it starts updating all FlxControlHandlers currently added.
-	 * Updating is enabled by default, but this can be used to re-start it if you have stopped it via <code>stop()</code>.
+	 * Updating is enabled by default, but this can be used to re-start it if you have stopped it via stop().
 	 * 
-	 * @param	ControlHandler	The <code>FlxControlHandler</code> to start updating on. If left as null it will start updating all handlers.
+	 * @param	ControlHandler	The FlxControlHandler to start updating on. If left as null it will start updating all handlers.
 	 */
 	public static function start(?ControlHandler:FlxControlHandler):Void
 	{

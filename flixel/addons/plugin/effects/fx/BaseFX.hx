@@ -70,7 +70,7 @@ class BaseFX
 	}
 	
 	/**
-	 * Pauses the effect from running. The draw function is still called each loop, but the pixel data is stopped from updating.<br>
+	 * Pauses the effect from running. The draw function is still called each loop, but the pixel data is stopped from updating.
 	 * To disable the SpecialFX Plugin from calling the FX at all set the "active" parameter to false.
 	 */
 	public function stop():Void

@@ -15,9 +15,9 @@ import flixel.FlxSprite;
 class FlxGridOverlay 
 {
 	/**
-	 * Creates an FlxSprite of the given width and height filled with a checkerboard pattern.<br />
-	 * Each grid cell is the specified width and height, and alternates between two colors.<br />
-	 * If alternate is true each row of the pattern will be offset, for a proper checkerboard style. If false each row will be the same colour, creating a striped-pattern effect.<br />
+	 * Creates an FlxSprite of the given width and height filled with a checkerboard pattern.
+	 * Each grid cell is the specified width and height, and alternates between two colors.
+	 * If alternate is true each row of the pattern will be offset, for a proper checkerboard style. If false each row will be the same colour, creating a striped-pattern effect.
 	 * So to create an 8x8 grid you'd call create(8,8)
 	 * 
 	 * @param	CellWidth		The grid cell width
@@ -58,9 +58,9 @@ class FlxGridOverlay
 	}
 	
 	/**
-	 * Creates a checkerboard pattern of the given width/height and overlays it onto the given FlxSprite.<br />
-	 * Each grid cell is the specified width and height, and alternates between two colors.<br />
-	 * If alternate is true each row of the pattern will be offset, for a proper checkerboard style. If false each row will be the same colour, creating a striped-pattern effect.<br />
+	 * Creates a checkerboard pattern of the given width/height and overlays it onto the given FlxSprite.
+	 * Each grid cell is the specified width and height, and alternates between two colors.
+	 * If alternate is true each row of the pattern will be offset, for a proper checkerboard style. If false each row will be the same colour, creating a striped-pattern effect.
 	 * So to create an 8x8 grid you'd call create(8,8,
 	 * 
 	 * @param	Sprite			The FlxSprite you wish to draw the grid on-top of. This updates its pixels value, not just the current frame (don't use animated sprites!)

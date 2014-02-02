@@ -18,11 +18,11 @@ import flixel.util.FlxRect;
 class FlxMouseControl extends FlxPlugin
 {
 	/**
-	 * Use with <code>sort()</code> to sort in ascending order.
+	 * Use with sort() to sort in ascending order.
 	 */
 	public static inline var ASCENDING:Int = -1;
 	/**
-	 * Use with <code>sort()</code> to sort in descending order.
+	 * Use with sort() to sort in descending order.
 	 */
 	public static inline var DESCENDING:Int = 1;
 	/**

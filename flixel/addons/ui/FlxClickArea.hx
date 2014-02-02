@@ -15,20 +15,20 @@ import flixel.util.FlxPoint;
 class FlxClickArea extends FlxObject
 {
 	/**
-	 * Shows the current state of the button, either <code>NORMAL</code>, 
-	 * <code>HIGHLIGHT</code> or <code>PRESSED</code>
+	 * Shows the current state of the button, either NORMAL, 
+	 * HIGHLIGHT or PRESSED
 	 */
 	public var status:Int;
 		
 	/**
 	 * This function is called when the button is released.
 	 * We recommend assigning your main button behavior to this function
-	 * via the <code>FlxClickArea</code> constructor.
+	 * via the FlxClickArea constructor.
 	 */
 	private var _onUp:Dynamic;
 	
 	/**
-	 * The params to pass to the <code>_onUp</code> function
+	 * The params to pass to the _onUp function
 	 */
 	private var _onUpParams:Array<Dynamic>;
 	
@@ -212,7 +212,7 @@ class FlxClickArea extends FlxObject
 	
 		
 	/**
-	 * Internal function for handling the actual callback call (for UI thread dependent calls like <code>FlxStringUtil.openURL()</code>).
+	 * Internal function for handling the actual callback call (for UI thread dependent calls like FlxStringUtil.openURL()).
 	 */
 	private function onMouseUp(event:Event):Void
 	{

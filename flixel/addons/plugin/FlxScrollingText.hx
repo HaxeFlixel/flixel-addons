@@ -24,8 +24,8 @@ class FlxScrollingText extends FlxPlugin
     private static var zeroPoint:Point = new Point(0,0);
 
     /**
-     * Adds an FlxBitmapFont to the Scrolling Text Manager and returns an FlxSprite which contains the text scroller in it.<br />
-     * The FlxSprite will automatically update itself via this plugin, but can be treated as a normal FlxSprite in all other regards<br />
+     * Adds an FlxBitmapFont to the Scrolling Text Manager and returns an FlxSprite which contains the text scroller in it.
+     * The FlxSprite will automatically update itself via this plugin, but can be treated as a normal FlxSprite in all other regards
      * re: positioning, collision, rotation, etc.
      * 
      * @param	bitmapFont			A pre-prepared FlxBitmapFont object (see the Test Suite examples for details on how this works)
@@ -95,7 +95,7 @@ class FlxScrollingText extends FlxPlugin
     }
     
     /**
-     * Adds or replaces the text in the given Text Scroller.<br />
+     * Adds or replaces the text in the given Text Scroller.
      * Can be called while the scroller is still active.
      * 
      * @param	source		The FlxSprite Text Scroller you wish to update (must have been added to FlxScrollingText via a call to add()
@@ -205,8 +205,8 @@ class FlxScrollingText extends FlxPlugin
     }
     
     /**
-     * Removes all FlxSprites<br />
-     * This is called automatically if the plugin is destroyed, but should be called manually by you if you change States<br />
+     * Removes all FlxSprites
+     * This is called automatically if the plugin is destroyed, but should be called manually by you if you change States
      * as all the FlxSprites will be destroyed by Flixel otherwise
      */
     public static function clear():Void
@@ -218,8 +218,8 @@ class FlxScrollingText extends FlxPlugin
     }
     
     /**
-     * Starts scrolling on the given FlxSprite. If no FlxSprite is given it starts scrolling on all FlxSprites currently added.<br />
-     * Scrolling is enabled by default, but this can be used to re-start it if you have stopped it via stopScrolling.<br />
+     * Starts scrolling on the given FlxSprite. If no FlxSprite is given it starts scrolling on all FlxSprites currently added.
+     * Scrolling is enabled by default, but this can be used to re-start it if you have stopped it via stopScrolling.
      * 
      * @param	source	The FlxSprite to start scrolling on. If left as null it will start scrolling on all sprites.
      */
@@ -239,8 +239,8 @@ class FlxScrollingText extends FlxPlugin
     }
     
     /**
-     * Stops scrolling on the given FlxSprite. If no FlxSprite is given it stops scrolling on all FlxSprites currently added.<br />
-     * Scrolling is enabled by default, but this can be used to stop it.<br />
+     * Stops scrolling on the given FlxSprite. If no FlxSprite is given it stops scrolling on all FlxSprites currently added.
+     * Scrolling is enabled by default, but this can be used to stop it.
      * 
      * @param	source	The FlxSprite to stop scrolling on. If left as null it will stop scrolling on all sprites.
      */
@@ -260,7 +260,7 @@ class FlxScrollingText extends FlxPlugin
     }
     
     /**
-     * Checks to see if the given FlxSprite is a Scrolling Text, and is actively scrolling or not<br />
+     * Checks to see if the given FlxSprite is a Scrolling Text, and is actively scrolling or not
      * Note: If the text is set to only scroll when on-screen, but if off-screen when this is called, it will still return true.
      * 
      * @param	source	The FlxSprite to check for scrolling on.

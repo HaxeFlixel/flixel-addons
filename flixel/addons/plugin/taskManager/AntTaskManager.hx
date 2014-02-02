@@ -84,8 +84,8 @@ class AntTaskManager extends FlxPlugin
 	}
 	
 	/**
-	 * Adds a task to the end of queue, the method will be executed while it returns <code>false</code>.
-	 * The task will be completed only when the method will return <code>true</code>. And manager will switch to the next task.
+	 * Adds a task to the end of queue, the method will be executed while it returns false.
+	 * The task will be completed only when the method will return true. And manager will switch to the next task.
 	 * 
 	 * @param	Object				An object to call method-task from
 	 * @param	Function			Method-task to be executed in sequence.
@@ -115,8 +115,8 @@ class AntTaskManager extends FlxPlugin
 	}
 	
 	/**
-	 * Adds a task to the top of the queue, the method will be executed while it returns <code>false</code>.
-	 * The task will be completed only when the method will return <code>true</code>, and the manager will move to the next task.
+	 * Adds a task to the top of the queue, the method will be executed while it returns false.
+	 * The task will be completed only when the method will return true, and the manager will move to the next task.
 	 * 
 	 * @param	Object	 			An object to call method-task from
 	 * @param	Function	 		Method-task to be executed in sequence.
@@ -260,8 +260,8 @@ class AntTaskManager extends FlxPlugin
 	/**
 	 * Adds the specified object to the end of the list
 	 * 
-	 * @param	Task	The <code>AntTask</code> to be added.
-	 * @return	Returns a pointer to the added <code>AntTask</code>.
+	 * @param	Task	The AntTask to be added.
+	 * @return	Returns a pointer to the added AntTask.
 	 */
 	private function push(Task:AntTask):AntTask
 	{
@@ -291,8 +291,8 @@ class AntTaskManager extends FlxPlugin
 	/**
 	 * Adds task to the top of task list
 	 * 
-	 * @param	Task	The <code>AntTask</code> to be added.
-	 * @return	Returns a pointer to the added <code>AntTask</code>
+	 * @param	Task	The AntTask to be added.
+	 * @return	Returns a pointer to the added AntTask
 	 */
 	private function unshift(Task:AntTask):AntTask
 	{

@@ -55,7 +55,7 @@ class FlxScreenGrab extends FlxPlugin
 	 * Specify which key will capture a screen shot. Use the String value of the key in the same way FlxG.keys does (so "F1" for example)
 	 * Optionally save the image to a file immediately. This uses the file systems "Save as" dialog window and pauses your game during the process.
 	 * 
-	 * @param	Key			The key(s) you press to capture the screen (i.e. <code>["F1", "SPACE"]</code>)
+	 * @param	Key			The key(s) you press to capture the screen (i.e. ["F1", "SPACE"])
 	 * @param	SaveToFile	If true it will immediately encodes the grab to a PNG and open a "Save As" dialog window when the hotkey is pressed
 	 * @param	HideMouse	If true the mouse will be hidden before capture and displayed afterwards when the hotkey is pressed
 	 */

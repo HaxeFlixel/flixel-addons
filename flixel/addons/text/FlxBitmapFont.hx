@@ -444,7 +444,7 @@ class FlxBitmapFont extends FlxSprite
 	}
 	
 	/**
-	 * If you need this FlxSprite to have a fixed width and custom alignment you can set the width here.<br>
+	 * If you need this FlxSprite to have a fixed width and custom alignment you can set the width here.
 	 * If text is wider than the width specified it will be cropped off.
 	 * 
 	 * @param	Width			Width in pixels of this FlxBitmapFont. Set to zero to disable and re-enable automatic resizing.
@@ -619,7 +619,7 @@ class FlxBitmapFont extends FlxSprite
 	 * Returns a single character from the font set as an FlxSprite.
 	 * 
 	 * @param	Char	The character you wish to have returned.
-	 * @return	A <code>FlxSprite</code> containing a single character from the font set.
+	 * @return	A FlxSprite containing a single character from the font set.
 	 */
 	public function getCharacter(Char:String):FlxSprite
 	{
@@ -640,7 +640,7 @@ class FlxBitmapFont extends FlxSprite
 	 * Returns a single character from the font set as bitmapData
 	 * 
 	 * @param	Char	The character you wish to have returned.
-	 * @return	<code>bitmapData</code> containing a single character from the font set.
+	 * @return	bitmapData containing a single character from the font set.
 	 */
 	public function getCharacterAsBitmapData(Char:String):BitmapData
 	{

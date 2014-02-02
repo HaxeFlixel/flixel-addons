@@ -34,7 +34,7 @@ class FlxMouseSpring
 	private var _ay:Float = 0;
 	
 	/**
-	 * Adds a spring between the mouse and a <code>FlxExtendedSprite</code>.
+	 * Adds a spring between the mouse and a FlxExtendedSprite.
 	 * 
 	 * @param	Sprite			The FlxExtendedSprite to which this spring is attached
 	 * @param	RetainVelocity	True to retain the velocity of the spring when the mouse is released, or false to clear it
