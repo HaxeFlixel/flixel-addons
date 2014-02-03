@@ -16,7 +16,7 @@ import flixel.util.FlxPoint;
  */
 class FlxSkewedSprite extends FlxSprite
 {
-	public var skew:FlxPoint;
+	public var skew(default, null):FlxPoint;
 	
 	private var _skewMatrix:Matrix;
 	
