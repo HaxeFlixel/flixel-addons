@@ -22,7 +22,7 @@ class FlxSkewedSprite extends FlxSprite
 	 * Tranformation matrix for this sprite.
 	 * Used only when matrixExposed is set to true
 	 */
-	public var transformMatrix(get, null):Matrix;
+	public var transformMatrix(default, null):Matrix;
 	
 	/**
 	 * Bool flag showing whether transformMatrix is used for rendering or not.
@@ -34,10 +34,6 @@ class FlxSkewedSprite extends FlxSprite
 	 * Internal helper matrix object. Used for rendering calculations when matrixExposed is set to false
 	 */
 	private var _skewMatrix:Matrix;
-	/**
-	 * Internal matrix object. Used for exposing transformation matrix when matrixExposed is set to true
-	 */
-	private var _transformMatrix:Matrix;
 	
 	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic)
 	{
@@ -45,7 +41,7 @@ class FlxSkewedSprite extends FlxSprite
 		
 		skew = new FlxPoint();
 		_skewMatrix = new Matrix();
-		_transformMatrix = new Matrix();
+		transformMatrix = new Matrix();
 	}
 	
 	/**
@@ -57,7 +53,7 @@ class FlxSkewedSprite extends FlxSprite
 	{
 		skew = null;
 		_skewMatrix = null;
-		_transformMatrix = null;
+		transformMatrix = null;
 		
 		super.destroy();
 	}
@@ -139,7 +135,7 @@ class FlxSkewedSprite extends FlxSprite
 			}
 			else
 			{
-				camera.buffer.draw(framePixels, _transformMatrix, null, blend, null, antialiasing);
+				camera.buffer.draw(framePixels, transformMatrix, null, blend, null, antialiasing);
 			}
 #else
 			var csx:Float = 1;
@@ -185,7 +181,7 @@ class FlxSkewedSprite extends FlxSprite
 				}
 				else
 				{
-					matrixToUse = _transformMatrix;
+					matrixToUse = transformMatrix;
 				}
 				
 				x2 = x1 * matrixToUse.a + y1 * matrixToUse.c + matrixToUse.tx;
@@ -250,10 +246,5 @@ class FlxSkewedSprite extends FlxSprite
 		#else
 		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && (forceComplexRender == false));
 		#end
-	}
-	
-	private function get_transformMatrix():Matrix
-	{
-		return _transformMatrix;
 	}
 }
