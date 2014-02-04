@@ -378,12 +378,12 @@ class FlxSlider extends FlxSpriteGroup
 	 */
 	override public function destroy():Void
 	{
-		FlxG.safeDestroy(body);
-		FlxG.safeDestroy(handle);
-		FlxG.safeDestroy(minLabel);
-		FlxG.safeDestroy(maxLabel);
-		FlxG.safeDestroy(nameLabel);
-		FlxG.safeDestroy(valueLabel);
+		body = FlxG.safeDestroy(body);
+		handle = FlxG.safeDestroy(handle);
+		minLabel = FlxG.safeDestroy(minLabel);
+		maxLabel = FlxG.safeDestroy(maxLabel);
+		nameLabel = FlxG.safeDestroy(nameLabel);
+		valueLabel = FlxG.safeDestroy(valueLabel);
 		
 		_bounds = null;
 		offset = null;
