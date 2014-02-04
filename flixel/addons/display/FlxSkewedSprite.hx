@@ -18,7 +18,26 @@ class FlxSkewedSprite extends FlxSprite
 {
 	public var skew(default, null):FlxPoint;
 	
+	/**
+	 * Tranformation matrix for this sprite.
+	 * Used only when matrixExposed is set to true
+	 */
+	public var transformMatrix(get, null):Matrix;
+	
+	/**
+	 * Bool flag showing whether transformMatrix is used for rendering or not.
+	 * False by default, which means that transformMatrix isn't used for rendering
+	 */
+	public var matrixExposed:Bool = false;
+	
+	/**
+	 * Internal helper matrix object. Used for rendering calculations when matrixExposed is set to false
+	 */
 	private var _skewMatrix:Matrix;
+	/**
+	 * Internal matrix object. Used for exposing transformation matrix when matrixExposed is set to true
+	 */
+	private var _transformMatrix:Matrix;
 	
 	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic)
 	{
@@ -26,6 +45,7 @@ class FlxSkewedSprite extends FlxSprite
 		
 		skew = new FlxPoint();
 		_skewMatrix = new Matrix();
+		_transformMatrix = new Matrix();
 	}
 	
 	/**
@@ -37,6 +57,7 @@ class FlxSkewedSprite extends FlxSprite
 	{
 		skew = null;
 		_skewMatrix = null;
+		_transformMatrix = null;
 		
 		super.destroy();
 	}
@@ -101,7 +122,7 @@ class FlxSkewedSprite extends FlxSprite
 				_point.copyToFlash(_flashPoint);
 				camera.buffer.copyPixels(framePixels, _flashRect, _flashPoint, null, null, true);
 			}
-			else
+			else if (!matrixExposed)
 			{
 				_matrix.identity();
 				_matrix.translate( -origin.x, -origin.y);
@@ -115,6 +136,10 @@ class FlxSkewedSprite extends FlxSprite
 				
 				_matrix.translate(_point.x + origin.x, _point.y + origin.y);
 				camera.buffer.draw(framePixels, _matrix, null, blend, null, antialiasing);
+			}
+			else
+			{
+				camera.buffer.draw(framePixels, _transformMatrix, null, blend, null, antialiasing);
 			}
 #else
 			var csx:Float = 1;
@@ -139,29 +164,37 @@ class FlxSkewedSprite extends FlxSprite
 			}
 			else
 			{
-				radians = -angle * FlxAngle.TO_RAD;
-				
-				_matrix.identity();
-				_matrix.rotate( -radians);
-				
-				if (isFlipped)
+				var matrixToUse:Matrix = _matrix;
+				if (!matrixExposed)
 				{
-					_matrix.scale( -scale.x, scale.y);
+					radians = -angle * FlxAngle.TO_RAD;
+					
+					_matrix.identity();
+					_matrix.rotate( -radians);
+					
+					if (isFlipped)
+					{
+						_matrix.scale( -scale.x, scale.y);
+					}
+					else
+					{
+						_matrix.scale(scale.x, scale.y);
+					}
+					
+					updateSkewMatrix();
 				}
 				else
 				{
-					_matrix.scale(scale.x, scale.y);
+					matrixToUse = _transformMatrix;
 				}
 				
-				updateSkewMatrix();
+				x2 = x1 * matrixToUse.a + y1 * matrixToUse.c + matrixToUse.tx;
+				y2 = x1 * matrixToUse.b + y1 * matrixToUse.d + matrixToUse.ty;
 				
-				x2 = x1 * _matrix.a + y1 * _matrix.c + _matrix.tx;
-				y2 = x1 * _matrix.b + y1 * _matrix.d + _matrix.ty;
-				
-				csx = _matrix.a;
-				ssy = _matrix.b;
-				ssx = _matrix.c;
-				csy = _matrix.d;
+				csx = matrixToUse.a;
+				ssy = matrixToUse.b;
+				ssx = matrixToUse.c;
+				csy = matrixToUse.d;
 			}
 			
 			currDrawData[currIndex++] = _point.x - x2;
@@ -217,5 +250,10 @@ class FlxSkewedSprite extends FlxSprite
 		#else
 		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && (forceComplexRender == false));
 		#end
+	}
+	
+	private function get_transformMatrix():Matrix
+	{
+		return _transformMatrix;
 	}
 }
