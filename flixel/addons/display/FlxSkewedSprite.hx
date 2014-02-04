@@ -77,7 +77,6 @@ class FlxSkewedSprite extends FlxSprite
 			var useAlpha:Bool = (alpha < 1);
 			drawItem = camera.getDrawStackItem(cachedGraphics, useAlpha);
 			#end
-			
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
 			
@@ -96,7 +95,7 @@ class FlxSkewedSprite extends FlxSprite
 			_point.y = y - (camera.scroll.y * scrollFactor.y) - (offset.y);
 		#end
 		
-	#if flash
+#if flash
 			if (isSimpleRender())
 			{
 				_point.copyToFlash(_flashPoint);
@@ -117,13 +116,17 @@ class FlxSkewedSprite extends FlxSprite
 				_matrix.translate(_point.x + origin.x, _point.y + origin.y);
 				camera.buffer.draw(framePixels, _matrix, null, blend, null, antialiasing);
 			}
-	#else
+#else
 			var csx:Float = 1;
 			var ssy:Float = 0;
 			var ssx:Float = 0;
 			var csy:Float = 1;
-			var x2:Float = 0;
-			var y2:Float = 0;
+			
+			var x1:Float = (origin.x - frame.center.x);
+			var y1:Float = (origin.y - frame.center.y);
+			
+			var x2:Float = x1;
+			var y2:Float = y1;
 			
 			var isFlipped:Bool = (flipped != 0) && (facing == FlxObject.LEFT);
 			
@@ -137,25 +140,9 @@ class FlxSkewedSprite extends FlxSprite
 			else
 			{
 				radians = -angle * FlxAngle.TO_RAD;
-				cos = Math.cos(radians);
-				sin = Math.sin(radians);
-				
-				csx = cos * scale.x;
-				ssy = sin * scale.y;
-				ssx = sin * scale.x;
-				csy = cos * scale.y;
-				
-				var x1:Float = (origin.x - frame.center.x);
-				var y1:Float = (origin.y - frame.center.y);
-				
-				x2 = (x1 * csx) + (y1 * ssy);
-				y2 = (-x1 * ssx) + (y1 * csy);
 				
 				_matrix.identity();
-				_matrix.a = cos;
-				_matrix.b = -sin;
-				_matrix.c = sin;
-				_matrix.d = cos;
+				_matrix.rotate( -radians);
 				
 				if (isFlipped)
 				{
@@ -168,6 +155,9 @@ class FlxSkewedSprite extends FlxSprite
 				
 				updateSkewMatrix();
 				
+				x2 = x1 * _matrix.a + y1 * _matrix.c + _matrix.tx;
+				y2 = x1 * _matrix.b + y1 * _matrix.d + _matrix.ty;
+				
 				csx = _matrix.a;
 				ssy = _matrix.b;
 				ssx = _matrix.c;
@@ -176,6 +166,7 @@ class FlxSkewedSprite extends FlxSprite
 			
 			currDrawData[currIndex++] = _point.x - x2;
 			currDrawData[currIndex++] = _point.y - y2;
+			
 			currDrawData[currIndex++] = frame.tileID;
 			
 			currDrawData[currIndex++] = csx;
@@ -199,7 +190,7 @@ class FlxSkewedSprite extends FlxSprite
 			#end
 			
 			drawItem.position = currIndex;
-	#end
+#end
 			#if !FLX_NO_DEBUG
 			FlxBasic._VISIBLECOUNT++;
 			#end
