@@ -2,10 +2,10 @@
 	"name": "flixel-addons",
 	"url" : "http://haxeflixel.com",
 	"license": "MIT",
-	"tags": ["flash", "game", "cpp", "openfl"],
+	"tags": ["game", "openfl", "flash", "neko", "cpp", "android", "ios", "cross"],
 	"description": "flixel-addons is a set of useful, additional classes for HaxeFlixel.",
-	"version": "1.0.1",
-	"releasenote": "New features added (FlxTypeText / FlxGameJolt), improvements and bugfixes. See CHANGELOG.md for more details.",
+	"version": "1.0.2",
+	"releasenote": "Flixel 3.1.0 compatibility, new features, improvements and bugfixes. See the CHANGELOG.md for more details.",
 	"contributors": ["haxeflixel"],
 	"dependencies": { "openfl": "", "flixel": "" }
 }
