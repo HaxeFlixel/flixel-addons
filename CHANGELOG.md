@@ -1,3 +1,17 @@
+v1.0.2
+------------------------------
+* FlxButtonPlus:
+  * fixed button graphic always being white
+  * use Void->Void for the callback function for consistency with the FlxTypedButton changes ([more info](https://github.com/HaxeFlixel/flixel/issues/805?source=cc))
+* Moved shape classes from flixel-ui to flixel.addons.display.shapes
+* Added FlxAsyncLoop
+* FlxNestedSprite: fixes for update and draw calls
+* FlxSkewedSprite:
+  * added SimpleGraphic param to the constructor
+  * now correctly works with origin on cpp targets
+  * exposed the transformation matrix via transformMatrix and matrixExposed
+* Moved FlxTrail, FlxTrailArea and FlxSlider into flixel-addons
+
 v1.0.1
 ------------------------------
 * FlxWeapon: Now works with different bullet classes (that extend FlxBullet)
