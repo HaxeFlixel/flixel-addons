@@ -65,7 +65,8 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public var relativeAngularAcceleration:Float;
 	
-	public var _parentAlpha:Float = 1;
+	public var relativeAlpha:Float = 1;
+
 	public var _parentRed:Float = 1;
 	public var _parentGreen:Float = 1;
 	public var _parentBlue:Float = 1;
@@ -127,8 +128,7 @@ class FlxNestedSprite extends FlxSprite
 			Child.scrollFactor.x = scrollFactor.x;
 			Child.scrollFactor.y = scrollFactor.y;
 			
-			Child._parentAlpha = this.alpha;
-			Child.alpha = Child.alpha;
+			Child.alpha = Child.relativeAlpha * alpha;
 
 			var thisRed:Float = (color >> 16) / 255;
 			var thisGreen:Float = (color >> 8 & 0xff) / 255;
@@ -285,7 +285,7 @@ class FlxNestedSprite extends FlxSprite
 				child.angularVelocity = child.angularAcceleration = 0;
 				child.postUpdate();
 				
-				if (isSimpleRender())
+				if (simpleRenderSprite())
 				{
 					child.x = x + child.relativeX - offset.x;
 					child.y = y + child.relativeY - offset.y;
@@ -360,8 +360,8 @@ class FlxNestedSprite extends FlxSprite
 		{
 			return alpha;
 		}
-		alpha = Alpha;
-		alpha *= _parentAlpha;
+		alpha = Alpha * relativeAlpha;
+		
 		#if flash
 		if ((alpha != 1) || (color != 0x00ffffff))
 		{
@@ -400,8 +400,7 @@ class FlxNestedSprite extends FlxSprite
 		{
 			for (child in _children)
 			{
-				child.alpha *= alpha;
-				child._parentAlpha = alpha;
+				child.alpha = alpha;
 			}
 		}
 		
