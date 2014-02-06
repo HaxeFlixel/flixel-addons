@@ -5,7 +5,9 @@ v1.0.2
   * use Void->Void for the callback function for consistency with the FlxTypedButton changes ([more info](https://github.com/HaxeFlixel/flixel/issues/805?source=cc))
 * Moved shape classes from flixel-ui to flixel.addons.display.shapes
 * Added FlxAsyncLoop
-* FlxNestedSprite: fixes for update and draw calls
+* FlxNestedSprite: 
+ * fixes for update and draw calls
+ * added relativeAlpha to fix the alpha calculation
 * FlxSkewedSprite:
   * added SimpleGraphic param to the constructor
   * now correctly works with origin on cpp targets
