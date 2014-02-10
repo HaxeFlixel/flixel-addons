@@ -8,6 +8,7 @@ import flixel.FlxSprite;
 import flixel.util.FlxAngle;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxMath;
+import flixel.util.FlxVelocity;
 
 /**
  * Some sort of DisplayObjectContainer but very limited.
@@ -258,18 +259,18 @@ class FlxNestedSprite extends FlxSprite
 		var velocityDelta:Float;
 		var dt:Float = FlxG.elapsed;
 		
-		velocityDelta = 0.5 * (FlxMath.computeVelocity(relativeAngularVelocity, relativeAngularAcceleration, angularDrag, maxAngular) - relativeAngularVelocity);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeAngularVelocity, relativeAngularAcceleration, angularDrag, maxAngular) - relativeAngularVelocity);
 		relativeAngularVelocity += velocityDelta; 
 		relativeAngle += relativeAngularVelocity * dt;
 		relativeAngularVelocity += velocityDelta;
 		
-		velocityDelta = 0.5 * (FlxMath.computeVelocity(relativeVelocityX, relativeAccelerationX, drag.x, maxVelocity.x) - relativeVelocityX);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocityX, relativeAccelerationX, drag.x, maxVelocity.x) - relativeVelocityX);
 		relativeVelocityX += velocityDelta;
 		delta = relativeVelocityX * dt;
 		relativeVelocityX += velocityDelta;
 		relativeX += delta;
 		
-		velocityDelta = 0.5 * (FlxMath.computeVelocity(relativeVelocityY, relativeAccelerationY, drag.y, maxVelocity.y) - relativeVelocityY);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocityY, relativeAccelerationY, drag.y, maxVelocity.y) - relativeVelocityY);
 		relativeVelocityY += velocityDelta;
 		delta = relativeVelocityY * dt;
 		relativeVelocityY += velocityDelta;
