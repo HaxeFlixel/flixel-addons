@@ -16,27 +16,44 @@ import flixel.util.FlxPoint;
  */
 class FlxSkewedSprite extends FlxSprite
 {
-	public var skew:FlxPoint;
+	public var skew(default, null):FlxPoint;
 	
+	/**
+	 * Tranformation matrix for this sprite.
+	 * Used only when matrixExposed is set to true
+	 */
+	public var transformMatrix(default, null):Matrix;
+	
+	/**
+	 * Bool flag showing whether transformMatrix is used for rendering or not.
+	 * False by default, which means that transformMatrix isn't used for rendering
+	 */
+	public var matrixExposed:Bool = false;
+	
+	/**
+	 * Internal helper matrix object. Used for rendering calculations when matrixExposed is set to false
+	 */
 	private var _skewMatrix:Matrix;
 	
-	public function new(X:Float = 0, Y:Float = 0) 
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic)
 	{
-		super(X, Y);
+		super(X, Y, SimpleGraphic);
 		
 		skew = new FlxPoint();
 		_skewMatrix = new Matrix();
+		transformMatrix = new Matrix();
 	}
 	
 	/**
-	 * WARNING: This will remove this sprite entirely. Use <code>kill()</code> if you 
-	 * want to disable it temporarily only and <code>reset()</code> it later to revive it.
+	 * WARNING: This will remove this sprite entirely. Use kill() if you 
+	 * want to disable it temporarily only and reset() it later to revive it.
 	 * Used to clean up memory.
 	 */
 	override public function destroy():Void 
 	{
 		skew = null;
 		_skewMatrix = null;
+		transformMatrix = null;
 		
 		super.destroy();
 	}
@@ -52,9 +69,6 @@ class FlxSkewedSprite extends FlxSprite
 		{
 			cameras = FlxG.cameras.list;
 		}
-		var camera:FlxCamera;
-		var i:Int = 0;
-		var l:Int = cameras.length;
 		
 		#if !flash
 		var drawItem:DrawStackItem;
@@ -66,11 +80,9 @@ class FlxSkewedSprite extends FlxSprite
 		var cos:Float;
 		var sin:Float;
 		
-		while(i < l)
+		for (camera in cameras)
 		{
-			camera = cameras[i++];
-			
-			if (!onScreen(camera) || !camera.visible || !camera.exists)
+			if (!isOnScreen(camera) || !camera.visible || !camera.exists)
 			{
 				continue;
 			}
@@ -101,44 +113,45 @@ class FlxSkewedSprite extends FlxSprite
 		#end
 		
 #if flash
-			if (simpleRenderSprite())
+			if (isSimpleRender())
 			{
-				_flashPoint.x = _point.x;
-				_flashPoint.y = _point.y;
+				_point.copyToFlash(_flashPoint);
 				camera.buffer.copyPixels(framePixels, _flashRect, _flashPoint, null, null, true);
 			}
-			else
+			else if (!matrixExposed)
 			{
-				_matrix.identity ();
+				_matrix.identity();
 				_matrix.translate( -origin.x, -origin.y);
-				if ((angle != 0) && (bakedRotation <= 0))
+				if ((angle != 0) && (bakedRotationAngle <= 0))
 				{
 					_matrix.rotate(angle * FlxAngle.TO_RAD);
 				}
 				_matrix.scale(scale.x, scale.y);
-				if (skew.x != 0 || skew.y != 0)
-				{
-					_skewMatrix.identity();
-					_skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
-					_skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
-					
-					_matrix.concat(_skewMatrix);
-				}
+				
+				updateSkewMatrix();
 				
 				_matrix.translate(_point.x + origin.x, _point.y + origin.y);
 				camera.buffer.draw(framePixels, _matrix, null, blend, null, antialiasing);
+			}
+			else
+			{
+				camera.buffer.draw(framePixels, transformMatrix, null, blend, null, antialiasing);
 			}
 #else
 			var csx:Float = 1;
 			var ssy:Float = 0;
 			var ssx:Float = 0;
 			var csy:Float = 1;
-			var x2:Float = 0;
-			var y2:Float = 0;
+			
+			var x1:Float = (origin.x - frame.center.x);
+			var y1:Float = (origin.y - frame.center.y);
+			
+			var x2:Float = x1;
+			var y2:Float = y1;
 			
 			var isFlipped:Bool = (flipped != 0) && (facing == FlxObject.LEFT);
 			
-			if (simpleRenderSprite())
+			if (isSimpleRender())
 			{
 				if (isFlipped)
 				{
@@ -147,53 +160,42 @@ class FlxSkewedSprite extends FlxSprite
 			}
 			else
 			{
-				radians = -angle * FlxAngle.TO_RAD;
-				cos = Math.cos(radians);
-				sin = Math.sin(radians);
-				
-				csx = cos * scale.x;
-				ssy = sin * scale.y;
-				ssx = sin * scale.x;
-				csy = cos * scale.y;
-				
-				var x1:Float = (origin.x - _halfWidth);
-				var y1:Float = (origin.y - _halfHeight);
-				x2 = x1 * csx + y1 * ssy;
-				y2 = -x1 * ssx + y1 * csy;
-				
-				_matrix.identity();
-				_matrix.a = cos;
-				_matrix.b = -sin;
-				_matrix.c = sin;
-				_matrix.d = cos;
-				
-				if (isFlipped)
+				var matrixToUse:Matrix = _matrix;
+				if (!matrixExposed)
 				{
-					_matrix.scale( -scale.x, scale.y);
+					radians = -angle * FlxAngle.TO_RAD;
+					
+					_matrix.identity();
+					_matrix.rotate( -radians);
+					
+					if (isFlipped)
+					{
+						_matrix.scale( -scale.x, scale.y);
+					}
+					else
+					{
+						_matrix.scale(scale.x, scale.y);
+					}
+					
+					updateSkewMatrix();
 				}
 				else
 				{
-					_matrix.scale(scale.x, scale.y);
+					matrixToUse = transformMatrix;
 				}
 				
-				if (skew.x != 0 || skew.y != 0)
-				{
-					_skewMatrix.identity();
-					
-					_skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
-					_skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
-					
-					_matrix.concat(_skewMatrix);
-				}
+				x2 = x1 * matrixToUse.a + y1 * matrixToUse.c + matrixToUse.tx;
+				y2 = x1 * matrixToUse.b + y1 * matrixToUse.d + matrixToUse.ty;
 				
-				csx = _matrix.a;
-				ssy = _matrix.b;
-				ssx = _matrix.c;
-				csy = _matrix.d;
+				csx = matrixToUse.a;
+				ssy = matrixToUse.b;
+				ssx = matrixToUse.c;
+				csy = matrixToUse.d;
 			}
 			
 			currDrawData[currIndex++] = _point.x - x2;
 			currDrawData[currIndex++] = _point.y - y2;
+			
 			currDrawData[currIndex++] = frame.tileID;
 			
 			currDrawData[currIndex++] = csx;
@@ -224,12 +226,25 @@ class FlxSkewedSprite extends FlxSprite
 		}
 	}
 	
-	private override function simpleRenderSprite():Bool
+	private function updateSkewMatrix():Void
+	{
+		if ((skew.x != 0) || (skew.y != 0))
+		{
+			_skewMatrix.identity();
+			
+			_skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
+			_skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
+			
+			_matrix.concat(_skewMatrix);
+		}
+	}
+	
+	public override function isSimpleRender():Bool
 	{
 		#if !flash
-		return (((angle == 0) || (bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
+		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
 		#else
-		return (((angle == 0) || (bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && (forceComplexRender == false));
+		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && (forceComplexRender == false));
 		#end
 	}
 }

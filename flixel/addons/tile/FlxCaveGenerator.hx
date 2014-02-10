@@ -9,13 +9,13 @@ import flixel.util.FlxRandom;
 class FlxCaveGenerator
 {
 	/**
-	 * Convert a matrix generated via <code>generateCaveMatrix()</code> into data 
-	 * that is usable by <code>FlxTilemap</code>.
+	 * Convert a matrix generated via generateCaveMatrix() into data 
+	 * that is usable by FlxTilemap.
 	 * 
 	 * @param 	Matrix		A matrix of data
-	 * @return 	A string that is usuable for <code>FlxTilemap.loadMap()</code>
+	 * @return 	A string that is usuable for FlxTilemap.loadMap()
 	 */
-	static public function convertMatrixToString(Matrix:Array<Array<Int>>):String
+	public static function convertMatrixToString(Matrix:Array<Array<Int>>):String
 	{
 		var mapString:String = "";
 		
@@ -41,7 +41,7 @@ class FlxCaveGenerator
 	 * @param	WallRatio 				Chance for a tile to become a wall - the closer the value is to 1.0, the more walls there are
 	 * @return	Returns a matrix of a cave!
 	 */
-	static public function generateCaveMatrix(Columns:Int, Rows:Int, SmoothingIterations:Int = 6, WallRatio:Float = 0.5):Array<Array<Int>>
+	public static function generateCaveMatrix(Columns:Int, Rows:Int, SmoothingIterations:Int = 6, WallRatio:Float = 0.5):Array<Array<Int>>
 	{
 		// Initialize random array
 		var matrix:Array<Array<Int>> = generateInitialMatrix(Columns, Rows);
@@ -72,16 +72,16 @@ class FlxCaveGenerator
 	}
 	
 	/**
-	 * Generates a new cave matrix via <code>generateCaveMatrix()</code> and returns it in a format 
-	 * usable by <code>FlxTilemap.load()</code> via <code>convertMatrixToString()</code>.
+	 * Generates a new cave matrix via generateCaveMatrix() and returns it in a format 
+	 * usable by FlxTilemap.load() via convertMatrixToString().
 	 * 
 	 * @param	Columns 				Number of columns for the matrix
 	 * @param	Rows					Number of rows for the matrix
 	 * @param	SmoothingIterations 	How many times do you want to "smooth" the caev - the higher the smoother, but slower
 	 * @param	WallRatio 				Chance for a tile to become a wall - the closer the value is to 1.0, the more walls there are
-	 * @return	A cave string that is usable by <code>FlxTilemap.loadMap()</code>
+	 * @return	A cave string that is usable by FlxTilemap.loadMap()
 	 */
-	inline static public function generateCaveString(Columns:Int, Rows:Int, SmoothingIterations:Int = 6, WallRatio:Float = 0.5):String
+	public static inline function generateCaveString(Columns:Int, Rows:Int, SmoothingIterations:Int = 6, WallRatio:Float = 0.5):String
 	{
 		return convertMatrixToString(generateCaveMatrix(Columns, Rows, SmoothingIterations, WallRatio));
 	}
@@ -93,7 +93,7 @@ class FlxCaveGenerator
 	 * @param	Rows		Number of rows for the matrix
 	 * @return 	Spits out a matrix that is columns * rows big, initiated with zeros
 	 */
-	static private function generateInitialMatrix(Columns:Int, Rows:Int):Array<Array<Int>>
+	private static function generateInitialMatrix(Columns:Int, Rows:Int):Array<Array<Int>>
 	{
 		var matrix:Array<Array<Int>> = new Array<Array<Int>>();
 		
@@ -117,7 +117,7 @@ class FlxCaveGenerator
 	 * @param	Distance	Radius of how far to check for neighbors
 	 * @return	Number of walls around the target, including itself
 	 */
-	static private function countNumWallsNeighbors(Matrix:Array<Array<Int>>, PosX:Int, PosY:Int, Distance:Int = 1):Int
+	private static function countNumWallsNeighbors(Matrix:Array<Array<Int>>, PosX:Int, PosY:Int, Distance:Int = 1):Int
 	{
 		var count:Int = 0;
 		var rows:Int = Matrix.length;
@@ -147,7 +147,7 @@ class FlxCaveGenerator
 	/**
 	 * Use the 4-5 rule to smooth cells
 	 */
-	static private function runCelluarAutomata(InMatrix:Array<Array<Int>>, OutMatrix:Array<Array<Int>>):Void
+	private static function runCelluarAutomata(InMatrix:Array<Array<Int>>, OutMatrix:Array<Array<Int>>):Void
 	{
 		var rows:Int = InMatrix.length;
 		var columns:Int = InMatrix[0].length;

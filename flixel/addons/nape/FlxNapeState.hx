@@ -1,5 +1,6 @@
 package flixel.addons.nape;
 
+import flash.display.BitmapData;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.system.ui.FlxSystemButton;
@@ -12,15 +13,16 @@ import nape.space.Space;
 
 #if !FLX_NO_DEBUG
 import nape.util.ShapeDebug;
+@:bitmap("assets/images/napeDebug.png") class GraphicNapeDebug extends BitmapData {}
 #end
 
 /**
- * <code>FlxNapeState</code> is a <code>FlxState</code> that integrates <code>nape.space.Space</code>
+ * FlxNapeState is a FlxState that integrates nape.space.Space
  * to provide Nape physics simulation in Flixel.
  *
- * Extend this state, add some <code>FlxNapeSprite(s)</code> to start using flixel + nape physics.
+ * Extend this state, add some FlxNapeSprite(s) to start using flixel + nape physics.
  *
- * Note that </code>space</code> is a static variable, use <code>FlxNapeState.space</code>
+ * Note that space is a static variable, use FlxNapeState.space
  * to access it.
  *
  * @author TiagoLr ( ~~~ProG4mr~~~ )
@@ -30,7 +32,7 @@ class FlxNapeState extends FlxState
 	/**
 	 * The space where the nape physics simulation occur.
 	 */
-	static public var space:Space;
+	public static var space:Space;
 	/**
 	 * The number of iterations used by nape in resolving errors in the velocities of objects. This is together with collision 
 	 * detection the most expensive phase of a simulation update, as well as the most important for stable results. (default 10)
@@ -50,9 +52,9 @@ class FlxNapeState extends FlxState
 	/**
 	 * Contains the sprite used for nape debug graphics.
 	 */
-	static public var debug(get, never):ShapeDebug;
+	public static var debug(get, never):ShapeDebug;
 	
-	static private function get_debug():ShapeDebug 
+	private static function get_debug():ShapeDebug
 	{ 
 		return cast(FlxG.state, FlxNapeState)._physDbgSpr; 
 	}
@@ -64,8 +66,8 @@ class FlxNapeState extends FlxState
 	#end
 
 	/**
-	 * Override this method like a normal <code>FlxState</code>, but add
-	 * <code>super.create()</code> to it, so that this function is called.
+	 * Override this method like a normal FlxState, but add
+	 * super.create() to it, so that this function is called.
 	 */
 	override public function create():Void
 	{
@@ -76,7 +78,7 @@ class FlxNapeState extends FlxState
 		
 		#if !FLX_NO_DEBUG
 		// Add a button to toggle Nape debug shapes to the debugger
-		_button = FlxG.debugger.addButton(RIGHT, "flixel/img/napeDebug.png", toggleDebug, true, true);
+		_button = FlxG.debugger.addButton(RIGHT, new GraphicNapeDebug(0, 0), toggleDebug, true, true);
 		napeDebugEnabled = true;
 		#end
 	}
@@ -86,10 +88,10 @@ class FlxNapeState extends FlxState
 	 *
 	 * @param 	MinX 		The smallest X value of your level (usually 0).
 	 * @param 	MinY 		The smallest Y value of your level (usually 0).
-	 * @param 	MaxX 		The largest X value of your level - 0 means <code>FlxG.width</code> (usually the level width).
-	 * @param 	MaxY 		The largest Y value of your level - 0 means <code>FlxG.height</code> (usually the level height).
+	 * @param 	MaxX 		The largest X value of your level - 0 means FlxG.width (usually the level width).
+	 * @param 	MaxY 		The largest Y value of your level - 0 means FlxG.height (usually the level height).
 	 * @param 	Thickness 	How thick the walls are. 10 by default.
-	 * @param 	_Material 	The <code>Material</code> to use for the physics body of the walls.
+	 * @param 	_Material 	The Material to use for the physics body of the walls.
 	 */
 	public function createWalls(MinX:Float = 0, MinY:Float = 0, MaxX:Float = 0, MaxY:Float = 0, Thickness:Float = 10, _Material:Material = null):Body
 	{
@@ -126,7 +128,7 @@ class FlxNapeState extends FlxState
 	}
 
 	/**
-	 * Override this method and add <code>super.update()</code>.
+	 * Override this method and add super.update().
 	 */
 	override public function update():Void
 	{
@@ -147,8 +149,8 @@ class FlxNapeState extends FlxState
 	}
 
 	/**
-	 * Override this function to null out variables or manually call <code>destroy()</code> 
-	 * on class members if necessary. Don't forget to call <code>super.destroy()</code>!
+	 * Override this function to null out variables or manually call destroy() 
+	 * on class members if necessary. Don't forget to call super.destroy()!
 	 */
 	override public function destroy():Void
 	{

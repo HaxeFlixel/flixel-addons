@@ -57,13 +57,13 @@ class FlxOgmoLoader
 	* 
 		// IMPORTANT: Always collide the map with objects, not the other way around. 
 		//			  This prevents odd collision errors (collision separation code off by 1 px).
-		<code>FlxG.collide(map, obj, notifyCallback);</code>
+		FlxG.collide(map, obj, notifyCallback);
 	* 
 	* @param	TileGraphic		A String or Class representing the location of the image asset for the tilemap.
 	* @param	TileWidth		The width of each individual tile.
 	* @param	TileHeight		The height of each individual tile.
 	* @param	TileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually "tiles" or "stage".
-	* @return	A <code>FlxTilemap</code>, where you can collide your entities against.
+	* @return	A FlxTilemap, where you can collide your entities against.
 	*/ 
 	public function loadTilemap(TileGraphic:Dynamic, TileWidth:Int = 16, TileHeight:Int = 16, TileLayer:String = "tiles"):FlxTilemap
 	{
@@ -77,7 +77,7 @@ class FlxOgmoLoader
 	* Parse every entity in the specified layer and call a function that will spawn game objects based on their name. 
 	* Optional data can be read from the xml object, here's an example that reads the position of an object:
 	* 
-		<code>public function loadEntity( type:String, data:Xml ):Void
+		public function loadEntity( type:String, data:Xml ):Void
 		{
 			switch (type.toLowerCase())
 			{
@@ -87,7 +87,7 @@ class FlxOgmoLoader
 			default:
 				throw "Unrecognized actor type '" + type + "' detected in level file.";
 			}
-		}</code>
+		}
 	* 
 	* @param	EntityLoadCallback		A function that takes in the following parameters (name:String, data:Xml):Void (returns Void) that spawns entities based on their name.
 	* @param	EntityLayer				The name of the layer the entities are stored in Ogmo editor. Usually "entities" or "actors"

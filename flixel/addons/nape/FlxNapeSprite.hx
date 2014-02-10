@@ -14,40 +14,40 @@ import nape.space.Space;
  * FlxNapeSprite consists of an FlxSprite with a physics body.
  * During the simulation, the sprite follows the physics body position and rotation.
  * 
- * By default, a rectangular physics body is created upon construction in <code>createRectangularBody()</code>.
+ * By default, a rectangular physics body is created upon construction in createRectangularBody().
  * 
  * @author TiagoLr ( ~~~ProG4mr~~~ )
  */
 class FlxNapeSprite extends FlxSprite
 {
 	/**
-	 * <code>body</code> is the physics body associated with this sprite. 
+	 * body is the physics body associated with this sprite. 
 	 */
 	public var body:Body;
 	
 	/**
-	 * Internal var to update <code>body.velocity.x</code> and <code>body.velocity.y</code>. 
+	 * Internal var to update body.velocity.x and body.velocity.y. 
 	 * Default is 1, which menas no drag.
 	 */
 	private var _linearDrag:Float = 1;
 	/**
-	 * Internal var to update <code>body.angularVel</code>
+	 * Internal var to update body.angularVel
 	 * Default is 1, which menas no drag.
 	 */
 	private var _angularDrag:Float = 1;
 
 	/**
-	 * Creates an FlxNapeSprite with an optional physics body (<code>body</code>).
+	 * Creates an FlxNapeSprite with an optional physics body (body).
 	 * At each step, the physics are updated, and so is the position and rotation of the sprite 
 	 * to match the bodys position and rotation values.
 	 * By default a physics body with rectangle shape will be created around your sprite graphics.
-	 * You can override this functionality and add a premade body of your own (see <code>addPremadeBody</code>).
+	 * You can override this functionality and add a premade body of your own (see addPremadeBody).
 	 * 
 	 * @param	X						The initial X position of the sprite.
 	 * @param	Y						The initial Y position of the sprite.
 	 * @param	SimpleGraphic 			The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
-	 * @param	CreateRectangularBody	Whether to create a rectangular body for this sprite (use <code>false</code> if you want to add a custom body).
-	 * @param	EnablePhysics			Whether to enable physics simulation on the rectangular body (only relevant if <code>CreateRectangularBody == true</code>).
+	 * @param	CreateRectangularBody	Whether to create a rectangular body for this sprite (use false if you want to add a custom body).
+	 * @param	EnablePhysics			Whether to enable physics simulation on the rectangular body (only relevant if CreateRectangularBody == true).
 	 */
 	public function new(X:Float = 0, Y:Float = 0, SimpleGraphic:Dynamic = null, CreateRectangularBody:Bool = true, EnablePhysics:Bool = true) 
 	{
@@ -61,11 +61,11 @@ class FlxNapeSprite extends FlxSprite
 	}
 
 	/**
-	 * WARNING: This will remove this sprite entirely. Use <code>kill()</code> if you 
-	 * want to disable it temporarily only and <code>reset()</code> it later to revive it.
+	 * WARNING: This will remove this sprite entirely. Use kill() if you 
+	 * want to disable it temporarily only and reset() it later to revive it.
 	 * Override this function to null out variables or manually call
-	 * <code>destroy()</code> on class members if necessary.
-	 * Don't forget to call <code>super.destroy()</code>!
+	 * destroy() on class members if necessary.
+	 * Don't forget to call super.destroy()!
 	 */
 	override public function destroy():Void 
 	{
@@ -103,7 +103,7 @@ class FlxNapeSprite extends FlxSprite
 
 	/**
 	 * Handy function for bringing game objects "back to life". Just sets alive and exists back to true.
-	 * In practice, this function is most often called by <code>FlxObject.reset()</code>.
+	 * In practice, this function is most often called by FlxObject.reset().
 	 */
 	override public function revive():Void
 	{
@@ -142,7 +142,7 @@ class FlxNapeSprite extends FlxSprite
 	 * Creates a circular physics body for this sprite.
 	 * 
 	 * @param	Radius	The radius of the circle-shaped body - 16 by default
-	 * @param 	_Type	The <code>BodyType</code> of the physics body. Optional, <code>DYNAMIC</code> by default.
+	 * @param 	_Type	The BodyType of the physics body. Optional, DYNAMIC by default.
 	 */
 	public function createCircularBody(Radius:Float = 16, ?_Type:BodyType):Void
 	{
@@ -168,9 +168,9 @@ class FlxNapeSprite extends FlxSprite
 	 * The width and height used are based on the size of sprite graphics if 0 is passed.
 	 * Call this method after calling makeGraphics() or loadGraphic() to update the body size.
 	 * 
-	 * @param	Width	The width of the rectangle. 0 = <code>frameWidth</code>
-	 * @param	Height	The height of the rectangle. 0 = <code>frameHeight</code>
-	 * @param	_Type	The <code>BodyType</code> of the physics body. Optional, <code>DYNAMIC</code> by default.
+	 * @param	Width	The width of the rectangle. 0 = frameWidth
+	 * @param	Height	The height of the rectangle. 0 = frameHeight
+	 * @param	_Type	The BodyType of the physics body. Optional, DYNAMIC by default.
 	 */
 	public function createRectangularBody(Width:Float = 0, Height:Float = 0, ?_Type:BodyType):Void
 	{
@@ -231,7 +231,7 @@ class FlxNapeSprite extends FlxSprite
 	}
 	
 	/**
-	 * Updates physics FlxSprite graphics to follow this sprite physics object, called at the end of <code>update()</code>.
+	 * Updates physics FlxSprite graphics to follow this sprite physics object, called at the end of update().
 	 * Things that are updated: Position, angle, angular and linear drag.
 	 */	
 	private function updatePhysObjects():Void 
@@ -258,7 +258,7 @@ class FlxNapeSprite extends FlxSprite
 	 */
 	public var physicsEnabled(default, set):Bool = true;
 	
-	inline private function set_physicsEnabled(Value:Bool):Bool
+	private inline function set_physicsEnabled(Value:Bool):Bool
 	{
 		body.space = Value ? FlxNapeState.space : null;
 		return physicsEnabled = Value;
@@ -272,7 +272,7 @@ class FlxNapeSprite extends FlxSprite
 	 * @param	LinearDrag		Typical value 0.96 (1 = no drag).
 	 * @param	AngularDrag		Typical value 0.96 (1 = no drag);
 	 */
-	inline public function setDrag(LinearDrag:Float = 1, AngularDrag:Float = 1):Void 
+	public inline function setDrag(LinearDrag:Float = 1, AngularDrag:Float = 1):Void
 	{
 		_linearDrag	= LinearDrag;
 		_angularDrag = AngularDrag;

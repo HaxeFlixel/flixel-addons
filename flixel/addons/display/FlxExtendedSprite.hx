@@ -155,7 +155,7 @@ class FlxExtendedSprite extends FlxSprite
 	private var _allowVerticalDrag:Bool = true;
 	
 	/**
-	 * Creates a white 8x8 square <code>FlxExtendedSprite</code> at the specified position.
+	 * Creates a white 8x8 square FlxExtendedSprite at the specified position.
 	 * Optionally can load a simple, one-frame graphic instead.
 	 * 
 	 * @param	X				The initial X position of the sprite.
@@ -171,7 +171,7 @@ class FlxExtendedSprite extends FlxSprite
 	
 	#if !FLX_NO_MOUSE
 	/**
-	 * Allow this Sprite to receive mouse clicks, the total number of times this sprite is clicked is stored in this.clicks<br>
+	 * Allow this Sprite to receive mouse clicks, the total number of times this sprite is clicked is stored in this.clicks
 	 * You can add callbacks via mousePressedCallback and mouseReleasedCallback
 	 * 
 	 * @param	OnRelease			Register the click when the mouse is pressed down (false) or when it's released (true). Note that callbacks still fire regardless of this setting.
@@ -336,7 +336,7 @@ class FlxExtendedSprite extends FlxSprite
 	 * @param	Tension				The tension of the spring, smaller numbers create springs closer to the mouse pointer
 	 * @param	Friction			The friction applied to the spring as it moves
 	 * @param	Gravity				The gravity controls how far "down" the spring hangs (use a negative value for it to hang up!)
-	 * @return	The <code>FlxMouseSpring</code> object if you wish to perform further chaining on it. Also available via FlxExtendedSprite.mouseSpring
+	 * @return	The FlxMouseSpring object if you wish to perform further chaining on it. Also available via FlxExtendedSprite.mouseSpring
 	 */ 
 	public function enableMouseSpring(OnPressed:Bool = true, RetainVelocity:Bool = false, Tension:Float = 0.1, Friction:Float = 0.95, Gravity:Float = 0):FlxMouseSpring
 	{
@@ -390,7 +390,7 @@ class FlxExtendedSprite extends FlxSprite
 	}
 	
 	/**
-	 * The spring x coordinate in game world space. Consists of <code>sprite.x + springOffsetX</code>
+	 * The spring x coordinate in game world space. Consists of sprite.x + springOffsetX
 	 */
 	public var springX(get, never):Int;
 	
@@ -400,7 +400,7 @@ class FlxExtendedSprite extends FlxSprite
 	}
 	
 	/**
-	 * The spring y coordinate in game world space. Consists of <code>sprite.y + springOffsetY</code>
+	 * The spring y coordinate in game world space. Consists of sprite.y + springOffsetY
 	 */
 	public var springY(get, never):Int;
 	
@@ -807,7 +807,7 @@ class FlxExtendedSprite extends FlxSprite
 	}
 	
 	/**
-	 * A <code>FlxPoint</code> consisting of this sprites world x/y coordinates
+	 * A FlxPoint consisting of this sprites world x/y coordinates
 	 */
 	public var point(get, set):FlxPoint;
 	
@@ -871,7 +871,7 @@ class FlxExtendedSprite extends FlxSprite
 	#end
 	
 	/**
-	 * Returns a <code>FlxRect</code> consisting of the bounds of this Sprite.
+	 * Returns a FlxRect consisting of the bounds of this Sprite.
 	 */
 	public var rect(get, never):FlxRect;
 	

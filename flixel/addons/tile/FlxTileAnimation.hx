@@ -11,7 +11,7 @@ class FlxTileAnimation
 	 */
 	public var delay:Float;
 	/**
-	 * A list of frames stored as <code>int</code> objects
+	 * A list of frames stored as int objects
 	 */
 	public var frames:Array<Int>;
 	/**

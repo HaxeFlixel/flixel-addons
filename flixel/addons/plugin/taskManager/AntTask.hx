@@ -34,7 +34,7 @@ class AntTask
 	public var next:AntTask;
 	
 	/**
-	 * Creates a new <code>AntTask</code>
+	 * Creates a new AntTask
 	 */
 	public function new(Obj:Dynamic, Func:Dynamic, ?Args:Array<Dynamic>, IgnoreCycle:Bool = false, Instant:Bool = false, ?Next:AntTask)
 	{

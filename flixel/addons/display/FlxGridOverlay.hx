@@ -15,9 +15,9 @@ import flixel.FlxSprite;
 class FlxGridOverlay 
 {
 	/**
-	 * Creates an FlxSprite of the given width and height filled with a checkerboard pattern.<br />
-	 * Each grid cell is the specified width and height, and alternates between two colors.<br />
-	 * If alternate is true each row of the pattern will be offset, for a proper checkerboard style. If false each row will be the same colour, creating a striped-pattern effect.<br />
+	 * Creates an FlxSprite of the given width and height filled with a checkerboard pattern.
+	 * Each grid cell is the specified width and height, and alternates between two colors.
+	 * If alternate is true each row of the pattern will be offset, for a proper checkerboard style. If false each row will be the same colour, creating a striped-pattern effect.
 	 * So to create an 8x8 grid you'd call create(8,8)
 	 * 
 	 * @param	CellWidth		The grid cell width
@@ -30,7 +30,7 @@ class FlxGridOverlay
 	 * @param	Color2			The second fill colour in 0xAARRGGBB format
 	 * @return	FlxSprite of given width/height
 	 */
-	static public function create(CellWidth:Int, CellHeight:Int, Width:Int = -1, Height:Int = -1, AddLegend:Bool = false, Alternate:Bool = true, Color1:Int = 0xffe7e6e6, Color2:Int = 0xffd9d5d5):FlxSprite
+	public static function create(CellWidth:Int, CellHeight:Int, Width:Int = -1, Height:Int = -1, AddLegend:Bool = false, Alternate:Bool = true, Color1:Int = 0xffe7e6e6, Color2:Int = 0xffd9d5d5):FlxSprite
 	{
 		if (Width == -1)
 		{
@@ -58,9 +58,9 @@ class FlxGridOverlay
 	}
 	
 	/**
-	 * Creates a checkerboard pattern of the given width/height and overlays it onto the given FlxSprite.<br />
-	 * Each grid cell is the specified width and height, and alternates between two colors.<br />
-	 * If alternate is true each row of the pattern will be offset, for a proper checkerboard style. If false each row will be the same colour, creating a striped-pattern effect.<br />
+	 * Creates a checkerboard pattern of the given width/height and overlays it onto the given FlxSprite.
+	 * Each grid cell is the specified width and height, and alternates between two colors.
+	 * If alternate is true each row of the pattern will be offset, for a proper checkerboard style. If false each row will be the same colour, creating a striped-pattern effect.
 	 * So to create an 8x8 grid you'd call create(8,8,
 	 * 
 	 * @param	Sprite			The FlxSprite you wish to draw the grid on-top of. This updates its pixels value, not just the current frame (don't use animated sprites!)
@@ -74,7 +74,7 @@ class FlxGridOverlay
 	 * @param	Color2			The second fill colour in 0xAARRGGBB format
 	 * @return	The modified source FlxSprite
 	 */
-	static public function overlay(Sprite:FlxSprite, CellWidth:Int, CellHeight:Int, Width:Int = -1, Height:Int = -1, AddLegend:Bool = false, Alternate:Bool = true, Color1:Int = 0x88e7e6e6, Color2:Int = 0x88d9d5d5):FlxSprite
+	public static function overlay(Sprite:FlxSprite, CellWidth:Int, CellHeight:Int, Width:Int = -1, Height:Int = -1, AddLegend:Bool = false, Alternate:Bool = true, Color1:Int = 0x88e7e6e6, Color2:Int = 0x88d9d5d5):FlxSprite
 	{
 		if (Width == -1)
 		{
@@ -102,7 +102,7 @@ class FlxGridOverlay
 		return Sprite;
 	}
 	
-	static public function addLegend(Sprite:FlxSprite, CellWidth:Int, CellHeight:Int, AxisX:Bool = true, AxisY:Bool = true):FlxSprite
+	public static function addLegend(Sprite:FlxSprite, CellWidth:Int, CellHeight:Int, AxisX:Bool = true, AxisY:Bool = true):FlxSprite
 	{
 		if (CellWidth > Sprite.width)
 		{
@@ -127,7 +127,7 @@ class FlxGridOverlay
 		return Sprite;
 	}
 	
-	static public function createGrid(CellWidth:Int, CellHeight:Int, Width:Int, Height:Int, Alternate:Bool, Color1:Int, Color2:Int):BitmapData
+	public static function createGrid(CellWidth:Int, CellHeight:Int, Width:Int, Height:Int, Alternate:Bool, Color1:Int, Color2:Int):BitmapData
 	{
 		// How many cells can we fit into the width/height? (round it UP if not even, then trim back)
 		var rowColor:Int = Color1;

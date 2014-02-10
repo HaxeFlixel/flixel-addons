@@ -26,60 +26,60 @@ class FlxBitmapFont extends FlxSprite
 	/**
 	 * Align each line of multi-line text to the left.
 	 */
-	inline static public var ALIGN_LEFT:String = "left";
+	public static inline var ALIGN_LEFT:String = "left";
 	/**
 	 * Align each line of multi-line text to the right.
 	 */
-	inline static public var ALIGN_RIGHT:String = "right";
+	public static inline var ALIGN_RIGHT:String = "right";
 	/**
 	 * Align each line of multi-line text in the center.
 	 */
-	inline static public var ALIGN_CENTER:String = "center";
+	public static inline var ALIGN_CENTER:String = "center";
 	
 	/**
 	 * Text Set 1 = !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
 	 */
-	inline static public var TEXT_SET1:String = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+	public static inline var TEXT_SET1:String = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 	/**
 	 * Text Set 2 =  !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ
 	 */
-	inline static public var TEXT_SET2:String = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	public static inline var TEXT_SET2:String = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	/**
 	 * Text Set 3 = ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 
 	 */
-	inline static public var TEXT_SET3:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
+	public static inline var TEXT_SET3:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
 	/**
 	 * Text Set 4 = ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789
 	 */
-	inline static public var TEXT_SET4:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";
+	public static inline var TEXT_SET4:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";
 	/**
 	 * Text Set 5 = ABCDEFGHIJKLMNOPQRSTUVWXYZ.,/() '!?-*:0123456789
 	 */
-	inline static public var TEXT_SET5:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,/() '!?-*:0123456789";
+	public static inline var TEXT_SET5:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,/() '!?-*:0123456789";
 	/**
 	 * Text Set 6 = ABCDEFGHIJKLMNOPQRSTUVWXYZ!?:;0123456789\"(),-.' 
 	 */
-	inline static public var TEXT_SET6:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!?:;0123456789\"(),-.' ";
+	public static inline var TEXT_SET6:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!?:;0123456789\"(),-.' ";
 	/**
 	 * Text Set 7 = AGMSY+:4BHNTZ!;5CIOU.?06DJPV,(17EKQW\")28FLRX-'39
 	 */
-	inline static public var TEXT_SET7:String = "AGMSY+:4BHNTZ!;5CIOU.?06DJPV,(17EKQW\")28FLRX-'39";
+	public static inline var TEXT_SET7:String = "AGMSY+:4BHNTZ!;5CIOU.?06DJPV,(17EKQW\")28FLRX-'39";
 	/**
 	 * Text Set 8 = 0123456789 .ABCDEFGHIJKLMNOPQRSTUVWXYZ
 	 */
-	inline static public var TEXT_SET8:String = "0123456789 .ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	public static inline var TEXT_SET8:String = "0123456789 .ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	/**
 	 * Text Set 9 = ABCDEFGHIJKLMNOPQRSTUVWXYZ()-0123456789.:,'\"?!
 	 */
-	inline static public var TEXT_SET9:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ()-0123456789.:,'\"?!";
+	public static inline var TEXT_SET9:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ()-0123456789.:,'\"?!";
 	/**
 	 * Text Set 10 = ABCDEFGHIJKLMNOPQRSTUVWXYZ
 	 */
-	inline static public var TEXT_SET10:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	public static inline var TEXT_SET10:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	/**
 	 * Text Set 11 = ABCDEFGHIJKLMNOPQRSTUVWXYZ.,\"-+!?()':;0123456789
 	 */
-	inline static public var TEXT_SET11:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,\"-+!?()':;0123456789";
+	public static inline var TEXT_SET11:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,\"-+!?()':;0123456789";
 	
 	/**
 	 * Alignment of the text when multiLine = true or a fixedWidth is set. Set to FlxBitmapFont.ALIGN_LEFT (default), FlxBitmapFont.ALIGN_RIGHT or FlxBitmapFont.ALIGN_CENTER.
@@ -312,7 +312,7 @@ class FlxBitmapFont extends FlxSprite
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
 			
-			if (!onScreen(camera) || !camera.visible || !camera.exists)
+			if (!isOnScreen(camera) || !camera.visible || !camera.exists)
 			{
 				continue;
 			}
@@ -333,7 +333,7 @@ class FlxBitmapFont extends FlxSprite
 			var ssx:Float = 0;
 			var csy:Float = 1;
 
-			if (!simpleRenderSprite())
+			if (!isSimpleRender())
 			{
 				if (_angleChanged)
 				{
@@ -397,7 +397,7 @@ class FlxBitmapFont extends FlxSprite
 		}
 	}
 	
-	override private function simpleRenderSprite():Bool
+	override public function isSimpleRender():Bool
 	{ 
 		return ((angle == 0) && (scale.x == 1) && (scale.y == 1));
 	}
@@ -444,7 +444,7 @@ class FlxBitmapFont extends FlxSprite
 	}
 	
 	/**
-	 * If you need this FlxSprite to have a fixed width and custom alignment you can set the width here.<br>
+	 * If you need this FlxSprite to have a fixed width and custom alignment you can set the width here.
 	 * If text is wider than the width specified it will be cropped off.
 	 * 
 	 * @param	Width			Width in pixels of this FlxBitmapFont. Set to zero to disable and re-enable automatic resizing.
@@ -619,7 +619,7 @@ class FlxBitmapFont extends FlxSprite
 	 * Returns a single character from the font set as an FlxSprite.
 	 * 
 	 * @param	Char	The character you wish to have returned.
-	 * @return	A <code>FlxSprite</code> containing a single character from the font set.
+	 * @return	A FlxSprite containing a single character from the font set.
 	 */
 	public function getCharacter(Char:String):FlxSprite
 	{
@@ -640,7 +640,7 @@ class FlxBitmapFont extends FlxSprite
 	 * Returns a single character from the font set as bitmapData
 	 * 
 	 * @param	Char	The character you wish to have returned.
-	 * @return	<code>bitmapData</code> containing a single character from the font set.
+	 * @return	bitmapData containing a single character from the font set.
 	 */
 	public function getCharacterAsBitmapData(Char:String):BitmapData
 	{

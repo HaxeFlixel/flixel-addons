@@ -27,9 +27,9 @@ import flixel.util.loaders.CachedGraphics;
  */
 class FlxButtonPlus extends FlxSpriteGroup
 {
-	inline static public var NORMAL:Int = 0;
-	inline static public var HIGHLIGHT:Int = 1;
-	inline static public var PRESSED:Int = 2;
+	public static inline var NORMAL:Int = 0;
+	public static inline var HIGHLIGHT:Int = 1;
+	public static inline var PRESSED:Int = 2;
 	
 	public var buttonNormal:FlxExtendedSprite;
 	public var buttonHighlight:FlxExtendedSprite;
@@ -51,18 +51,22 @@ class FlxButtonPlus extends FlxSpriteGroup
 	public var onColor:Array<Int>;
 	
 	/**
-	 * Set this to true if you want this button to function even while the game is paused.
+	 * This function is called when the button is clicked.
 	 */
-	public var pauseProof:Bool;
+	public var onClickCallback:Void->Void;
+	/**
+	 * This function is called when the button is hovered over
+	 */
+	public var enterCallback:Void->Void;
+	/**
+	 * This function is called when the mouse leaves a hovered button (but didn't click)
+	 */
+	public var leaveCallback:Void->Void;
+	
 	/**
 	 * Shows the current state of the button.
 	 */
-	
 	private var _status:Int;
-	/**
-	 * This function is called when the button is clicked.
-	 */
-	private var _onClick:Dynamic;
 	/**
 	 * Tracks whether or not the button is currently pressed.
 	 */
@@ -71,40 +75,19 @@ class FlxButtonPlus extends FlxSpriteGroup
 	 * Whether or not the button has initialized itself yet.
 	 */
 	private var _initialized:Bool;
-	/**
-	 * The parameters passed to the _onClick function when the button is clicked
-	 */
-	private var _onClickParams:Array<Dynamic>;
-	/**
-	 * This function is called when the button is hovered over
-	 */
-	private var _enterCallback:Dynamic;
-	/**
-	 * The parameters passed to the enterCallback function when the button is hovered over
-	 */
-	private var _enterCallbackParams:Array<Dynamic>;
-	/**
-	 * This function is called when the mouse leaves a hovered button (but didn't click)
-	 */
-	private var _leaveCallback:Dynamic;
-	/**
-	 * The parameters passed to the leaveCallback function when the hovered button is left
-	 */
-	private var _leaveCallbackParams:Array<Dynamic>;
 	
 	/**
-	 * Creates a new <code>FlxButton</code> object with a gray background
+	 * Creates a new FlxButton object with a gray background
 	 * and a callback function on the UI thread.
 	 * 
 	 * @param	X			The X position of the button.
 	 * @param	Y			The Y position of the button.
 	 * @param	Callback	The function to call whenever the button is clicked.
-	 * @param	Params		An optional array of parameters that will be passed to the Callback function
 	 * @param	Label		Text to display on the button
 	 * @param	Width		The width of the button.
 	 * @param	Height		The height of the button.
 	 */
-	public function new(X:Int = 0, Y:Int = 0, ?Callback:Dynamic, ?Params:Array<Dynamic>, ?Label:String, Width:Int = 100, Height:Int = 20)
+	public function new(X:Int = 0, Y:Int = 0, ?Callback:Void->Void, ?Label:String, Width:Int = 100, Height:Int = 20)
 	{
 		offColor = [0xff008000, 0xff00ff00];
 		onColor = [0xff800000, 0xffff0000];
@@ -113,7 +96,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		x = X;
 		y = Y;
-		_onClick = Callback;
+		onClickCallback = Callback;
 		
 		buttonNormal = new FlxExtendedSprite();
 		
@@ -160,21 +143,11 @@ class FlxButtonPlus extends FlxSpriteGroup
 		_status = NORMAL;
 		_pressed = false;
 		_initialized = false;
-		pauseProof = false;
-		
-		if (Params != null)
-		{
-			_onClickParams = Params;
-		}
-		else
-		{
-			_onClickParams = [];
-		}
 	}
 	
 	/**
-	 * If you wish to replace the two buttons (normal and hovered-over) with FlxSprites, then pass them here.<br />
-	 * Note: The pixel data is extract from the passed FlxSprites and assigned locally, it doesn't actually use the sprites<br />
+	 * If you wish to replace the two buttons (normal and hovered-over) with FlxSprites, then pass them here.
+	 * Note: The pixel data is extract from the passed FlxSprites and assigned locally, it doesn't actually use the sprites
 	 * or keep a reference to them.
 	 * 
 	 * @param	Normal		The FlxSprite to use when the button is in-active (not hovered over)
@@ -270,9 +243,9 @@ class FlxButtonPlus extends FlxSpriteGroup
 					textHighlight.visible = false;
 				}
 				
-				if (_leaveCallback != null)
+				if (leaveCallback != null)
 				{
-					Reflect.callMethod(null, _leaveCallback, _leaveCallbackParams);
+					leaveCallback();
 				}
 			}
 			else if (_status == HIGHLIGHT)
@@ -286,17 +259,17 @@ class FlxButtonPlus extends FlxSpriteGroup
 					textHighlight.visible = true;
 				}
 				
-				if (_enterCallback != null)
+				if (enterCallback != null)
 				{
-					Reflect.callMethod(null, _enterCallback, _enterCallbackParams);
+					enterCallback();
 				}
 			}
 		}
 	}
 	
 	/**
-	 * WARNING: This will remove this object entirely. Use <code>kill()</code> if you 
-	 * want to disable it temporarily only and <code>reset()</code> it later to revive it.
+	 * WARNING: This will remove this object entirely. Use kill() if you 
+	 * want to disable it temporarily only and reset() it later to revive it.
 	 * Called by the game state when state is changed (if this object belongs to the state)
 	 */
 	override public function destroy():Void
@@ -330,28 +303,28 @@ class FlxButtonPlus extends FlxSpriteGroup
 			textHighlight = null;
 		}
 		
-		_onClick = null;
-		_enterCallback = null;
-		_leaveCallback = null;
+		onClickCallback = null;
+		enterCallback = null;
+		leaveCallback = null;
 		
 		super.destroy();
 	}
 	
 	/**
-	 * Internal function for handling the actual callback call (for UI thread dependent calls like <code>FlxStringUtil.openURL()</code>).
+	 * Internal function for handling the actual callback call (for UI thread dependent calls like FlxStringUtil.openURL()).
 	 */
 	function onMouseUp(E:MouseEvent):Void
 	{
-		if (exists && visible && active && (_status == PRESSED) && (_onClick != null) && (pauseProof))
+		if (exists && visible && active && (_status == PRESSED) && (onClickCallback != null))
 		{
-			Reflect.callMethod(this, Reflect.getProperty(this, "_onClick"), _onClickParams);
+			onClickCallback();
 		}
 	}
 	
 	/**
 	 * If you want to change the color of this button in its in-active (not hovered over) state, then pass a new array of color values
 	 * 
-	 * @param	colors
+	 * @param	Colors
 	 */
 	public function updateInactiveButtonColors(Colors:Array<Int>):Void
 	{
@@ -446,60 +419,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 		
 		return NewText;
-	}
-	
-	/**
-	 * Sets a callback function for when this button is rolled-over with the mouse
-	 * 
-	 * @param	Callback	The function to call, will be called once when the mouse enters
-	 * @param	Params		An optional array of parameters to pass to the function
-	 */
-	public function setMouseOverCallback(Callback:Dynamic, ?Params:Array<Dynamic>):Void
-	{
-		_enterCallback = Callback;
-		
-		if (Params != null)
-		{
-			_enterCallbackParams = Params;
-		}
-		else
-		{
-			_enterCallbackParams = [];
-		}
-	}
-	
-	/**
-	 * Sets a callback function for when the mouse rolls-out of this button
-	 * 
-	 * @param	Callback	The function to call, will be called once when the mouse leaves the button
-	 * @param	Params		An optional array of parameters to pass to the function
-	 */
-	public function setMouseOutCallback(Callback:Dynamic, ?Params:Array<Dynamic>):Void
-	{
-		_leaveCallback = Callback;
-		
-		if (Params != null)
-		{
-			_leaveCallbackParams = Params;
-		}
-		else
-		{
-			_leaveCallbackParams = [];
-		}
-	}
-	
-	public function setOnClickCallback(Callback:Dynamic, Params:Array<Dynamic> = null):Void
-	{
-		_onClick = Callback;
-		
-		if (Params != null)
-		{
-			_onClickParams = Params;
-		}
-		else
-		{
-			_onClickParams = [];
-		}
 	}
 }
 #end

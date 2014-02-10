@@ -11,7 +11,7 @@ import flixel.util.FlxMath;
 
 /**
  * Some sort of DisplayObjectContainer but very limited.
- * It can contain only other <code>FlxNestedSprites</code>.
+ * It can contain only other FlxNestedSprites.
  * @author Zaphod
  */
 class FlxNestedSprite extends FlxSprite
@@ -65,7 +65,8 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public var relativeAngularAcceleration:Float;
 	
-	public var _parentAlpha:Float = 1;
+	public var relativeAlpha:Float = 1;
+
 	public var _parentRed:Float = 1;
 	public var _parentGreen:Float = 1;
 	public var _parentBlue:Float = 1;
@@ -96,8 +97,8 @@ class FlxNestedSprite extends FlxSprite
 	}
 	
 	/**
-	 * WARNING: This will remove this sprite entirely. Use <code>kill()</code> if you 
-	 * want to disable it temporarily only and <code>reset()</code> it later to revive it.
+	 * WARNING: This will remove this sprite entirely. Use kill() if you 
+	 * want to disable it temporarily only and reset() it later to revive it.
 	 * Used to clean up memory.
 	 */
 	override public function destroy():Void
@@ -113,9 +114,9 @@ class FlxNestedSprite extends FlxSprite
 	}
 	
 	/**
-	 * Adds the <code>FlxNestedSprite</code> to the children list.
-	 * @param	Child	The <code>FlxNestedSprite</code> to add.
-	 * @return	The added <code>FlxNestedSprite</code>.
+	 * Adds the FlxNestedSprite to the children list.
+	 * @param	Child	The FlxNestedSprite to add.
+	 * @return	The added FlxNestedSprite.
 	 */
 	public function add(Child:FlxNestedSprite):FlxNestedSprite
 	{
@@ -127,8 +128,7 @@ class FlxNestedSprite extends FlxSprite
 			Child.scrollFactor.x = scrollFactor.x;
 			Child.scrollFactor.y = scrollFactor.y;
 			
-			Child._parentAlpha = this.alpha;
-			Child.alpha = Child.alpha;
+			Child.alpha = Child.relativeAlpha * alpha;
 
 			var thisRed:Float = (color >> 16) / 255;
 			var thisGreen:Float = (color >> 8 & 0xff) / 255;
@@ -144,9 +144,9 @@ class FlxNestedSprite extends FlxSprite
 	}
 	
 	/**
-	 * Removes the <code>FlxNestedSprite</code> from the children list.
-	 * @param	Child	The <code>FlxNestedSprite</code> to remove.
-	 * @return	The removed <code>FlxNestedSprite</code>.
+	 * Removes the FlxNestedSprite from the children list.
+	 * @param	Child	The FlxNestedSprite to remove.
+	 * @return	The removed FlxNestedSprite.
 	 */
 	public function remove(Child:FlxNestedSprite):FlxNestedSprite
 	{
@@ -161,7 +161,7 @@ class FlxNestedSprite extends FlxSprite
 	}
 	
 	/**
-	 * Removes the <code>FlxNestedSprite</code> from the position in the children list.
+	 * Removes the FlxNestedSprite from the position in the children list.
 	 * @param	Index	Index to remove.
 	 */
 	public function removeAt(Index:Int = 0):FlxNestedSprite
@@ -194,7 +194,7 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public var children(get, never):Array<FlxNestedSprite>;
 	
-	inline private function get_children():Array<FlxNestedSprite> 
+	private inline function get_children():Array<FlxNestedSprite>
 	{ 
 		return _children; 
 	}
@@ -220,7 +220,10 @@ class FlxNestedSprite extends FlxSprite
 		
 		for (child in _children)
 		{
-			child.preUpdate();
+			if (child.active && child.exists)
+			{
+				child.preUpdate();
+			}
 		}
 	}
 	
@@ -230,7 +233,10 @@ class FlxNestedSprite extends FlxSprite
 		
 		for (child in _children)
 		{
-			child.update();
+			if (child.active && child.exists)
+			{
+				child.update();
+			}
 		}
 		
 		postUpdate();
@@ -272,40 +278,43 @@ class FlxNestedSprite extends FlxSprite
 		
 		for (child in _children)
 		{
-			child.velocity.x = child.velocity.y = 0;
-			child.acceleration.x = child.acceleration.y = 0;
-			child.angularVelocity = child.angularAcceleration = 0;
-			child.postUpdate();
-			
-			if (simpleRenderSprite())
+			if (child.active && child.exists)
 			{
-				child.x = x + child.relativeX - offset.x;
-				child.y = y + child.relativeY - offset.y;
+				child.velocity.x = child.velocity.y = 0;
+				child.acceleration.x = child.acceleration.y = 0;
+				child.angularVelocity = child.angularAcceleration = 0;
+				child.postUpdate();
+				
+				if (isSimpleRender())
+				{
+					child.x = x + child.relativeX - offset.x;
+					child.y = y + child.relativeY - offset.y;
+				}
+				else
+				{
+					var radians:Float = angle * FlxAngle.TO_RAD;
+					var cos:Float = Math.cos(radians);
+					var sin:Float = Math.sin(radians);
+					
+					var dx:Float = child.relativeX - offset.x;
+					var dy:Float = child.relativeY - offset.y;
+					
+					var relX:Float = (dx * cos * scale.x - dy * sin * scale.y);
+					var relY:Float = (dx * sin * scale.x + dy * cos * scale.y);
+					
+					child.x = x + relX;
+					child.y = y + relY;
+				}
+				
+				child.angle = angle + child.relativeAngle;
+				child.scale.x = scale.x * child.relativeScaleX;
+				child.scale.y = scale.y * child.relativeScaleY;
+				
+				child.velocity.x = velocity.x;
+				child.velocity.y = velocity.y;
+				child.acceleration.x = acceleration.x;
+				child.acceleration.y = acceleration.y;
 			}
-			else
-			{
-				var radians:Float = angle * FlxAngle.TO_RAD;
-				var cos:Float = Math.cos(radians);
-				var sin:Float = Math.sin(radians);
-				
-				var dx:Float = child.relativeX - offset.x;
-				var dy:Float = child.relativeY - offset.y;
-				
-				var relX:Float = (dx * cos * scale.x - dy * sin * scale.y);
-				var relY:Float = (dx * sin * scale.x + dy * cos * scale.y);
-				
-				child.x = x + relX;
-				child.y = y + relY;
-			}
-			
-			child.angle = angle + child.relativeAngle;
-			child.scale.x = scale.x * child.relativeScaleX;
-			child.scale.y = scale.y * child.relativeScaleY;
-			
-			child.velocity.x = velocity.x;
-			child.velocity.y = velocity.y;
-			child.acceleration.x = acceleration.x;
-			child.acceleration.y = acceleration.y;
 		}
 	}
 	
@@ -315,7 +324,10 @@ class FlxNestedSprite extends FlxSprite
 		
 		for (child in _children)
 		{
-			child.draw();
+			if (child.exists && child.visible)
+			{
+				child.draw();
+			}
 		}
 	}
 	
@@ -326,7 +338,10 @@ class FlxNestedSprite extends FlxSprite
 		
 		for (child in _children)
 		{
-			child.drawDebug();
+			if (child.exists && child.visible)
+			{
+				child.drawDebug();
+			}
 		}
 	}
 	#end
@@ -345,8 +360,8 @@ class FlxNestedSprite extends FlxSprite
 		{
 			return alpha;
 		}
-		alpha = Alpha;
-		alpha *= _parentAlpha;
+		alpha = Alpha * relativeAlpha;
+		
 		#if flash
 		if ((alpha != 1) || (color != 0x00ffffff))
 		{
@@ -385,8 +400,7 @@ class FlxNestedSprite extends FlxSprite
 		{
 			for (child in _children)
 			{
-				child.alpha *= alpha;
-				child._parentAlpha = alpha;
+				child.alpha = alpha;
 			}
 		}
 		

@@ -11,8 +11,8 @@ import flixel.util.FlxVelocity;
 
 /**
  * 
- * Makes controlling an FlxSprite with the keyboard a LOT easier and quicker to set-up!<br>
- * Sometimes it's hard to know what values to set, especially if you want gravity, jumping, sliding, etc.<br>
+ * Makes controlling an FlxSprite with the keyboard a LOT easier and quicker to set-up!
+ * Sometimes it's hard to know what values to set, especially if you want gravity, jumping, sliding, etc.
  * This class helps sort that - and adds some cool extra functionality too :)
  * 
  * TODO: Hot Keys
@@ -29,59 +29,59 @@ class FlxControlHandler
 	/**
 	 * The "Instant" Movement Type means the sprite will move at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
 	 */
-	inline static public var MOVEMENT_INSTANT:Int = 0;
+	public static inline var MOVEMENT_INSTANT:Int = 0;
 	/**
 	 * The "Accelerates" Movement Type means the sprite will accelerate until it reaches maximum speed.
 	 */
-	inline static public var MOVEMENT_ACCELERATES:Int = 1;
+	public static inline var MOVEMENT_ACCELERATES:Int = 1;
 	/**
 	 * The "Instant" Stopping Type means the sprite will stop immediately when no direction keys are being pressed, there will be no deceleration.
 	 */
-	inline static public var STOPPING_INSTANT:Int = 0;
+	public static inline var STOPPING_INSTANT:Int = 0;
 	/**
 	 * The "Decelerates" Stopping Type means the sprite will start decelerating when no direction keys are being pressed. Deceleration continues until the speed reaches zero.
 	 */
-	inline static public var STOPPING_DECELERATES:Int = 1;
+	public static inline var STOPPING_DECELERATES:Int = 1;
 	/**
 	 * The "Never" Stopping Type means the sprite will never decelerate, any speed built up will be carried on and never reduce.
 	 */
-	inline static public var STOPPING_NEVER:Int = 2;
+	public static inline var STOPPING_NEVER:Int = 2;
 	
 	/**
 	 * The "Instant" Movement Type means the sprite will rotate at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
 	 */
-	inline static public var ROTATION_INSTANT:Int = 0;
+	public static inline var ROTATION_INSTANT:Int = 0;
 	/**
 	 * The "Accelerates" Rotaton Type means the sprite will accelerate until it reaches maximum rotation speed.
 	 */
-	inline static public var ROTATION_ACCELERATES:Int = 1;
+	public static inline var ROTATION_ACCELERATES:Int = 1;
 	/**
 	 * The "Instant" Stopping Type means the sprite will stop rotating immediately when no rotation keys are being pressed, there will be no deceleration.
 	 */
-	inline static public var ROTATION_STOPPING_INSTANT:Int = 0;
+	public static inline var ROTATION_STOPPING_INSTANT:Int = 0;
 	/**
 	 * The "Decelerates" Stopping Type means the sprite will start decelerating when no rotation keys are being pressed. Deceleration continues until rotation speed reaches zero.
 	 */
-	inline static public var ROTATION_STOPPING_DECELERATES:Int = 1;
+	public static inline var ROTATION_STOPPING_DECELERATES:Int = 1;
 	/**
 	 * The "Never" Stopping Type means the sprite will never decelerate, any speed built up will be carried on and never reduce.
 	 */
-	inline static public var ROTATION_STOPPING_NEVER:Int = 2;
+	public static inline var ROTATION_STOPPING_NEVER:Int = 2;
 	
 	/**
 	 * This keymode fires for as long as the key is held down
 	 */
-	inline static public var KEYMODE_PRESSED:Int = 0;
+	public static inline var KEYMODE_PRESSED:Int = 0;
 	
 	/**
 	 * This keyboard fires when the key has just been pressed down, and not again until it is released and re-pressed
 	 */
-	inline static public var KEYMODE_JUST_DOWN:Int = 1;
+	public static inline var KEYMODE_JUST_DOWN:Int = 1;
 	
 	/**
 	 * This keyboard fires only when the key has been pressed and then released again
 	 */
-	inline static public var KEYMODE_RELEASED:Int = 2;
+	public static inline var KEYMODE_RELEASED:Int = 2;
 	
 	// Helpers
 	public var isPressedUp:Bool = false;
@@ -194,7 +194,7 @@ class FlxControlHandler
 	private var _thrustSound:FlxSound;
 	
 	/**
-	 * Sets the FlxSprite to be controlled by this class, and defines the initial movement and stopping types.<br>
+	 * Sets the FlxSprite to be controlled by this class, and defines the initial movement and stopping types.
 	 * After creating an instance of this class you should call setMovementSpeed, and one of the enableXControl functions if you need more than basic cursors.
 	 * 
 	 * @param	Sprite			The FlxSprite you want this class to control. It can only control one FlxSprite at once.
@@ -225,7 +225,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Set the speed at which the sprite will move when a direction key is pressed.<br>
+	 * Set the speed at which the sprite will move when a direction key is pressed.
 	 * All values are given in pixels per second. So an xSpeed of 100 would move the sprite 100 pixels in 1 second (1000ms)
 	 * Due to the nature of the internal Flash timer this amount is not 100% accurate and will vary above/below the desired distance by a few pixels.
 	 * 
@@ -268,9 +268,9 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Set the speed at which the sprite will move when a direction key is pressed.<br>
-	 * All values are given in pixels per second. So an xSpeed of 100 would move the sprite 100 pixels in 1 second (1000ms)<br>
-	 * Due to the nature of the internal Flash timer this amount is not 100% accurate and will vary above/below the desired distance by a few pixels.<br>
+	 * Set the speed at which the sprite will move when a direction key is pressed.
+	 * All values are given in pixels per second. So an xSpeed of 100 would move the sprite 100 pixels in 1 second (1000ms)
+	 * Due to the nature of the internal Flash timer this amount is not 100% accurate and will vary above/below the desired distance by a few pixels.
 	 * 
 	 * If you don't need different speed values for every direction on its own then use setMovementSpeed
 	 * 
@@ -295,10 +295,10 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Set the speed at which the sprite will rotate when a direction key is pressed.<br>
-	 * Use this in combination with setMovementSpeed to create a Thrust like movement system.<br>
-	 * All values are given in pixels per second. So an xSpeed of 100 would rotate the sprite 100 pixels in 1 second (1000ms)<br>
-	 * Due to the nature of the internal Flash timer this amount is not 100% accurate and will vary above/below the desired distance by a few pixels.<br>
+	 * Set the speed at which the sprite will rotate when a direction key is pressed.
+	 * Use this in combination with setMovementSpeed to create a Thrust like movement system.
+	 * All values are given in pixels per second. So an xSpeed of 100 would rotate the sprite 100 pixels in 1 second (1000ms)
+	 * Due to the nature of the internal Flash timer this amount is not 100% accurate and will vary above/below the desired distance by a few pixels.
 	 */
 	public function setRotationSpeed(AntiClockwiseSpeed:Float, ClockwiseSpeed:Float, SpeedMax:Float, Deceleration:Float):Void
 	{
@@ -321,8 +321,8 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Sets the maximum speed (in pixels per second) that the FlxSprite can rotate.<br>
-	 * When the FlxSprite is accelerating (movement type MOVEMENT_ACCELERATES) its speed won't increase above this value.<br>
+	 * Sets the maximum speed (in pixels per second) that the FlxSprite can rotate.
+	 * When the FlxSprite is accelerating (movement type MOVEMENT_ACCELERATES) its speed won't increase above this value.
 	 * However Flixel allows the velocity of an FlxSprite to be set to anything. So if you'd like to check the value and restrain it, then enable "limitVelocity".
 	 * 
 	 * @param	Speed			The maximum speed in pixels per second in which the sprite can rotate
@@ -336,7 +336,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Deceleration is a speed (in pixels per second) that is applied to the sprite if stopping type is "DECELERATES" and if no rotation is taking place.<br>
+	 * Deceleration is a speed (in pixels per second) that is applied to the sprite if stopping type is "DECELERATES" and if no rotation is taking place.
 	 * The velocity of the sprite will be reduced until it reaches zero.
 	 * 
 	 * @param	Speed	The speed in pixels per second at which the sprite will have its angular rotation speed decreased
@@ -347,7 +347,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Set minimum and maximum angle limits that the Sprite won't be able to rotate beyond.<br>
+	 * Set minimum and maximum angle limits that the Sprite won't be able to rotate beyond.
 	 * Values must be between -180 and +180. 0 is pointing right, 90 down, 180 left, -90 up.
 	 * 
 	 * @param	MinimumAngle	Minimum angle below which the sprite cannot rotate (must be -180 or above)
@@ -405,7 +405,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * If you want to enable a Thrust like motion for your sprite use this to set the speed and keys.<br>
+	 * If you want to enable a Thrust like motion for your sprite use this to set the speed and keys.
 	 * This is usually used in conjunction with Rotation and it will over-ride anything already defined in setMovementSpeed.
 	 * 
 	 * @param	ThrustKey		Specify the key String (as taken from flixel.system.input.Keyboard) to use for the Thrust action
@@ -434,8 +434,8 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Sets the maximum speed (in pixels per second) that the FlxSprite can move. You can set the horizontal and vertical speeds independantly.<br>
-	 * When the FlxSprite is accelerating (movement type MOVEMENT_ACCELERATES) its speed won't increase above this value.<br>
+	 * Sets the maximum speed (in pixels per second) that the FlxSprite can move. You can set the horizontal and vertical speeds independantly.
+	 * When the FlxSprite is accelerating (movement type MOVEMENT_ACCELERATES) its speed won't increase above this value.
 	 * However Flixel allows the velocity of an FlxSprite to be set to anything. So if you'd like to check the value and restrain it, then enable "limitVelocity".
 	 * 
 	 * @param	SpeedX			The maximum speed in pixels per second in which the sprite can move horizontally
@@ -451,7 +451,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Deceleration is a speed (in pixels per second) that is applied to the sprite if stopping type is "DECELERATES" and if no acceleration is taking place.<br>
+	 * Deceleration is a speed (in pixels per second) that is applied to the sprite if stopping type is "DECELERATES" and if no acceleration is taking place.
 	 * The velocity of the sprite will be reduced until it reaches zero, and can be configured separately per axis.
 	 * 
 	 * @param	SpeedX		The speed in pixels per second at which the sprite will have its horizontal speed decreased
@@ -464,8 +464,8 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Gravity can be applied to the sprite, pulling it in any direction.<br>
-	 * Gravity is given in pixels per second and is applied as acceleration. The speed the sprite reaches under gravity will never exceed the Maximum Movement Speeds set.<br>
+	 * Gravity can be applied to the sprite, pulling it in any direction.
+	 * Gravity is given in pixels per second and is applied as acceleration. The speed the sprite reaches under gravity will never exceed the Maximum Movement Speeds set.
 	 * If you don't want gravity for a specific direction pass a value of zero.
 	 * 
 	 * @param	ForceX	A positive value applies gravity dragging the sprite to the right. A negative value drags the sprite to the left. Zero disables horizontal gravity.
@@ -481,7 +481,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Switches the gravity applied to the sprite. If gravity was +400 Y (pulling them down) this will swap it to -400 Y (pulling them up)<br>
+	 * Switches the gravity applied to the sprite. If gravity was +400 Y (pulling them down) this will swap it to -400 Y (pulling them up)
 	 * To reset call flipGravity again
 	 */
 	public function flipGravity():Void
@@ -926,7 +926,7 @@ class FlxControlHandler
 		// 1 = Just Down
 		// 2 = Just Released
 		if (((_fireKeyMode == 0) && FlxG.keys.anyPressed([_fireKey])) || 
-			_fireKeyMode == 1 && FlxG.keys.anyJustPressed([_fireKey])) || 
+			(_fireKeyMode == 1 && FlxG.keys.anyJustPressed([_fireKey])) || 
 			(_fireKeyMode == 2 && FlxG.keys.anyJustReleased([_fireKey])))
 		{
 			if (_fireRate > 0)
@@ -1243,7 +1243,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Enables Cursor/Arrow Key controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.<br>
+	 * Enables Cursor/Arrow Key controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 * 
 	 * @param	AllowUp		Enable the UP key
@@ -1265,7 +1265,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Enables WASD controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.<br>
+	 * Enables WASD controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 * 
 	 * @param	allowUp		Enable the up (W) key
@@ -1287,7 +1287,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Enables ESDF (home row) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.<br>
+	 * Enables ESDF (home row) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 * 
 	 * @param	AllowUp		Enable the up (E) key
@@ -1309,7 +1309,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Enables IJKL (right-sided or secondary player) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.<br>
+	 * Enables IJKL (right-sided or secondary player) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 * 
 	 * @param	AllowUp		Enable the up (I) key
@@ -1331,7 +1331,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Enables HJKL (Rogue / Net-Hack) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.<br>
+	 * Enables HJKL (Rogue / Net-Hack) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 * 
 	 * @param	AllowUp		Enable the up (K) key
@@ -1353,7 +1353,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Enables ZQSD (Azerty keyboard) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.<br>
+	 * Enables ZQSD (Azerty keyboard) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 * 
 	 * @param	AllowUp		Enable the up (Z) key
@@ -1375,7 +1375,7 @@ class FlxControlHandler
 	}
 	
 	/**
-	 * Enables Dvoark Simplified Controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.<br>
+	 * Enables Dvoark Simplified Controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 * 
 	 * @param	AllowUp		Enable the up (COMMA) key

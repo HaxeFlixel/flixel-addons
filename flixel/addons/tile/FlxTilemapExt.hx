@@ -18,7 +18,7 @@ import flixel.util.FlxPoint;
 
 
 /**
- * Extended <code>FlxTilemap</code> class that provides collision detection against slopes
+ * Extended FlxTilemap class that provides collision detection against slopes
  * Based on the original by Dirk Bunk.
  * ---
  * Also add support to flipped / rotated tiles.
@@ -28,10 +28,10 @@ import flixel.util.FlxPoint;
  */
 class FlxTilemapExt extends FlxTilemap
 {
-	inline static public var SLOPE_FLOOR_LEFT:Int = 0;
-	inline static public var SLOPE_FLOOR_RIGHT:Int = 1;
-	inline static public var SLOPE_CEIL_LEFT:Int = 2;
-	inline static public var SLOPE_CEIL_RIGHT:Int = 3;
+	public static inline var SLOPE_FLOOR_LEFT:Int = 0;
+	public static inline var SLOPE_FLOOR_RIGHT:Int = 1;
+	public static inline var SLOPE_CEIL_LEFT:Int = 2;
+	public static inline var SLOPE_CEIL_RIGHT:Int = 3;
 	
 	// Slope related variables
 	private var _snapping:Int = 2;
@@ -138,10 +138,10 @@ class FlxTilemapExt extends FlxTilemap
 	}
 	
 	/**
-	 * THIS IS A COPY FROM <code>FlxTilemap</code> BUT IT DEALS WITH FLIPPED AND ROTATED TILES
+	 * THIS IS A COPY FROM FlxTilemap BUT IT DEALS WITH FLIPPED AND ROTATED TILES
 	 * Internal function that actually renders the tilemap to the tilemap buffer.  Called by draw().
-	 * @param	Buffer		The <code>FlxTilemapBuffer</code> you are rendering to.
-	 * @param	Camera		The related <code>FlxCamera</code>, mainly for scroll values.
+	 * @param	Buffer		The FlxTilemapBuffer you are rendering to.
+	 * @param	Camera		The related FlxCamera, mainly for scroll values.
 	 */
 	override private function drawTilemap(Buffer:FlxTilemapBuffer, Camera:FlxCamera):Void 
 	{
@@ -340,7 +340,7 @@ class FlxTilemapExt extends FlxTilemap
 	
 	/**
 	 * Set the special tiles (rotated or flipped)
-	 * @param	tiles	An <code>Array</code> with all the <code>FlxTileSpecial</code>
+	 * @param	tiles	An Array with all the FlxTileSpecial
 	 */
 	public function setSpecialTiles(tiles:Array<FlxTileSpecial>):Void 
 	{
@@ -410,7 +410,7 @@ class FlxTilemapExt extends FlxTilemap
 	}
 	
 	/**
-	 * THIS IS A COPY FROM <code>FlxTilemap</code>
+	 * THIS IS A COPY FROM FlxTilemap
 	 * I've only swapped lines 386 and 387 to give DrawTilemap() a chance to set the buffer dirty
 	 * ---
 	 * Draws the tilemap buffers to the cameras.
@@ -475,12 +475,12 @@ class FlxTilemapExt extends FlxTilemap
 	}
 
 	/**
-	 * THIS IS A COPY FROM <code>FlxTilemap</code> BUT IT SOLVES SLOPE COLLISION TOO
+	 * THIS IS A COPY FROM FlxTilemap BUT IT SOLVES SLOPE COLLISION TOO
 	 * Checks if the Object overlaps any tiles with any collision flags set,
 	 * and calls the specified callback function (if there is one).
 	 * Also calls the tile's registered callback if the filter matches.
 	 *
-	 * @param 	Object 				The <code>FlxObject</code> you are checking for overlaps against.
+	 * @param 	Object 				The FlxObject you are checking for overlaps against.
 	 * @param 	Callback 			An optional function that takes the form "myCallback(Object1:FlxObject,Object2:FlxObject)", where Object1 is a FlxTile object, and Object2 is the object passed in in the first parameter of this method.
 	 * @param 	FlipCallbackParams 	Used to preserve A-B list ordering from FlxObject.separate() - returns the FlxTile object as the second parameter instead.
 	 * @param 	Position 			Optional, specify a custom position for the tilemap (useful for overlapsAt()-type funcitonality).

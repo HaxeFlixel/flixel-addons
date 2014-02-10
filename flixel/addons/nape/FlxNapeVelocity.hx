@@ -19,7 +19,7 @@ class FlxNapeVelocity
 	 * @param	Dest		The FlxSprite where the source object will move to
 	 * @param	Speed		The speed it will move, in pixels per second (default is 100 pixels/sec)
 	 */
-	inline static public function moveTowardsObject(Source:FlxNapeSprite, Dest:FlxSprite, Speed:Float = 100):Void
+	public static inline function moveTowardsObject(Source:FlxNapeSprite, Dest:FlxSprite, Speed:Float = 100):Void
 	{
 		var direction = FlxAngle.angleBetween(Source, Dest);
 		Source.body.applyImpulse(Vec2.fromPolar(Speed, direction));
@@ -33,7 +33,7 @@ class FlxNapeVelocity
 	 * @param	Source		The FlxNapeSprite to move
 	 * @param	Speed		The speed it will move, in pixels per second (default is 100 pixels/sec)
 	 */
-	inline static public function moveTowardsMouse(Source:FlxNapeSprite, Speed:Float = 100):Void
+	public static inline function moveTowardsMouse(Source:FlxNapeSprite, Speed:Float = 100):Void
 	{
 		var direction = FlxAngle.angleBetweenMouse(Source);
 		Source.body.applyImpulse(Vec2.fromPolar(Speed, direction));
@@ -48,7 +48,7 @@ class FlxNapeVelocity
 	 * @param	Source			The FlxNapeSprite to move
 	 * @param	Speed			The speed it will move, in pixels per second (default is 100 pixels/sec)
 	 */
-	inline static public function moveTowardsTouch(Source:FlxNapeSprite, Touch:FlxTouch, Speed:Float = 100):Void
+	public static inline function moveTowardsTouch(Source:FlxNapeSprite, Touch:FlxTouch, Speed:Float = 100):Void
 	{
 		var direction = FlxAngle.angleBetweenTouch(Source, Touch);
 		Source.body.applyImpulse(Vec2.fromPolar(Speed, direction));
@@ -63,7 +63,7 @@ class FlxNapeVelocity
 	 * @param	Target		The FlxPoint coordinates to move the source FlxSprite towards
 	 * @param	Speed		The speed it will move, in pixels per second (default is 100 pixels/sec)
 	 */
-	inline static public function moveTowardsPoint(Source:FlxNapeSprite, Target:FlxPoint, Speed:Float = 100):Void
+	public static inline function moveTowardsPoint(Source:FlxNapeSprite, Target:FlxPoint, Speed:Float = 100):Void
 	{
 		var direction = FlxAngle.angleBetweenPoint(Source, Target);
 		Source.body.applyImpulse(Vec2.fromPolar(Speed, direction));
@@ -73,7 +73,7 @@ class FlxNapeVelocity
 	 * Stops a FlxNapeSprite from moving by setting its velocity to 0, 0.
 	 * @param	Source		The FlxNapeSprite to stop
 	 */
-	inline static public function stopVelocity(Source:FlxNapeSprite):Void
+	public static inline function stopVelocity(Source:FlxNapeSprite):Void
 	{
 		Source.body.velocity.set(Vec2.get(0, 0)); 
 		Source.body.velocity.set(Vec2.get(0, 0)); 

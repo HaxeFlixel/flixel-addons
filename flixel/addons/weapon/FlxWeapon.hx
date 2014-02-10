@@ -33,14 +33,14 @@ import flixel.util.FlxVelocity;
 class FlxWeapon 
 {
 	// Quick firing direction angle constants
-	inline static public var BULLET_UP:Int = -90;
-	inline static public var BULLET_DOWN:Int = 90;
-	inline static public var BULLET_LEFT:Int = 180;
-	inline static public var BULLET_RIGHT:Int = 0;
-	inline static public var BULLET_NORTH_EAST:Int = -45;
-	inline static public var BULLET_NORTH_WEST:Int = -135;
-	inline static public var BULLET_SOUTH_EAST:Int = 45;
-	inline static public var BULLET_SOUTH_WEST:Int = 135;
+	public static inline var BULLET_UP:Int = -90;
+	public static inline var BULLET_DOWN:Int = 90;
+	public static inline var BULLET_LEFT:Int = 180;
+	public static inline var BULLET_RIGHT:Int = 0;
+	public static inline var BULLET_NORTH_EAST:Int = -45;
+	public static inline var BULLET_NORTH_WEST:Int = -135;
+	public static inline var BULLET_SOUTH_EAST:Int = 45;
+	public static inline var BULLET_SOUTH_WEST:Int = 135;
 	
 	/**
 	 * Internal name for this weapon (i.e. "pulse rifle")
@@ -98,13 +98,13 @@ class FlxWeapon
 	public var onFireSound:FlxSound;
 	public var onPostFireSound:FlxSound;
 	
-	inline static private var FIRE:Int = 0;
-	inline static private var FIRE_AT_MOUSE:Int = 1;
-	inline static private var FIRE_AT_POSITION:Int = 2;
-	inline static private var FIRE_AT_TARGET:Int = 3;
-	inline static private var FIRE_FROM_ANGLE:Int = 4;
-	inline static private var FIRE_FROM_PARENT_ANGLE:Int = 5;
-	inline static private var FIRE_AT_TOUCH:Int = 6;
+	private static inline var FIRE:Int = 0;
+	private static inline var FIRE_AT_MOUSE:Int = 1;
+	private static inline var FIRE_AT_POSITION:Int = 2;
+	private static inline var FIRE_AT_TARGET:Int = 3;
+	private static inline var FIRE_FROM_ANGLE:Int = 4;
+	private static inline var FIRE_FROM_PARENT_ANGLE:Int = 5;
+	private static inline var FIRE_AT_TOUCH:Int = 6;
 	
 	private var _rotateToAngle:Bool;
 	private var _velocity:FlxPoint;
@@ -141,7 +141,7 @@ class FlxWeapon
 	/**
 	 * Creates the FlxWeapon class which will fire your bullets.
 	 * You should call one of the makeBullet functions to visually create the bullets.
-	 * Then either use <code>setDirection</code> with <code>fire()</code> or one of the <code>fireAt</code> functions to launch them.
+	 * Then either use setDirection with fire() or one of the fireAt functions to launch them.
 	 * 
 	 * @param	Name		The name of your weapon (i.e. "lazer" or "shotgun"). For your internal reference really, but could be displayed in-game.
 	 * @param	ParentRef	If this weapon belongs to a parent sprite, specify it here (bullets will fire from the sprites x/y vars as defined below).
@@ -276,7 +276,7 @@ class FlxWeapon
 	 * @param	X
 	 * @param	Y
 	 * @param	Target
-	 * @return	True if a bullet was fired or false if one wasn't available. The bullet last fired is stored in <code>FlxWeapon.prevBullet</code>
+	 * @return	True if a bullet was fired or false if one wasn't available. The bullet last fired is stored in FlxWeapon.prevBullet
 	 */
 	private function runFire(Method:Int, X:Int = 0, Y:Int = 0, ?Target:FlxSprite, Angle:Int = 0):Bool
 	{
@@ -386,7 +386,7 @@ class FlxWeapon
 	 * 
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fire():Bool
+	public inline function fire():Bool
 	{
 		return runFire(FlxWeapon.FIRE);
 	}
@@ -397,7 +397,7 @@ class FlxWeapon
 	 * 
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fireAtMouse():Bool
+	public inline function fireAtMouse():Bool
 	{
 		return runFire(FlxWeapon.FIRE_AT_MOUSE);
 	}
@@ -440,7 +440,7 @@ class FlxWeapon
 	 * @param	Y	The y coordinate (in game world pixels) to fire at
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fireAtPosition(X:Int, Y:Int):Bool
+	public inline function fireAtPosition(X:Int, Y:Int):Bool
 	{
 		return runFire(FlxWeapon.FIRE_AT_POSITION, X, Y);
 	}
@@ -451,7 +451,7 @@ class FlxWeapon
 	 * @param	Target	The FlxSprite you wish to fire the bullet at
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fireAtTarget(Target:FlxSprite):Bool
+	public inline function fireAtTarget(Target:FlxSprite):Bool
 	{
 		return runFire(FlxWeapon.FIRE_AT_TARGET, 0, 0, Target);
 	}
@@ -462,7 +462,7 @@ class FlxWeapon
 	 * @param	Angle	The angle (in degrees) calculated in clockwise positive direction (down = 90 degrees positive, right = 0 degrees positive, up = 90 degrees negative)
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fireFromAngle(Angle:Int):Bool
+	public inline function fireFromAngle(Angle:Int):Bool
 	{
 		return runFire(FlxWeapon.FIRE_FROM_ANGLE, 0, 0, null, Angle);
 	}
@@ -472,7 +472,7 @@ class FlxWeapon
 	 * 
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	inline public function fireFromParentAngle():Bool
+	public inline function fireFromParentAngle():Bool
 	{
 		return runFire(FlxWeapon.FIRE_FROM_PARENT_ANGLE);
 	}
@@ -503,7 +503,7 @@ class FlxWeapon
 	}
 	
 	/**
-	 * Causes the Weapon to fire from a fixed x/y position on the screen, like in the game Missile Command.<br>
+	 * Causes the Weapon to fire from a fixed x/y position on the screen, like in the game Missile Command.
 	 * If set this over-rides a call to setParent (which causes the Weapon to fire from the parents x/y position)
 	 * 
 	 * @param	X			The x coordinate (in game world pixels) to fire from
@@ -522,7 +522,7 @@ class FlxWeapon
 	}
 	
 	/**
-	 * The speed in pixels/sec (sq) that the bullet travels at when fired via fireAtMouse, fireAtPosition or fireAtTarget.<br>
+	 * The speed in pixels/sec (sq) that the bullet travels at when fired via fireAtMouse, fireAtPosition or fireAtTarget.
 	 * You can update this value in real-time, should you need to speed-up or slow-down your bullets (i.e. collecting a power-up)
 	 * 
 	 * @param	Speed	The speed it will move, in pixels per second (sq)
@@ -543,7 +543,7 @@ class FlxWeapon
 	}
 	
 	/**
-	 * Sets the firing rate of the Weapon. By default there is no rate, as it can be controlled by FlxControl.setFireButton.<br>
+	 * Sets the firing rate of the Weapon. By default there is no rate, as it can be controlled by FlxControl.setFireButton.
 	 * However if you are firing using the mouse you may wish to set a firing rate.
 	 * 
 	 * @param	Rate	The delay in milliseconds (ms) between which each bullet is fired, set to zero to clear
@@ -565,8 +565,8 @@ class FlxWeapon
 	}
 	
 	/**
-	 * Set the direction the bullet will travel when fired.<br>
-	 * You can use one of the consts such as BULLET_UP, BULLET_DOWN or BULLET_NORTH_EAST to set the angle easily.<br>
+	 * Set the direction the bullet will travel when fired.
+	 * You can use one of the consts such as BULLET_UP, BULLET_DOWN or BULLET_NORTH_EAST to set the angle easily.
 	 * Speed should be given in pixels/sec (sq) and is the speed at which the bullet travels when fired.
 	 * 
 	 * @param	angle		The angle of the bullet. In clockwise positive direction: Right = 0, Down = 90, Left = 180, Up = -90. You can use one of the consts such as BULLET_UP, etc
@@ -578,7 +578,7 @@ class FlxWeapon
 	}
 	
 	/**
-	 * Sets gravity on all currently created bullets<br>
+	 * Sets gravity on all currently created bullets
 	 * This will update ALL bullets, even those currently "in flight", so be careful about when you call this!
 	 * 
 	 * @param	ForceX	A positive value applies gravity dragging the bullet to the right. A negative value drags the bullet to the left. Zero disables horizontal gravity.
@@ -591,8 +591,8 @@ class FlxWeapon
 	}
 	
 	/**
-	 * If you'd like your bullets to accelerate to their top speed rather than be launched already at it, then set the acceleration value here.<br>
-	 * If you've previously set the acceleration then setting it to zero will cancel the effect.<br>
+	 * If you'd like your bullets to accelerate to their top speed rather than be launched already at it, then set the acceleration value here.
+	 * If you've previously set the acceleration then setting it to zero will cancel the effect.
 	 * This will update ALL bullets, even those currently "in flight", so be careful about when you call this!
 	 * 
 	 * @param	AccelerationX		Acceleration speed in pixels per second to apply to the sprites horizontal movement, set to zero to cancel. Negative values move left, positive move right.
@@ -617,8 +617,8 @@ class FlxWeapon
 	}
 	
 	/**
-	 * When the bullet is fired from a parent (or fixed position) it will do so from their x/y coordinate.<br>
-	 * Often you need to align a bullet with the sprite, i.e. to make it look like it came out of the "nose" of a space ship.<br>
+	 * When the bullet is fired from a parent (or fixed position) it will do so from their x/y coordinate.
+	 * Often you need to align a bullet with the sprite, i.e. to make it look like it came out of the "nose" of a space ship.
 	 * Use this offset x/y value to achieve that effect.
 	 * 
 	 * @param	OffsetX		The x coordinate offset to add to the launch location (positive or negative)
@@ -636,7 +636,7 @@ class FlxWeapon
 	 * @param 	RandomAngle		The +- value applied to the angle when fired. For example 20 means the bullet can fire up to 20 degrees under or over its angle when fired.
 	 * @param	RandomSpeed		The +- value applied to the speed when fired. For example 20 means the bullet can fire up to 20 px/sec slower or faster when fired.
 	 * @param 	RandomPosition  The +- value applied to the firing location when fired (fire spread).
-	 * @param 	RandomLifeSpan  The +- value applied to the <code>bulletLifeSpan</code> when fired. For example passing 2 when <code>bulletLifeSpan</code> is 3, means the bullet can live up to 5 seconds, minimum of 1.
+	 * @param 	RandomLifeSpan  The +- value applied to the bulletLifeSpan when fired. For example passing 2 when bulletLifeSpan is 3, means the bullet can live up to 5 seconds, minimum of 1.
 	 */
 	public function setBulletRandomFactor(RandomAngle:Int = 0, RandomSpeed:Int = 0, ?RandomPosition:FlxPoint, RandomLifeSpan:Float = 0):Void
 	{
@@ -675,7 +675,7 @@ class FlxWeapon
 	/**
 	 * Internal function that returns the next available bullet from the pool (if any)
 	 * 
-	 * @return	A <code>FlxBullet</code>
+	 * @return	A FlxBullet
 	 */
 	private function getFreeBullet():FlxBullet
 	{
@@ -746,7 +746,7 @@ class FlxWeapon
 	 * @param  NotifyCallBack  	A function that will get called if a bullet overlaps an object
 	 * @param  SkipParent    	Don't trigger colision notifies with the parent of this object
 	*/
-	inline public function bulletsOverlap(ObjectOrGroup:FlxBasic, ?NotifyCallBack:FlxObject->FlxObject->Void, SkipParent:Bool = true):Void
+	public inline function bulletsOverlap(ObjectOrGroup:FlxBasic, ?NotifyCallBack:FlxObject->FlxObject->Void, SkipParent:Bool = true):Void
 	{
 		if (group != null && group.length > 0)
 		{
