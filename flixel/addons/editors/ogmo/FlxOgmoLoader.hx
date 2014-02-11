@@ -1,12 +1,11 @@
 package flixel.addons.editors.ogmo;
 
-import flash.geom.Rectangle;
-import openfl.Assets;
+import flixel.FlxG;
+import flixel.tile.FlxTilemap;
+import flixel.util.FlxRect;
 import haxe.xml.Fast;
 import haxe.xml.Parser;
-import flixel.FlxG;
-import flixel.util.FlxPoint;
-import flixel.tile.FlxTilemap;
+import openfl.Assets;
 
 class FlxOgmoLoader
 {
@@ -111,13 +110,13 @@ class FlxOgmoLoader
 	 * @param	RectLoadCallback	A function that takes in the Rectangle object and returns Void.
 	 * @param	RectLayer			The name of the layer which contains 'rect' objects.
 	 */
-	public function loadRectangles(RectLoadCallback:Rectangle->Void, RectLayer:String = "rectangles"):Void
+	public function loadRectangles(RectLoadCallback:FlxRect->Void, RectLayer:String = "rectangles"):Void
 	{
 		var rects = _fastXml.node.resolve(RectLayer);
 		
 		for (r in rects.elements)
 		{
-			RectLoadCallback(new Rectangle(Std.parseInt(r.x.get("x")), Std.parseInt(r.x.get("y")), Std.parseInt(r.x.get("w")), Std.parseInt(r.x.get("h"))));
+			RectLoadCallback(new FlxRect(Std.parseInt(r.x.get("x")), Std.parseInt(r.x.get("y")), Std.parseInt(r.x.get("w")), Std.parseInt(r.x.get("h"))));
 		}
 	}
 }
