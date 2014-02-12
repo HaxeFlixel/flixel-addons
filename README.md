@@ -2,6 +2,8 @@
 
 [flixel](https://github.com/HaxeFlixel/flixel) | [addons](https://github.com/HaxeFlixel/flixel-addons) | [ui](https://github.com/HaxeFlixel/flixel-ui) | [demos](https://github.com/HaxeFlixel/flixel-demos) | [tools](https://github.com/HaxeFlixel/flixel-tools) | [templates](https://github.com/HaxeFlixel/flixel-templates) | [docs](https://github.com/HaxeFlixel/flixel-docs) | [haxeflixel.com](https://github.com/HaxeFlixel/haxeflixel.com)
 
+[![Build Status](https://travis-ci.org/HaxeFlixel/flixel-addons.png)](https://travis-ci.org/HaxeFlixel/flixel-addons) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/HaxeFlixel/flixel-addons/trend.png)](https://bitdeli.com/HaxeFlixel "Bitdeli Badge")
+
 ##About
 
 A set of useful, but optional classes for [HaxeFlixel](https://github.com/HaxeFlixel/flixel) created by the community. Includes some classes from the [Flixel Power Tools](https://github.com/photonstorm/Flixel-Power-Tools).
@@ -17,8 +19,3 @@ If you are wanting to contribute code, please review the follwing documentation:
 If you have a question or have not contributed on github before, there are friendly people in the community that help out in the [forums](http://haxeflixel.com/documentation/community/).
 
 For using git with github we recommended using a GUI application to manage your changes, for example [SourceTree](http://www.sourcetreeapp.com/).
-
-=
-
-[![Build Status](https://travis-ci.org/HaxeFlixel/flixel-addons.png)](https://travis-ci.org/HaxeFlixel/flixel-addons) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/HaxeFlixel/flixel-addons/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
