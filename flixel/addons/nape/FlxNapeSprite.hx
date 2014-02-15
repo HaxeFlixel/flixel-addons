@@ -26,6 +26,11 @@ class FlxNapeSprite extends FlxSprite
 	public var body:Body;
 	
 	/**
+	 * Enables/Disables this sprites physics body in simulations.
+	 */
+	public var physicsEnabled(default, set):Bool = false;
+	
+	/**
 	 * Internal var to update body.velocity.x and body.velocity.y. 
 	 * Default is 1, which menas no drag.
 	 */
@@ -49,7 +54,7 @@ class FlxNapeSprite extends FlxSprite
 	 * @param	CreateRectangularBody	Whether to create a rectangular body for this sprite (use false if you want to add a custom body).
 	 * @param	EnablePhysics			Whether to enable physics simulation on the rectangular body (only relevant if CreateRectangularBody == true).
 	 */
-	public function new(X:Float = 0, Y:Float = 0, SimpleGraphic:Dynamic = null, CreateRectangularBody:Bool = true, EnablePhysics:Bool = true) 
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic, CreateRectangularBody:Bool = true, EnablePhysics:Bool = true) 
 	{
 		super(X, Y, SimpleGraphic);
 		
@@ -81,7 +86,7 @@ class FlxNapeSprite extends FlxSprite
 	{
 		super.update();
 		
-		if (moves)
+		if ((body != null) && moves)
 		{
 			updatePhysObjects();
 		}
@@ -229,40 +234,6 @@ class FlxNapeSprite extends FlxSprite
 			body = null;
 		}
 	}
-	
-	/**
-	 * Updates physics FlxSprite graphics to follow this sprite physics object, called at the end of update().
-	 * Things that are updated: Position, angle, angular and linear drag.
-	 */	
-	private function updatePhysObjects():Void 
-	{
-		x = body.position.x - origin.x;
-		y = body.position.y - origin.y;
-		
-		if (body.allowRotation)
-		{
-			angle = body.rotation * FlxAngle.TO_DEG;
-		}
-		
-		// Applies custom physics drag.
-		if (_linearDrag < 1 || _angularDrag < 1) 
-		{
-			body.angularVel *= _angularDrag;
-			body.velocity.x *= _linearDrag;
-			body.velocity.y *= _linearDrag;
-		}
-	}
-	
-	/**
-	 * Enables/Disables this sprites physics body in simulations.
-	 */
-	public var physicsEnabled(default, set):Bool = true;
-	
-	private inline function set_physicsEnabled(Value:Bool):Bool
-	{
-		body.space = Value ? FlxNapeState.space : null;
-		return physicsEnabled = Value;
-	}
 
 	/**
 	 * Nape requires fluid spaces to add empty space linear drag and angular drag.
@@ -290,4 +261,33 @@ class FlxNapeSprite extends FlxSprite
 		}
 	}
 	#end
+	
+	/**
+	 * Updates physics FlxSprite graphics to follow this sprite physics object, called at the end of update().
+	 * Things that are updated: Position, angle, angular and linear drag.
+	 */	
+	private function updatePhysObjects():Void 
+	{
+		x = body.position.x - origin.x;
+		y = body.position.y - origin.y;
+		
+		if (body.allowRotation)
+		{
+			angle = body.rotation * FlxAngle.TO_DEG;
+		}
+		
+		// Applies custom physics drag.
+		if (_linearDrag < 1 || _angularDrag < 1) 
+		{
+			body.angularVel *= _angularDrag;
+			body.velocity.x *= _linearDrag;
+			body.velocity.y *= _linearDrag;
+		}
+	}
+	
+	private inline function set_physicsEnabled(Value:Bool):Bool
+	{
+		body.space = Value ? FlxNapeState.space : null;
+		return physicsEnabled = Value;
+	}
 }
