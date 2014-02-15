@@ -33,6 +33,19 @@ class FlxNapeState extends FlxState
 	 * The space where the nape physics simulation occur.
 	 */
 	public static var space:Space;
+	
+	#if !FLX_NO_DEBUG
+	/**
+	 * Contains the sprite used for nape debug graphics.
+	 */
+	public static var debug(get, never):ShapeDebug;
+	
+	private static function get_debug():ShapeDebug
+	{ 
+		return cast(FlxG.state, FlxNapeState)._physDbgSpr; 
+	}
+	#end
+	
 	/**
 	 * The number of iterations used by nape in resolving errors in the velocities of objects. This is together with collision 
 	 * detection the most expensive phase of a simulation update, as well as the most important for stable results. (default 10)
@@ -44,20 +57,16 @@ class FlxNapeState extends FlxState
 	 */
 	public var positionIterations:Int = 10;
 	
+	/**
+	 * Whether the nape debug graphics are enabled or not.
+	 */
+	public var napeDebugEnabled(default, set):Bool;
+	
 	#if !FLX_NO_DEBUG
 	/**
 	 * Contains the sprite used for nape debug graphics.
 	 */
 	private var _physDbgSpr:ShapeDebug;
-	/**
-	 * Contains the sprite used for nape debug graphics.
-	 */
-	public static var debug(get, never):ShapeDebug;
-	
-	private static function get_debug():ShapeDebug
-	{ 
-		return cast(FlxG.state, FlxNapeState)._physDbgSpr; 
-	}
 	
 	/**
 	 * Contains a reference to the Nape button in the debugger.
@@ -79,7 +88,7 @@ class FlxNapeState extends FlxState
 		#if !FLX_NO_DEBUG
 		// Add a button to toggle Nape debug shapes to the debugger
 		_button = FlxG.debugger.addButton(RIGHT, new GraphicNapeDebug(0, 0), toggleDebug, true, true);
-		napeDebugEnabled = true;
+		napeDebugEnabled = false;
 		#end
 	}
 
@@ -166,13 +175,8 @@ class FlxNapeState extends FlxState
 		_button = null;
 		#end
 	}
-
-	/**
-	 * Whether the nape debug graphics are enabled or not.
-	 */
-	public var napeDebugEnabled(default, set):Bool;
 	
-	public function set_napeDebugEnabled(Value:Bool):Bool
+	private function set_napeDebugEnabled(Value:Bool):Bool
 	{
 		#if !FLX_NO_DEBUG
 		_button.toggled = !Value;
