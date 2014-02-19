@@ -476,5 +476,24 @@ class FlxNestedSprite extends FlxSprite
 		}
 		
 		return color;
+		
+		
 	}
+	
+	override private function set_facing(Direction:Int):Int
+	{
+		super.set_facing(Direction);
+		if (_children != null)
+		{
+			for (child in _children)
+			{
+				if (child.exists && child.active)
+				{
+					child.facing = Direction;
+				}
+			}
+		}
+		return Direction;
+	}
+
 }
