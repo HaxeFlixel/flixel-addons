@@ -68,10 +68,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 	 */
 	private var _status:Int;
 	/**
-	 * Tracks whether or not the button is currently pressed.
-	 */
-	private var _pressed:Bool;
-	/**
 	 * Whether or not the button has initialized itself yet.
 	 */
 	private var _initialized:Bool;
@@ -141,7 +137,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 
 		_status = NORMAL;
-		_pressed = false;
 		_initialized = false;
 	}
 	
@@ -158,7 +153,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		buttonNormal.pixels = Normal.pixels;
 		buttonHighlight.pixels = Highlight.pixels;
 
-		if (_pressed)
+		if (_status==HIGHLIGHT)
 		{
 			buttonNormal.visible = false;
 		}
