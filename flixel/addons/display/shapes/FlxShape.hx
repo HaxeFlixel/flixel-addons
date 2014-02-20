@@ -56,7 +56,7 @@ class FlxShape extends FlxSprite
 		_drawStyle = {matrix:null,colorTransform:null,blendMode:BlendMode.NORMAL,clipRect:null,smoothing:true};
 		
 		if (TrueWidth != 0 && TrueHeight != 0) {
-			if(TrueWidth < CanvasWidth && TrueHeight < CanvasHeight){
+			if (TrueWidth < CanvasWidth && TrueHeight < CanvasHeight){
 				fixBoundaries(TrueWidth, TrueHeight);
 			}
 		}

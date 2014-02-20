@@ -830,8 +830,8 @@ class FlxExtendedSprite extends FlxSprite
 	
 	private function get_mouseOver():Bool
 	{
-		return FlxMath.pointInCoordinates(	Math.floor( FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX) ),
-											Math.floor( FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY) ),
+		return FlxMath.pointInCoordinates(	Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX)),
+											Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY)),
 											Math.floor(x),
 											Math.floor(y),
 											Math.floor(width),

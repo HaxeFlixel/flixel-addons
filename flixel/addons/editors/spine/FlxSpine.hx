@@ -203,7 +203,7 @@ class FlxSpine extends FlxSprite
 				wrapper.x = this.x + relX - wrapper.frameWidth * 0.5;
 				wrapper.y = this.y + relY - wrapper.frameHeight * 0.5;
 				
-				wrapper.angle = (-(bone.worldRotation + regionAttachment.rotation) + wrapperAngle) * flip + angle;
+				wrapper.angle = ( -(bone.worldRotation + regionAttachment.rotation) + wrapperAngle) * flip + angle;
 				wrapper.scale.x = (bone.worldScaleX + regionAttachment.scaleX - 1) * flipX * scale.x;
 				wrapper.scale.y = (bone.worldScaleY + regionAttachment.scaleY - 1) * flipY * scale.y;
 				wrapper.antialiasing = antialiasing;

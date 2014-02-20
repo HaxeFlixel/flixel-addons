@@ -198,7 +198,7 @@ class FlxBullet extends FlxSprite
 		
 		if (_weapon.bulletLifeSpan > 0)
 		{
-			lifespan = _weapon.bulletLifeSpan + FlxRandom.floatRanged(-_weapon.rndFactorLifeSpan, _weapon.rndFactorLifeSpan);
+			lifespan = _weapon.bulletLifeSpan + FlxRandom.floatRanged( -_weapon.rndFactorLifeSpan, _weapon.rndFactorLifeSpan);
 		}
 		
 		if (_weapon.onFireCallback != null)

@@ -139,7 +139,7 @@ class FlxShapeLightning extends FlxShapeLine
 		width = canvasWidth;
 		height = canvasHeight;
 		
-		if(canvasWidth != pixels.width || canvasHeight != pixels.height){
+		if (canvasWidth != pixels.width || canvasHeight != pixels.height){
 			makeGraphic(canvasWidth, canvasHeight, 0x00000000, true);
 		}else {
 			pixels.fillRect(pixels.rect, 0x00000000);
@@ -151,8 +151,8 @@ class FlxShapeLightning extends FlxShapeLine
 		var dh:Int= 0;
 		
 		//if it's poking of the left or top, I need to adjust the drawing location
-		if (left < 0) { dw = Std.int(-left + (strokeBuffer/2)); }
-		if (up   < 0) { dh = Std.int(-up   + (strokeBuffer/2)); }
+		if (left < 0) { dw = Std.int( -left + (strokeBuffer/2)); }
+		if (up   < 0) { dh = Std.int( -up   + (strokeBuffer/2)); }
 		
 		//lineStyle.thickness = 1;		//lightningStyle.thickness;
 		//lineStyle.color = 0xffffff00; 	//lightningStyle.color;

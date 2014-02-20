@@ -179,7 +179,7 @@ class TiledLayer
 			values = row.split(",");
 			var i:Int;
 			for (v in values) {
-				if ( v == "") {
+				if (v == "") {
 					continue;
 				}
 				i = Std.parseInt(v);

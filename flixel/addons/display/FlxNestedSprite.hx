@@ -186,7 +186,7 @@ class FlxNestedSprite extends FlxSprite
 		var i:Int = _children.length;
 		while (i > 0)
 		{
-			removeAt(--i);
+			removeAt( --i);
 		}
 	}
 	

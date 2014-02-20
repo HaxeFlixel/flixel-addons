@@ -135,7 +135,7 @@ class TiledMap
 			
 			if (!noLoadHash.exists(name))
 			{
-				layers.push( new TiledLayer(node, this) );
+				layers.push(new TiledLayer(node, this));
 			}
 		}
 		
@@ -144,9 +144,9 @@ class TiledMap
 		{
 			name = node.att.name;
 			
-			if(!noLoadHash.exists(name))
+			if (!noLoadHash.exists(name))
 			{
-				objectGroups.push( new TiledObjectGroup(node, this) );
+				objectGroups.push(new TiledObjectGroup(node, this));
 			}
 		}
 	}
