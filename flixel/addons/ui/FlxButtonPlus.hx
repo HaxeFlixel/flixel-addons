@@ -1,7 +1,6 @@
 package flixel.addons.ui;
 
 #if !FLX_NO_MOUSE
-import flash.display.BitmapData;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.Lib;
@@ -14,7 +13,6 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 import flixel.util.FlxMath;
-import flixel.util.FlxSpriteUtil;
 import flixel.util.loaders.CachedGraphics;
 
 //TODO: Port to use touch as well
@@ -40,7 +38,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 	/**
 	 * The 1px thick border color that is drawn around this button
 	 */
-	public var borderColor:Int = 0xffffffff;
+	public var borderColor:Int = FlxColor.WHITE;
 	/**
 	 * The color gradient of the button in its in-active (not hovered over) state
 	 */
@@ -62,15 +60,19 @@ class FlxButtonPlus extends FlxSpriteGroup
 	 * This function is called when the mouse leaves a hovered button (but didn't click)
 	 */
 	public var leaveCallback:Void->Void;
+	/**
+	 * If this button has text, set this to change the value
+	 */
+	public var text(never, set):String;
 	
 	/**
 	 * Shows the current state of the button.
 	 */
-	private var _status:Int;
+	private var _status:Int = NORMAL;
 	/**
 	 * Whether or not the button has initialized itself yet.
 	 */
-	private var _initialized:Bool;
+	private var _initialized:Bool = false;
 	
 	/**
 	 * Creates a new FlxButton object with a gray background
@@ -135,9 +137,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 			add(textNormal);
 			add(textHighlight);
 		}
-
-		_status = NORMAL;
-		_initialized = false;
 	}
 	
 	/**
@@ -153,7 +152,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		buttonNormal.pixels = Normal.pixels;
 		buttonHighlight.pixels = Highlight.pixels;
 
-		if (_status==HIGHLIGHT)
+		if (_status == HIGHLIGHT)
 		{
 			buttonNormal.visible = false;
 		}
@@ -195,15 +194,10 @@ class FlxButtonPlus extends FlxSpriteGroup
 			buttonNormal.cameras = FlxG.cameras.list;
 		}
 		
-		var c:FlxCamera;
-		var i:Int = 0;
-		var l:Int = buttonNormal.cameras.length;
 		var offAll:Bool = true;
 		
-		while (i < l)
+		for (camera in buttonNormal.cameras)
 		{
-			c = buttonNormal.cameras[i++];
-			
 			if (FlxMath.mouseInFlxRect(false, buttonNormal.rect))
 			{
 				offAll = false;
@@ -274,29 +268,10 @@ class FlxButtonPlus extends FlxSpriteGroup
 			Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 		}
 		
-		if (buttonNormal != null)
-		{
-			buttonNormal.destroy();
-			buttonNormal = null;
-		}
-		
-		if (buttonHighlight != null)
-		{
-			buttonHighlight.destroy();
-			buttonHighlight = null;
-		}
-		
-		if (textNormal != null)
-		{
-			textNormal.destroy();
-			textNormal = null;
-		}
-		
-		if (textHighlight != null)
-		{
-			textHighlight.destroy();
-			textHighlight = null;
-		}
+		buttonNormal = FlxG.safeDestroy(buttonNormal);
+		buttonHighlight = FlxG.safeDestroy(buttonHighlight);
+		textNormal = FlxG.safeDestroy(textNormal);
+		textHighlight = FlxG.safeDestroy(textHighlight);
 		
 		onClickCallback = null;
 		enterCallback = null;
@@ -318,8 +293,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 	
 	/**
 	 * If you want to change the color of this button in its in-active (not hovered over) state, then pass a new array of color values
-	 * 
-	 * @param	Colors
 	 */
 	public function updateInactiveButtonColors(Colors:Array<Int>):Void
 	{
@@ -359,8 +332,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 	
 	/**
 	 * If you want to change the color of this button in its active (hovered over) state, then pass a new array of color values
-	 * 
-	 * @param	Colors
 	 */
 	public function updateActiveButtonColors(Colors:Array<Int>):Void
 	{
@@ -399,13 +370,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		#end
 	}
 	
-	/**
-	 * If this button has text, set this to change the value
-	 */
-	
-	public var text(never, set):String;
-	
-	public function set_text(NewText:String):String
+	private function set_text(NewText:String):String
 	{
 		if (textNormal != null && textNormal.text != NewText)
 		{
