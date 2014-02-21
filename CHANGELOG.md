@@ -1,8 +1,9 @@
 1.0.3
 ------------------------------
-* Compatibility with flixel 3.1.1
+* Compatibility with flixel 3.2.0
 * FlxOgmoLoader: add loadRectangles()
 * FlxNapeSprite: fix crash without a body
+* FlxNestedSprite: compatibility with facing
 
 1.0.2
 ------------------------------
