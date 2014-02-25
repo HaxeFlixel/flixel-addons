@@ -272,15 +272,6 @@ class FlxBitmapFont extends FlxSprite
 	#if !flash
 	override public function draw():Void 
 	{
-		if (cameras == null)
-		{
-			cameras = FlxG.cameras.list;
-		}
-		
-		var camera:FlxCamera;
-		var i:Int = 0;
-		var l:Int = cameras.length;
-		
 		var j:Int = 0;
 		var textLength:Int = Std.int(_points.length / 3);
 		var currPosInArr:Int;
@@ -301,9 +292,8 @@ class FlxBitmapFont extends FlxSprite
 		var useAlpha:Bool = (alpha < 1);
 		#end
 		
-		while (i < l)
+		for (camera in cameras)
 		{
-			camera = cameras[i++];
 			#if !js
 			drawItem = camera.getDrawStackItem(_fontSet, isColored, _blendInt, antialiasing);
 			#else

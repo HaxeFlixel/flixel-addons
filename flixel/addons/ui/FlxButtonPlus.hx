@@ -188,12 +188,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 	function updateButton():Void
 	{
 		var prevStatus:Int = _status;
-		
-		if (buttonNormal.cameras == null)
-		{
-			buttonNormal.cameras = FlxG.cameras.list;
-		}
-		
 		var offAll:Bool = true;
 		
 		for (camera in buttonNormal.cameras)

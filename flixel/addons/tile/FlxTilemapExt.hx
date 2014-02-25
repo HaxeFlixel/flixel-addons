@@ -417,11 +417,7 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	override public function draw():Void
 	{
-		if (cameras == null)
-		{
-			cameras = FlxG.cameras.list;
-		}
-		
+		var cameras = cameras;
 		var camera:FlxCamera;
 		var buffer:FlxTilemapBuffer;
 		var i:Int = 0;
@@ -430,7 +426,6 @@ class FlxTilemapExt extends FlxTilemap
 		while (i < l)
 		{
 			camera = cameras[i];
-			
 			if (!camera.visible || !camera.exists)
 			{
 				continue;

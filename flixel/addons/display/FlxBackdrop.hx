@@ -128,17 +128,8 @@ class FlxBackdrop extends FlxObject
 
 	override public function draw():Void
 	{
-		if (cameras == null)
+		for (camera in cameras)
 		{
-			cameras = FlxG.cameras.list;
-		}
-		var camera:FlxCamera;
-		var l:Int = cameras.length;
-		
-		for (i in 0...(l))
-		{
-			camera = cameras[i];
-			
 			if (!camera.visible || !camera.exists)
 			{
 				continue;

@@ -406,14 +406,6 @@ private class StarSprite extends FlxSprite
 	
 	override public function draw():Void 
 	{
-		if (cameras == null)
-		{
-			cameras = FlxG.cameras.list;
-		}
-		var camera:FlxCamera;
-		var i:Int = 0;
-		var l:Int = cameras.length;
-		
 		var currDrawData:Array<Float>;
 		var currIndex:Int;
 		var drawItem:DrawStackItem;
@@ -428,9 +420,8 @@ private class StarSprite extends FlxSprite
 		
 		var starDef:StarDef;
 		
-		while (i < l)
+		for (camera in cameras)
 		{
-			camera = cameras[i++];
 			if (!camera.visible || !camera.exists || !isOnScreen(camera))
 			{
 				continue;

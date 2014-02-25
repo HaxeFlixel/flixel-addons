@@ -65,11 +65,6 @@ class FlxSkewedSprite extends FlxSprite
 			calcFrame();
 		}
 		
-		if (cameras == null)
-		{
-			cameras = FlxG.cameras.list;
-		}
-		
 		#if !flash
 		var drawItem:DrawStackItem;
 		var currDrawData:Array<Float>;

@@ -133,17 +133,9 @@ class FlxClickArea extends FlxObject
 		
 		if (continueUpdate)
 		{
-			if (cameras == null)
-			{
-				cameras = FlxG.cameras.list;
-			}
-			var camera:FlxCamera;
-			var i:Int = 0;
-			var l:Int = cameras.length;
 			var offAll:Bool = true;
-			while (i < l)
+			for (camera in cameras)
 			{
-				camera = cameras[i++];
 				#if !FLX_NO_MOUSE
 					FlxG.mouse.getWorldPosition(camera, _point);
 					offAll = (updateButtonStatus(_point, camera, FlxG.mouse.justPressed) == false) ? false : offAll;
