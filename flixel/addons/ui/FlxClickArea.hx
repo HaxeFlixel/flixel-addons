@@ -25,12 +25,7 @@ class FlxClickArea extends FlxObject
 	 * We recommend assigning your main button behavior to this function
 	 * via the FlxClickArea constructor.
 	 */
-	private var _onUp:Dynamic;
-	
-	/**
-	 * The params to pass to the _onUp function
-	 */
-	private var _onUpParams:Array<Dynamic>;
+	public var onUp:Void->Void;
 	
 	/**
 	 * Tracks whether or not the button is currently pressed.
@@ -50,17 +45,16 @@ class FlxClickArea extends FlxObject
 	 * @param	Y			The Y position of the button.
 	 * @param   Width		Width of the area
 	 * @param 	Height		Height of the area
-	 * @param	OnClick		The function to call whenever the button is clicked.
+	 * @param	OnUp		The function to call whenever the button is clicked.
 	 */
-	public function new(X:Float = 0, Y:Float = 0, Width:Float=80, Height:Float=20, ?OnClick:Dynamic)
+	public function new(X:Float = 0, Y:Float = 0, Width:Float=80, Height:Float=20, ?OnUp:Void->Void)
 	{
 		super(X, Y);
 		
 		width = Width;
 		height = Height;
 		
-		_onUp = OnClick;
-		_onUpParams = [];
+		onUp = OnUp;
 		
 		status = FlxButton.NORMAL;
 		_pressed = false;
@@ -86,8 +80,7 @@ class FlxClickArea extends FlxObject
 			#end
 		}
 
-		_onUp = null;
-		_onUpParams = null;
+		onUp = null;
 
 		super.destroy();
 	}
@@ -185,25 +178,6 @@ class FlxClickArea extends FlxObject
 	}
 	
 	/**
-	 * Set the callback function for when the button is released.
-	 * 
-	 * @param	Callback	The callback function.
-	 * @param	Params		Any params you want to pass to the function. Optional!
-	 */
-	public inline function setOnUpCallback(Callback:Dynamic, Params:Array<Dynamic> = null):Void
-	{
-		_onUp = Callback;
-		
-		if (Params == null)
-		{
-			Params = [];
-		}
-		
-		_onUpParams = Params;
-	}
-	
-		
-	/**
 	 * Internal function for handling the actual callback call (for UI thread dependent calls like FlxStringUtil.openURL()).
 	 */
 	private function onMouseUp(event:Event):Void
@@ -212,9 +186,9 @@ class FlxClickArea extends FlxObject
 		{
 			return;
 		}
-		if (_onUp != null)
+		if (onUp != null)
 		{
-			Reflect.callMethod(null, _onUp, _onUpParams);
+			onUp();
 		}
 		status = FlxButton.NORMAL;
 	}
