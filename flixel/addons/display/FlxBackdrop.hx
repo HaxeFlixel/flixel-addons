@@ -87,9 +87,9 @@ class FlxBackdrop extends FlxObject
 		var regionRect:Rectangle = new Rectangle(region.startX, region.startY, region.width, region.height);
 		#end
 		
-		while (_ppoint.y < h + region.height)
+		while (_ppoint.y < h)
 		{
-			while (_ppoint.x < w + region.width)
+			while (_ppoint.x < w)
 			{
 				#if flash
 				_data.copyPixels(cachedGraphics.bitmap, regionRect, _ppoint);
