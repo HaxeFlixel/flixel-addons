@@ -586,8 +586,10 @@ class FlxWeapon
 	 */
 	public function setBulletGravity(ForceX:Int, ForceY:Int):Void
 	{
-		group.setAll("xGravity", ForceX);
-		group.setAll("yGravity", ForceY);
+		group.forEach(function (b:FlxBullet) {
+			b.acceleration.x = ForceX;
+			b.acceleration.y = ForceY;
+		});
 	}
 	
 	/**
@@ -604,15 +606,19 @@ class FlxWeapon
 	{
 		if (AccelerationX == 0 && AccelerationY == 0)
 		{
-			group.setAll("accelerates", false);
+			group.forEach(function (b:FlxBullet) {
+				b.accelerates = false;
+			});
 		}
 		else
 		{
-			group.setAll("accelerates", true);
-			group.setAll("xAcceleration", AccelerationX);
-			group.setAll("yAcceleration", AccelerationY);
-			group.setAll("maxVelocityX", SpeedMaxX);
-			group.setAll("maxVelocityY", SpeedMaxY);
+			group.forEach(function (b:FlxBullet) {
+				b.accelerates = true;
+				b.xAcceleration = AccelerationX;
+				b.yAcceleration = AccelerationY;
+				b.maxVelocity.x = SpeedMaxX;
+				b.maxVelocity.y = SpeedMaxY;
+			});
 		}
 	}
 	
@@ -775,16 +781,5 @@ class FlxWeapon
   	private function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
 	{
 		Bullet.kill();
-	}
-	
-	// TODO
-	public function createBulletPattern(Pattern:Array<Dynamic>):Void
-	{
-		//	Launches this many bullets
-	}
-	
-	public function update():Void
-	{
-		// ???
 	}
 }
