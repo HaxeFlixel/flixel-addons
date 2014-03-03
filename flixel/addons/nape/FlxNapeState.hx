@@ -224,12 +224,6 @@ class FlxNapeState extends FlxState
 		
 		sprite.x = -cam.scroll.x * zoom;
 		sprite.y = -cam.scroll.y * zoom;
-
-		if (cam.target != null)
-		{
-			sprite.x += (FlxG.width - FlxG.width * zoom) / 2;
-			sprite.y += (FlxG.height - FlxG.height * zoom) / 2;
-		}
 		#end
 	}
 	
