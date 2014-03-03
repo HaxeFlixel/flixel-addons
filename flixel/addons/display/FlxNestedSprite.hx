@@ -370,27 +370,27 @@ class FlxNestedSprite extends FlxSprite
 			var green:Float = (color >> 8 & 0xff) * _parentGreen / 255;
 			var blue:Float = (color & 0xff) * _parentBlue / 255;
 			
-			if (_colorTransform == null)
+			if (colorTransform == null)
 			{
-				_colorTransform = new ColorTransform(red, green, blue, alpha);
+				colorTransform = new ColorTransform(red, green, blue, alpha);
 			}
 			else
 			{
-				_colorTransform.redMultiplier = red;
-				_colorTransform.greenMultiplier = green;
-				_colorTransform.blueMultiplier = blue;
-				_colorTransform.alphaMultiplier = alpha;
+				colorTransform.redMultiplier = red;
+				colorTransform.greenMultiplier = green;
+				colorTransform.blueMultiplier = blue;
+				colorTransform.alphaMultiplier = alpha;
 			}
 			useColorTransform = true;
 		}
 		else
 		{
-			if (_colorTransform != null)
+			if (colorTransform != null)
 			{
-				_colorTransform.redMultiplier = 1;
-				_colorTransform.greenMultiplier = 1;
-				_colorTransform.blueMultiplier = 1;
-				_colorTransform.alphaMultiplier = 1;
+				colorTransform.redMultiplier = 1;
+				colorTransform.greenMultiplier = 1;
+				colorTransform.blueMultiplier = 1;
+				colorTransform.alphaMultiplier = 1;
 			}
 			useColorTransform = false;
 		}
@@ -425,27 +425,27 @@ class FlxNestedSprite extends FlxSprite
 		color = combinedColor;
 		if ((alpha != 1) || (color != 0x00ffffff))
 		{
-			if (_colorTransform == null)
+			if (colorTransform == null)
 			{
-				_colorTransform = new ColorTransform(combinedRed, combinedGreen, combinedBlue, alpha);
+				colorTransform = new ColorTransform(combinedRed, combinedGreen, combinedBlue, alpha);
 			}
 			else
 			{
-				_colorTransform.redMultiplier = combinedRed;
-				_colorTransform.greenMultiplier = combinedGreen;
-				_colorTransform.blueMultiplier = combinedBlue;
-				_colorTransform.alphaMultiplier = alpha;
+				colorTransform.redMultiplier = combinedRed;
+				colorTransform.greenMultiplier = combinedGreen;
+				colorTransform.blueMultiplier = combinedBlue;
+				colorTransform.alphaMultiplier = alpha;
 			}
 			useColorTransform = true;
 		}
 		else
 		{
-			if (_colorTransform != null)
+			if (colorTransform != null)
 			{
-				_colorTransform.redMultiplier = 1;
-				_colorTransform.greenMultiplier = 1;
-				_colorTransform.blueMultiplier = 1;
-				_colorTransform.alphaMultiplier = 1;
+				colorTransform.redMultiplier = 1;
+				colorTransform.greenMultiplier = 1;
+				colorTransform.blueMultiplier = 1;
+				colorTransform.alphaMultiplier = 1;
 			}
 			useColorTransform = false;
 		}
