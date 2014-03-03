@@ -29,7 +29,7 @@ class FlxTileSpecial extends FlxBasic
 	private var _tmp_flipV:Bool;
 	private var _tmp_rot:Int;
 	
-	#if flash
+	#if FLX_RENDER_BLIT
 	private var _normalFrame:BitmapData;
 	private var _flippedFrame:BitmapData;
 	private var _point:Point;
@@ -47,7 +47,7 @@ class FlxTileSpecial extends FlxBasic
 	private var _currAnimParam:AnimParams;
 	private var _frameTimer:Float = 0.0;
 	
-	#if flash
+	#if FLX_RENDER_BLIT
 	private var _animRects:Array<Rectangle>;
 	public var dirty:Bool = true;
 	#end
@@ -61,7 +61,7 @@ class FlxTileSpecial extends FlxBasic
 		this.flipVertically = FlipVertical;
 		this.rotate = Rotate;
 		
-		#if flash
+		#if FLX_RENDER_BLIT
 		this._normalFrame = null;
 		this._flippedFrame = null;
 		this._point = new Point(0, 0);
@@ -78,7 +78,7 @@ class FlxTileSpecial extends FlxBasic
 	{
 		super.destroy();
 		
-		#if flash
+		#if FLX_RENDER_BLIT
 		if (_normalFrame != null)
 		{
 			_normalFrame.dispose();
@@ -108,7 +108,7 @@ class FlxTileSpecial extends FlxBasic
 	override public function update():Void 
 	{
 		super.update();
-		#if flash
+		#if FLX_RENDER_BLIT
 		dirty = false;
 		#end
 		// Modified from updateAnimation() in FlxSprite
@@ -137,7 +137,7 @@ class FlxTileSpecial extends FlxBasic
 				_currAnimParam = _animation.framesData[_currFrame];
 			}
 			
-			#if flash
+			#if FLX_RENDER_BLIT
 			dirty = !(_currFrame == _lastFrame);
 			#end
 		}
@@ -158,7 +158,7 @@ class FlxTileSpecial extends FlxBasic
 		return (_animation != null);
 	}
 	
-	#if flash
+	#if FLX_RENDER_BLIT
 	public function getBitmapData(width:Int, height:Int, rect:Rectangle, bitmap:BitmapData):BitmapData 
 	{
 		if (_normalFrame == null)

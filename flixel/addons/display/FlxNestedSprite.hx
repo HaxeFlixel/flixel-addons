@@ -363,7 +363,7 @@ class FlxNestedSprite extends FlxSprite
 		}
 		alpha = Alpha * relativeAlpha;
 		
-		#if flash
+		#if FLX_RENDER_BLIT
 		if ((alpha != 1) || (color != 0x00ffffff))
 		{
 			var red:Float = (color >> 16) * _parentRed / 255;
@@ -452,7 +452,7 @@ class FlxNestedSprite extends FlxSprite
 		
 		dirty = true;
 		
-		#if !flash
+		#if FLX_RENDER_TILE
 		_red = combinedRed;
 		_green = combinedGreen;
 		_blue = combinedBlue;
@@ -495,5 +495,4 @@ class FlxNestedSprite extends FlxSprite
 		}
 		return Direction;
 	}
-
 }

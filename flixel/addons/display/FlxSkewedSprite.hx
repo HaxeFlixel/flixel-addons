@@ -65,7 +65,7 @@ class FlxSkewedSprite extends FlxSprite
 			calcFrame();
 		}
 		
-		#if !flash
+		#if FLX_RENDER_TILE
 		var drawItem:DrawStackItem;
 		var currDrawData:Array<Float>;
 		var currIndex:Int;
@@ -82,13 +82,8 @@ class FlxSkewedSprite extends FlxSprite
 				continue;
 			}
 			
-		#if !flash
-			#if !js
+		#if FLX_RENDER_TILE
 			drawItem = camera.getDrawStackItem(cachedGraphics, isColored, _blendInt, antialiasing);
-			#else
-			var useAlpha:Bool = (alpha < 1);
-			drawItem = camera.getDrawStackItem(cachedGraphics, useAlpha);
-			#end
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
 			
@@ -97,17 +92,12 @@ class FlxSkewedSprite extends FlxSprite
 			
 			_point.x = (_point.x) + origin.x;
 			_point.y = (_point.y) + origin.y;
-			
-			#if js
-			_point.x = Math.floor(_point.x);
-			_point.y = Math.floor(_point.y);
-			#end
 		#else
 			_point.x = x - (camera.scroll.x * scrollFactor.x) - (offset.x);
 			_point.y = y - (camera.scroll.y * scrollFactor.y) - (offset.y);
 		#end
 		
-#if flash
+#if FLX_RENDER_BLIT
 			if (isSimpleRender())
 			{
 				_point.copyToFlash(_flashPoint);
@@ -198,7 +188,6 @@ class FlxSkewedSprite extends FlxSprite
 			currDrawData[currIndex++] = ssx;
 			currDrawData[currIndex++] = csy;
 			
-			#if !js
 			if (isColored)
 			{
 				currDrawData[currIndex++] = _red;
@@ -206,12 +195,6 @@ class FlxSkewedSprite extends FlxSprite
 				currDrawData[currIndex++] = _blue;
 			}
 			currDrawData[currIndex++] = alpha;
-			#else 
-			if (useAlpha)
-			{
-				currDrawData[currIndex++] = alpha;
-			}
-			#end
 			
 			drawItem.position = currIndex;
 #end
@@ -236,7 +219,7 @@ class FlxSkewedSprite extends FlxSprite
 	
 	public override function isSimpleRender():Bool
 	{
-		#if !flash
+		#if FLX_RENDER_BLIT
 		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
 		#else
 		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && (forceComplexRender == false));
