@@ -222,7 +222,7 @@ class FlxSkewedSprite extends FlxSprite
 		#if FLX_RENDER_BLIT
 		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
 		#else
-		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && (forceComplexRender == false));
+		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && pixelPerfectRender);
 		#end
 	}
 }

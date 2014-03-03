@@ -423,7 +423,7 @@ class FlxTilemapExt extends FlxTilemap
 			if (_buffers[i] == null)
 			{
 				_buffers[i] = new FlxTilemapBuffer(_tileWidth, _tileHeight, widthInTiles, heightInTiles, camera);
-				_buffers[i].forceComplexRender = forceComplexRender;
+				_buffers[i].pixelPerfectRender = pixelPerfectRender;
 			}
 			
 			buffer = _buffers[i++];
