@@ -219,13 +219,13 @@ class FlxButtonPlus extends FlxSpriteGroup
 		{
 			if (_status == NORMAL)
 			{
-				buttonNormal.visible = true;
 				buttonHighlight.visible = false;
+				buttonNormal.visible = true;
 				
 				if (textNormal != null)
 				{
-					textNormal.visible = true;
 					textHighlight.visible = false;
+					textNormal.visible = true;
 				}
 				
 				if (leaveCallback != null)
