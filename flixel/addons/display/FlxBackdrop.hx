@@ -1,22 +1,19 @@
 package flixel.addons.display;
 
-import flixel.system.layer.Region;
-import flixel.util.loaders.TextureRegion;
-import openfl.Assets;
-import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flixel.FlxCamera;
 import flixel.FlxG;
-import flixel.FlxObject;
+import flixel.FlxSprite;
 import flixel.system.layer.DrawStackItem;
+import flixel.system.layer.Region;
+import flixel.util.loaders.TextureRegion;
 
 /**
  * Used for showing infinitely scrolling backgrounds.
  * @author Chevy Ray
  */
-class FlxBackdrop extends FlxObject
+class FlxBackdrop extends FlxSprite
 {
 	private var _ppoint:Point;
 	private var _scrollW:Int;
@@ -200,7 +197,7 @@ class FlxBackdrop extends FlxObject
 		}
 	}
 	
-	public function updateFrameData():Void
+	override public function updateFrameData():Void
 	{
 		#if FLX_RENDER_TILE
 		if (cachedGraphics != null)
