@@ -29,12 +29,6 @@ class FlxButtonPlus extends FlxSpriteGroup
 	public static inline var HIGHLIGHT:Int = 1;
 	public static inline var PRESSED:Int = 2;
 	
-	public var buttonNormal:FlxExtendedSprite;
-	public var buttonHighlight:FlxExtendedSprite;
-	
-	public var textNormal:FlxText;
-	public var textHighlight:FlxText;
-	
 	/**
 	 * The 1px thick border color that is drawn around this button
 	 */
@@ -60,6 +54,13 @@ class FlxButtonPlus extends FlxSpriteGroup
 	 * This function is called when the mouse leaves a hovered button (but didn't click)
 	 */
 	public var leaveCallback:Void->Void;
+	
+	public var buttonNormal(default, set):FlxExtendedSprite;
+	public var buttonHighlight(default, set):FlxExtendedSprite;
+	
+	public var textNormal(default, set):FlxText;
+	public var textHighlight(default, set):FlxText;
+	
 	/**
 	 * If this button has text, set this to change the value
 	 */
@@ -133,6 +134,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 			
 			textHighlight = new FlxText(0, 3, Width, Label);
 			textHighlight.setFormat(null, 8, 0xffffff, "center", 0x000000);
+			textHighlight.visible = false;
 			
 			add(textNormal);
 			add(textHighlight);
@@ -366,13 +368,41 @@ class FlxButtonPlus extends FlxSpriteGroup
 	
 	private function set_text(NewText:String):String
 	{
-		if (textNormal != null && textNormal.text != NewText)
+		if ((textNormal != null) && (textNormal.text != NewText))
 		{
 			textNormal.text = NewText;
 			textHighlight.text = NewText;
 		}
 		
 		return NewText;
+	}
+	
+	private inline function set_buttonNormal(Value:FlxExtendedSprite):FlxExtendedSprite
+	{
+		FlxG.safeDestroy(buttonNormal);
+		replace(buttonNormal, Value);
+		return buttonNormal = Value;
+	}
+	
+	private inline function set_buttonHighlight(Value:FlxExtendedSprite):FlxExtendedSprite
+	{
+		FlxG.safeDestroy(buttonHighlight);
+		replace(buttonHighlight, Value);
+		return buttonHighlight = Value;
+	}
+	
+	private inline function set_textNormal(Value:FlxText):FlxText
+	{
+		FlxG.safeDestroy(textNormal);
+		replace(textNormal, Value);
+		return textNormal = Value;
+	}
+	
+	private inline function set_textHighlight(Value:FlxText):FlxText
+	{
+		FlxG.safeDestroy(textHighlight);
+		replace(textHighlight, Value);
+		return textHighlight = Value;
 	}
 }
 #end
