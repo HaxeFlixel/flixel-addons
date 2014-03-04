@@ -39,7 +39,7 @@ class FlxSkewedSprite extends FlxSprite
 	{
 		super(X, Y, SimpleGraphic);
 		
-		skew = new FlxPoint();
+		skew = FlxPoint.get();
 		_skewMatrix = new Matrix();
 		transformMatrix = new Matrix();
 	}

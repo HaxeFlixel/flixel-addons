@@ -116,7 +116,7 @@ class FlxOgmoLoader
 		
 		for (r in rects.elements)
 		{
-			RectLoadCallback(new FlxRect(Std.parseInt(r.x.get("x")), Std.parseInt(r.x.get("y")), Std.parseInt(r.x.get("w")), Std.parseInt(r.x.get("h"))));
+			RectLoadCallback(FlxRect.get(Std.parseInt(r.x.get("x")), Std.parseInt(r.x.get("y")), Std.parseInt(r.x.get("w")), Std.parseInt(r.x.get("h"))));
 		}
 	}
 }

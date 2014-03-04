@@ -141,13 +141,13 @@ class FlxShapeCross extends FlxShape
 		vertices = null;
 	}
 	
-	public override function drawSpecificShape(matrix:Matrix=null):Void 
+	public override function drawSpecificShape(?matrix:Matrix):Void 
 	{
 		if (vertices == null) {
 			vertices = new Array<FlxPoint>();
 			var i:Int = 13;
 			while (i > 0) {
-				vertices.push(new FlxPoint());
+				vertices.push(FlxPoint.get());
 				i--;
 			}
 		}

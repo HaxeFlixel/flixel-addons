@@ -65,7 +65,7 @@ class FlxShapeLightning extends FlxShapeLine
 		if (Displacement < lightningStyle.detail){
 			addSegment(A, B);
 		}else{
-			var mid:FlxPoint = new FlxPoint();
+			var mid:FlxPoint = FlxPoint.get();
 			mid.x = (A.x + B.x) / 2;
 			mid.y = (A.y + B.y) / 2;
 			var dispX:Float = FlxRandom.floatRanged( -0.5, 0.5); 
@@ -267,8 +267,8 @@ class LineSegment
 	
 	public function new(A:FlxPoint, B:FlxPoint) 
 	{
-		a = new FlxPoint(A.x,A.y);
-		b = new FlxPoint(B.x,B.y);
+		a = FlxPoint.get(A.x,A.y);
+		b = FlxPoint.get(B.x,B.y);
 	}
 
 	public function copy():LineSegment 

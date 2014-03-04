@@ -74,8 +74,8 @@ class FlxTilemapExt extends FlxTilemap
 	{
 		super();
 		
-		_slopePoint = new FlxPoint();
-		_objPoint = new FlxPoint();
+		_slopePoint = FlxPoint.get();
+		_objPoint = FlxPoint.get();
 		
 		_slopeFloorLeft = new Array<Int>();
 		_slopeFloorRight = new Array<Int>();

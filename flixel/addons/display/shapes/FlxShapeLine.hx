@@ -58,7 +58,7 @@ class FlxShapeLine extends FlxShape
 	{
 		if (point == null)
 		{
-			point = new FlxPoint(p.x, p.y);
+			point = FlxPoint.get(p.x, p.y);
 		}
 		else
 		{
@@ -74,7 +74,7 @@ class FlxShapeLine extends FlxShape
 	{
 		if (point2 == null)
 		{
-			point2 = new FlxPoint(p.x, p.y);
+			point2 = FlxPoint.get(p.x, p.y);
 		}
 		else
 		{

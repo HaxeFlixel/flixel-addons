@@ -130,11 +130,11 @@ class FlxBullet extends FlxSprite
 		
 		if (accelerates)
 		{
-			FlxVelocity.accelerateTowardsPoint(this, new FlxPoint(ToX, ToY), Speed + FlxRandom.intRanged( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed), Math.floor(maxVelocity.x), Math.floor(maxVelocity.y));
+			FlxVelocity.accelerateTowardsPoint(this, FlxPoint.get(ToX, ToY), Speed + FlxRandom.intRanged( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed), Math.floor(maxVelocity.x), Math.floor(maxVelocity.y));
 		}
 		else
 		{
-			FlxVelocity.moveTowardsPoint(this, new FlxPoint(ToX, ToY), Speed + FlxRandom.intRanged( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed));
+			FlxVelocity.moveTowardsPoint(this, FlxPoint.get(ToX, ToY), Speed + FlxRandom.intRanged( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed));
 		}
 		
 		postFire();

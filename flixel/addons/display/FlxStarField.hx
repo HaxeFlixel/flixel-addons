@@ -18,7 +18,7 @@ class FlxStarField2D extends FlxStarField
 	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, StarAmount:Int = 300)
 	{
 		super(X, Y, Width, Height, StarAmount);
-		starVelocityOffset = new FlxPoint( -1, 0);
+		starVelocityOffset = FlxPoint.get( -1, 0);
 		setStarDepthColors(5, 0xff585858, 0xffF4F4F4);
 		setStarSpeed(100, 400);
 	}
@@ -61,7 +61,7 @@ class FlxStarField3D extends FlxStarField
 	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, StarAmount:Int = 300)
 	{
 		super(X, Y, Width, Height, StarAmount);
-		center = new FlxPoint(width / 2, height / 2);
+		center = FlxPoint.get(width / 2, height / 2);
 		setStarDepthColors(300, 0xff292929, 0xffffffff);
 		setStarSpeed(0, 200);
 	}

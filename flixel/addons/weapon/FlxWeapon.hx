@@ -150,10 +150,10 @@ class FlxWeapon
 	 */
 	public function new(Name:String, ?ParentRef:FlxSprite, ?BulletType:Class<FlxBullet>, ?BulletID:Int = 0)
 	{
-		rndFactorPosition = new FlxPoint();
-		bounds = new FlxRect(0, 0, FlxG.width, FlxG.height);
-		_positionOffset = new FlxPoint();
-		_velocity = new FlxPoint();
+		rndFactorPosition = FlxPoint.get();
+		bounds = FlxRect.get(0, 0, FlxG.width, FlxG.height);
+		_positionOffset = FlxPoint.get();
+		_velocity = FlxPoint.get();
 		
 		name = Name;
 		

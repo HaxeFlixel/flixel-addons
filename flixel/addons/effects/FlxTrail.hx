@@ -106,7 +106,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 		_recentScales = new Array<FlxPoint>();
 		_recentFrames = new Array<Int>();
 		_recentFacings = new Array<Int>();
-		_spriteOrigin = new FlxPoint(Sprite.origin.x, Sprite.origin.y);
+		_spriteOrigin = FlxPoint.get(Sprite.origin.x, Sprite.origin.y);
 
 		// Sync the vars 
 		sprite = Sprite;
@@ -157,7 +157,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 			}
 			else
 			{
-				spritePosition = new FlxPoint();
+				spritePosition = FlxPoint.get();
 			}
 			
 			spritePosition.set(sprite.x - sprite.offset.x, sprite.y - sprite.offset.y);
@@ -185,7 +185,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 				}
 				else
 				{
-					spriteScale = new FlxPoint();
+					spriteScale = FlxPoint.get();
 				}
 				
 				spriteScale.set(sprite.scale.x, sprite.scale.y);
