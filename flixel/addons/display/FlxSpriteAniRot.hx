@@ -80,7 +80,7 @@ class FlxSpriteAniRot extends FlxSprite
 	 */
 	override private function calcFrame(RunOnCpp:Bool = false):Void
 	{
-		#if !(flash || js)
+		#if FLX_RENDER_TILE
 		if (!RunOnCpp)
 		{
 			return;
