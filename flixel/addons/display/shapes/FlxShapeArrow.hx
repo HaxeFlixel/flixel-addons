@@ -69,7 +69,7 @@ class FlxShapeArrow extends FlxShape
 		vertices.push(FlxPoint.get(0, arrowSize));		//close it up
 		
 		//get arrowhead rotation vector
-		var fv:FlxVector = new FlxVector(point.x - point2.x, point.y - point2.y);
+		var fv = FlxVector.get(point.x - point2.x, point.y - point2.y);
 		
 		_matrix2.identity();
 		_matrix2.translate( -arrowSize, 0);		//translate so origin is the tip of arrow

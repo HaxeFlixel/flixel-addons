@@ -35,7 +35,7 @@ class FlxShapeLightning extends FlxShapeLine
 		shape_id = "lightning";
 		lightningStyle = Style;
 		
-		var v:FlxVector = new FlxVector(A.x - B.x, A.y - B.y);
+		var v = FlxVector.get(A.x - B.x, A.y - B.y);
 		magnitude = v.length;
 		
 		if (lightningStyle.halo_colors == null && UseDefaults == true) {
