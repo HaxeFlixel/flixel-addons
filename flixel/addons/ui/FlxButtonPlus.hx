@@ -219,13 +219,13 @@ class FlxButtonPlus extends FlxSpriteGroup
 		{
 			if (_status == NORMAL)
 			{
-				buttonNormal.visible = true;
 				buttonHighlight.visible = false;
+				buttonNormal.visible = true;
 				
 				if (textNormal != null)
 				{
-					textNormal.visible = true;
 					textHighlight.visible = false;
+					textNormal.visible = true;
 				}
 				
 				if (leaveCallback != null)
@@ -379,28 +379,60 @@ class FlxButtonPlus extends FlxSpriteGroup
 	
 	private inline function set_buttonNormal(Value:FlxExtendedSprite):FlxExtendedSprite
 	{
-		FlxG.safeDestroy(buttonNormal);
+		if (buttonHighlight != buttonNormal)
+		{
+			FlxG.safeDestroy(buttonNormal);
+		}
 		replace(buttonNormal, Value);
+		if (_status != NORMAL)
+		{
+			Value.visible = false;
+			buttonHighlight.visible = true;
+		}
 		return buttonNormal = Value;
 	}
 	
 	private inline function set_buttonHighlight(Value:FlxExtendedSprite):FlxExtendedSprite
 	{
-		FlxG.safeDestroy(buttonHighlight);
+		if (buttonHighlight != buttonNormal)
+		{
+			FlxG.safeDestroy(buttonHighlight);
+		}
+		if (_status != HIGHLIGHT)
+		{
+			Value.visible = false;
+			buttonNormal.visible = true;
+		}
 		replace(buttonHighlight, Value);
 		return buttonHighlight = Value;
 	}
 	
 	private inline function set_textNormal(Value:FlxText):FlxText
 	{
-		FlxG.safeDestroy(textNormal);
+		if (textNormal != textHighlight)
+		{
+			FlxG.safeDestroy(textNormal);
+		}
+		if (_status != NORMAL)
+		{
+			Value.visible = false;
+			textHighlight.visible = true;
+		}
 		replace(textNormal, Value);
 		return textNormal = Value;
 	}
 	
 	private inline function set_textHighlight(Value:FlxText):FlxText
 	{
-		FlxG.safeDestroy(textHighlight);
+		if (textNormal != textHighlight)
+		{
+			FlxG.safeDestroy(textHighlight);
+		}
+		if (_status != HIGHLIGHT)
+		{
+			Value.visible = false;
+			textNormal.visible = true;
+		}
 		replace(textHighlight, Value);
 		return textHighlight = Value;
 	}
