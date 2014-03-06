@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
+import flixel.util.FlxColorUtil;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
@@ -186,7 +187,8 @@ class FlxSlider extends FlxSpriteGroup
 		
 		// Creating the "body" of the slider
 		body = new FlxSprite(offset.x, offset.y);
-		body.makeGraphic(_width, _height, 0);
+		var colorKey:String = "slider:W=" + _width + "H=" + _height + "C=" + FlxColorUtil.ARGBtoHexString(_color) + "T=" + _thickness;
+		body.makeGraphic(_width, _height, 0, false, colorKey);
 		body.scrollFactor.set();
 		FlxSpriteUtil.drawLine(body, 0, _height / 2, _width, _height / 2, { color:_color, thickness:_thickness }); 
 		
