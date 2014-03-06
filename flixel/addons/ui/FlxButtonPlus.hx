@@ -379,6 +379,10 @@ class FlxButtonPlus extends FlxSpriteGroup
 	
 	private inline function set_buttonNormal(Value:FlxExtendedSprite):FlxExtendedSprite
 	{
+		if (Value == null)
+		{
+			return buttonNormal = null;
+		}
 		if (buttonHighlight != buttonNormal)
 		{
 			FlxG.safeDestroy(buttonNormal);
@@ -394,6 +398,10 @@ class FlxButtonPlus extends FlxSpriteGroup
 	
 	private inline function set_buttonHighlight(Value:FlxExtendedSprite):FlxExtendedSprite
 	{
+		if (Value == null)
+		{
+			return buttonHighlight = null;
+		}
 		if (buttonHighlight != buttonNormal)
 		{
 			FlxG.safeDestroy(buttonHighlight);
@@ -409,6 +417,10 @@ class FlxButtonPlus extends FlxSpriteGroup
 	
 	private inline function set_textNormal(Value:FlxText):FlxText
 	{
+		if (Value == null)
+		{
+			return textNormal = null;
+		}
 		if (textNormal != textHighlight)
 		{
 			FlxG.safeDestroy(textNormal);
@@ -424,6 +436,10 @@ class FlxButtonPlus extends FlxSpriteGroup
 	
 	private inline function set_textHighlight(Value:FlxText):FlxText
 	{
+		if (Value == null)
+		{
+			return textHighlight = null;
+		}
 		if (textNormal != textHighlight)
 		{
 			FlxG.safeDestroy(textHighlight);
