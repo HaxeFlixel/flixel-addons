@@ -1,6 +1,7 @@
 package flixel.addons.display.shapes;
 
 import flash.geom.Matrix;
+import flixel.FlxG;
 import flixel.util.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxVector;
@@ -10,56 +11,66 @@ class FlxShapeArrow extends FlxShape
 	public var outlineStyle(default, set):LineStyle;
 	public var arrowSize(default, set):Float;
 	
-	public var point(default, set):FlxPoint;
-	public var point2(default, set):FlxPoint;
+	public var point(default, null):FlxPoint;
+	public var point2(default, null):FlxPoint;
+	
+	private var _matrix2:Matrix;
+	private var _vertices:Array<FlxPoint>;
 	
 	/**
-	 * Creates a line with an arrowhead on point B
+	 * Creates a line with an arrowhead on the end point
+	 * 
 	 * @param	X				X location of the sprite canvas
 	 * @param	Y				Y location of the sprite canvas
-	 * @param	a				starting point of the arrow
-	 * @param	b				ending point of the arrow (this is where the arrowhead is)
+	 * @param	Start			starting point of the arrow
+	 * @param	End				ending point of the arrow (this is where the arrowhead is)
 	 * @param	ArrowSize		how big the arrow is (height)
 	 * @param	LineStyle_		line style for the line and arrowhead
 	 * @param	OutlineStyle_	line style for the outer line (optional)
 	 */
-	public function new(X:Float, Y:Float, a:FlxPoint, b:FlxPoint, ArrowSize:Float, LineStyle_:LineStyle, ?OutlineStyle_:LineStyle) 
+	public function new(X:Float, Y:Float, Start:FlxPoint, End:FlxPoint, ArrowSize:Float, LineStyle_:LineStyle, ?OutlineStyle_:LineStyle) 
 	{
 		arrowSize = ArrowSize;
 		outlineStyle = OutlineStyle_;
 		
 		shape_id = "arrow";
 		
-		lineStyle = LineStyle_;
+		point = new FlxCallbackPoint(setPointCallback);
+		point2 = new FlxCallbackPoint(setPointCallback);
 		
-		point = a;
-		point2 = b;
+		point.copyFrom(Start);
+		point.copyFrom(End);
 		
-		var strokeBuffer:Float = (lineStyle.thickness);
+		Start.putWeak();
+		End.putWeak();
 		
-		var trueWidth:Float = Math.abs(a.x - b.x);	//actual geometric size
-		var trueHeight:Float = Math.abs(a.y - b.y);
+		var strokeBuffer:Float = (LineStyle_.thickness);
+		
+		var trueWidth:Float = Math.abs(point.x - point2.x);	//actual geometric size
+		var trueHeight:Float = Math.abs(point.y - point2.y);
 		
 		var w:Float = trueWidth + strokeBuffer;		//create buffer space for stroke
 		var h:Float = trueHeight + strokeBuffer;
 		
 		if (w <= 0)
-		{
 			w = strokeBuffer;
-		}
 		if (h <= 0) 
-		{
 			h = strokeBuffer;
-		}
 		
 		super(X, Y, w, h, lineStyle, null, trueWidth, trueHeight);
 	}
 	
-	public override function drawSpecificShape(matrix:Matrix=null):Void 
+	override public function destroy():Void
 	{
-		if (_matrix2 == null) {
+		super.destroy();
+		point = FlxG.safeDestroy(point);
+		point2 = FlxG.safeDestroy(point2);
+	}
+	
+	public override function drawSpecificShape(?matrix:Matrix):Void 
+	{
+		if (_matrix2 == null) 
 			_matrix2 = new Matrix();
-		}
 		
 		//generate the arrowhead
 		var vertices:Array<FlxPoint> = new Array<FlxPoint>();
@@ -82,7 +93,8 @@ class FlxShapeArrow extends FlxShape
 		
 		var buffer:Float = 0;
 		
-		if (outlineStyle != null) {
+		if (outlineStyle != null) 
+		{
 			//draw the outline
 			FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, outlineStyle, { matrix: matrix });
 			//draw the arrowhead outline
@@ -98,50 +110,22 @@ class FlxShapeArrow extends FlxShape
 		fixBoundaries(Math.abs(point.x - point2.x), Math.abs(point.y - point2.y));
 	}
 	
-	public function set_point(p:FlxPoint):FlxPoint 
+	private inline function setPointCallback(p:FlxPoint):Void 
 	{
-		if (point == null)
-		{
-			point = FlxPoint.get(p.x, p.y);
-		}
-		else
-		{
-			point.x = p.x;
-			point.y = p.y;
-		}
-		
 		shapeDirty = true;
-		return point;
-	}
-
-	public function set_point2(p:FlxPoint):FlxPoint 
-	{
-		if (point2 == null)
-		{
-			point2 = FlxPoint.get(p.x, p.y);
-		}
-		else
-		{
-			point2.x = p.x;
-			point2.y = p.y;
-		}
-		
-		shapeDirty = true;
-		return point2;
 	}
 	
-	public function set_arrowSize(f:Float):Float {
+	private inline function set_arrowSize(f:Float):Float 
+	{
 		arrowSize = f;
 		shapeDirty = true;
 		return arrowSize;
 	}
 	
-	public function set_outlineStyle(ls:LineStyle):LineStyle {
+	private inline function set_outlineStyle(ls:LineStyle):LineStyle 
+	{
 		outlineStyle = ls;
 		shapeDirty = true;
 		return outlineStyle;
 	}
-	
-	private var _matrix2:Matrix;
-	private var _vertices:Array<FlxPoint>;
 }

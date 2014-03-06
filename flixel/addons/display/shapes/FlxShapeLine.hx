@@ -1,38 +1,37 @@
 package flixel.addons.display.shapes;
 
-import flash.display.BitmapData;
-import flash.display.Shape;
 import flash.geom.Matrix;
-import flixel.FlxG;
-import flixel.FlxObject;
 import flixel.util.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
 
 class FlxShapeLine extends FlxShape 
 {
-	public var point(default, set):FlxPoint;
-	public var point2(default, set):FlxPoint;
+	public var point(default, null):FlxPoint;
+	public var point2(default, null):FlxPoint;
 
 	/**
-	 * Creates a FlxSprite with a line drawn on top of it. 
-	 * X/Y is where the SPRITE is, and points a&b are RELATIVE to this object's origin. 
+	 * Creates a FlxSprite with a line drawn on top of it. X/Y is where the SPRITE is, and points a&b are RELATIVE to this object's origin. 
 	 * Points with negative values will not draw correctly since they'll appear beyond the sprite's canvas.
+	 * 
 	 * @param	X x position of the canvas
 	 * @param	Y y position of the canvas
 	 * @param	a first point in the line (relative to the sprite's origin)
 	 * @param	b second point in the line (relative to the sprite's origin)
 	 * @param	LineStyle_
 	 */
-	
 	public function new(X:Float, Y:Float, a:FlxPoint, b:FlxPoint, LineStyle_:LineStyle) 
 	{
 		shape_id = "line";
 		
-		lineStyle = LineStyle_;
+		point = new FlxCallbackPoint(setPoint);
+		point2 = new FlxCallbackPoint(setPoint);
 		
-		point = a;
-		point2 = b;
+		point.copyFrom(a);
+		point2.copyFrom(b);
+		
+		a.putWeak();
+		b.putWeak();
 		
 		var strokeBuffer:Float = (lineStyle.thickness);
 		
@@ -43,51 +42,20 @@ class FlxShapeLine extends FlxShape
 		var h:Float = trueHeight + strokeBuffer;
 		
 		if (w <= 0)
-		{
 			w = strokeBuffer;
-		}
 		if (h <= 0) 
-		{
 			h = strokeBuffer;
-		}
 		
 		super(X, Y, w, h, lineStyle, null, trueWidth, trueHeight);
 	}
+
+	override public function drawSpecificShape(?matrix:Matrix):Void 
+	{
+		FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, lineStyle, { matrix: matrix });
+	}
 	
-	public function set_point(p:FlxPoint):FlxPoint 
+	private inline function setPoint(p:FlxPoint):Void 
 	{
-		if (point == null)
-		{
-			point = FlxPoint.get(p.x, p.y);
-		}
-		else
-		{
-			point.x = p.x;
-			point.y = p.y;
-		}
-		
 		shapeDirty = true;
-		return point;
-	}
-
-	public function set_point2(p:FlxPoint):FlxPoint 
-	{
-		if (point2 == null)
-		{
-			point2 = FlxPoint.get(p.x, p.y);
-		}
-		else
-		{
-			point2.x = p.x;
-			point2.y = p.y;
-		}
-		
-		shapeDirty = true;
-		return point2;
-	}
-
-	public override function drawSpecificShape(matrix:Matrix=null):Void 
-	{
-		FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, lineStyle,  { matrix: matrix });
 	}
 }
