@@ -6,6 +6,7 @@ import flash.display.BitmapData;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
+import flixel.addons.util.PNGEncoder;
 import flixel.FlxG;
 import flixel.plugin.FlxPlugin;
 

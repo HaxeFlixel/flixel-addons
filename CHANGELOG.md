@@ -1,5 +1,13 @@
-v1.0.2
+1.0.3
 ------------------------------
+* Compatibility with flixel 3.2.0
+* FlxOgmoLoader: add loadRectangles()
+* FlxNapeSprite: fix crash without a body
+* FlxNestedSprite: compatibility with facing
+
+1.0.2
+------------------------------
+* Compatibility with flixel 3.1.0
 * FlxButtonPlus:
   * fixed button graphic always being white
   * use Void->Void for the callback function for consistency with the FlxTypedButton changes ([more info](https://github.com/HaxeFlixel/flixel/issues/805?source=cc))
@@ -14,7 +22,7 @@ v1.0.2
   * exposed the transformation matrix via transformMatrix and matrixExposed
 * Moved FlxTrail, FlxTrailArea and FlxSlider into flixel-addons
 
-v1.0.1
+1.0.1
 ------------------------------
 * FlxWeapon: Now works with different bullet classes (that extend FlxBullet)
 * FlxBitmapFont.setFontGraphics() is now public
@@ -25,6 +33,6 @@ v1.0.1
 * FlxNapeState: ShapeDebug works correctly with FlxCamera again, is now also drawn below the flixel debugger, added a button to toggle nape debugging to the debugger
 * ui.FlxClickArea added
 
-v1.0.0
+1.0.0
 ------------------------------
 * Initial haxelib release

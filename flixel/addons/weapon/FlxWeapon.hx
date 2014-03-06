@@ -150,10 +150,10 @@ class FlxWeapon
 	 */
 	public function new(Name:String, ?ParentRef:FlxSprite, ?BulletType:Class<FlxBullet>, ?BulletID:Int = 0)
 	{
-		rndFactorPosition = new FlxPoint();
-		bounds = new FlxRect(0, 0, FlxG.width, FlxG.height);
-		_positionOffset = new FlxPoint();
-		_velocity = new FlxPoint();
+		rndFactorPosition = FlxPoint.get();
+		bounds = FlxRect.get(0, 0, FlxG.width, FlxG.height);
+		_positionOffset = FlxPoint.get();
+		_velocity = FlxPoint.get();
 		
 		name = Name;
 		
@@ -217,7 +217,7 @@ class FlxWeapon
 		{
 			var tempBullet:FlxBullet = Type.createInstance(bulletType, [this, bulletID]);
 			
-			#if flash
+			#if FLX_RENDER_BLIT
 			if (AutoRotate)
 			{
 				tempBullet.loadRotatedGraphic(Image, Rotations, Frame, AntiAliasing, AutoBuffer);
@@ -586,8 +586,10 @@ class FlxWeapon
 	 */
 	public function setBulletGravity(ForceX:Int, ForceY:Int):Void
 	{
-		group.setAll("xGravity", ForceX);
-		group.setAll("yGravity", ForceY);
+		group.forEach(function (b:FlxBullet) {
+			b.acceleration.x = ForceX;
+			b.acceleration.y = ForceY;
+		});
 	}
 	
 	/**
@@ -604,15 +606,19 @@ class FlxWeapon
 	{
 		if (AccelerationX == 0 && AccelerationY == 0)
 		{
-			group.setAll("accelerates", false);
+			group.forEach(function (b:FlxBullet) {
+				b.accelerates = false;
+			});
 		}
 		else
 		{
-			group.setAll("accelerates", true);
-			group.setAll("xAcceleration", AccelerationX);
-			group.setAll("yAcceleration", AccelerationY);
-			group.setAll("maxVelocityX", SpeedMaxX);
-			group.setAll("maxVelocityY", SpeedMaxY);
+			group.forEach(function (b:FlxBullet) {
+				b.accelerates = true;
+				b.xAcceleration = AccelerationX;
+				b.yAcceleration = AccelerationY;
+				b.maxVelocity.x = SpeedMaxX;
+				b.maxVelocity.y = SpeedMaxY;
+			});
 		}
 	}
 	
@@ -775,16 +781,5 @@ class FlxWeapon
   	private function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
 	{
 		Bullet.kill();
-	}
-	
-	// TODO
-	public function createBulletPattern(Pattern:Array<Dynamic>):Void
-	{
-		//	Launches this many bullets
-	}
-	
-	public function update():Void
-	{
-		// ???
 	}
 }

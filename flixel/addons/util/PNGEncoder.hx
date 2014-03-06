@@ -29,7 +29,7 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package flixel.addons.plugin.screengrab;
+package flixel.addons.util;
 
 #if !js
 import flash.display.Bitmap;
@@ -41,6 +41,9 @@ import flash.utils.ByteArray;
  */	
 class PNGEncoder
 {
+	private static var crcTable:Array<Int>;
+	private static var crcTableComputed:Bool;
+	
 	/**
 	 * Created a PNG image from the specified BitmapData
 	 *
@@ -95,10 +98,6 @@ class PNGEncoder
 		// return PNG
 		return png;
 	}
-	
-	private static var crcTable:Array<Int>;
-	
-	private static var crcTableComputed:Bool;
 	
 	private static function writeChunk(png:ByteArray, type:Int, data:ByteArray):Void 
 	{

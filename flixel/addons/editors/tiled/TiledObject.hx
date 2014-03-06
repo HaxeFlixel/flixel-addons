@@ -134,7 +134,7 @@ class TiledObject
 		var pair:Array<String>;
 		for (p in pointsStr) {
 			pair = p.split(",");
-			points.push(new FlxPoint(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
+			points.push(FlxPoint.get(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
 		}
 	}
 	

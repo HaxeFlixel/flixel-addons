@@ -4,6 +4,7 @@ import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.display.Shape;
 import flash.geom.Matrix;
+import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
 
@@ -15,20 +16,10 @@ class FlxShapeDonut extends FlxShape
 	/**
 	 * Creates a FlxSprite with a donut drawn on top of it. 
 	 * X/Y is where the SPRITE is, the donut's upper-left
-	 * @param	X x position of the canvas
-	 * @param	Y y position of the canvas
-	 * @param	RadiusIn 
-	 * @param	RadiusOut 
-	 * @param	LineStyle_
-	 * @param	FillStyle_
 	 */
-	
 	public function new(X:Float, Y:Float, RadiusOut:Float, RadiusIn:Float, LineStyle_:LineStyle, FillStyle_:FillStyle) 
 	{
 		shape_id = "donut";
-		
-		lineStyle = LineStyle_;
-		fillStyle = FillStyle_;
 		
 		var strokeBuffer:Float = (lineStyle.thickness);
 		
@@ -42,39 +33,36 @@ class FlxShapeDonut extends FlxShape
 		var h:Float = trueHeight + strokeBuffer;
 		
 		if (w <= 0)
-		{
 			w = strokeBuffer;
-		}
 		if (h <= 0) 
-		{
 			h = strokeBuffer;
-		}
 		
 		super(X, Y, w, h, lineStyle, fillStyle, trueWidth, trueHeight);
 	}
 	
-	public function set_radius_out(r:Float):Float
+	override public function drawSpecificShape(?matrix:Matrix):Void 
+	{
+		var cx:Float = Math.ceil(width / 2);
+		var cy:Float = Math.ceil(height / 2);
+		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillStyle.color, lineStyle, { matrix: matrix } );
+		
+		if (radius_in > 0) 
+			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.RED, null, { matrix: matrix, blendMode: BlendMode.ERASE, smoothing: true });
+		
+		FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.TRANSPARENT, lineStyle, { matrix: matrix });
+	}
+	
+	private inline function set_radius_out(r:Float):Float
 	{
 		radius_out = r;
 		shapeDirty = true;
 		return radius_out;
 	}
 
-	public function set_radius_in(r:Float):Float
+	private inline function set_radius_in(r:Float):Float
 	{
 		radius_in = r;
 		shapeDirty = true;
 		return radius_in;
-	}
-
-	public override function drawSpecificShape(matrix:Matrix=null):Void 
-	{
-		var cx:Float = Math.ceil(width / 2);
-		var cy:Float = Math.ceil(height / 2);
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillStyle.color, lineStyle, { matrix: matrix });
-		if (radius_in > 0) {
-			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, 0xffff0000, null, { matrix: matrix, blendMode: BlendMode.ERASE, smoothing: true });
-		}
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, 0x00000000, lineStyle, { matrix: matrix });
 	}
 }

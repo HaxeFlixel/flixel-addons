@@ -1,22 +1,19 @@
 package flixel.addons.display;
 
-import flixel.system.layer.Region;
-import flixel.util.loaders.TextureRegion;
-import openfl.Assets;
-import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flixel.FlxCamera;
 import flixel.FlxG;
-import flixel.FlxObject;
+import flixel.FlxSprite;
 import flixel.system.layer.DrawStackItem;
+import flixel.system.layer.Region;
+import flixel.util.loaders.TextureRegion;
 
 /**
  * Used for showing infinitely scrolling backgrounds.
  * @author Chevy Ray
  */
-class FlxBackdrop extends FlxObject
+class FlxBackdrop extends FlxSprite
 {
 	private var _ppoint:Point;
 	private var _scrollW:Int;
@@ -24,7 +21,7 @@ class FlxBackdrop extends FlxObject
 	private var _repeatX:Bool;
 	private var _repeatY:Bool;
 	
-	#if !flash
+	#if FLX_RENDER_TILE
 	private var _tileID:Int;
 	private var _tileInfo:Array<Float>;
 	private var _numTiles:Int = 0;
@@ -70,7 +67,7 @@ class FlxBackdrop extends FlxObject
 			h += FlxG.height;
 		}
 		
-		#if flash
+		#if FLX_RENDER_BLIT
 		_data = new BitmapData(w, h);
 		#end
 		_ppoint = new Point();
@@ -80,18 +77,18 @@ class FlxBackdrop extends FlxObject
 		_repeatX = RepeatX;
 		_repeatY = RepeatY;
 		
-		#if !flash
+		#if FLX_RENDER_TILE
 		_tileInfo = [];
 		_numTiles = 0;
 		#else
 		var regionRect:Rectangle = new Rectangle(region.startX, region.startY, region.width, region.height);
 		#end
 		
-		while (_ppoint.y < h + region.height)
+		while (_ppoint.y < h)
 		{
-			while (_ppoint.x < w + region.width)
+			while (_ppoint.x < w)
 			{
-				#if flash
+				#if FLX_RENDER_BLIT
 				_data.copyPixels(cachedGraphics.bitmap, regionRect, _ppoint);
 				#else
 				_tileInfo.push(_ppoint.x);
@@ -112,7 +109,7 @@ class FlxBackdrop extends FlxObject
 	
 	override public function destroy():Void 
 	{
-		#if flash
+		#if FLX_RENDER_BLIT
 		if (_data != null)
 		{
 			_data.dispose();
@@ -128,17 +125,8 @@ class FlxBackdrop extends FlxObject
 
 	override public function draw():Void
 	{
-		if (cameras == null)
+		for (camera in cameras)
 		{
-			cameras = FlxG.cameras.list;
-		}
-		var camera:FlxCamera;
-		var l:Int = cameras.length;
-		
-		for (i in 0...(l))
-		{
-			camera = cameras[i];
-			
 			if (!camera.visible || !camera.exists)
 			{
 				continue;
@@ -154,7 +142,7 @@ class FlxBackdrop extends FlxObject
 			{
 				_ppoint.x = (x - camera.scroll.x * scrollFactor.x);
 			}
-
+			
 			// Find y position
 			if (_repeatY)
 			{
@@ -167,9 +155,9 @@ class FlxBackdrop extends FlxObject
 			}
 			
 			// Draw to the screen
-			#if flash
+		#if FLX_RENDER_BLIT
 			camera.buffer.copyPixels(_data, _data.rect, _ppoint, null, null, true);
-			#else
+		#else
 			if (cachedGraphics == null)
 			{
 				return;
@@ -177,11 +165,7 @@ class FlxBackdrop extends FlxObject
 			
 			var currDrawData:Array<Float>;
 			var currIndex:Int;
-			#if !js
 			var drawItem:DrawStackItem = camera.getDrawStackItem(cachedGraphics, false, 0);
-			#else
-			var drawItem:DrawStackItem = camera.getDrawStackItem(cachedGraphics, false);
-			#end
 			
 			currDrawData = drawItem.drawData;
 			currIndex = drawItem.position;
@@ -195,13 +179,8 @@ class FlxBackdrop extends FlxObject
 				currPosInArr = j * 2;
 				currTileX = _tileInfo[currPosInArr];
 				currTileY = _tileInfo[currPosInArr + 1];
-				#if !js
 				currDrawData[currIndex++] = (_ppoint.x) + currTileX;
 				currDrawData[currIndex++] = (_ppoint.y) + currTileY;
-				#else
-				currDrawData[currIndex++] = Math.floor(_ppoint.x) + currTileX;
-				currDrawData[currIndex++] = Math.floor(_ppoint.y) + currTileY;
-				#end
 				currDrawData[currIndex++] = _tileID;
 				
 				currDrawData[currIndex++] = 1;
@@ -209,20 +188,18 @@ class FlxBackdrop extends FlxObject
 				currDrawData[currIndex++] = 0;
 				currDrawData[currIndex++] = 1;
 				
-				#if !js
 				// Alpha
 				currDrawData[currIndex++] = 1.0;	
-				#end
 			}
 			
 			drawItem.position = currIndex;
-			#end
+		#end
 		}
 	}
 	
-	public function updateFrameData():Void
+	override public function updateFrameData():Void
 	{
-		#if !flash
+		#if FLX_RENDER_TILE
 		if (cachedGraphics != null)
 		{
 			_tileID = cachedGraphics.tilesheet.addTileRect(new Rectangle(region.startX, region.startY, _scrollW, _scrollH), new Point());

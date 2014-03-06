@@ -183,7 +183,7 @@ class FlxSlider extends FlxSpriteGroup
 	private function createSlider():Void
 	{
 		offset.set(7, 18); 
-		_bounds = new FlxRect(x + offset.x, y +offset.y, _width, _height);
+		_bounds = FlxRect.get(x + offset.x, y +offset.y, _width, _height);
 		
 		// Creating the "body" of the slider
 		body = new FlxSprite(offset.x, offset.y);

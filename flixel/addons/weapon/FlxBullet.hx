@@ -130,11 +130,11 @@ class FlxBullet extends FlxSprite
 		
 		if (accelerates)
 		{
-			FlxVelocity.accelerateTowardsPoint(this, new FlxPoint(ToX, ToY), Speed + FlxRandom.intRanged( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed), Math.floor(maxVelocity.x), Math.floor(maxVelocity.y));
+			FlxVelocity.accelerateTowardsPoint(this, FlxPoint.get(ToX, ToY), Speed + FlxRandom.intRanged( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed), Math.floor(maxVelocity.x), Math.floor(maxVelocity.y));
 		}
 		else
 		{
-			FlxVelocity.moveTowardsPoint(this, new FlxPoint(ToX, ToY), Speed + FlxRandom.intRanged( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed));
+			FlxVelocity.moveTowardsPoint(this, FlxPoint.get(ToX, ToY), Speed + FlxRandom.intRanged( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed));
 		}
 		
 		postFire();
@@ -198,7 +198,7 @@ class FlxBullet extends FlxSprite
 		
 		if (_weapon.bulletLifeSpan > 0)
 		{
-			lifespan = _weapon.bulletLifeSpan + FlxRandom.floatRanged(-_weapon.rndFactorLifeSpan, _weapon.rndFactorLifeSpan);
+			lifespan = _weapon.bulletLifeSpan + FlxRandom.floatRanged( -_weapon.rndFactorLifeSpan, _weapon.rndFactorLifeSpan);
 		}
 		
 		if (_weapon.onFireCallback != null)
@@ -214,34 +214,6 @@ class FlxBullet extends FlxSprite
 		#end
 	}
 	
-	public var xGravity(never, set):Float;
-	
-	private function set_xGravity(NewXGravity:Float):Float
-	{
-		return acceleration.x = NewXGravity;
-	}
-	
-	public var yGravity(never, set):Float;
-	
-	private function set_yGravity(NewYGravity:Float):Float
-	{
-		return acceleration.y = NewYGravity;
-	}
-	
-	public var maxVelocityX(never, set):Float;
-	
-	private function set_maxVelocityX(MaxXVelocity:Float):Float
-	{
-		return maxVelocity.x = MaxXVelocity;
-	}
-	
-	public var maxVelocityY(never, set):Float;
-	
-	private function set_maxVelocityY(MaxYVelocity:Float):Float
-	{
-		return maxVelocity.y = MaxYVelocity;
-	}
-	
 	override public function update():Void
 	{
 		if (lifespan > 0)
@@ -254,7 +226,7 @@ class FlxBullet extends FlxSprite
 			}
 		}
 		
-		if (FlxMath.pointInFlxRect(Math.floor(x), Math.floor(y), _weapon.bounds) == false)
+		if (!FlxMath.pointInFlxRect(Math.floor(x), Math.floor(y), _weapon.bounds))
 		{
 			kill();
 		}

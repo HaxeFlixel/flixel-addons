@@ -123,9 +123,9 @@ class FlxCaveGenerator
 		var rows:Int = Matrix.length;
 		var columns:Int = Matrix[0].length; 
 		
-		for (y in (-Distance)...(Distance + 1))
+		for (y in ( -Distance)...(Distance + 1))
 		{
-			for (x in (-Distance)...(Distance + 1))
+			for (x in ( -Distance)...(Distance + 1))
 			{
 				// Boundary
 				if ((PosX + x < 0) || (PosX + x > columns - 1) || (PosY + y < 0) || (PosY + y > rows - 1))

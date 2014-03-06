@@ -163,7 +163,7 @@ class FlxTypeText extends FlxText
 	 * @param	Size			The size of the text.
 	 * @param	EmbeddedFont	Whether this text field uses embedded fonts or not.
 	 */
-	public function new( X:Float, Y:Float, Width:Int, Text:String, Size:Int = 8, EmbeddedFont:Bool = true )
+	public function new(X:Float, Y:Float, Width:Int, Text:String, Size:Int = 8, EmbeddedFont:Bool = true)
 	{
 		super(X, Y, Width, "", Size, EmbeddedFont);
 		_finalText = Text;
@@ -181,11 +181,11 @@ class FlxTypeText extends FlxText
 	 * @param	Callback	The callback function.
 	 * @param	Params		Any params you want to pass to the function. Optional!
 	 */
-	public function setCompleteCallback( Callback:Dynamic, ?Params:Array<Dynamic> ):Void
+	public function setCompleteCallback(Callback:Dynamic, ?Params:Array<Dynamic>):Void
 	{
 		_onComplete = Callback;
 		
-		if ( Params == null )
+		if (Params == null)
 		{
 			Params = [];
 		}
@@ -200,11 +200,11 @@ class FlxTypeText extends FlxText
 	 * @param	Callback		The callback function.
 	 * @param	Params			Any params you want to pass to the function. Optional!
 	 */
-	public function setEraseCallback( Callback:Dynamic, ?Params:Array<Dynamic> ):Void
+	public function setEraseCallback(Callback:Dynamic, ?Params:Array<Dynamic>):Void
 	{
 		_onErase = Callback;
 		
-		if ( Params == null )
+		if (Params == null)
 		{
 			Params = [];
 		}
@@ -223,9 +223,9 @@ class FlxTypeText extends FlxText
 	 * @param	Callback		An optional callback function, to be called when the typing animation is complete.
 	 * @param 	Params			Optional parameters to pass to the callback function.
 	 */
-	public function start( ?Delay:Float, ForceRestart:Bool = false, AutoErase:Bool = false, ?Sound:FlxSound, ?SkipKeys:Array<String>, ?Callback:Dynamic, ?Params:Array<Dynamic> ):Void
+	public function start(?Delay:Float, ForceRestart:Bool = false, AutoErase:Bool = false, ?Sound:FlxSound, ?SkipKeys:Array<String>, ?Callback:Dynamic, ?Params:Array<Dynamic>):Void
 	{
-		if ( Delay != null )
+		if (Delay != null)
 		{
 			delay = Delay;
 		}
@@ -235,7 +235,7 @@ class FlxTypeText extends FlxText
 		paused = false;
 		_waiting = false;
 		
-		if ( ForceRestart )
+		if (ForceRestart)
 		{
 			text = "";
 			_length = 0;
@@ -244,27 +244,27 @@ class FlxTypeText extends FlxText
 		autoErase = AutoErase;
 		
 		#if !FLX_NO_SOUND_SYSTEM
-		if ( Sound != null )
+		if (Sound != null)
 		{
 			sound = Sound;
 		}
-		else if ( useDefaultSound )
+		else if (useDefaultSound)
 		{
-			sound = FlxG.sound.load( new TypeSound() );
+			sound = FlxG.sound.load(new TypeSound());
 		}
 		#end
 		
-		if ( SkipKeys != null )
+		if (SkipKeys != null)
 		{
 			skipKeys = SkipKeys;
 		}
 		
-		if ( Callback != null )
+		if (Callback != null)
 		{
 			_onComplete = Callback;
 		}
 		
-		if ( Params != null )
+		if (Params != null)
 		{
 			_onCompleteParams = Params;
 		}
@@ -280,46 +280,46 @@ class FlxTypeText extends FlxText
 	 * @param	Callback		An optional callback function, to be called when the erasing animation is complete.
 	 * @param	Params			Optional parameters to pass to the callback function.
 	 */
-	public function erase( ?Delay:Float, ForceRestart:Bool = false, ?Sound:FlxSound, ?SkipKeys:Array<String>, ?Callback:Dynamic, ?Params:Array<Dynamic> ):Void
+	public function erase(?Delay:Float, ForceRestart:Bool = false, ?Sound:FlxSound, ?SkipKeys:Array<String>, ?Callback:Dynamic, ?Params:Array<Dynamic>):Void
 	{
 		_erasing = true;
 		_typing = false;
 		paused = false;
 		_waiting = false;
 		
-		if ( Delay != null )
+		if (Delay != null)
 		{
 			eraseDelay = Delay;
 		}
 		
-		if ( ForceRestart )
+		if (ForceRestart)
 		{
 			_length = _finalText.length;
 			text = _finalText;
 		}
 		
 		#if !FLX_NO_SOUND_SYSTEM
-		if ( Sound != null )
+		if (Sound != null)
 		{
 			sound = Sound;
 		}
-		else if ( useDefaultSound )
+		else if (useDefaultSound)
 		{
-			sound = FlxG.sound.load( new TypeSound() );
+			sound = FlxG.sound.load(new TypeSound());
 		}
 		#end
 		
-		if ( SkipKeys != null )
+		if (SkipKeys != null)
 		{
 			skipKeys = SkipKeys;
 		}
 		
-		if ( Callback != null )
+		if (Callback != null)
 		{
 			_onErase = Callback;
 		}
 		
-		if ( Params != null )
+		if (Params != null)
 		{
 			_onEraseParams = Params;
 		}
@@ -330,7 +330,7 @@ class FlxTypeText extends FlxText
 	 * 
 	 * @param	Text	The text that will ultimately be displayed.
 	 */
-	public function resetText( Text:String ):Void
+	public function resetText(Text:String):Void
 	{
 		text = "";
 		_finalText = Text;
@@ -345,7 +345,7 @@ class FlxTypeText extends FlxText
 	 * 
 	 * @param	Keys	An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
 	 */
-	public function setSkipKeys( Keys:Array<String> ):Void
+	public function setSkipKeys(Keys:Array<String>):Void
 	{
 		skipKeys = Keys;
 	}
@@ -355,7 +355,7 @@ class FlxTypeText extends FlxText
 	 * 
 	 * @param	Sound	A FlxSound object.
 	 */
-	public function setSound( Sound:FlxSound ):Void
+	public function setSound(Sound:FlxSound):Void
 	{
 		sound = Sound;
 	}
@@ -368,11 +368,11 @@ class FlxTypeText extends FlxText
 	 * @param	Amount		How much variation to add, as a percentage of delay (0.5 = 50% is the maximum amount that will be added or subtracted from the delay variable). Only valid if >0 and <1.
 	 * @param	On			Whether or not to add the random variation. True by default.
 	 */
-	public function setTypingVariation( Amount:Float = 0.5, On:Bool = true ):Void
+	public function setTypingVariation(Amount:Float = 0.5, On:Bool = true):Void
 	{
 		_typingVariation = On;
 		
-		if ( Amount > 0 && Amount < 1 )
+		if (Amount > 0 && Amount < 1)
 		{
 			_typeVarPercent = Amount;
 		}
@@ -390,16 +390,16 @@ class FlxTypeText extends FlxText
 		_timer = 0;
 		_typing = false;
 		
-		if ( _onComplete != null )
+		if (_onComplete != null)
 		{
-			Reflect.callMethod( null, _onComplete, _onCompleteParams );
+			Reflect.callMethod(null, _onComplete, _onCompleteParams);
 		}
 		
-		if ( autoErase && waitTime <= 0 )
+		if (autoErase && waitTime <= 0)
 		{
 			_erasing = true;
 		}
-		else if ( autoErase )
+		else if (autoErase)
 		{
 			_waitTimer = waitTime;
 			_waiting = true;
@@ -411,9 +411,9 @@ class FlxTypeText extends FlxText
 		_timer = 0;
 		_erasing = false;
 		
-		if ( _onErase != null )
+		if (_onErase != null)
 		{
-			Reflect.callMethod( null, _onErase, _onEraseParams );
+			Reflect.callMethod(null, _onErase, _onEraseParams);
 		}
 	}
 	
@@ -422,25 +422,25 @@ class FlxTypeText extends FlxText
 		// If the skip key was pressed, complete the animation.
 		
 		#if !FLX_NO_KEYBOARD
-		if ( skipKeys != null && skipKeys.length > 0 && FlxG.keys.anyJustPressed( skipKeys ) )
+		if (skipKeys != null && skipKeys.length > 0 && FlxG.keys.anyJustPressed(skipKeys))
 		{
-			if ( _erasing || _waiting )
+			if (_erasing || _waiting)
 			{
 				_length = 0;
 				_waiting = false;
 			}
-			else if ( _typing )
+			else if (_typing)
 			{
 				_length = _finalText.length;
 			}
 		}
 		#end
 		
-		if ( _waiting && !paused )
+		if (_waiting && !paused)
 		{
 			_waitTimer -= FlxG.elapsed;
 			
-			if ( _waitTimer <= 0 )
+			if (_waitTimer <= 0)
 			{
 				_waiting = false;
 				_erasing = true;
@@ -449,14 +449,14 @@ class FlxTypeText extends FlxText
 		
 		// So long as we should be animating, increment the timer by time elapsed.
 		
-		if ( !_waiting && !paused )
+		if (!_waiting && !paused)
 		{
-			if ( _length < _finalText.length && _typing )
+			if (_length < _finalText.length && _typing)
 			{
 				_timer += FlxG.elapsed;
 			}
 			
-			if ( _length > 0 && _erasing )
+			if (_length > 0 && _erasing)
 			{
 				_timer += FlxG.elapsed;
 			}
@@ -464,29 +464,29 @@ class FlxTypeText extends FlxText
 		
 		// If the timer value is higher than the rate at which we should be changing letters, increase or decrease desired string length.
 		
-		if ( _typing || _erasing )
+		if (_typing || _erasing)
 		{
-			if ( _typing && _timer >= delay )
+			if (_typing && _timer >= delay)
 			{
 				_length ++;
 			}
 			
-			if ( _erasing && _timer >= eraseDelay )
+			if (_erasing && _timer >= eraseDelay)
 			{
 				_length --;
 			}
 			
-			if ( ( _typing && _timer >= delay ) || ( _erasing && _timer >= eraseDelay ) )
+			if ((_typing && _timer >= delay) || (_erasing && _timer >= eraseDelay))
 			{
-				if ( _typingVariation  )
+				if (_typingVariation )
 				{
-					if ( _typing )
+					if (_typing)
 					{
-						_timer = FlxRandom.floatRanged( -delay * _typeVarPercent / 2, delay * _typeVarPercent / 2 );
+						_timer = FlxRandom.floatRanged( -delay * _typeVarPercent / 2, delay * _typeVarPercent / 2);
 					}
 					else
 					{
-						_timer = FlxRandom.floatRanged( -eraseDelay * _typeVarPercent / 2, eraseDelay * _typeVarPercent / 2 );
+						_timer = FlxRandom.floatRanged( -eraseDelay * _typeVarPercent / 2, eraseDelay * _typeVarPercent / 2);
 					}
 				}
 				else
@@ -495,9 +495,9 @@ class FlxTypeText extends FlxText
 				}
 				
 				#if !FLX_NO_SOUND_SYSTEM
-				if ( sound != null )
+				if (sound != null)
 				{
-					sound.play( true );
+					sound.play(true);
 				}
 				#end
 			}
@@ -505,20 +505,20 @@ class FlxTypeText extends FlxText
 		
 		// Update the helper string with what could potentially be the new text.
 		
-		helperString = prefix + _finalText.substr( 0, _length );
+		helperString = prefix + _finalText.substr(0, _length);
 		
 		// Append the cursor if needed.
 		
-		if ( showCursor )
+		if (showCursor)
 		{
 			_cursorTimer += FlxG.elapsed;
 			
-			if ( _cursorTimer > cursorBlinkSpeed / 2 )
+			if (_cursorTimer > cursorBlinkSpeed / 2)
 			{
-				helperString += cursorCharacter.charAt( 0 );
+				helperString += cursorCharacter.charAt(0);
 			}
 			
-			if ( _cursorTimer > cursorBlinkSpeed )
+			if (_cursorTimer > cursorBlinkSpeed)
 			{
 				_cursorTimer = 0;
 			}
@@ -526,20 +526,20 @@ class FlxTypeText extends FlxText
 		
 		// If the text changed, update it.
 		
-		if ( helperString != text )
+		if (helperString != text)
 		{
 			text = helperString;
 			
 			// If we're done typing, call the onComplete() function
 			
-			if ( _length >= _finalText.length && _typing && !_waiting && !_erasing )
+			if (_length >= _finalText.length && _typing && !_waiting && !_erasing)
 			{
 				onComplete();
 			}
 			
 			// If we're done erasing, call the onErased() function
 			
-			if ( _length == 0 && _erasing && !_typing && !_waiting )
+			if (_length == 0 && _erasing && !_typing && !_waiting)
 			{
 				onErased();
 			}

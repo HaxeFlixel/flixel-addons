@@ -60,7 +60,7 @@ class FlxRayCastTilemap extends FlxTilemap
   
 		if (Result == null)
 		{
-			Result = new FlxPoint();
+			Result = FlxPoint.get();
 		}
 		
 		if (Direction == null || (Direction.x == 0 && Direction.y == 0))

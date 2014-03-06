@@ -22,32 +22,26 @@ class FlxExtendedSprite extends FlxSprite
 	public var priorityID:Int;
 	/**
 	 * If the mouse currently pressed down on this sprite?
-	 * @default false
 	 */
 	public var isPressed:Bool = false;
 	/**
 	 * Is this sprite allowed to be clicked?
-	 * @default false
 	 */
 	public var clickable:Bool = false;
 	/**
 	 * Is this sprite allowed to be thrown?
-	 * @default false
 	 */
 	public var throwable:Bool = false;
 	/**
 	 * An FlxRect region of the game world within which the sprite is restricted during mouse drag
-	 * @default null
 	 */
 	public var boundsRect:FlxRect;
 	/**
 	 * An FlxSprite the bounds of which this sprite is restricted during mouse drag
-	 * @default null
 	 */
 	public var boundsSprite:FlxSprite;
 	/**
 	 * Does this sprite have gravity applied to it?
-	 * @default false
 	 */
 	public var hasGravity:Bool = false;
 	/**
@@ -60,12 +54,10 @@ class FlxExtendedSprite extends FlxSprite
 	public var gravityY:Int;
 	/**
 	 * Determines how quickly the Sprite come to rest on the walls if the sprite has x gravity enabled
-	 * @default 500
 	 */
 	public var frictionX:Float;
 	/**
 	 * Determines how quickly the Sprite come to rest on the ground if the sprite has y gravity enabled
-	 * @default 500
 	 */
 	public var frictionY:Float;
 	/**
@@ -78,17 +70,14 @@ class FlxExtendedSprite extends FlxSprite
 	public var toleranceY:Float;
 	/**
 	 * Is this sprite being dragged by the mouse or not?
-	 * @default false
 	 */
 	public var isDragged:Bool = false;
 	/**
 	 * Is this sprite allowed to be dragged by the mouse? true = yes, false = no
-	 * @default false
 	 */
 	public var draggable:Bool= false;
 	/**
 	 * Will the Mouse Spring be active always (false) or only when pressed (true)
-	 * @default true
 	 */
 	public var springOnPressed:Bool = true;
 	/**
@@ -103,33 +92,66 @@ class FlxExtendedSprite extends FlxSprite
 	#if !FLX_NO_MOUSE
 	/**
 	 * Function called when the mouse is pressed down on this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
-	 * @default null
 	 */
-	public var mousePressedCallback:FlxExtendedSprite->Int->Int->Void;
+	public var mousePressedCallback:MouseCallback;
 	/**
 	 * Function called when the mouse is released from this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
-	 * @default null
 	 */
-	public var mouseReleasedCallback:FlxExtendedSprite->Int->Int->Void;
+	public var mouseReleasedCallback:MouseCallback;
 	/**
 	 * The MouseSpring object which is used to tie this sprite to the mouse
 	 */
 	public var mouseSpring:FlxMouseSpring;
 	/**
 	 * Function called when the mouse starts to drag this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
-	 * @default null
 	 */
-	public var mouseStartDragCallback:Dynamic;
+	public var mouseStartDragCallback:MouseCallback;
 	/**
 	 * Function called when the mouse stops dragging this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
-	 * @default null
 	 */
-	public var mouseStopDragCallback:Dynamic;
+	public var mouseStopDragCallback:MouseCallback;
 	/**
 	 * Is this sprite using a mouse spring?
-	 * @default false
 	 */
 	public var hasMouseSpring:Bool = false;
+	#end
+	
+	/**
+	 * The number of clicks this item has received. Usually you'd only set it to zero.
+	 */
+	public var clicks(get, set):Int;
+	/**
+	 * The spring x coordinate in game world space. Consists of sprite.x + springOffsetX
+	 */
+	public var springX(get, never):Int;
+	/**
+	 * The spring y coordinate in game world space. Consists of sprite.y + springOffsetY
+	 */
+	public var springY(get, never):Int;
+	/**
+	 * A FlxPoint consisting of this sprites world x/y coordinates
+	 */
+	public var point(get, set):FlxPoint;
+	/**
+	 * Returns a FlxRect consisting of the bounds of this Sprite.
+	 */
+	public var rect(get, never):FlxRect;
+	
+	#if !FLX_NO_MOUSE
+	/**
+	 * Return true if the mouse is over this Sprite, otherwise false. Only takes the Sprites bounding box into consideration and does not check if there 
+	 * are other sprites potentially on-top of this one. Check the value of this.isPressed if you need to know if the mouse is currently clicked on this sprite.
+	 */
+	public var mouseOver(get, never):Bool;
+	/**
+	 * Returns how many horizontal pixels the mouse pointer is inside this sprite from the top left corner. Returns -1 if outside.
+	 */
+	public var mouseX(get, never):Int;
+	
+	/**
+	 * Returns how many vertical pixels the mouse pointer is inside this sprite from the top left corner. Returns -1 if outside.
+	 */
+	public var mouseY(get, never):Int;
 	#end
 	
 	private var _snapOnDrag:Bool = false;
@@ -164,7 +186,7 @@ class FlxExtendedSprite extends FlxSprite
 	 */
 	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic)
 	{
-		_rect = new FlxRect();
+		_rect = FlxRect.get();
 		
 		super(X, Y, SimpleGraphic);
 	}
@@ -196,26 +218,11 @@ class FlxExtendedSprite extends FlxSprite
 	/**
 	 * Stops this sprite from checking for mouse clicks and clears any set callbacks
 	 */
-	public function disableMouseClicks():Void
+	public inline function disableMouseClicks():Void
 	{
 		clickable = false;
 		mousePressedCallback = null;
 		mouseReleasedCallback = null;
-	}
-	
-	/**
-	 * The number of clicks this item has received. Usually you'd only set it to zero.
-	 */
-	public var clicks(get, set):Int;
-	
-	private function get_clicks():Int
-	{
-		return _clickCounter;
-	}
-	
-	private function set_clicks(NewValue:Int):Int
-	{
-		return _clickCounter = NewValue;
 	}
 	
 	/**
@@ -387,26 +394,6 @@ class FlxExtendedSprite extends FlxSprite
 	{
 		_allowHorizontalDrag = AllowHorizontalDrag;
 		_allowVerticalDrag = AllowVerticalDrag;
-	}
-	
-	/**
-	 * The spring x coordinate in game world space. Consists of sprite.x + springOffsetX
-	 */
-	public var springX(get, never):Int;
-	
-	private function get_springX():Int
-	{
-		return Math.floor(x + springOffsetX);
-	}
-	
-	/**
-	 * The spring y coordinate in game world space. Consists of sprite.y + springOffsetY
-	 */
-	public var springY(get, never):Int;
-	
-	private function get_springY():Int
-	{
-		return Math.floor(y + springOffsetY);
 	}
 	
 	/**
@@ -806,43 +793,49 @@ class FlxExtendedSprite extends FlxSprite
 		}
 	}
 	
-	/**
-	 * A FlxPoint consisting of this sprites world x/y coordinates
-	 */
-	public var point(get, set):FlxPoint;
+	private inline function get_clicks():Int
+	{
+		return _clickCounter;
+	}
 	
-	private function get_point():FlxPoint
+	private inline function set_clicks(NewValue:Int):Int
+	{
+		return _clickCounter = NewValue;
+	}
+	
+	private inline function get_springX():Int
+	{
+		return Math.floor(x + springOffsetX);
+	}
+	
+	private inline function get_springY():Int
+	{
+		return Math.floor(y + springOffsetY);
+	}
+	
+	private inline function get_point():FlxPoint
 	{
 		return _point;
 	}
 	
-	private function set_point(NewPoint:FlxPoint):FlxPoint
+	private inline function set_point(NewPoint:FlxPoint):FlxPoint
 	{
 		return _point = NewPoint;
 	}
 	
 	#if !FLX_NO_MOUSE
-	/**
-	 * Return true if the mouse is over this Sprite, otherwise false. Only takes the Sprites bounding box into consideration and does not check if there 
-	 * are other sprites potentially on-top of this one. Check the value of this.isPressed if you need to know if the mouse is currently clicked on this sprite.
-	 */
-	public var mouseOver(get, never):Bool;
+	
 	
 	private function get_mouseOver():Bool
 	{
-		return FlxMath.pointInCoordinates(	Math.floor( FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX) ),
-											Math.floor( FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY) ),
+		return FlxMath.pointInCoordinates(	Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX)),
+											Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY)),
 											Math.floor(x),
 											Math.floor(y),
 											Math.floor(width),
 											Math.floor(height)
 											);
 	}
-	
-	/**
-	 * Returns how many horizontal pixels the mouse pointer is inside this sprite from the top left corner. Returns -1 if outside.
-	 */
-	public var mouseX(get, never):Int;
 	
 	private function get_mouseX():Int
 	{
@@ -853,11 +846,6 @@ class FlxExtendedSprite extends FlxSprite
 		
 		return -1;
 	}
-	
-	/**
-	 * Returns how many vertical pixels the mouse pointer is inside this sprite from the top left corner. Returns -1 if outside.
-	 */
-	public var mouseY(get, never):Int;
 	
 	private function get_mouseY():Int
 	{
@@ -870,12 +858,7 @@ class FlxExtendedSprite extends FlxSprite
 	}
 	#end
 	
-	/**
-	 * Returns a FlxRect consisting of the bounds of this Sprite.
-	 */
-	public var rect(get, never):FlxRect;
-	
-	private function get_rect():FlxRect
+	private inline function get_rect():FlxRect
 	{
 		_rect.x = x;
 		_rect.y = y;
@@ -885,3 +868,5 @@ class FlxExtendedSprite extends FlxSprite
 		return _rect;
 	}
 }
+
+typedef MouseCallback = FlxExtendedSprite->Int->Int->Void;

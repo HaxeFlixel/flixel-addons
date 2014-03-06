@@ -76,6 +76,5 @@ class FlxNapeVelocity
 	public static inline function stopVelocity(Source:FlxNapeSprite):Void
 	{
 		Source.body.velocity.set(Vec2.get(0, 0)); 
-		Source.body.velocity.set(Vec2.get(0, 0)); 
 	}
 }

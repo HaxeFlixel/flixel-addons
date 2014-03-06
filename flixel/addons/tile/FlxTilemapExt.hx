@@ -48,7 +48,7 @@ class FlxTilemapExt extends FlxTilemap
 	private var _specialTiles:Array<FlxTileSpecial>;
 	
 	// Alpha stuff
-	#if flash
+	#if FLX_RENDER_BLIT
 	private var _flashAlpha:BitmapData;
 	private var _flashAlphaPoint:Point;
 	#end
@@ -57,7 +57,7 @@ class FlxTilemapExt extends FlxTilemap
 	public function set_alpha(alpha:Float):Float 
 	{
 		this.alpha = alpha;
-		#if flash
+		#if FLX_RENDER_BLIT
 		if (_tileWidth == 0 || _tileHeight == 0) 
 		{
 			throw "You can't set the alpha of the tilemap before loading it";
@@ -74,8 +74,8 @@ class FlxTilemapExt extends FlxTilemap
 	{
 		super();
 		
-		_slopePoint = new FlxPoint();
-		_objPoint = new FlxPoint();
+		_slopePoint = FlxPoint.get();
+		_objPoint = FlxPoint.get();
 		
 		_slopeFloorLeft = new Array<Int>();
 		_slopeFloorRight = new Array<Int>();
@@ -112,7 +112,7 @@ class FlxTilemapExt extends FlxTilemap
 		_specialTiles = null;
 		MATRIX = null;
 		
-		#if flash
+		#if FLX_RENDER_BLIT
 		if (_flashAlpha != null)
 		{
 			_flashAlpha.dispose();
@@ -145,7 +145,7 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	override private function drawTilemap(Buffer:FlxTilemapBuffer, Camera:FlxCamera):Void 
 	{
-		#if flash
+		#if FLX_RENDER_BLIT
 		Buffer.fill();
 		#else
 		
@@ -156,11 +156,7 @@ class FlxTilemapExt extends FlxTilemap
 		var drawX:Float;
 		var drawY:Float;
 		
-		#if !js
 		var drawItem:DrawStackItem = Camera.getDrawStackItem(cachedGraphics, false, 0);
-		#else
-		var drawItem:DrawStackItem = Camera.getDrawStackItem(cachedGraphics, false);
-		#end
 		var currDrawData:Array<Float> = drawItem.drawData;
 		var currIndex:Int = drawItem.position;
 		#end
@@ -213,7 +209,7 @@ class FlxTilemapExt extends FlxTilemap
 			
 			while (column < screenColumns)
 			{
-				#if flash
+				#if FLX_RENDER_BLIT
 				_flashRect = _rects[columnIndex];
 				
 				if (_flashRect != null)
@@ -298,13 +294,8 @@ class FlxTilemapExt extends FlxTilemap
 					drawX += MATRIX.tx;
 					drawY += MATRIX.ty;
 					
-					#if !js
 					currDrawData[currIndex++] = Math.floor(drawX) + 0.01;
 					currDrawData[currIndex++] = Math.floor(drawY) + 0.01;
-					#else
-					currDrawData[currIndex++] = Math.floor(drawX);
-					currDrawData[currIndex++] = Math.floor(drawY);
-					#end
 					currDrawData[currIndex++] = tileID;
 					
 					
@@ -313,10 +304,8 @@ class FlxTilemapExt extends FlxTilemap
 					currDrawData[currIndex++] = MATRIX.c;
 					currDrawData[currIndex++] = MATRIX.d; 
 					
-					#if !js
 					// Alpha
 					currDrawData[currIndex++] = alpha; 
-					#end
 				}
 				#end
 				
@@ -330,7 +319,7 @@ class FlxTilemapExt extends FlxTilemap
 			row++;
 		}
 		
-		#if !flash
+		#if FLX_RENDER_TILE
 		drawItem.position = currIndex;
 		#end
 		
@@ -346,7 +335,7 @@ class FlxTilemapExt extends FlxTilemap
 	{
 		_specialTiles = new Array<FlxTileSpecial>();
 
-		#if flash
+		#if FLX_RENDER_BLIT
 		var animIds:Array<Int>;
 		#end
 		var t:FlxTileSpecial;
@@ -357,7 +346,7 @@ class FlxTilemapExt extends FlxTilemap
 			{
 				_specialTiles[i] = t;
 				
-				#if flash
+				#if FLX_RENDER_BLIT
 				// Update the tile animRects with the animation
 				if (t.hasAnimation()) 
 				{
@@ -417,11 +406,7 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	override public function draw():Void
 	{
-		if (cameras == null)
-		{
-			cameras = FlxG.cameras.list;
-		}
-		
+		var cameras = cameras;
 		var camera:FlxCamera;
 		var buffer:FlxTilemapBuffer;
 		var i:Int = 0;
@@ -430,7 +415,6 @@ class FlxTilemapExt extends FlxTilemap
 		while (i < l)
 		{
 			camera = cameras[i];
-			
 			if (!camera.visible || !camera.exists)
 			{
 				continue;
@@ -439,12 +423,12 @@ class FlxTilemapExt extends FlxTilemap
 			if (_buffers[i] == null)
 			{
 				_buffers[i] = new FlxTilemapBuffer(_tileWidth, _tileHeight, widthInTiles, heightInTiles, camera);
-				_buffers[i].forceComplexRender = forceComplexRender;
+				_buffers[i].pixelPerfectRender = pixelPerfectRender;
 			}
 			
 			buffer = _buffers[i++];
 			
-			#if flash
+			#if FLX_RENDER_BLIT
 			if (!buffer.dirty)
 			{
 				// Copied from getScreenXY()

@@ -8,6 +8,7 @@ import flixel.FlxSprite;
 import flixel.util.FlxAngle;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxMath;
+import flixel.util.FlxVelocity;
 
 /**
  * Some sort of DisplayObjectContainer but very limited.
@@ -185,7 +186,7 @@ class FlxNestedSprite extends FlxSprite
 		var i:Int = _children.length;
 		while (i > 0)
 		{
-			removeAt(--i);
+			removeAt( --i);
 		}
 	}
 	
@@ -258,18 +259,18 @@ class FlxNestedSprite extends FlxSprite
 		var velocityDelta:Float;
 		var dt:Float = FlxG.elapsed;
 		
-		velocityDelta = 0.5 * (FlxMath.computeVelocity(relativeAngularVelocity, relativeAngularAcceleration, angularDrag, maxAngular) - relativeAngularVelocity);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeAngularVelocity, relativeAngularAcceleration, angularDrag, maxAngular) - relativeAngularVelocity);
 		relativeAngularVelocity += velocityDelta; 
 		relativeAngle += relativeAngularVelocity * dt;
 		relativeAngularVelocity += velocityDelta;
 		
-		velocityDelta = 0.5 * (FlxMath.computeVelocity(relativeVelocityX, relativeAccelerationX, drag.x, maxVelocity.x) - relativeVelocityX);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocityX, relativeAccelerationX, drag.x, maxVelocity.x) - relativeVelocityX);
 		relativeVelocityX += velocityDelta;
 		delta = relativeVelocityX * dt;
 		relativeVelocityX += velocityDelta;
 		relativeX += delta;
 		
-		velocityDelta = 0.5 * (FlxMath.computeVelocity(relativeVelocityY, relativeAccelerationY, drag.y, maxVelocity.y) - relativeVelocityY);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocityY, relativeAccelerationY, drag.y, maxVelocity.y) - relativeVelocityY);
 		relativeVelocityY += velocityDelta;
 		delta = relativeVelocityY * dt;
 		relativeVelocityY += velocityDelta;
@@ -362,34 +363,34 @@ class FlxNestedSprite extends FlxSprite
 		}
 		alpha = Alpha * relativeAlpha;
 		
-		#if flash
+		#if FLX_RENDER_BLIT
 		if ((alpha != 1) || (color != 0x00ffffff))
 		{
 			var red:Float = (color >> 16) * _parentRed / 255;
 			var green:Float = (color >> 8 & 0xff) * _parentGreen / 255;
 			var blue:Float = (color & 0xff) * _parentBlue / 255;
 			
-			if (_colorTransform == null)
+			if (colorTransform == null)
 			{
-				_colorTransform = new ColorTransform(red, green, blue, alpha);
+				colorTransform = new ColorTransform(red, green, blue, alpha);
 			}
 			else
 			{
-				_colorTransform.redMultiplier = red;
-				_colorTransform.greenMultiplier = green;
-				_colorTransform.blueMultiplier = blue;
-				_colorTransform.alphaMultiplier = alpha;
+				colorTransform.redMultiplier = red;
+				colorTransform.greenMultiplier = green;
+				colorTransform.blueMultiplier = blue;
+				colorTransform.alphaMultiplier = alpha;
 			}
 			useColorTransform = true;
 		}
 		else
 		{
-			if (_colorTransform != null)
+			if (colorTransform != null)
 			{
-				_colorTransform.redMultiplier = 1;
-				_colorTransform.greenMultiplier = 1;
-				_colorTransform.blueMultiplier = 1;
-				_colorTransform.alphaMultiplier = 1;
+				colorTransform.redMultiplier = 1;
+				colorTransform.greenMultiplier = 1;
+				colorTransform.blueMultiplier = 1;
+				colorTransform.alphaMultiplier = 1;
 			}
 			useColorTransform = false;
 		}
@@ -424,34 +425,34 @@ class FlxNestedSprite extends FlxSprite
 		color = combinedColor;
 		if ((alpha != 1) || (color != 0x00ffffff))
 		{
-			if (_colorTransform == null)
+			if (colorTransform == null)
 			{
-				_colorTransform = new ColorTransform(combinedRed, combinedGreen, combinedBlue, alpha);
+				colorTransform = new ColorTransform(combinedRed, combinedGreen, combinedBlue, alpha);
 			}
 			else
 			{
-				_colorTransform.redMultiplier = combinedRed;
-				_colorTransform.greenMultiplier = combinedGreen;
-				_colorTransform.blueMultiplier = combinedBlue;
-				_colorTransform.alphaMultiplier = alpha;
+				colorTransform.redMultiplier = combinedRed;
+				colorTransform.greenMultiplier = combinedGreen;
+				colorTransform.blueMultiplier = combinedBlue;
+				colorTransform.alphaMultiplier = alpha;
 			}
 			useColorTransform = true;
 		}
 		else
 		{
-			if (_colorTransform != null)
+			if (colorTransform != null)
 			{
-				_colorTransform.redMultiplier = 1;
-				_colorTransform.greenMultiplier = 1;
-				_colorTransform.blueMultiplier = 1;
-				_colorTransform.alphaMultiplier = 1;
+				colorTransform.redMultiplier = 1;
+				colorTransform.greenMultiplier = 1;
+				colorTransform.blueMultiplier = 1;
+				colorTransform.alphaMultiplier = 1;
 			}
 			useColorTransform = false;
 		}
 		
 		dirty = true;
 		
-		#if !flash
+		#if FLX_RENDER_TILE
 		_red = combinedRed;
 		_green = combinedGreen;
 		_blue = combinedBlue;
@@ -475,5 +476,23 @@ class FlxNestedSprite extends FlxSprite
 		}
 		
 		return color;
+		
+		
+	}
+	
+	override private function set_facing(Direction:Int):Int
+	{
+		super.set_facing(Direction);
+		if (_children != null)
+		{
+			for (child in _children)
+			{
+				if (child.exists && child.active)
+				{
+					child.facing = Direction;
+				}
+			}
+		}
+		return Direction;
 	}
 }

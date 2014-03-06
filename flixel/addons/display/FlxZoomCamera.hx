@@ -71,9 +71,9 @@ class FlxZoomCamera extends FlxCamera
 		
 		// Center on the target, until the camera bumps up to its bounds
 		// then gradually favor the edge of the screen based on _zoomMargin
-		var ratioMinX:Float = (targetScreenX / (width / 2) ) - 1 - _zoomMargin;
+		var ratioMinX:Float = (targetScreenX / (width / 2)) - 1 - _zoomMargin;
 		var ratioMinY:Float = (targetScreenY / (height / 2)) - 1 - _zoomMargin;
-		var ratioMaxX:Float = (( -width + targetScreenX) / (width / 2) ) + 1 + _zoomMargin;
+		var ratioMaxX:Float = (( -width + targetScreenX) / (width / 2)) + 1 + _zoomMargin;
 		var ratioMaxY:Float = (( -height + targetScreenY) / (height / 2)) + 1 + _zoomMargin;
 		
 		// Offsets are numbers between [-1, 1]

@@ -1,11 +1,11 @@
 package flixel.addons.editors.ogmo;
 
-import openfl.Assets;
+import flixel.FlxG;
+import flixel.tile.FlxTilemap;
+import flixel.util.FlxRect;
 import haxe.xml.Fast;
 import haxe.xml.Parser;
-import flixel.FlxG;
-import flixel.util.FlxPoint;
-import flixel.tile.FlxTilemap;
+import openfl.Assets;
 
 class FlxOgmoLoader
 {
@@ -100,6 +100,23 @@ class FlxOgmoLoader
 		for (a in actors.elements) 
 		{
 			EntityLoadCallback(a.name, a.x);
+		}
+	}
+	
+	/**
+	 * Parse every 'rect' in the specified layer and call a function to do something based on each rectangle.
+	 * Useful for setting up zones or regions in your game that can be filled in procedurally.
+	 * 
+	 * @param	RectLoadCallback	A function that takes in the Rectangle object and returns Void.
+	 * @param	RectLayer			The name of the layer which contains 'rect' objects.
+	 */
+	public function loadRectangles(RectLoadCallback:FlxRect->Void, RectLayer:String = "rectangles"):Void
+	{
+		var rects = _fastXml.node.resolve(RectLayer);
+		
+		for (r in rects.elements)
+		{
+			RectLoadCallback(FlxRect.get(Std.parseInt(r.x.get("x")), Std.parseInt(r.x.get("y")), Std.parseInt(r.x.get("w")), Std.parseInt(r.x.get("h"))));
 		}
 	}
 }
