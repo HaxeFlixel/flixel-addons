@@ -23,6 +23,13 @@ class FlxStarField2D extends FlxStarField
 		setStarSpeed(100, 400);
 	}
 	
+	override public function destroy():Void
+	{
+		starVelocityOffset.put();
+		starVelocityOffset = null;
+		super.destroy();
+	}
+	
 	override public function update():Void
 	{
 		for (star in _stars)
@@ -64,6 +71,13 @@ class FlxStarField3D extends FlxStarField
 		center = FlxPoint.get(width / 2, height / 2);
 		setStarDepthColors(300, 0xff292929, 0xffffffff);
 		setStarSpeed(0, 200);
+	}
+	
+	override public function destroy():Void
+	{
+		center.put();
+		center = null;
+		super.destroy();
 	}
 	
 	override public function update():Void

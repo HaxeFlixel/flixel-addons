@@ -122,13 +122,25 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	
 	override public function destroy():Void
 	{
+		for (position in _recentPositions)
+		{
+			position.put();
+			position = null;
+		}
+		
+		for (scale in _recentScales)
+		{
+			scale.put();
+			scale = null;
+		}
+		
 		_recentAngles = null;
 		_recentPositions = null;
 		_recentScales = null;
 		_recentFrames = null;
 		_recentFacings = null;
 		_spriteOrigin = null;
-
+		
 		sprite = null;
 		_image = null;
 		

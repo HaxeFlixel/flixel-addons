@@ -89,6 +89,9 @@ class FlxTilemapExt extends FlxTilemap
 	
 	override public function destroy():Void 
 	{
+		_slopePoint.put();
+		_objPoint.put();
+		
 		_slopePoint = null;
 		_objPoint = null;
 		

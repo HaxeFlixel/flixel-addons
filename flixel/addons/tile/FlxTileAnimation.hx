@@ -22,6 +22,10 @@ class FlxTileAnimation
 	 * An array of dynamic elements that let you add arbritary data to each frame
 	 */
 	public var framesData(default, null):Array<Dynamic>;
+	/**
+	 * Animation frameRate - the speed in frames per second that the animation should play at.
+	 */
+	public var frameRate(default, set):Float;
 	
 	/**
 	 * Constructor
@@ -48,11 +52,6 @@ class FlxTileAnimation
 		frames = null;
 		framesData = null;
 	}
-	
-	/**
-	 * Animation frameRate - the speed in frames per second that the animation should play at.
-	 */
-	public var frameRate(default, set_frameRate):Float;
 	
 	private function set_frameRate(value:Float):Float
 	{

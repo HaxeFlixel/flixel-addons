@@ -51,6 +51,8 @@ class FlxSkewedSprite extends FlxSprite
 	 */
 	override public function destroy():Void 
 	{
+		skew.put();
+		
 		skew = null;
 		_skewMatrix = null;
 		transformMatrix = null;

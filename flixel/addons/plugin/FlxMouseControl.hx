@@ -95,6 +95,34 @@ class FlxMouseControl extends FlxPlugin
 	}
 	
 	/**
+	 * Removes all references to any click / drag targets and resets this class
+	 */
+	public static function clear():Void
+	{
+		_hasClickTarget = false;
+		
+		if (clickTarget != null)
+		{
+			clickTarget.mouseReleasedHandler();
+		}
+		
+		clickTarget = null;
+		
+		isDragging = false;
+		
+		if (dragTarget != null)
+		{
+			dragTarget.stopDrag();
+		}
+		
+		speedX = 0;
+		speedY = 0;
+		dragTarget = null;
+		mouseZone = null;
+		linkToDeadZone = false;
+	}
+	
+	/**
 	 * Main Update Loop - checks mouse status and updates FlxExtendedSprites accordingly
 	 */
 	override public function update():Void
@@ -211,34 +239,6 @@ class FlxMouseControl extends FlxPlugin
 		}
 		
 		return 0;
-	}
-	
-	/**
-	 * Removes all references to any click / drag targets and resets this class
-	 */
-	public static function clear():Void
-	{
-		_hasClickTarget = false;
-		
-		if (clickTarget != null)
-		{
-			clickTarget.mouseReleasedHandler();
-		}
-		
-		clickTarget = null;
-		
-		isDragging = false;
-		
-		if (dragTarget != null)
-		{
-			dragTarget.stopDrag();
-		}
-		
-		speedX = 0;
-		speedY = 0;
-		dragTarget = null;
-		mouseZone = null;
-		linkToDeadZone = false;
 	}
 	
 	/**
