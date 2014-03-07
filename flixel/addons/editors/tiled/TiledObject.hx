@@ -141,11 +141,12 @@ class TiledObject
 	/**
 	 * Property accessors
 	 */
-	public function get_flippedHorizontally():Bool
+	private inline function get_flippedHorizontally():Bool
 	{
 		return cast (gid & FLIPPED_HORIZONTALLY_FLAG);
 	}
-	public function get_flippedVertically():Bool
+	
+	private inline function get_flippedVertically():Bool
 	{
 		return cast (gid & FLIPPED_VERTICALLY_FLAG);
 	}

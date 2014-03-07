@@ -54,7 +54,7 @@ class FlxTilemapExt extends FlxTilemap
 	#end
 	public var alpha(default, set):Float = 1.0;
 	
-	public function set_alpha(alpha:Float):Float 
+	private function set_alpha(alpha:Float):Float 
 	{
 		this.alpha = alpha;
 		#if FLX_RENDER_BLIT
