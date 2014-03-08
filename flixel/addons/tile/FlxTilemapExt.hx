@@ -13,6 +13,7 @@ import flixel.system.layer.DrawStackItem;
 import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.tile.FlxTilemapBuffer;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 
@@ -89,8 +90,8 @@ class FlxTilemapExt extends FlxTilemap
 	
 	override public function destroy():Void 
 	{
-		_slopePoint = FlxG.safePut(_slopePoint);
-		_objPoint = FlxG.safePut(_objPoint);
+		_slopePoint = FlxDestroyUtil.put(_slopePoint);
+		_objPoint = FlxDestroyUtil.put(_objPoint);
 		
 		_slopeFloorLeft = null;
 		_slopeFloorRight = null;

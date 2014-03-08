@@ -11,6 +11,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxGradient;
 import flixel.util.FlxMath;
 import flixel.util.loaders.CachedGraphics;
@@ -264,10 +265,10 @@ class FlxButtonPlus extends FlxSpriteGroup
 			Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 		}
 		
-		buttonNormal = FlxG.safeDestroy(buttonNormal);
-		buttonHighlight = FlxG.safeDestroy(buttonHighlight);
-		textNormal = FlxG.safeDestroy(textNormal);
-		textHighlight = FlxG.safeDestroy(textHighlight);
+		buttonNormal = FlxDestroyUtil.destroy(buttonNormal);
+		buttonHighlight = FlxDestroyUtil.destroy(buttonHighlight);
+		textNormal = FlxDestroyUtil.destroy(textNormal);
+		textHighlight = FlxDestroyUtil.destroy(textHighlight);
 		
 		onClickCallback = null;
 		enterCallback = null;
@@ -385,7 +386,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 		if (buttonHighlight != buttonNormal)
 		{
-			FlxG.safeDestroy(buttonNormal);
+			FlxDestroyUtil.destroy(buttonNormal);
 		}
 		replace(buttonNormal, Value);
 		if (_status != NORMAL)
@@ -404,7 +405,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 		if (buttonHighlight != buttonNormal)
 		{
-			FlxG.safeDestroy(buttonHighlight);
+			FlxDestroyUtil.destroy(buttonHighlight);
 		}
 		if (_status != HIGHLIGHT)
 		{
@@ -423,7 +424,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 		if (textNormal != textHighlight)
 		{
-			FlxG.safeDestroy(textNormal);
+			FlxDestroyUtil.destroy(textNormal);
 		}
 		if (_status != NORMAL)
 		{
@@ -442,7 +443,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 		if (textNormal != textHighlight)
 		{
-			FlxG.safeDestroy(textHighlight);
+			FlxDestroyUtil.destroy(textHighlight);
 		}
 		if (_status != HIGHLIGHT)
 		{

@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColorUtil;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
@@ -393,14 +394,14 @@ class FlxSlider extends FlxSpriteGroup
 	 */
 	override public function destroy():Void
 	{
-		body = FlxG.safeDestroy(body);
-		handle = FlxG.safeDestroy(handle);
-		minLabel = FlxG.safeDestroy(minLabel);
-		maxLabel = FlxG.safeDestroy(maxLabel);
-		nameLabel = FlxG.safeDestroy(nameLabel);
-		valueLabel = FlxG.safeDestroy(valueLabel);
+		body = FlxDestroyUtil.destroy(body);
+		handle = FlxDestroyUtil.destroy(handle);
+		minLabel = FlxDestroyUtil.destroy(minLabel);
+		maxLabel = FlxDestroyUtil.destroy(maxLabel);
+		nameLabel = FlxDestroyUtil.destroy(nameLabel);
+		valueLabel = FlxDestroyUtil.destroy(valueLabel);
 		
-		_bounds = FlxG.safePut(_bounds);
+		_bounds = FlxDestroyUtil.put(_bounds);
 		
 		super.destroy();
 	}

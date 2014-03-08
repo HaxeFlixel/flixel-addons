@@ -7,6 +7,7 @@ package flixel.addons.display;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxGradient;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRandom;
@@ -25,7 +26,7 @@ class FlxStarField2D extends FlxStarField
 	
 	override public function destroy():Void
 	{
-		starVelocityOffset = FlxG.safePut(starVelocityOffset);
+		starVelocityOffset = FlxDestroyUtil.put(starVelocityOffset);
 		super.destroy();
 	}
 	
@@ -74,7 +75,7 @@ class FlxStarField3D extends FlxStarField
 	
 	override public function destroy():Void
 	{
-		center = FlxG.safePut(center);
+		center = FlxDestroyUtil.put(center);
 		super.destroy();
 	}
 	

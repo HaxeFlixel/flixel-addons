@@ -8,6 +8,7 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.system.layer.DrawStackItem;
 import flixel.util.FlxAngle;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 
 /**
@@ -51,7 +52,7 @@ class FlxSkewedSprite extends FlxSprite
 	 */
 	override public function destroy():Void 
 	{
-		skew = FlxG.safePut(skew);
+		skew = FlxDestroyUtil.put(skew);
 		_skewMatrix = null;
 		transformMatrix = null;
 		
