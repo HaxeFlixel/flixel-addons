@@ -1,5 +1,6 @@
 package flixel.addons.effects;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
 import flixel.util.FlxPoint;
@@ -124,14 +125,12 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	{
 		for (position in _recentPositions)
 		{
-			position.put();
-			position = null;
+			position = FlxG.safePut(position);
 		}
 		
 		for (scale in _recentScales)
 		{
-			scale.put();
-			scale = null;
+			scale = FlxG.safePut(scale);
 		}
 		
 		_recentAngles = null;

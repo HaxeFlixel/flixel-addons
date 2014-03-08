@@ -25,8 +25,7 @@ class FlxStarField2D extends FlxStarField
 	
 	override public function destroy():Void
 	{
-		starVelocityOffset.put();
-		starVelocityOffset = null;
+		starVelocityOffset = FlxG.safePut(starVelocityOffset);
 		super.destroy();
 	}
 	
@@ -75,8 +74,7 @@ class FlxStarField3D extends FlxStarField
 	
 	override public function destroy():Void
 	{
-		center.put();
-		center = null;
+		center = FlxG.safePut(center);
 		super.destroy();
 	}
 	

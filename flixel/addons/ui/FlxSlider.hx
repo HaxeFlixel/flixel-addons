@@ -400,8 +400,7 @@ class FlxSlider extends FlxSpriteGroup
 		nameLabel = FlxG.safeDestroy(nameLabel);
 		valueLabel = FlxG.safeDestroy(valueLabel);
 		
-		_bounds.put();
-		_bounds = null;
+		_bounds = FlxG.safePut(_bounds);
 		
 		super.destroy();
 	}
