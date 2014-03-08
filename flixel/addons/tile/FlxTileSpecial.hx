@@ -8,6 +8,7 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.util.FlxAngle;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 
 class FlxTileSpecial extends FlxBasic
 {
@@ -79,28 +80,15 @@ class FlxTileSpecial extends FlxBasic
 		super.destroy();
 		
 		#if FLX_RENDER_BLIT
-		if (_normalFrame != null)
-		{
-			_normalFrame.dispose();
-		}
-		_normalFrame = null;
-		
-		if (_flippedFrame != null)
-		{
-			_flippedFrame.dispose();
-		}
-		_flippedFrame = null;
+		_normalFrame = FlxDestroyUtil.dispose(_normalFrame);
+		_flippedFrame = FlxDestroyUtil.dispose(_flippedFrame);
 		
 		_point = null;
 		_animRects = null;
 		tileRect = null;
 		#end
 		
-		if (_animation != null)
-		{
-			_animation.destroy();
-		}
-		_animation = null;
+		_animation = FlxDestroyUtil.destroy(_animation);
 		_currAnimParam = null;
 		_matrix = null;
 	}

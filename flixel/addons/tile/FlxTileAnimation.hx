@@ -1,6 +1,8 @@
 package flixel.addons.tile;
 
-class FlxTileAnimation
+import flixel.interfaces.IFlxDestroyable;
+
+class FlxTileAnimation implements IFlxDestroyable
 {
 	/**
 	 * String name of the animation (e.g. "walk")

@@ -7,6 +7,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.system.layer.DrawStackItem;
 import flixel.system.layer.Region;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.loaders.TextureRegion;
 
 /**
@@ -110,11 +111,7 @@ class FlxBackdrop extends FlxSprite
 	override public function destroy():Void 
 	{
 		#if FLX_RENDER_BLIT
-		if (_data != null)
-		{
-			_data.dispose();
-		}
-		_data = null;
+		_data = FlxDestroyUtil.dispose(_data);
 		#else
 		_tileInfo = null;
 		#end

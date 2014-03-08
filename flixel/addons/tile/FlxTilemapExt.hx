@@ -114,11 +114,7 @@ class FlxTilemapExt extends FlxTilemap
 		MATRIX = null;
 		
 		#if FLX_RENDER_BLIT
-		if (_flashAlpha != null)
-		{
-			_flashAlpha.dispose();
-		}
-		_flashAlpha = null;
+		_flashAlpha = FlxDestroyUtil.dispose(_flashAlpha);
 		_flashAlphaPoint = null;
 		#end
 	}
