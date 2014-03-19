@@ -11,6 +11,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
 import flixel.util.FlxAngle;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 
 /**
  * This provides an area in which the added sprites have a trail effect. Usage: Create the FlxTrailArea and 
@@ -152,7 +153,7 @@ class FlxTrailArea extends FlxSprite
 	
 	override public function destroy():Void 
 	{
-		group = FlxG.safeDestroy(group);
+		group = FlxDestroyUtil.destroy(group);//FlxG.safeDestroy(group);
 		blendMode = null;
 		
 		super.destroy();
