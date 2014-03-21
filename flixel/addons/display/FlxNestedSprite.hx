@@ -105,13 +105,15 @@ class FlxNestedSprite extends FlxSprite
 	override public function destroy():Void
 	{
 		super.destroy();
-		
-		for (child in _children)
+		if (_children != null)
 		{
-			child.destroy();
+			for (child in _children)
+			{
+				child.destroy();
+			}
+			
+			_children = null;
 		}
-		
-		_children = null;
 	}
 	
 	/**
