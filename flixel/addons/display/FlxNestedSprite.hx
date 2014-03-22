@@ -20,51 +20,51 @@ class FlxNestedSprite extends FlxSprite
 	/**
 	 * X position of this sprite relative to parent, 0 by default
 	 */
-	public var relativeX:Float;
+	public var relativeX:Float = 0;
 	/**
 	 * Y position of this sprite relative to parent, 0 by default
 	 */
-	public var relativeY:Float;
+	public var relativeY:Float = 0;
 	
 	/**
 	 * Angle of this sprite relative to parent
 	 */
-	public var relativeAngle:Float;
+	public var relativeAngle:Float = 0;
 	
 	/**
 	 * X scale of this sprite relative to parent
 	 */
-	public var relativeScaleX:Float;
+	public var relativeScaleX:Float = 1;
 	/**
 	 * Y scale of this sprite relative to parent
 	 */
-	public var relativeScaleY:Float;
+	public var relativeScaleY:Float = 1;
 	
 	/**
 	 * X velocity relative to parent sprite
 	 */
-	public var relativeVelocityX:Float;
+	public var relativeVelocityX:Float = 0;
 	/**
 	 * Y velocity relative to parent sprite
 	 */
-	public var relativeVelocityY:Float;
+	public var relativeVelocityY:Float = 0;
 	/**
 	 * Angular velocity relative to parent sprite
 	 */
-	public var relativeAngularVelocity:Float;
+	public var relativeAngularVelocity:Float = 0;
 	
 	/**
 	 * X acceleration relative to parent sprite
 	 */
-	public var relativeAccelerationX:Float;
+	public var relativeAccelerationX:Float = 0;
 	/**
 	 * Y acceleration relative to parent sprite
 	 */
-	public var relativeAccelerationY:Float;
+	public var relativeAccelerationY:Float = 0;
 	/**
 	 * Angular acceleration relative to parent sprite
 	 */
-	public var relativeAngularAcceleration:Float;
+	public var relativeAngularAcceleration:Float = 0;
 	
 	public var relativeAlpha:Float = 1;
 
@@ -80,21 +80,7 @@ class FlxNestedSprite extends FlxSprite
 	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic) 
 	{
 		super(X, Y, SimpleGraphic);
-		
 		_children = [];
-		relativeX = 0;
-		relativeY = 0;
-		relativeAngle = 0;
-		relativeScaleX = 1;
-		relativeScaleY = 1;
-		
-		relativeVelocityX = 0;
-		relativeVelocityY = 0;
-		relativeAngularVelocity = 0;
-		
-		relativeAccelerationX = 0;
-		relativeAccelerationY = 0;
-		relativeAngularAcceleration = 0;
 	}
 	
 	/**
