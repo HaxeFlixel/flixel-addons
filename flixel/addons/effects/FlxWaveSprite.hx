@@ -6,7 +6,9 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 
 /**
- * ...
+ * This creates a FlxSprite which copies a target FlxSprite and applies a non-destructive wave-distortion effect.
+ * Usage: Create a FlxSprite object, position it where you want (don't add it), and then create a new FlxWaveSprite, 
+ * passing the Target object to it, and then add the FlxWaveSprite to your state/group.
  * @author Tim Hely / tims-world.com
  */
 class FlxWaveSprite extends FlxSprite
@@ -34,19 +36,34 @@ class FlxWaveSprite extends FlxSprite
 	/*
 	 * How strong the wave effect should be
 	 */
-	private var _strength:Int = 20;
+	public var strength(default, null):Int = 20;
+	
+	/*
+	 * How fast should the wave effect be (higher = faster)
+	 */
+	public var speed(default, null):Float = 4;
 	
 	/*
 	 * The 'center' of our sprite (where the wave effect should start/end)
 	 */
 	public var center:Int;
 	
-	public function new(Target:FlxSprite, Mode:Int = 0, Strength:Int = 40, Center:Int = -1) 
+	/**
+	 * Creates a new FlxWaveSprite, which clones a target FlxSprite and applies a wave-distortion effect to the clone.
+	 * 
+	 * @param	Target		The target FlxSprite you want to clone.
+	 * @param	Mode		Which Mode you would like to use for the effect. ALL = applies a constant distortion throughout the image, BOTTOM = makes the effect get stronger towards the bottom of the image, and TOP = the reverse of BOTTOM
+	 * @param	Strength	How strong you want the effect
+	 * @param	Center		The 'center' of the effect when using BOTTOM or TOP modes. Anything above(BOTTOM)/below(TOP) this point on the image will have no distortion effect.
+	 * @param	Speed		How fast you want the effect to move. Higher values = faster.
+	 */
+	public function new(Target:FlxSprite, Mode:Int = 0, Strength:Int = 40, Center:Int = -1, Speed:Float = 3) 
 	{
 		super();
 		_target = Target;
 		strength = Strength;
 		mode = Mode;
+		speed = Speed;
 		if (Center < 0)
 		{
 			center = Std.int(_target.height * .33);
@@ -57,6 +74,8 @@ class FlxWaveSprite extends FlxSprite
 	
 	override public function draw():Void
 	{
+		if (!visible || alpha == 0)
+			return;
 		pixels.fillRect(pixels.rect, 0x0);
 		var off:Float = 0;
 		for (oY in 0...Std.int(_target.height))
@@ -89,8 +108,9 @@ class FlxWaveSprite extends FlxSprite
 					}
 					
 			}
-
-			pixels.copyPixels(_target.pixels, new Rectangle(0, oY, _target.width, 1), new Point(strength+off, oY));
+			_flashPoint.setTo(strength + off, oY);
+			_flashRect2.setTo(0, oY, _target.width, 1);
+			pixels.copyPixels(_target.pixels, _flashRect2, _flashPoint);
 		}
 		if (_targetOff == -999)
 		{
@@ -101,7 +121,7 @@ class FlxWaveSprite extends FlxSprite
 			if (off == _targetOff)
 				_time = 0;
 		}
-		_time += FlxG.elapsed*4;
+		_time += FlxG.elapsed*speed;
 		
 		resetFrameBitmapDatas();
 		dirty = true;
@@ -112,22 +132,15 @@ class FlxWaveSprite extends FlxSprite
 	{
 		setPosition(_target.x -strength, _target.y);
 		makeGraphic(Std.int(_target.width + (strength * 2)), Std.int(_target.height), 0x0, true);
-		pixels.copyPixels(_target.pixels, _target.pixels.rect, new Point(strength, 0));
+		_flashPoint.setTo(strength, 0);
+		pixels.copyPixels(_target.pixels, _target.pixels.rect, _flashPoint);
 	}
 	
-	function get_strength():Int 
+	private function set_strength(value:Int):Int 
 	{
-		return _strength;
-	}
-	
-	function set_strength(value:Int):Int 
-	{
-		_strength = value;
+		strength = value;
 		initPixels();
-		return _strength;
+		return strength;
 	}
-
-	
-	public var strength(get_strength, set_strength):Int;
 	
 }
