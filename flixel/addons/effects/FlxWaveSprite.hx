@@ -36,12 +36,12 @@ class FlxWaveSprite extends FlxSprite
 	/*
 	 * How strong the wave effect should be
 	 */
-	public var strength(default, null):Int = 20;
+	public var strength(default, set_strength):Int = 20;
 	
 	/*
 	 * How fast should the wave effect be (higher = faster)
 	 */
-	public var speed(default, null):Float = 4;
+	public var speed:Float = 4;
 	
 	/*
 	 * The 'center' of our sprite (where the wave effect should start/end)
