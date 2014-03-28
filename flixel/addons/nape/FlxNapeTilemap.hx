@@ -1,4 +1,5 @@
-package ;
+package flixel.addons.nape;
+import flixel.util.FlxArrayUtil;
 import nape.phys.Material;
 import nape.shape.Polygon;
 import flash.geom.Rectangle;
@@ -19,28 +20,86 @@ class FlxNapeTilemap extends FlxTilemap {
 		super();
 		body = new Body(BodyType.STATIC);
 	}
+	
+	override public function loadMap(MapData:Dynamic, TileGraphic:Dynamic, TileWidth:Int = 0, TileHeight:Int = 0, AutoTile:Int = 0, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
+	{
+		super.loadMap(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
+		_binaryData = new Array<Int>();
+		FlxArrayUtil.setLength(_binaryData, _data.length);
+		return this;
+	}
+	
 	/**
-	 * Builds the nape collider with all tiles indices greater or equal to CollideIndex as solid (like in FlxTilemap), and assigns the nape material
+	 * Adds a collision box for one tile at the specified position
+	 * Using this many times will fragment the collider mesh, possibly impacting performance!
+	 * If you are changing a lot of tiles, consider calling body.shapes.clear() and then setupCollideIndex or setupTileIndices
+	 * @param	X		The X-Position of the tile
+	 * @param	Y		The Y-Position of the tile
+	 * @param	?mat	The material for the collider. Defaults to default nape material
+	 */
+	public function addSolidTile(X:Int, Y:Int, ?mat:Material) {
+		body.space = null;
+		if (mat == null) {
+			mat = new Material();
+		}
+		X *= _tileWidth;
+		Y *= _tileHeight;
+		var vertices:Array<Vec2> = new Array<Vec2>();
+		
+		vertices.push(Vec2.get(X, Y));
+		vertices.push(Vec2.get(X + _tileWidth, Y));
+		vertices.push(Vec2.get(X + _tileWidth, Y + _tileHeight));
+		vertices.push(Vec2.get(X, Y + _tileHeight));
+		
+		body.shapes.add(new Polygon(vertices, mat));
+		body.space = FlxNapeState.space;
+	}
+	/**
+	 * Builds the nape collider with all tiles indices greater or equal to CollideIndex as solid (like normally with FlxTilemap), and assigns the nape material
 	 * @param	CollideIndex	All tiles with an index greater or equal to this will be solid
 	 * @param	?mat			The Nape physics material to use. Will use the default material if not specified
 	 */
 	public function setupCollideIndex(CollideIndex:Int = 1, ?mat:Material) {
+		if (_data == null) {
+			trace("loadMap has to be called first!");
+			return;
+		}
+		var tileIndex:Int = 0;
+		//Iterate through the tilemap and convert it to a binary map, marking if a tile is solid (1) or not (0)
+		for (y in 0...heightInTiles) {
+			for (x in 0...widthInTiles) {
+				tileIndex = x + (y * widthInTiles);
+				_binaryData[tileIndex] = if (_data[tileIndex] >= CollideIndex) 1 else 0;
+			}
+		}
+		constructCollider(mat);
+	}
+	
+	public function setupTileIndices(tileIndices:Array<Int>, ?mat:Material) {
+		if (_data == null) {
+			trace("loadMap has to be called first!");
+			return;
+		}
+		var tileIndex:Int = 0;
+		for (y in 0...heightInTiles) {
+			for (x in 0...widthInTiles) {
+				tileIndex = x + (y * widthInTiles);
+				_binaryData[tileIndex] = if (Lambda.has(tileIndices, _data[tileIndex])) 1 else 0;
+			}
+		}
+		constructCollider(mat);
+	}
+	
+	function constructCollider(?mat:Material) {
 		if (mat == null) {
 			mat = new Material();
 		}
 		var tileIndex:Int = 0;
 		var startRow:Int = -1;
 		var endRow:Int = -1;
-		_binaryData = new Array<Int>();
 		var rects:Array<Rectangle> = new Array<Rectangle>();
 		
-		//Iterate through the tilemap and convert it to a binary map, marking if a tile is solid (1) or not (0)
-		for (y in 0...heightInTiles) {
-			for (x in 0...widthInTiles) {
-				tileIndex = x + (y * widthInTiles);
-				_binaryData.push(if (_data[tileIndex] >= CollideIndex) 1 else 0);
-			}
-		}
+		
 		//Go over every column, then scan along them
 		for (x in 0...widthInTiles) {
 			for (y in 0...heightInTiles) {
@@ -93,12 +152,6 @@ class FlxNapeTilemap extends FlxTilemap {
 		
 		if (body.space == null) {
 			body.space = FlxNapeState.space;
-		}
-	}
-	
-	public function setupTileIndices(tileIndices:Array<Int>, ?mat:Material) {
-		if (mat == null) {
-			mat = new Material();
 		}
 	}
 	/**
