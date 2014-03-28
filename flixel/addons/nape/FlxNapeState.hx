@@ -13,7 +13,9 @@ import nape.space.Space;
 
 #if !FLX_NO_DEBUG
 import nape.util.ShapeDebug;
-@:bitmap("assets/images/napeDebug.png") class GraphicNapeDebug extends BitmapData {}
+
+@:bitmap("assets/images/napeDebug.png")
+class GraphicNapeDebug extends BitmapData {}
 #end
 
 /**

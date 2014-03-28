@@ -7,7 +7,9 @@ import flixel.util.FlxRandom;
 
 #if !FLX_NO_SOUND_SYSTEM
 import flash.media.Sound;
-@:sound("assets/sounds/typetext.wav") class TypeSound extends Sound {}
+
+@:sound("assets/sounds/typetext.wav")
+class TypeSound extends Sound {}
 #end
 
 /**
