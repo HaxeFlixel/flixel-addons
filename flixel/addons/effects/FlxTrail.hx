@@ -1,7 +1,9 @@
 package flixel.addons.effects;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 
 /**
@@ -122,13 +124,23 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	
 	override public function destroy():Void
 	{
+		for (position in _recentPositions)
+		{
+			position = FlxDestroyUtil.put(position);
+		}
+		
+		for (scale in _recentScales)
+		{
+			scale = FlxDestroyUtil.put(scale);
+		}
+		
 		_recentAngles = null;
 		_recentPositions = null;
 		_recentScales = null;
 		_recentFrames = null;
 		_recentFacings = null;
 		_spriteOrigin = null;
-
+		
 		sprite = null;
 		_image = null;
 		

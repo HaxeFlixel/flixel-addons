@@ -82,6 +82,19 @@ class FlxSlider extends FlxSpriteGroup
 	public var setVariable:Bool = true;
 
 	/**
+	 * The expected position of the handle based on the current variable value.
+	 */
+	public var expectedPos(get, never):Float;
+	/**
+	 * The position of the handle relative to the slider / max value.
+	 */
+	public var relativePos(get, never):Float;
+	/**
+	 * Stores the variable the slider controls.
+	 */
+	public var varString(default, set):String;
+	
+	/**
 	 * The dragable area for the handle. Is configured automatically.
 	 */
 	private var _bounds:FlxRect;
@@ -388,16 +401,10 @@ class FlxSlider extends FlxSpriteGroup
 		nameLabel = FlxDestroyUtil.destroy(nameLabel);
 		valueLabel = FlxDestroyUtil.destroy(valueLabel);
 		
-		_bounds = null;
-		offset = null;
+		_bounds = FlxDestroyUtil.put(_bounds);
 		
 		super.destroy();
 	}
-	
-	/**
-	 * The expected position of the handle based on the current variable value.
-	 */
-	public var expectedPos(get, never):Float;
 	
 	private function get_expectedPos():Float 
 	{ 
@@ -416,11 +423,6 @@ class FlxSlider extends FlxSpriteGroup
 		return pos; 
 	}
 	
-	/**
-	 * The position of the handle relative to the slider / max value.
-	 */
-	public var relativePos(get, never):Float;
-	
 	private function get_relativePos():Float 
 	{ 
 		var pos:Float = (handle.x - x - offset.x) / (_width - handle.width); 
@@ -433,11 +435,6 @@ class FlxSlider extends FlxSpriteGroup
 		
 		return pos;
 	}
-	
-	/**
-	 * Stores the variable the slider controls.
-	 */
-	public var varString(default, set):String;
 	
 	private function set_varString(Value:String):String
 	{

@@ -11,6 +11,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxGradient;
 import flixel.util.FlxMath;
 import flixel.util.loaders.CachedGraphics;
@@ -86,7 +87,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 	 * @param	Width		The width of the button.
 	 * @param	Height		The height of the button.
 	 */
-	public function new(X:Int = 0, Y:Int = 0, ?Callback:Void->Void, ?Label:String, Width:Int = 100, Height:Int = 20)
+	public function new(X:Float = 0, Y:Float = 0, ?Callback:Void->Void, ?Label:String, Width:Int = 100, Height:Int = 20)
 	{
 		offColor = [0xff008000, 0xff00ff00];
 		onColor = [0xff800000, 0xffff0000];
@@ -264,10 +265,10 @@ class FlxButtonPlus extends FlxSpriteGroup
 			Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 		}
 		
-		buttonNormal = FlxG.safeDestroy(buttonNormal);
-		buttonHighlight = FlxG.safeDestroy(buttonHighlight);
-		textNormal = FlxG.safeDestroy(textNormal);
-		textHighlight = FlxG.safeDestroy(textHighlight);
+		buttonNormal = FlxDestroyUtil.destroy(buttonNormal);
+		buttonHighlight = FlxDestroyUtil.destroy(buttonHighlight);
+		textNormal = FlxDestroyUtil.destroy(textNormal);
+		textHighlight = FlxDestroyUtil.destroy(textHighlight);
 		
 		onClickCallback = null;
 		enterCallback = null;
@@ -385,7 +386,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 		if (buttonHighlight != buttonNormal)
 		{
-			FlxG.safeDestroy(buttonNormal);
+			FlxDestroyUtil.destroy(buttonNormal);
 		}
 		replace(buttonNormal, Value);
 		if (_status != NORMAL)
@@ -404,7 +405,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 		if (buttonHighlight != buttonNormal)
 		{
-			FlxG.safeDestroy(buttonHighlight);
+			FlxDestroyUtil.destroy(buttonHighlight);
 		}
 		if (_status != HIGHLIGHT)
 		{
@@ -423,7 +424,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 		if (textNormal != textHighlight)
 		{
-			FlxG.safeDestroy(textNormal);
+			FlxDestroyUtil.destroy(textNormal);
 		}
 		if (_status != NORMAL)
 		{
@@ -442,7 +443,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		}
 		if (textNormal != textHighlight)
 		{
-			FlxG.safeDestroy(textHighlight);
+			FlxDestroyUtil.destroy(textHighlight);
 		}
 		if (_status != HIGHLIGHT)
 		{

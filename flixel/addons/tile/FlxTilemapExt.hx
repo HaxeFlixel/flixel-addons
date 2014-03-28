@@ -13,6 +13,7 @@ import flixel.system.layer.DrawStackItem;
 import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.tile.FlxTilemapBuffer;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 
@@ -54,7 +55,7 @@ class FlxTilemapExt extends FlxTilemap
 	#end
 	public var alpha(default, set):Float = 1.0;
 	
-	public function set_alpha(alpha:Float):Float 
+	private function set_alpha(alpha:Float):Float 
 	{
 		this.alpha = alpha;
 		#if FLX_RENDER_BLIT
@@ -89,8 +90,8 @@ class FlxTilemapExt extends FlxTilemap
 	
 	override public function destroy():Void 
 	{
-		_slopePoint = null;
-		_objPoint = null;
+		_slopePoint = FlxDestroyUtil.put(_slopePoint);
+		_objPoint = FlxDestroyUtil.put(_objPoint);
 		
 		_slopeFloorLeft = null;
 		_slopeFloorRight = null;
@@ -113,11 +114,7 @@ class FlxTilemapExt extends FlxTilemap
 		MATRIX = null;
 		
 		#if FLX_RENDER_BLIT
-		if (_flashAlpha != null)
-		{
-			_flashAlpha.dispose();
-		}
-		_flashAlpha = null;
+		_flashAlpha = FlxDestroyUtil.dispose(_flashAlpha);
 		_flashAlphaPoint = null;
 		#end
 	}

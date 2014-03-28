@@ -13,7 +13,9 @@ import nape.space.Space;
 
 #if !FLX_NO_DEBUG
 import nape.util.ShapeDebug;
-@:bitmap("assets/images/napeDebug.png") class GraphicNapeDebug extends BitmapData {}
+
+@:bitmap("assets/images/napeDebug.png")
+class GraphicNapeDebug extends BitmapData {}
 #end
 
 /**
@@ -166,8 +168,7 @@ class FlxNapeState extends FlxState
 		super.destroy();
 		
 		space.clear();
-		
-		FlxNapeState.space = null; // resets atributes like gravity.
+		space = null; // resets atributes like gravity.
 		
 		#if !FLX_NO_DEBUG
 		napeDebugEnabled = false;
@@ -204,7 +205,7 @@ class FlxNapeState extends FlxState
 	/**
 	 * Draws debug graphics.
 	 */
-	private function drawPhysDebug():Void
+	private inline function drawPhysDebug():Void
 	{
 		#if !FLX_NO_DEBUG
 		if (_physDbgSpr == null || space == null)
