@@ -167,8 +167,11 @@ class FlxNapeState extends FlxState
 	{
 		super.destroy();
 		
-		space.clear();
-		space = null; // resets atributes like gravity.
+		if (space != null)
+		{
+			space.clear();
+			space = null; // resets atributes like gravity.
+		}
 		
 		#if !FLX_NO_DEBUG
 		napeDebugEnabled = false;
