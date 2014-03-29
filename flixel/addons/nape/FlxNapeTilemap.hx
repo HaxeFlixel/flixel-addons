@@ -1,22 +1,23 @@
 package flixel.addons.nape;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxRect;
 import nape.phys.Material;
 import nape.shape.Polygon;
-import flash.geom.Rectangle;
 import flixel.addons.nape.FlxNapeState;
 import flixel.tile.FlxTilemap;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
-import nape.util.Debug;
 
 /**
- * @author Tilman Schmidt
+ * @author KeyMaster
  */
-class FlxNapeTilemap extends FlxTilemap {
+class FlxNapeTilemap extends FlxTilemap 
+{
 	public var body:Body;
 	private var _binaryData:Array<Int>;
-	public function new() {
+	public function new() 
+	{
 		super();
 		body = new Body(BodyType.STATIC);
 	}
@@ -37,9 +38,11 @@ class FlxNapeTilemap extends FlxTilemap {
 	 * @param	Y		The Y-Position of the tile
 	 * @param	?mat	The material for the collider. Defaults to default nape material
 	 */
-	public function addSolidTile(X:Int, Y:Int, ?mat:Material) {
+	public function addSolidTile(X:Int, Y:Int, ?mat:Material) 
+	{
 		body.space = null;
-		if (mat == null) {
+		if (mat == null) 
+		{
 			mat = new Material();
 		}
 		X *= _tileWidth;
@@ -59,30 +62,42 @@ class FlxNapeTilemap extends FlxTilemap {
 	 * @param	CollideIndex	All tiles with an index greater or equal to this will be solid
 	 * @param	?mat			The Nape physics material to use. Will use the default material if not specified
 	 */
-	public function setupCollideIndex(CollideIndex:Int = 1, ?mat:Material) {
-		if (_data == null) {
+	public function setupCollideIndex(CollideIndex:Int = 1, ?mat:Material) 
+	{
+		if (_data == null) 
+		{
 			trace("loadMap has to be called first!");
 			return;
 		}
 		var tileIndex:Int = 0;
 		//Iterate through the tilemap and convert it to a binary map, marking if a tile is solid (1) or not (0)
-		for (y in 0...heightInTiles) {
-			for (x in 0...widthInTiles) {
+		for (y in 0...heightInTiles) 
+		{
+			for (x in 0...widthInTiles) 
+			{
 				tileIndex = x + (y * widthInTiles);
 				_binaryData[tileIndex] = if (_data[tileIndex] >= CollideIndex) 1 else 0;
 			}
 		}
 		constructCollider(mat);
 	}
-	
-	public function setupTileIndices(tileIndices:Array<Int>, ?mat:Material) {
-		if (_data == null) {
+	/**
+	 * Builds the nape collider with all indices in the array as solid, assigning the material
+	 * @param	tileIndices		An array of all tile indices that should be solid
+	 * @param	?mat			The nape physics material applied to the collider. Defaults to nape default material
+	 */
+	public function setupTileIndices(tileIndices:Array<Int>, ?mat:Material) 
+	{
+		if (_data == null) 
+		{
 			trace("loadMap has to be called first!");
 			return;
 		}
 		var tileIndex:Int = 0;
-		for (y in 0...heightInTiles) {
-			for (x in 0...widthInTiles) {
+		for (y in 0...heightInTiles) 
+		{
+			for (x in 0...widthInTiles) 
+			{
 				tileIndex = x + (y * widthInTiles);
 				_binaryData[tileIndex] = if (Lambda.has(tileIndices, _data[tileIndex])) 1 else 0;
 			}
@@ -90,24 +105,30 @@ class FlxNapeTilemap extends FlxTilemap {
 		constructCollider(mat);
 	}
 	
-	function constructCollider(?mat:Material) {
-		if (mat == null) {
+	function constructCollider(?mat:Material) 
+	{
+		if (mat == null) 
+		{
 			mat = new Material();
 		}
 		var tileIndex:Int = 0;
 		var startRow:Int = -1;
 		var endRow:Int = -1;
-		var rects:Array<Rectangle> = new Array<Rectangle>();
+		var rects:Array<FlxRect> = new Array<FlxRect>();
 		
 		
 		//Go over every column, then scan along them
-		for (x in 0...widthInTiles) {
-			for (y in 0...heightInTiles) {
+		for (x in 0...widthInTiles) 
+		{
+			for (y in 0...heightInTiles) 
+			{
 				tileIndex = x + (y * widthInTiles);
 				//Is that tile solid?
-				if (_binaryData[tileIndex] == 1) {
+				if (_binaryData[tileIndex] == 1) 
+				{
 					//Mark the beginning of a new rectangle
-					if (startRow == -1) {
+					if (startRow == -1) 
+					{
 						startRow = y;
 					}
 					//Mark the tile as already read
@@ -115,9 +136,11 @@ class FlxNapeTilemap extends FlxTilemap {
 					
 				}
 				//Is the tile not solid or already read
-				else if (_binaryData[tileIndex] == 0 || _binaryData[tileIndex] == -1) {
+				else if (_binaryData[tileIndex] == 0 || _binaryData[tileIndex] == -1) 
+				{
 					//If we marked the beginning a rectangle, end it and process it
-					if (startRow != -1) {
+					if (startRow != -1) 
+					{
 						endRow = y - 1;
 						rects.push(constructRectangle(x, startRow, endRow));
 						startRow = -1;
@@ -126,7 +149,8 @@ class FlxNapeTilemap extends FlxTilemap {
 				}
 			}
 			//If we reached the last line and marked the beginning of a rectangle, end it and process it
-			if (startRow != -1) {
+			if (startRow != -1) 
+			{
 				endRow = heightInTiles - 1;
 				rects.push(constructRectangle(x, startRow, endRow));
 				startRow = -1;
@@ -135,7 +159,8 @@ class FlxNapeTilemap extends FlxTilemap {
 		}
 		//Convert the rectangles to nape polygons
 		var vertices:Array<Vec2>;
-		for (rect in rects) {
+		for (rect in rects) 
+		{
 			vertices = new Array<Vec2>();
 			rect.x *= _tileWidth;
 			rect.y *= _tileHeight;
@@ -148,9 +173,11 @@ class FlxNapeTilemap extends FlxTilemap {
 			vertices.push(Vec2.get(rect.width, rect.height));
 			vertices.push(Vec2.get(rect.x, rect.height));
 			body.shapes.add(new Polygon(vertices, mat));
+			rect.put();
 		}
 		
-		if (body.space == null) {
+		if (body.space == null) 
+		{
 			body.space = FlxNapeState.space;
 		}
 	}
@@ -161,42 +188,51 @@ class FlxNapeTilemap extends FlxTilemap {
 	 * @param	EndY	The row in which the rectangle ends
 	 * @return			The rectangle covering solid tiles. CAUTION: Width is used as bottom-right x coordinate, height is used as bottom-right y coordinate
 	 */
-	function constructRectangle(StartX:Int, StartY:Int, EndY:Int):Rectangle {
+	function constructRectangle(StartX:Int, StartY:Int, EndY:Int):FlxRect
+	{
 		//Increase StartX by one to skip the first column, we checked that one already
 		StartX++;
 		var rectFinished:Bool = false;
 		var tileIndex:Int = 0;
 		//go along the columns from StartX onwards, then scan along those columns in the range of StartY to EndY
-		for (x in StartX...widthInTiles) {
-			for (y in StartY...(EndY + 1)) {
+		for (x in StartX...widthInTiles) 
+		{
+			for (y in StartY...(EndY + 1)) 
+			{
 				tileIndex = x + (y * widthInTiles);
 				//If the range includes a non-solid tile or a tile already read, the rectangle is finished
-				if (_binaryData[tileIndex] == 0 || _binaryData[tileIndex] == -1) {
+				if (_binaryData[tileIndex] == 0 || _binaryData[tileIndex] == -1) 
+				{
 					rectFinished = true;
+					break;
 				}
 			}
-			if (rectFinished) {
+			if (rectFinished) 
+			{
 				//If the rectangle is finished, fill the area covered with -1 (tiles have been read)
-				for (u in StartX...x) {
-					for (v in StartY...(EndY + 1)) {
+				for (u in StartX...x) 
+				{
+					for (v in StartY...(EndY + 1)) 
+					{
 						tileIndex = u + (v * widthInTiles);
 						_binaryData[tileIndex] = -1;
 					}
 				}
 				//StartX - 1 to counteract the increment in the beginning
 				//Slight misuse of Rectangle here, width and height are used as x/y of the bottom right corner
-				return new Rectangle(StartX - 1, StartY, x - 1, EndY);
+				return FlxRect.get(StartX - 1, StartY, x - 1, EndY);
 			}
 		}
 		//We reached the end of the map without finding a non-solid/alread-read tile, finalize the rectangle with the map's right border as the endX
-		for (u in StartX...widthInTiles) {
-			for (v in StartY...(EndY + 1)) {
+		for (u in StartX...widthInTiles) 
+		{
+			for (v in StartY...(EndY + 1)) 
+			{
 				tileIndex = u + (v * widthInTiles);
 				_binaryData[tileIndex] = -1;
 			}
 		}
-		
-		return new Rectangle(StartX - 1, StartY, widthInTiles - 1, EndY);
+		return FlxRect.get(StartX - 1, StartY, widthInTiles - 1, EndY);
 	}
 	
 }
