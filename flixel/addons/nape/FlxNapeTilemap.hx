@@ -1,4 +1,5 @@
 package flixel.addons.nape;
+import flixel.FlxG;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxRect;
 import nape.phys.Material;
@@ -66,7 +67,7 @@ class FlxNapeTilemap extends FlxTilemap
 	{
 		if (_data == null) 
 		{
-			trace("loadMap has to be called first!");
+			FlxG.log.error("loadMap has to be called first!");
 			return;
 		}
 		var tileIndex:Int = 0;
@@ -90,7 +91,7 @@ class FlxNapeTilemap extends FlxTilemap
 	{
 		if (_data == null) 
 		{
-			trace("loadMap has to be called first!");
+			FlxG.log.error("loadMap has to be called first!");
 			return;
 		}
 		var tileIndex:Int = 0;
