@@ -1,15 +1,16 @@
 package flixel.addons.nape;
+
+import flixel.addons.nape.FlxNapeState;
 import flixel.FlxG;
+import flixel.tile.FlxTilemap;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
-import nape.phys.Material;
-import nape.shape.Polygon;
-import flixel.addons.nape.FlxNapeState;
-import flixel.tile.FlxTilemap;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
+import nape.phys.Material;
+import nape.shape.Polygon;
 
 /**
  * @author KeyMaster
@@ -17,7 +18,9 @@ import nape.phys.BodyType;
 class FlxNapeTilemap extends FlxTilemap 
 {
 	public var body:Body;
+	
 	private var _binaryData:Array<Int>;
+	
 	public function new() 
 	{
 		super();
@@ -43,6 +46,7 @@ class FlxNapeTilemap extends FlxTilemap
 	 * Adds a collision box for one tile at the specified position
 	 * Using this many times will fragment the collider mesh, possibly impacting performance!
 	 * If you are changing a lot of tiles, consider calling body.shapes.clear() and then setupCollideIndex or setupTileIndices
+	 * 
 	 * @param	X		The X-Position of the tile
 	 * @param	Y		The Y-Position of the tile
 	 * @param	?mat	The material for the collider. Defaults to default nape material
@@ -85,6 +89,7 @@ class FlxNapeTilemap extends FlxTilemap
 	
 	/**
 	 * Builds the nape collider with all tiles indices greater or equal to CollideIndex as solid (like normally with FlxTilemap), and assigns the nape material
+	 * 
 	 * @param	CollideIndex	All tiles with an index greater or equal to this will be solid
 	 * @param	?mat			The Nape physics material to use. Will use the default material if not specified
 	 */
@@ -107,8 +112,10 @@ class FlxNapeTilemap extends FlxTilemap
 		}
 		constructCollider(mat);
 	}
+	
 	/**
 	 * Builds the nape collider with all indices in the array as solid, assigning the material
+	 * 
 	 * @param	tileIndices		An array of all tile indices that should be solid
 	 * @param	?mat			The nape physics material applied to the collider. Defaults to nape default material
 	 */
@@ -131,7 +138,17 @@ class FlxNapeTilemap extends FlxTilemap
 		constructCollider(mat);
 	}
 	
-	function constructCollider(?mat:Material) 
+	#if !FLX_NO_DEBUG
+	override public function drawDebug():Void 
+	{
+		if (FlxNapeState.debug == null)
+		{
+			super.drawDebug();
+		}
+	}
+	#end
+	
+	private function constructCollider(?mat:Material) 
 	{
 		if (mat == null) 
 		{
@@ -207,14 +224,16 @@ class FlxNapeTilemap extends FlxTilemap
 			body.space = FlxNapeState.space;
 		}
 	}
+	
 	/**
 	 * Scans along x in the rows between StartY to EndY for the biggest rectangle covering solid tiles in the binary data
+	 * 
 	 * @param	StartX	The column in which the rectangle starts
 	 * @param	StartY	The row in which the rectangle starts
 	 * @param	EndY	The row in which the rectangle ends
 	 * @return			The rectangle covering solid tiles. CAUTION: Width is used as bottom-right x coordinate, height is used as bottom-right y coordinate
 	 */
-	function constructRectangle(StartX:Int, StartY:Int, EndY:Int):FlxRect
+	private function constructRectangle(StartX:Int, StartY:Int, EndY:Int):FlxRect
 	{
 		//Increase StartX by one to skip the first column, we checked that one already
 		StartX++;
@@ -260,16 +279,4 @@ class FlxNapeTilemap extends FlxTilemap
 		}
 		return FlxRect.get(StartX - 1, StartY, widthInTiles - 1, EndY);
 	}
-	
-	#if !FLX_NO_DEBUG
-	override public function drawDebug():Void 
-	{
-		if (FlxNapeState.debug == null)
-		{
-			super.drawDebug();
-		}
-	}
-	#end
-	
-	
 }
