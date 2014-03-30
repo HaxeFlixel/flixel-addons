@@ -1,6 +1,7 @@
 package flixel.addons.nape;
 import flixel.FlxG;
 import flixel.util.FlxArrayUtil;
+import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
 import nape.phys.Material;
 import nape.shape.Polygon;
@@ -21,6 +22,13 @@ class FlxNapeTilemap extends FlxTilemap
 	{
 		super();
 		body = new Body(BodyType.STATIC);
+	}
+	
+	override public function update():Void 
+	{
+		x = body.position.x;
+		y = body.position.y;
+		super.update();
 	}
 	
 	override public function loadMap(MapData:Dynamic, TileGraphic:Dynamic, TileWidth:Int = 0, TileHeight:Int = 0, AutoTile:Int = 0, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
@@ -48,7 +56,7 @@ class FlxNapeTilemap extends FlxTilemap
 		}
 		X *= _tileWidth;
 		Y *= _tileHeight;
-		var vertices:Array<Vec2> = new Array<Vec2>();
+		var vertices = new Array<Vec2>();
 		
 		vertices.push(Vec2.get(X, Y));
 		vertices.push(Vec2.get(X + _tileWidth, Y));
@@ -58,6 +66,23 @@ class FlxNapeTilemap extends FlxTilemap
 		body.shapes.add(new Polygon(vertices, mat));
 		body.space = FlxNapeState.space;
 	}
+	
+	public function placeCustomPolygon(tileIndices:Array<Int>, vertices:Array<Vec2>, ?mat:Material) {
+		body.space = null;
+		var polygon:Polygon;
+		for (index in tileIndices) {
+			var coords:Array<FlxPoint> = getTileCoords(index, false);
+			for (point in coords) {
+				polygon = new Polygon(vertices, mat);
+				polygon.translate(Vec2.get(point.x, point.y));
+				body.shapes.add(polygon);
+			}
+			
+		}
+		
+		body.space = FlxNapeState.space;
+	}
+	
 	/**
 	 * Builds the nape collider with all tiles indices greater or equal to CollideIndex as solid (like normally with FlxTilemap), and assigns the nape material
 	 * @param	CollideIndex	All tiles with an index greater or equal to this will be solid
@@ -70,7 +95,7 @@ class FlxNapeTilemap extends FlxTilemap
 			FlxG.log.error("loadMap has to be called first!");
 			return;
 		}
-		var tileIndex:Int = 0;
+		var tileIndex = 0;
 		//Iterate through the tilemap and convert it to a binary map, marking if a tile is solid (1) or not (0)
 		for (y in 0...heightInTiles) 
 		{
@@ -94,7 +119,7 @@ class FlxNapeTilemap extends FlxTilemap
 			FlxG.log.error("loadMap has to be called first!");
 			return;
 		}
-		var tileIndex:Int = 0;
+		var tileIndex = 0;
 		for (y in 0...heightInTiles) 
 		{
 			for (x in 0...widthInTiles) 
@@ -112,10 +137,10 @@ class FlxNapeTilemap extends FlxTilemap
 		{
 			mat = new Material();
 		}
-		var tileIndex:Int = 0;
-		var startRow:Int = -1;
-		var endRow:Int = -1;
-		var rects:Array<FlxRect> = new Array<FlxRect>();
+		var tileIndex = 0;
+		var startRow = -1;
+		var endRow = -1;
+		var rects = new Array<FlxRect>();
 		
 		
 		//Go over every column, then scan along them
@@ -193,8 +218,8 @@ class FlxNapeTilemap extends FlxTilemap
 	{
 		//Increase StartX by one to skip the first column, we checked that one already
 		StartX++;
-		var rectFinished:Bool = false;
-		var tileIndex:Int = 0;
+		var rectFinished = false;
+		var tileIndex = 0;
 		//go along the columns from StartX onwards, then scan along those columns in the range of StartY to EndY
 		for (x in StartX...widthInTiles) 
 		{
@@ -235,5 +260,16 @@ class FlxNapeTilemap extends FlxTilemap
 		}
 		return FlxRect.get(StartX - 1, StartY, widthInTiles - 1, EndY);
 	}
+	
+	#if !FLX_NO_DEBUG
+	override public function drawDebug():Void 
+	{
+		if (FlxNapeState.debug == null)
+		{
+			super.drawDebug();
+		}
+	}
+	#end
+	
 	
 }
