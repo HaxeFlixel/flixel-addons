@@ -45,18 +45,10 @@ class TiledMap
 		var source:Fast = null;
 		var node:Fast = null;
 		
-		#if (LOAD_CONFIG_REAL_TIME && !neko)
-		// Load the asset located in the assets foldier, not the copies within bin folder
-		if (Std.is(Data, String)) 
-		{
-			source = new Fast(Xml.parse(File.getContent("../../../../" + Data)));
-		}
-		#else
 		if (Std.is(Data, String)) 
 		{
 			source = new Fast(Xml.parse(Assets.getText(Data)));
 		}
-		#end
 		else if (Std.is(Data, Xml)) 
 		{
 			source = new Fast(Data);
