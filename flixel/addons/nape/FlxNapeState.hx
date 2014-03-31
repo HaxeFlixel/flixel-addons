@@ -186,7 +186,7 @@ class FlxNapeState extends FlxState
 	private function set_napeDebugEnabled(Value:Bool):Bool
 	{
 		#if !FLX_NO_DEBUG
-		if(_button != null)
+		if (_button != null)
 			_button.toggled = !Value;
 		
 		if (Value)
