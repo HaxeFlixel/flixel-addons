@@ -4,6 +4,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.util.FlxColor;
 
 /**
  * This creates a FlxSprite which copies a target FlxSprite and applies a non-destructive wave-distortion effect.
@@ -13,40 +14,32 @@ import flixel.FlxSprite;
  */
 class FlxWaveSprite extends FlxSprite
 {
-
-	private static inline var baseStr:Float = 0.06;
+	private static inline var BASE_STRENGTH:Float = 0.06;
 	
-	static public inline var MODE_ALL:Int = 0; // the entire sprite should be wavy
-	static public inline var MODE_BOTTOM:Int = 1; // the bottom half should be wavy
-	static public inline var MODE_TOP:Int = 2; // the top half should be wavy
-
-	/*
+	/**
 	 * Which mode we're using for the effect
 	 */
-	public var mode:Int = 0;
-	
-	/*
-	 * The target FlxSprite we're going to be using
-	 */
-	private var _target:FlxSprite;
-	
-	private var _time:Float = 0;
-	private var _targetOff:Float = -999;
-	
-	/*
-	 * How strong the wave effect should be
-	 */
-	public var strength(default, set_strength):Int = 20;
-	
-	/*
+	public var mode:WaveMode;
+	/**
 	 * How fast should the wave effect be (higher = faster)
 	 */
-	public var speed:Float = 4;
-	
-	/*
+	public var speed:Float;
+	/**
 	 * The 'center' of our sprite (where the wave effect should start/end)
 	 */
 	public var center:Int;
+	/**
+	 * How strong the wave effect should be
+	 */
+	public var strength(default, set):Int;
+	
+	/**
+	 * The target FlxSprite we're going to be using
+	 */
+	private var _target:FlxSprite;
+	private var _targetOffset:Float = -999;
+	
+	private var _time:Float = 0;
 	
 	/**
 	 * Creates a new FlxWaveSprite, which clones a target FlxSprite and applies a wave-distortion effect to the clone.
@@ -57,17 +50,17 @@ class FlxWaveSprite extends FlxSprite
 	 * @param	Center		The 'center' of the effect when using BOTTOM or TOP modes. Anything above(BOTTOM)/below(TOP) this point on the image will have no distortion effect.
 	 * @param	Speed		How fast you want the effect to move. Higher values = faster.
 	 */
-	public function new(Target:FlxSprite, Mode:Int = 0, Strength:Int = 40, Center:Int = -1, Speed:Float = 3) 
+	public function new(Target:FlxSprite, ?Mode:WaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3) 
 	{
 		super();
+		if (Mode == null)
+			Mode = ALL;
 		_target = Target;
 		strength = Strength;
 		mode = Mode;
 		speed = Speed;
 		if (Center < 0)
-		{
-			center = Std.int(_target.height * .33);
-		}
+			center = Std.int(_target.height * 0.5);
 		initPixels();
 		dirty = true;
 	}
@@ -76,71 +69,80 @@ class FlxWaveSprite extends FlxSprite
 	{
 		if (!visible || alpha == 0)
 			return;
-		pixels.fillRect(pixels.rect, 0x0);
-		var off:Float = 0;
-		for (oY in 0...Std.int(_target.height))
+			
+		pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
+		
+		var offset:Float = 0;
+		for (oY in 0..._target.frameHeight)
 		{
 			var p:Float=0;
 			switch(mode)
 			{
-				case MODE_ALL:
-					p = oY;
-					off = (center*(strength*baseStr)) * baseStr * Math.sin((.3 * (p)) + _time);
-				case MODE_BOTTOM:
-					if (oY < center)
-					{
-						off = 0;
-					}
-					else
+				case ALL:
+					offset = center * calculateOffset(oY);
+					
+				case BOTTOM:
+					if (oY >= center)
 					{
 						p = oY - center;
-						off = ((p) * (strength*baseStr)) * baseStr * Math.sin((.3 * (p)) + _time);
-					}
-				case MODE_TOP:
-					if (oY > center)
-					{
-						off = 0;
-					}
-					else
-					{
-						p  = center - oY;
-						off = ((p) * (strength*baseStr)) * baseStr * Math.sin((.3 * (p)) + _time);
+						offset = p * calculateOffset(p);
 					}
 					
+				case TOP:
+					if (oY <= center)
+					{
+						p  = center - oY;
+						offset = p * calculateOffset(p);
+					}
 			}
-			_flashPoint.setTo(strength + off, oY);
-			_flashRect2.setTo(0, oY, _target.width, 1);
+			
+			_flashPoint.setTo(strength + offset, oY);
+			_flashRect2.setTo(0, oY, _target.frameWidth, 1);
 			pixels.copyPixels(_target.pixels, _flashRect2, _flashPoint);
 		}
-		if (_targetOff == -999)
+		
+		if (_targetOffset == -999)
 		{
-			_targetOff = off;
+			_targetOffset = offset;
 		}
 		else
 		{
-			if (off == _targetOff)
+			if (offset == _targetOffset)
 				_time = 0;
 		}
-		_time += FlxG.elapsed*speed;
+		_time += FlxG.elapsed * speed;
 		
 		resetFrameBitmapDatas();
 		dirty = true;
 		super.draw();
 	}
 	
+	private inline function calculateOffset(p:Float):Float
+	{
+		return (strength * BASE_STRENGTH) * BASE_STRENGTH * Math.sin((0.3 * p) + _time);
+	}
+	
 	private function initPixels():Void
 	{
 		setPosition(_target.x -strength, _target.y);
-		makeGraphic(Std.int(_target.width + (strength * 2)), Std.int(_target.height), 0x0, true);
+		makeGraphic(Std.int(_target.frameWidth + (strength * 2)), _target.frameHeight, FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo(strength, 0);
 		pixels.copyPixels(_target.pixels, _target.pixels.rect, _flashPoint);
 	}
 	
 	private function set_strength(value:Int):Int 
 	{
-		strength = value;
-		initPixels();
+		if (strength != value)
+		{
+			strength = value;
+			initPixels();
+		}
 		return strength;
 	}
-	
+}
+
+enum WaveMode {
+	ALL;
+	TOP;
+	BOTTOM;
 }
