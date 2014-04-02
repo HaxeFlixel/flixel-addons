@@ -196,6 +196,7 @@ class FlxNapeState extends FlxState
 				_physDbgSpr = new ShapeDebug(FlxG.width, FlxG.height);
 				_physDbgSpr.drawConstraints = true;
 				_physDbgSpr.display.scrollRect = null;
+				_physDbgSpr.thickness = 1;
 				FlxG.addChildBelowMouse(_physDbgSpr.display);
 			}
 		}
