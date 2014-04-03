@@ -543,8 +543,8 @@ class FlxTypeText extends FlxText
 	}
 	
 	/**
-	 * Immediately finished the animation. Called if any of the skipKeys is pressed.
-	 * Handy for custom skipping behaviour (for example with different input like mouse or gamepad).
+	 * Immediately finishes the animation. Called if any of the skipKeys is pressed.
+	 * Handy for custom skipping behaviour (for example with different inputs like mouse or gamepad).
 	 */
 	public function skip():Void
 	{
