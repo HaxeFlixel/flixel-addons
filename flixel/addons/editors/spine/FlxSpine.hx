@@ -184,7 +184,7 @@ class FlxSpine extends FlxSprite
 	}
 	
 	#if !FLX_NO_DEBUG
-	override public function drawDebugOnCamera(?Camera:FlxCamera):Void
+	override public function drawDebugOnCamera(Camera:FlxCamera):Void
 	{
 		super.drawDebugOnCamera(Camera);
 		
