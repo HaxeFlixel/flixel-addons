@@ -1166,6 +1166,20 @@ class FlxControlHandler
 			{
 				movedX = moveRight();
 			}
+			
+			if (movedX && movedY)
+			{
+				if (_movement == MOVEMENT_INSTANT)
+				{
+					_entity.velocity.x *= 0.70710678118;
+					_entity.velocity.y *= 0.70710678118;
+				}
+				else if (_movement == MOVEMENT_ACCELERATES)
+				{
+					_entity.acceleration.x *= 0.70710678118;
+					_entity.acceleration.y *= 0.70710678118;
+				}
+			}
 		}
 		
 		if (_fire)
