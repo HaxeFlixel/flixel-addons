@@ -6,6 +6,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.system.FlxSound;
+import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 import flixel.util.FlxVelocity;
 
@@ -17,7 +18,6 @@ import flixel.util.FlxVelocity;
  * 
  * TODO: Hot Keys
  * TODO: Binding of sound effects to keys (seperate from setSounds? as those are event based)
- * TODO: If moving diagonally compensate speed parameter (times x,y velocities by 0.707 or cos/sin(45))
  * TODO: Specify animation frames to play based on velocity
  * TODO: Variable gravity (based on height, the higher the stronger the effect)
  * 
@@ -91,6 +91,8 @@ class FlxControlHandler
 	
 	// Used by the FlxControl plugin
 	public var enabled:Bool = false;
+	
+	private static inline var DIAGONAL_COMPENSATION_FACTOR:Float = FlxMath.SQUARE_ROOT_OF_TWO * 0.5;
 	
 	private var _entity:FlxSprite;
 	
@@ -1171,13 +1173,13 @@ class FlxControlHandler
 			{
 				if (_movement == MOVEMENT_INSTANT)
 				{
-					_entity.velocity.x *= 0.70710678118;
-					_entity.velocity.y *= 0.70710678118;
+					_entity.velocity.x *= DIAGONAL_COMPENSATION_FACTOR;
+					_entity.velocity.y *= DIAGONAL_COMPENSATION_FACTOR;
 				}
 				else if (_movement == MOVEMENT_ACCELERATES)
 				{
-					_entity.acceleration.x *= 0.70710678118;
-					_entity.acceleration.y *= 0.70710678118;
+					_entity.acceleration.x *= DIAGONAL_COMPENSATION_FACTOR;
+					_entity.acceleration.y *= DIAGONAL_COMPENSATION_FACTOR;
 				}
 			}
 		}
