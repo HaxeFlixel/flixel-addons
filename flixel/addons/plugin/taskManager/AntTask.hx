@@ -1,25 +1,20 @@
 package flixel.addons.plugin.taskManager;
 
+import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxDestroyUtil;
+
 /**
  * @author Anton Karlov
  * @since  08.22.2012
  * @author Zaphod
  * @since  11.19.2012
  */
-class AntTask
+class AntTask implements IFlxDestroyable
 {
 	/**
 	 * Method-task to be executed
 	 */
-	public var func:Dynamic;
-	/**
-	 * An object to call func from
-	 */
-	public var obj:Dynamic;
-	/**
-	 * An array of arguments that can be passed to the task-method.
-	 */
-	public var args:Array<Dynamic>;
+	public var func:Void->Bool;
 	/**
 	 * If true then the task will be deleted from the manager immediately after execution.
 	 */
@@ -36,17 +31,9 @@ class AntTask
 	/**
 	 * Creates a new AntTask
 	 */
-	public function new(Obj:Dynamic, Func:Dynamic, ?Args:Array<Dynamic>, IgnoreCycle:Bool = false, Instant:Bool = false, ?Next:AntTask)
+	public function new(Func:Void->Bool, IgnoreCycle:Bool = false, Instant:Bool = false, ?Next:AntTask)
 	{
-		obj = Obj;
 		func = Func;
-		
-		if (args == null)	
-		{
-			args = new Array<Dynamic>();
-		}
-		
-		args = Args;
 		ignoreCycle = IgnoreCycle;
 		instant = Instant;
 		next = Next;
@@ -55,16 +42,9 @@ class AntTask
 	/**
 	 * Destroys the list.
 	 */
-	public function dispose():Void
+	public function destroy():Void
 	{
-		if (next != null)
-		{
-			next.dispose();
-		}
-		
-		next = null;
-		obj = null;
+		next = FlxDestroyUtil.destroy(next);
 		func = null;
-		args = null;
 	}
 }
