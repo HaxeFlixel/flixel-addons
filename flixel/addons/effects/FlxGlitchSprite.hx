@@ -15,25 +15,21 @@ class FlxGlitchSprite extends FlxSprite
 {
 	/**
 	 * Which direction the glitch effect should be applied.
-	 * @default	HORIZONTAL
 	 */
 	public var direction(default, set):GlitchDirection;
 	
 	/**
 	 * How thick each glitch segment should be.
-	 * @default	1
 	 */
 	public var size:Int = 1;
 	
 	/**
 	 * How strong the glitch effect should be (how much it should move from the center)
-	 * @default	2
 	 */
 	public var strength(default, set):Int = 2;
 	
 	/**
 	 * Time, in seconds, between glitch updates
-	 * @default	0.05
 	 */
 	public var delay:Float = 0.05;
 	
@@ -49,12 +45,12 @@ class FlxGlitchSprite extends FlxSprite
 	 * This effect is non-destructive to the target's pixels, and can be used on animated FlxSprites.
 	 * 
 	 * @param	Target		The target FlxSprite you want to clone.
-	 * @param	?Strength	How strong you want the effect
-	 * @param	?Size		How 'thick' you want each piece of the glitch
-	 * @param	?Delay		How long (in seconds) between each glitch update
-	 * @param	?Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL)
+	 * @param	Strength	How strong you want the effect
+	 * @param	Size		How 'thick' you want each piece of the glitch
+	 * @param	Delay		How long (in seconds) between each glitch update
+	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL)
 	 */
-	public function new(Target:FlxSprite, ?Strength:Int = 4, ?Size:Int = 1, ?Delay:Float = 0.05, ?Direction:GlitchDirection) 
+	public function new(Target:FlxSprite, Strength:Int = 4, Size:Int = 1, Delay:Float = 0.05, ?Direction:GlitchDirection) 
 	{
 		super();
 		target = Target;
@@ -69,8 +65,9 @@ class FlxGlitchSprite extends FlxSprite
 	
 	override public function draw():Void
 	{
-		if (!visible || alpha == 0 || !alive || !exists || target == null)
+		if (!alive || !active || alpha == 0 || target == null)
 			return;
+			
 		if (_time > delay)
 		{
 			_time = 0;
