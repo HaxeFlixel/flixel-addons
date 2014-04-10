@@ -65,7 +65,7 @@ class FlxGlitchSprite extends FlxSprite
 	
 	override public function draw():Void
 	{
-		if (!alive || !active || alpha == 0 || target == null)
+		if (alpha == 0 || target == null)
 			return;
 			
 		if (_time > delay)
