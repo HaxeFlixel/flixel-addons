@@ -1,4 +1,5 @@
 package flixel.addons.effects;
+
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
@@ -14,29 +15,25 @@ import flixel.util.FlxRandom;
 class FlxGlitchSprite extends FlxSprite
 {
 	/**
-	 * Which direction the glitch effect should be applied.
-	 */
-	public var direction(default, set):GlitchDirection;
-	
-	/**
 	 * How thick each glitch segment should be.
 	 */
 	public var size:Int = 1;
-	
-	/**
-	 * How strong the glitch effect should be (how much it should move from the center)
-	 */
-	public var strength(default, set):Int = 2;
-	
 	/**
 	 * Time, in seconds, between glitch updates
 	 */
 	public var delay:Float = 0.05;
-	
 	/**
 	 * The target FlxSprite that the glitch effect copies from.
 	 */
 	public var target:FlxSprite;
+	/**
+	 * Which direction the glitch effect should be applied.
+	 */
+	public var direction(default, set):GlitchDirection;
+	/**
+	 * How strong the glitch effect should be (how much it should move from the center)
+	 */
+	public var strength(default, set):Int = 2;
 	
 	private var _time:Float = 0;
 	
@@ -138,7 +135,6 @@ class FlxGlitchSprite extends FlxSprite
 		}
 		return strength;
 	}
-	
 }
 
 enum GlitchDirection {
