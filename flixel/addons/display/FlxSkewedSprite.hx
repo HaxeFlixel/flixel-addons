@@ -135,7 +135,7 @@ class FlxSkewedSprite extends FlxSprite
 			var x2:Float = x1;
 			var y2:Float = y1;
 			
-			var isFlipped:Bool = (flipped != 0) && (facing == FlxObject.LEFT);
+			var isFlipped:Bool = flippable && (facing == FlxObject.LEFT);
 			
 			if (isSimpleRender())
 			{
