@@ -15,7 +15,7 @@ class FlxShapeCircle extends FlxShape
 	{
 		shape_id = "circle";
 		
-		var strokeBuffer:Float = (lineStyle.thickness);
+		var strokeBuffer:Float = (LineStyle_.thickness);
 		
 		radius = Radius;
 		
@@ -30,7 +30,7 @@ class FlxShapeCircle extends FlxShape
 		if (h <= 0) 
 			h = strokeBuffer;
 		
-		super(X, Y, w, h, lineStyle, fillStyle, trueWidth, trueHeight);
+		super(X, Y, w, h, LineStyle_, FillStyle_, trueWidth, trueHeight);
 	}
 	
 	override public inline function drawSpecificShape(?matrix:Matrix):Void 
