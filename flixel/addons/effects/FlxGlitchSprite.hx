@@ -106,7 +106,7 @@ class FlxGlitchSprite extends FlxSprite
 		super.draw();
 	}
 	
-	private function initPixels():Void
+	public function initPixels():Void
 	{
 		target.drawFrame();	
 		setPosition(target.x - (direction == HORIZONTAL ? strength : 0), target.y - (direction == VERTICAL ? strength : 0));
