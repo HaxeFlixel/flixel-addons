@@ -135,13 +135,18 @@ class FlxSkewedSprite extends FlxSprite
 			var x2:Float = x1;
 			var y2:Float = y1;
 			
-			var isFlipped:Bool = flippable && (facing == FlxObject.LEFT);
+			var sx:Float = scale.x * _facingHorizontalMult;
+			var sy:Float = scale.y * _facingVerticalMult;
 			
 			if (isSimpleRender())
 			{
-				if (isFlipped)
+				if (flipX)
 				{
 					csx = -csx;
+				}
+				if (flipY)
+				{
+					csy = -csy;
 				}
 			}
 			else
@@ -153,15 +158,7 @@ class FlxSkewedSprite extends FlxSprite
 					
 					_matrix.identity();
 					_matrix.rotate( -radians);
-					
-					if (isFlipped)
-					{
-						_matrix.scale( -scale.x, scale.y);
-					}
-					else
-					{
-						_matrix.scale(scale.x, scale.y);
-					}
+					_matrix.scale(sx, sy);
 					
 					updateSkewMatrix();
 				}
