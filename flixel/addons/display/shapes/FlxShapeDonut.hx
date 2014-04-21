@@ -21,7 +21,7 @@ class FlxShapeDonut extends FlxShape
 	{
 		shape_id = "donut";
 		
-		var strokeBuffer:Float = (lineStyle.thickness);
+		var strokeBuffer:Float = (LineStyle_.thickness);
 		
 		radius_out = RadiusOut;
 		radius_in = RadiusIn;

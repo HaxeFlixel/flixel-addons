@@ -41,7 +41,7 @@ class FlxShapeCross extends FlxShape
 		intersectionH = IntersectionH;
 		intersectionV = IntersectionV;
 		
-		var strokeBuffer:Float = (lineStyle.thickness);
+		var strokeBuffer:Float = (LineStyle_.thickness);
 		
 		var w:Float = horizontalLength + strokeBuffer;				//create buffer space for stroke
 		var h:Float = verticalLength   + strokeBuffer;
