@@ -51,7 +51,7 @@ class FlxShapeCross extends FlxShape
 		if (h <= 0) 
 			h = strokeBuffer;
 		
-		super(X, Y, w, h, lineStyle, fillStyle, horizontalLength, verticalLength);
+		super(X, Y, w, h, LineStyle_, FillStyle_, horizontalLength, verticalLength);
 	}
 	
 	public override function destroy():Void 
