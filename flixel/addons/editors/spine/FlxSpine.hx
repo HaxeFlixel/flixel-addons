@@ -58,9 +58,6 @@ class FlxSpine extends FlxSprite
 	public var wrapperAngles:ObjectMap<RegionAttachment, Float>;
 	public var cachedSprites:ObjectMap<RegionAttachment, FlxSprite>;
 	
-	public var flipX(get, set):Bool;
-	public var flipY(get, set):Bool;
-	
 	/**
 	 * Instantiate a new Spine Sprite.
 	 * @param	skeletonData	Animation data from Spine (.json .skel .png), get it like this: FlxSpineSprite.readSkeletonData( "mySpriteData", "assets/" );
@@ -86,8 +83,6 @@ class FlxSpine extends FlxSprite
 		skeleton = Skeleton.create(skeletonData);
 		skeleton.setX(0);
 		skeleton.setY(0);
-		skeleton.setFlipY(true);
-		//skeleton.setFlipX(true);
 		
 		cachedSprites = new ObjectMap<RegionAttachment, FlxSprite>();
 		wrapperAngles = new ObjectMap<RegionAttachment, Float>();
@@ -241,30 +236,19 @@ class FlxSpine extends FlxSprite
 		return wrapper;
 	}
 	
-	private inline function get_flipX():Bool
-	{
-		return skeleton.flipX;
-	}
-	
-	private function set_flipX(value:Bool):Bool
+	override private function set_flipX(value:Bool):Bool
 	{
 		if (value != skeleton.flipX)
 			skeleton.setFlipX(value);
 			
-		facing = (value == true) ? FlxObject.LEFT : FlxObject.RIGHT;
-		return value;
+		return super.set_flipX(value);
 	}
 	
-	private inline function get_flipY():Bool
-	{
-		return skeleton.flipY;
-	}
-	
-	private function set_flipY(value:Bool):Bool
+	override private function set_flipY(value:Bool):Bool
 	{
 		if (value != skeleton.flipY)
 			skeleton.setFlipY(value);
 			
-		return value;
+		return super.set_flipY(value);
 	}
 }
