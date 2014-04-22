@@ -259,7 +259,7 @@ class FlxWeapon
 		{
 			var tempBullet:FlxBullet = Type.createInstance(bulletType, [this, bulletID]);
 			
-			tempBullet.loadGraphic(ImageSequence, true, false, FrameWidth, FrameHeight);
+			tempBullet.loadGraphic(ImageSequence, true, FrameWidth, FrameHeight);
 			tempBullet.addAnimation("fire", Frames, FrameRate, Looped);
 			
 			group.add(tempBullet);

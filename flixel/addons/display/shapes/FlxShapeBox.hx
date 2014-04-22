@@ -20,7 +20,7 @@ class FlxShapeBox extends FlxShape
 	{
 		shape_id = "box";
 		
-		var strokeBuffer:Float = (lineStyle.thickness);
+		var strokeBuffer:Float = (LineStyle_.thickness);
 		shapeWidth = W;
 		shapeHeight = H;
 		
@@ -32,7 +32,7 @@ class FlxShapeBox extends FlxShape
 		if (h <= 0) 
 			h = strokeBuffer;
 		
-		super(X, Y, w, h, lineStyle, fillStyle, shapeWidth, shapeHeight);
+		super(X, Y, w, h, LineStyle_, FillStyle_, shapeWidth, shapeHeight);
 	}
 	
 	override public function drawSpecificShape(?matrix:Matrix):Void 

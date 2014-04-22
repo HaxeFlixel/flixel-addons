@@ -36,7 +36,7 @@ class FlxShapeSquareDonut extends FlxShape
 		if (h <= 0) 
 			h = strokeBuffer;
 		
-		super(X, Y, w, h, lineStyle, fillStyle, trueWidth, trueHeight);
+		super(X, Y, w, h, LineStyle_, FillStyle_, trueWidth, trueHeight);
 	}
 	
 	override public function drawSpecificShape(?matrix:Matrix):Void 
