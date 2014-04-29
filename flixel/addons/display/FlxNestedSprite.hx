@@ -114,7 +114,7 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public function add(Child:FlxNestedSprite):FlxNestedSprite
 	{
-		if (FlxArrayUtil.indexOf(children, Child) < 0)
+		if (children.indexOf(Child) < 0)
 		{
 			children.push(Child);
 			Child.velocity.x = Child.velocity.y = 0;
@@ -145,7 +145,7 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public function remove(Child:FlxNestedSprite):FlxNestedSprite
 	{
-		var index:Int = FlxArrayUtil.indexOf(children, Child);
+		var index:Int = children.indexOf(Child);
 		
 		if (index >= 0)
 		{
