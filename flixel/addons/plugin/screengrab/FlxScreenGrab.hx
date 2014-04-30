@@ -1,4 +1,5 @@
 package flixel.addons.plugin.screengrab;
+import systools.Dialogs;
 
 #if !js
 import flash.display.Bitmap;
@@ -158,7 +159,16 @@ class FlxScreenGrab extends FlxPlugin
 		file.save(png, Filename);
 		#else
 		var png:ByteArray = screenshot.bitmapData.encode('x');
-		var f = sys.io.File.write(Filename, true);
+		var path:String = "";
+		try
+		{
+			path = Dialogs.saveFile("", "", flash.filesystem.File.documentsDirectory.nativePath, { count:1, descriptions:["png files"], extensions:["*.png"] } );
+		}
+		catch (msg:String)
+		{
+			path = Filename;
+		}
+		var f = sys.io.File.write(path, true);
 		f.writeString(png.readUTFBytes(png.length));
 		f.close();
 		#end
