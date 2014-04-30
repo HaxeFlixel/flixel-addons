@@ -426,15 +426,7 @@ class FlxTypeText extends FlxText
 		#if !FLX_NO_KEYBOARD
 		if (skipKeys != null && skipKeys.length > 0 && FlxG.keys.anyJustPressed(skipKeys))
 		{
-			if (_erasing || _waiting)
-			{
-				_length = 0;
-				_waiting = false;
-			}
-			else if (_typing)
-			{
-				_length = _finalText.length;
-			}
+			skip();
 		}
 		#end
 		
@@ -548,5 +540,22 @@ class FlxTypeText extends FlxText
 		}
 		
 		super.update();
+	}
+	
+	/**
+	 * Immediately finishes the animation. Called if any of the skipKeys is pressed.
+	 * Handy for custom skipping behaviour (for example with different inputs like mouse or gamepad).
+	 */
+	public function skip():Void
+	{
+		if (_erasing || _waiting)
+		{
+			_length = 0;
+			_waiting = false;
+		}
+		else if (_typing)
+		{
+			_length = _finalText.length;
+		}
 	}
 }

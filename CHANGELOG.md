@@ -1,3 +1,30 @@
+1.1.0
+------------------------------
+* Compatibility with flixel 3.3.0
+* FlxClickArea: use Void->Void callbacks instead of Dynamic ones
+* Refactored StarFieldFX into FlxStarField2D and FlxStarField3D
+* FlxBullet: removed redundant xGravity, yGravity, maxVelocityX and maxVelocityY
+* FlxButtonPlus:
+ * Fixed initial text visibility
+ * Added setters for the member sprites and texts so you can change them
+ * Constructor params X and Y are now Floats
+* FlxExtendedSprite: mouseStartDragCallback and mouseStopDragCallback now use MouseCallback (instead of Dynamic)
+* FlxSlider: fixed uniqueness of the body sprite graphic
+* FlxNestedSprite: fixed a potential issue in destroy()
+* TiledObjectGroup: 
+ * Removed x, y, width and height vars
+ * Added map and color vars
+* FlxTypeText: added skip()
+* FlxNapeState: fixed issue with nape debug draw not showing on native targets
+* Refactored AntTaskManager:
+ * Switched to Bool->Void callbacks as opposed to Dynamic
+ * Now extends FlxBasic and has to be add()ed
+ * Removed pause variable
+* FlxControlHandler: added compensation for diagonal movement
+* Added FlxNapeTilemap
+* Added FlxWaveSprite
+* Added FlxGlitchSprite
+
 1.0.3
 ------------------------------
 * Compatibility with flixel 3.2.0

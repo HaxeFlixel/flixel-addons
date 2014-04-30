@@ -1,29 +1,26 @@
 package flixel.addons.editors.spine;
 
-import openfl.Assets;
-import haxe.ds.ObjectMap;
-
-import flixel.FlxG;
+import flixel.addons.editors.spine.texture.FlixelTexture;
+import flixel.addons.editors.spine.texture.FlixelTextureLoader;
 import flixel.FlxCamera;
-import flixel.FlxSprite;
+import flixel.FlxG;
 import flixel.FlxObject;
+import flixel.FlxSprite;
 import flixel.util.FlxAngle;
 import flixel.util.loaders.CachedGraphics;
 import flixel.util.loaders.TextureRegion;
-
-import flixel.addons.editors.spine.texture.FlixelTexture;
-import flixel.addons.editors.spine.texture.FlixelTextureLoader;
-
-import spinehx.Bone;
-import spinehx.Slot;
-import spinehx.Skeleton;
-import spinehx.SkeletonData;
-import spinehx.SkeletonJson;
+import haxe.ds.ObjectMap;
+import openfl.Assets;
 import spinehx.AnimationState;
 import spinehx.AnimationStateData;
 import spinehx.atlas.TextureAtlas;
 import spinehx.attachments.Attachment;
 import spinehx.attachments.RegionAttachment;
+import spinehx.Bone;
+import spinehx.Skeleton;
+import spinehx.SkeletonData;
+import spinehx.SkeletonJson;
+import spinehx.Slot;
 
 /**
  * A Sprite that can play animations exported by Spine (http://esotericsoftware.com/)
@@ -33,6 +30,23 @@ import spinehx.attachments.RegionAttachment;
  */
 class FlxSpine extends FlxSprite
 {
+	/**
+	 * Get Spine animation data.
+	 * 
+	 * @param	DataName	The name of the animation data files exported from Spine (.atlas .json .png).
+	 * @param	DataPath	The directory these files are located at
+	 * @param	Scale		Animation scale
+	 */
+	public static function readSkeletonData(DataName:String, DataPath:String, Scale:Float = 1):SkeletonData
+	{
+		if (DataPath.lastIndexOf("/") < 0) DataPath += "/"; // append / at the end of the folder path
+		var spineAtlas:TextureAtlas = TextureAtlas.create(Assets.getText(DataPath + DataName + ".atlas"), DataPath, new FlixelTextureLoader());
+		var json:SkeletonJson = SkeletonJson.create(spineAtlas);
+		json.setScale(Scale);
+		var skeletonData:SkeletonData = json.readSkeletonData(DataName, Assets.getText(DataPath + DataName + ".json"));
+		return skeletonData;
+	}
+	
 	public var skeleton:Skeleton;
 	public var skeletonData:SkeletonData;
 	public var state:AnimationState;
@@ -69,8 +83,6 @@ class FlxSpine extends FlxSprite
 		skeleton = Skeleton.create(skeletonData);
 		skeleton.setX(0);
 		skeleton.setY(0);
-		skeleton.setFlipY(true);
-		//skeleton.setFlipX(true);
 		
 		cachedSprites = new ObjectMap<RegionAttachment, FlxSprite>();
 		wrapperAngles = new ObjectMap<RegionAttachment, Float>();
@@ -101,53 +113,6 @@ class FlxSpine extends FlxSprite
 		cachedSprites = null;
 		
 		super.destroy();
-	}
-	
-	public var flipX(get, set):Bool;
-	
-	private function get_flipX():Bool
-	{
-		return skeleton.flipX;
-	}
-	
-	private function set_flipX(value:Bool):Bool
-	{
-		if (value != skeleton.flipX)
-			skeleton.setFlipX(value);
-			
-		facing = (value == true) ? FlxObject.LEFT : FlxObject.RIGHT;
-		return value;
-	}
-	
-	public var flipY(get, set):Bool;
-	
-	private function get_flipY():Bool
-	{
-		return skeleton.flipY;
-	}
-	
-	private function set_flipY(value:Bool):Bool
-	{
-		if (value != skeleton.flipY)
-			skeleton.setFlipY(value);
-			
-		return value;
-	}
-	
-	/**
-	 * Get Spine animation data.
-	 * @param	DataName	The name of the animation data files exported from Spine (.atlas .json .png).
-	 * @param	DataPath	The directory these files are located at
-	 * @param	Scale		Animation scale
-	 */
-	public static function readSkeletonData(DataName:String, DataPath:String, Scale:Float = 1):SkeletonData
-	{
-		if (DataPath.lastIndexOf("/") < 0) DataPath += "/"; // append / at the end of the folder path
-		var spineAtlas:TextureAtlas = TextureAtlas.create(Assets.getText(DataPath + DataName + ".atlas"), DataPath, new FlixelTextureLoader());
-		var json:SkeletonJson = SkeletonJson.create(spineAtlas);
-		json.setScale(Scale);
-		var skeletonData:SkeletonData = json.readSkeletonData(DataName, Assets.getText(DataPath + DataName + ".json"));
-		return skeletonData;
 	}
 	
 	override public function update():Void
@@ -214,7 +179,7 @@ class FlxSpine extends FlxSprite
 	}
 	
 	#if !FLX_NO_DEBUG
-	override public function drawDebugOnCamera(?Camera:FlxCamera):Void
+	override public function drawDebugOnCamera(Camera:FlxCamera):Void
 	{
 		super.drawDebugOnCamera(Camera);
 		
@@ -269,5 +234,21 @@ class FlxSpine extends FlxSprite
 		cachedSprites.set(regionAttachment, wrapper);
 		wrapperAngles.set(regionAttachment, wrapper.angle);
 		return wrapper;
+	}
+	
+	override private function set_flipX(value:Bool):Bool
+	{
+		if (value != skeleton.flipX)
+			skeleton.setFlipX(value);
+			
+		return super.set_flipX(value);
+	}
+	
+	override private function set_flipY(value:Bool):Bool
+	{
+		if (value != skeleton.flipY)
+			skeleton.setFlipY(value);
+			
+		return super.set_flipY(value);
 	}
 }

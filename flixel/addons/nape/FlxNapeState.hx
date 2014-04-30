@@ -167,20 +167,27 @@ class FlxNapeState extends FlxState
 	{
 		super.destroy();
 		
-		space.clear();
-		space = null; // resets atributes like gravity.
+		if (space != null)
+		{
+			space.clear();
+			space = null; // resets atributes like gravity.
+		}
 		
 		#if !FLX_NO_DEBUG
 		napeDebugEnabled = false;
-		FlxG.debugger.removeButton(_button);
-		_button = null;
+		if (_button != null)
+		{
+			FlxG.debugger.removeButton(_button);
+			_button = null;
+		}
 		#end
 	}
 	
 	private function set_napeDebugEnabled(Value:Bool):Bool
 	{
 		#if !FLX_NO_DEBUG
-		_button.toggled = !Value;
+		if (_button != null)
+			_button.toggled = !Value;
 		
 		if (Value)
 		{
@@ -189,6 +196,7 @@ class FlxNapeState extends FlxState
 				_physDbgSpr = new ShapeDebug(FlxG.width, FlxG.height);
 				_physDbgSpr.drawConstraints = true;
 				_physDbgSpr.display.scrollRect = null;
+				_physDbgSpr.thickness = 1;
 				FlxG.addChildBelowMouse(_physDbgSpr.display);
 			}
 		}
