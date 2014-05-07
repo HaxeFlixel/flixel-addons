@@ -243,16 +243,6 @@ class FlxTileSpecial extends FlxBasic
 		}
 		
 		_matrix.identity();
-		if (_tmp_flipH) 
-		{
-			_matrix.scale( -1, 1);
-			_matrix.translate(width, 0);
-		}
-		if (_tmp_flipV) 
-		{
-			_matrix.scale(1, -1);
-			_matrix.translate(0, height);
-		}
 		
 		if (_tmp_rot != FlxTileSpecial.ROTATE_0) 
 		{
@@ -266,6 +256,17 @@ class FlxTileSpecial extends FlxBasic
 					_matrix.rotate(270 * FlxAngle.TO_RAD);
 					_matrix.translate(0, height);
 			}
+		}
+		
+		if (_tmp_flipH) 
+		{
+			_matrix.scale( -1, 1);
+			_matrix.translate(width, 0);
+		}
+		if (_tmp_flipV) 
+		{
+			_matrix.scale(1, -1);
+			_matrix.translate(0, height);
 		}
 		
 		return _matrix;
