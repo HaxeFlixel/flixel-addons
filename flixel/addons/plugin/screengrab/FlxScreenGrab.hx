@@ -164,7 +164,9 @@ class FlxScreenGrab extends FlxPlugin
 		var path:String = "";
 		try
 		{
-			path = Dialogs.saveFile("", "", flash.filesystem.File.documentsDirectory.nativePath, { count:1, descriptions:["png files"], extensions:["*.png"] } );
+			path = Dialogs.saveFile("", "", flash.filesystem.File.documentsDirectory.nativePath);
+			//these parameters can be added when systools is finally updated on haxelib:
+			//, { count:1, descriptions:["png files"], extensions:["*.png"] } );
 		}
 		catch (msg:String)
 		{
