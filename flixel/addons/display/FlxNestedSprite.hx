@@ -257,7 +257,7 @@ class FlxNestedSprite extends FlxSprite
 				child.angularVelocity = child.angularAcceleration = 0;
 				child.postUpdate();
 				
-				if (isSimpleRender())
+				if (isSimpleRender(camera))
 				{
 					child.x = x + child.relativeX - offset.x;
 					child.y = y + child.relativeY - offset.y;

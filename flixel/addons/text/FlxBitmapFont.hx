@@ -310,7 +310,7 @@ class FlxBitmapFont extends FlxSprite
 			var ssx:Float = 0;
 			var csy:Float = 1;
 			
-			if (!isSimpleRender())
+			if (!isSimpleRender(camera))
 			{
 				if (_angleChanged)
 				{
@@ -367,9 +367,9 @@ class FlxBitmapFont extends FlxSprite
 		}
 	}
 	
-	override public function isSimpleRender():Bool
+	override public function isSimpleRender(?camera:FlxCamera):Bool
 	{ 
-		return ((angle == 0) && (scale.x == 1) && (scale.y == 1));
+		return (angle == 0) && (scale.x == 1) && (scale.y == 1);
 	}
 	#end
 	

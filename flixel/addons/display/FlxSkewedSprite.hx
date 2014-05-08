@@ -99,7 +99,7 @@ class FlxSkewedSprite extends FlxSprite
 		#end
 		
 #if FLX_RENDER_BLIT
-			if (isSimpleRender())
+			if (isSimpleRender(camera))
 			{
 				_point.copyToFlash(_flashPoint);
 				camera.buffer.copyPixels(framePixels, _flashRect, _flashPoint, null, null, true);
@@ -138,7 +138,7 @@ class FlxSkewedSprite extends FlxSprite
 			var sx:Float = scale.x * _facingHorizontalMult;
 			var sy:Float = scale.y * _facingVerticalMult;
 			
-			if (isSimpleRender())
+			if (isSimpleRender(camera))
 			{
 				if (flipX)
 				{
@@ -215,12 +215,8 @@ class FlxSkewedSprite extends FlxSprite
 		}
 	}
 	
-	public override function isSimpleRender():Bool
+	override public function isSimpleRender(?camera:FlxCamera):Bool
 	{
-		#if FLX_RENDER_BLIT
-		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
-		#else
-		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && pixelPerfectRender);
-		#end
+		return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0);
 	}
 }
