@@ -21,8 +21,8 @@ class FlxTileSpecial extends FlxBasic
 	 */
 	public var tileID:Int;
 	
-	public var flipHorizontally:Bool = false;
-	public var flipVertically:Bool = false;
+	public var flipX:Bool = false;
+	public var flipY:Bool = false;
 	
 	public var rotate:Int;
 	
@@ -53,26 +53,26 @@ class FlxTileSpecial extends FlxBasic
 	public var dirty:Bool = true;
 	#end
 	
-	public function new(TilesetId:Int, FlipHorizontal:Bool, FlipVertical:Bool, Rotate:Int) 
+	public function new(TilesetId:Int, FlipX:Bool, FlipY:Bool, Rotate:Int) 
 	{
 		super();
-		this.tileID = TilesetId;
-		this._currTileId = this.tileID;
-		this.flipHorizontally = FlipHorizontal;
-		this.flipVertically = FlipVertical;
-		this.rotate = Rotate;
+		tileID = TilesetId;
+		_currTileId = tileID;
+		flipX = FlipX;
+		flipY = FlipY;
+		rotate = Rotate;
 		
 		#if FLX_RENDER_BLIT
-		this._normalFrame = null;
-		this._flippedFrame = null;
-		this._point = new Point(0, 0);
+		_normalFrame = null;
+		_flippedFrame = null;
+		_point = new Point(0, 0);
 		
 		_animRects = null;
 		tileRect = new Rectangle();
 		#end
 		
-		this._matrix = new Matrix();
-		this._animation = null;
+		_matrix = new Matrix();
+		_animation = null;
 	}
 	
 	override public function destroy():Void 
@@ -133,17 +133,17 @@ class FlxTileSpecial extends FlxBasic
 	
 	public inline function isSpecial():Bool 
 	{
-		return (isFlipped() || hasAnimation());
+		return isFlipped() || hasAnimation();
 	}
 	
 	public inline function isFlipped():Bool 
 	{
-		return ((flipHorizontally || flipVertically) || rotate != ROTATE_0);
+		return (flipX || flipY) || rotate != ROTATE_0;
 	}
 	
 	public inline function hasAnimation():Bool 
 	{
-		return (_animation != null);
+		return _animation != null;
 	}
 	
 	#if FLX_RENDER_BLIT
@@ -187,7 +187,7 @@ class FlxTileSpecial extends FlxBasic
 	 */
 	public function setAnimationRects(rects:Array<Rectangle>):Void 
 	{
-		this._animRects = rects;
+		_animRects = rects;
 	}
 	#end
 	
@@ -216,12 +216,7 @@ class FlxTileSpecial extends FlxBasic
 	 */
 	public function getAnimationTilesId():Array<Int> 
 	{
-		if (_animation != null) 
-		{
-			return _animation.frames;
-		}
-		
-		return null;
+		return (_animation != null) ? _animation.frames : null;
 	}
 	
 	/**
@@ -232,13 +227,14 @@ class FlxTileSpecial extends FlxBasic
 	 */
 	public function getMatrix(width:Int, height:Int):Matrix 
 	{
-		_tmp_flipH = flipHorizontally;
-		_tmp_flipV = flipVertically;
+		_tmp_flipH = flipX;
+		_tmp_flipV = flipY;
 		_tmp_rot = rotate;
 		
-		if (_currAnimParam != null) {
-			_tmp_flipH = _currAnimParam.flipHorizontal;
-			_tmp_flipV = _currAnimParam.flipVertical;
+		if (_currAnimParam != null)
+		{
+			_tmp_flipH = _currAnimParam.flipX;
+			_tmp_flipV = _currAnimParam.flipY;
 			_tmp_rot = _currAnimParam.rotate;
 		}
 		
@@ -274,9 +270,8 @@ class FlxTileSpecial extends FlxBasic
 }
 
 
-typedef AnimParams = 
-{
-	var flipHorizontal:Bool;
-	var flipVertical:Bool;
+typedef AnimParams = {
+	var flipX:Bool;
+	var flipY:Bool;
 	var rotate:Int;
 }
