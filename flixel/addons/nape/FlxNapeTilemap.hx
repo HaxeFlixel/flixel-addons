@@ -34,7 +34,8 @@ class FlxNapeTilemap extends FlxTilemap
 		super.update();
 	}
 	
-	override public function loadMap(MapData:Dynamic, TileGraphic:Dynamic, TileWidth:Int = 0, TileHeight:Int = 0, AutoTile:Int = 0, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
+	override public function loadMap(MapData:Dynamic, TileGraphic:Dynamic, TileWidth:Int = 0, TileHeight:Int = 0, 
+		?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
 	{
 		super.loadMap(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
 		_binaryData = new Array<Int>();
@@ -88,7 +89,8 @@ class FlxNapeTilemap extends FlxTilemap
 	}
 	
 	/**
-	 * Builds the nape collider with all tiles indices greater or equal to CollideIndex as solid (like normally with FlxTilemap), and assigns the nape material
+	 * Builds the nape collider with all tiles indices greater or equal to CollideIndex 
+	 * as solid (like normally with FlxTilemap), and assigns the nape material
 	 * 
 	 * @param	CollideIndex	All tiles with an index greater or equal to this will be solid
 	 * @param	?mat			The Nape physics material to use. Will use the default material if not specified
