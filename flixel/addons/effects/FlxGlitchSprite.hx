@@ -7,8 +7,8 @@ import flixel.util.FlxRandom;
 
 /**
  * This creates a FlxSprite which copies a target FlxSprite and applies a non-destructive wave-distortion effect.
- * Usage: Create a FlxSprite object, position it where you want (don't add it), and then create a new FlxWaveSprite, 
- * passing the Target object to it, and then add the FlxWaveSprite to your state/group.
+ * Usage: Create a FlxSprite object, position it where you want (don't add it), and then create a new FlxGlitchSprite, 
+ * passing the Target object to it, and then add the sprite to your state/group.
  * Based, in part, from PhotonStorm's GlitchFX Class in Flixel Power Tools.
  * @author Tim Hely / tims-world.com
  */
@@ -29,7 +29,7 @@ class FlxGlitchSprite extends FlxSprite
 	/**
 	 * Which direction the glitch effect should be applied.
 	 */
-	public var direction(default, set):GlitchDirection;
+	public var direction(default, set):FlxGlitchDirection;
 	/**
 	 * How strong the glitch effect should be (how much it should move from the center)
 	 */
@@ -47,7 +47,7 @@ class FlxGlitchSprite extends FlxSprite
 	 * @param	Delay		How long (in seconds) between each glitch update
 	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL)
 	 */
-	public function new(Target:FlxSprite, Strength:Int = 4, Size:Int = 1, Delay:Float = 0.05, ?Direction:GlitchDirection) 
+	public function new(Target:FlxSprite, Strength:Int = 4, Size:Int = 1, Delay:Float = 0.05, ?Direction:FlxGlitchDirection) 
 	{
 		super();
 		target = Target;
@@ -116,7 +116,7 @@ class FlxGlitchSprite extends FlxSprite
 		dirty = true;
 	}
 	
-	private function set_direction(Value:GlitchDirection):GlitchDirection
+	private function set_direction(Value:FlxGlitchDirection):FlxGlitchDirection
 	{
 		if (direction != Value)
 		{
@@ -137,7 +137,8 @@ class FlxGlitchSprite extends FlxSprite
 	}
 }
 
-enum GlitchDirection {
+enum FlxGlitchDirection
+{
 	HORIZONTAL;
 	VERTICAL;
 }

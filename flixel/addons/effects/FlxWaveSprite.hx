@@ -19,7 +19,7 @@ class FlxWaveSprite extends FlxSprite
 	/**
 	 * Which mode we're using for the effect
 	 */
-	public var mode:WaveMode;
+	public var mode:FlxWaveMode;
 	/**
 	 * How fast should the wave effect be (higher = faster)
 	 */
@@ -50,7 +50,7 @@ class FlxWaveSprite extends FlxSprite
 	 * @param	Center		The 'center' of the effect when using BOTTOM or TOP modes. Anything above(BOTTOM)/below(TOP) this point on the image will have no distortion effect.
 	 * @param	Speed		How fast you want the effect to move. Higher values = faster.
 	 */
-	public function new(Target:FlxSprite, ?Mode:WaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3) 
+	public function new(Target:FlxSprite, ?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3) 
 	{
 		super();
 		if (Mode == null)
@@ -141,7 +141,8 @@ class FlxWaveSprite extends FlxSprite
 	}
 }
 
-enum WaveMode {
+enum FlxWaveMode
+{
 	ALL;
 	TOP;
 	BOTTOM;
