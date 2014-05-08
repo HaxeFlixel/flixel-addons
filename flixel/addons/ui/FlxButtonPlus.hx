@@ -131,10 +131,10 @@ class FlxButtonPlus extends FlxSpriteGroup
 		if (Label != null)
 		{
 			textNormal = new FlxText(0, 3, Width, Label);
-			textNormal.setFormat(null, 8, 0xffffff, "center", 0x000000);
+			textNormal.setFormat(null, 8, 0xffffff, "center");
 			
 			textHighlight = new FlxText(0, 3, Width, Label);
-			textHighlight.setFormat(null, 8, 0xffffff, "center", 0x000000);
+			textHighlight.setFormat(null, 8, 0xffffff, "center");
 			textHighlight.visible = false;
 			
 			add(textNormal);
