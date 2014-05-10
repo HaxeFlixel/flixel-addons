@@ -504,26 +504,6 @@ class FlxControlHandler
 	/**
 	 * TODO
 	 * 
-	 * @param	FactorX
-	 * @param	FactorY
-	 */
-	public function speedUp(FactorX:Float, FactorY:Float):Void
-	{
-	}
-	
-	/**
-	 * TODO
-	 * 
-	 * @param	FactorX
-	 * @param	FactorY
-	 */
-	public function slowDown(FactorX:Float, FactorY:Float):Void
-	{
-	}
-	
-	/**
-	 * TODO
-	 * 
 	 * @param	ResetX
 	 * @param	ResetY
 	 */
@@ -538,29 +518,6 @@ class FlxControlHandler
 		{
 			_ySpeedAdjust = 0;
 		}
-	}
-	
-	/**
-	 * Creates a new Hot Key, which can be bound to any function you specify (such as "swap weapon", "quit", etc)
-	 * 
-	 * @param	Key			The key to use as the hot key (String from flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL", "Q", etc)
-	 * @param	Callback	The function to call when the key is pressed
-	 * @param	Keymode		The keymode that will trigger the callback, either KEYMODE_PRESSED, KEYMODE_JUST_DOWN or KEYMODE_RELEASED
-	 */
-	public function addHotKey(Key:String, Callback:Dynamic, Keymode:Int):Void
-	{
-		// TODO
-	}
-	
-	/**
-	 * Removes a previously defined hot key
-	 * 
-	 * @param	Key		The key to use as the hot key (String from flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL", "Q", etc)
-	 * @return	True if the key was found and removed, false if the key couldn't be found
-	 */
-	public function removeHotKey(Key:String):Bool
-	{
-		return true;
 	}
 	
 	/**
