@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
+import flixel.system.FlxAssets.FlxGraphicSource;
 import flixel.system.FlxSound;
 import flixel.input.touch.FlxTouch;
 import flixel.tile.FlxTilemap;
@@ -123,20 +124,7 @@ class FlxWeapon
 	private var _directionFromParent:Bool;
 	private var _angleFromParent:Bool;
 	
-	// TODO :)
-	/**
-	 * Keeps a tally of how many bullets have been fired by this weapon
-	 */
-	private var _bulletsFired:Int = 0;
-	private var _currentMagazine:Int;
-	//private var _currentBullet:Int;
-	private var _magazineCount:Int;
-	private var _bulletsPerMagazine:Int;
-	private var _magazineSwapDelay:Int;
 	private var _skipParentCollision:Bool;
-	
-	private var _magazineSwapCallback:Dynamic;
-	private var _magazineSwapSound:FlxSound;
 	
 	/**
 	 * Creates the FlxWeapon class which will fire your bullets.
@@ -198,7 +186,7 @@ class FlxWeapon
 	 * Makes a bullet sprite from the given image. It will use the width/height of the image.
 	 * 
 	 * @param	Quantity		How many bullets do you need to make? This value should be high enough to cover all bullets you need on-screen *at once* plus probably a few extra spare!
-	 * @param	Image			The image used to create the bullet from
+	 * @param	Graphic			The image used to create the bullet from
 	 * @param	OffsetX			When the bullet is fired if you need to offset it on the x axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
 	 * @param	OffsetY			When the bullet is fired if you need to offset it on the y axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
 	 * @param	AutoRotate		When true the bullet sprite will rotate to match the angle of the parent sprite. Call fireFromParentAngle or fromFromAngle to fire it using an angle as the velocity.
@@ -207,7 +195,7 @@ class FlxWeapon
 	 * @param	AntiAliasing	Whether to use high quality rotations when creating the graphic. Default is false.
 	 * @param	AutoBuffer		Whether to automatically increase the image size to accomodate rotated corners. Default is false. Will create frames that are 150% larger on each axis than the original frame or graphic.
 	 */
-	public function makeImageBullet(Quantity:Int, Image:Dynamic, OffsetX:Int = 0, OffsetY:Int = 0, AutoRotate:Bool = false, Rotations:Int = 16, Frame:Int = -1, AntiAliasing:Bool = false, AutoBuffer:Bool = false):Void
+	public function makeImageBullet(Quantity:Int, Graphic:FlxGraphicSource, OffsetX:Int = 0, OffsetY:Int = 0, AutoRotate:Bool = false, Rotations:Int = 16, Frame:Int = -1, AntiAliasing:Bool = false, AutoBuffer:Bool = false):Void
 	{
 		group = new FlxTypedGroup<FlxBullet>(Quantity);
 		
@@ -220,14 +208,14 @@ class FlxWeapon
 			#if FLX_RENDER_BLIT
 			if (AutoRotate)
 			{
-				tempBullet.loadRotatedGraphic(Image, Rotations, Frame, AntiAliasing, AutoBuffer);
+				tempBullet.loadRotatedGraphic(Graphic, Rotations, Frame, AntiAliasing, AutoBuffer);
 			}
 			else
 			{
-				tempBullet.loadGraphic(Image);
+				tempBullet.loadGraphic(Graphic);
 			}
 			#else
-			tempBullet.loadGraphic(Image);
+			tempBullet.loadGraphic(Graphic);
 			tempBullet.animation.frameIndex = Frame;
 			tempBullet.antialiasing = AntiAliasing;
 			#end
@@ -242,7 +230,7 @@ class FlxWeapon
 	 * Makes an animated bullet from the image and frame data given.
 	 * 
 	 * @param	Quantity		How many bullets do you need to make? This value should be high enough to cover all bullets you need on-screen *at once* plus probably a few extra spare!
-	 * @param	ImageSequence	The image used to created the animated bullet from
+	 * @param	Graphic			The image used to created the animated bullet from
 	 * @param	FrameWidth		The width of each frame in the animation
 	 * @param	FrameHeight		The height of each frame in the animation
 	 * @param	Frames			An array of numbers indicating what frames to play in what order (e.g. 1, 2, 3)
@@ -251,7 +239,7 @@ class FlxWeapon
 	 * @param	OffsetX			When the bullet is fired if you need to offset it on the x axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
 	 * @param	OffsetY			When the bullet is fired if you need to offset it on the y axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
 	 */
-	public function makeAnimatedBullet(Quantity:Int, ImageSequence:Dynamic, FrameWidth:Int, FrameHeight:Int, Frames:Array<Int>, FrameRate:Int, Looped:Bool, OffsetX:Int = 0, OffsetY:Int = 0):Void
+	public function makeAnimatedBullet(Quantity:Int, Graphic:FlxGraphicSource, FrameWidth:Int, FrameHeight:Int, Frames:Array<Int>, FrameRate:Int, Looped:Bool, OffsetX:Int = 0, OffsetY:Int = 0):Void
 	{
 		group = new FlxTypedGroup<FlxBullet>(Quantity);
 		
@@ -259,7 +247,7 @@ class FlxWeapon
 		{
 			var tempBullet:FlxBullet = Type.createInstance(bulletType, [this, bulletID]);
 			
-			tempBullet.loadGraphic(ImageSequence, true, FrameWidth, FrameHeight);
+			tempBullet.loadGraphic(Graphic, true, FrameWidth, FrameHeight);
 			tempBullet.addAnimation("fire", Frames, FrameRate, Looped);
 			
 			group.add(tempBullet);
@@ -375,8 +363,6 @@ class FlxWeapon
 			onPostFireSound.play();
 		}
 		#end
-		
-		_bulletsFired++;
 		
 		return true;
 	}

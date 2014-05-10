@@ -6,6 +6,7 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.system.FlxAssets;
 import flixel.system.layer.DrawStackItem;
 import flixel.util.FlxAngle;
 import flixel.util.FlxDestroyUtil;
@@ -36,7 +37,7 @@ class FlxSkewedSprite extends FlxSprite
 	 */
 	private var _skewMatrix:Matrix;
 	
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic)
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicSource)
 	{
 		super(X, Y, SimpleGraphic);
 		

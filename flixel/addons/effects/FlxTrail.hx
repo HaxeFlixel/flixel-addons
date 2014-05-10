@@ -3,6 +3,7 @@ package flixel.addons.effects;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
+import flixel.system.FlxAssets;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPoint;
 
@@ -43,6 +44,10 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	 * Whether to check for frame changes of the "parent" FlxSprite or not.
 	 */
 	public var framesEnabled:Bool = true;
+	/**
+	 * Determines whether trailsprites are solid or not. False by default.
+	 */
+	public var solid(default, set):Bool = false;
 	
 	/**
 	 *  Counts the frames passed.
@@ -55,7 +60,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	/**
 	 *  Stores the trailsprite image.
 	 */
-	private var _image:Dynamic;
+	private var _graphic:FlxGraphicSource;
 	/**
 	 *  The alpha value for the next trailsprite.
 	 */
@@ -93,13 +98,13 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	 * Creates a new FlxTrail effect for a specific FlxSprite.
 	 * 
 	 * @param	Sprite		The FlxSprite the trail is attached to.
-	 * @param  	Image   	The image to ues for the trailsprites. Optional, uses the sprite's graphic if null.
+	 * @param  	Graphic   	The image to ues for the trailsprites. Optional, uses the sprite's graphic if null.
 	 * @param	Length		The amount of trailsprites to create. 
 	 * @param	Delay		How often to update the trail. 0 updates every frame.
 	 * @param	Alpha		The alpha value for the very first trailsprite.
 	 * @param	Diff		How much lower the alpha of the next trailsprite is.
 	 */
-	public function new(Sprite:FlxSprite, ?Image:Dynamic, Length:Int = 10, Delay:Int = 3, Alpha:Float = 0.4, Diff:Float = 0.05):Void
+	public function new(Sprite:FlxSprite, ?Graphic:FlxGraphicSource, Length:Int = 10, Delay:Int = 3, Alpha:Float = 0.4, Diff:Float = 0.05):Void
 	{
 		super();
 
@@ -113,7 +118,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 		// Sync the vars 
 		sprite = Sprite;
 		delay = Delay;
-		_image = Image;
+		_graphic = Graphic;
 		_transp = Alpha;
 		_difference = Diff;
 
@@ -142,7 +147,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 		_spriteOrigin = null;
 		
 		sprite = null;
-		_image = null;
+		_graphic = null;
 		
 		super.destroy();
 	}
@@ -205,7 +210,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 			}
 			
 			// Again the same thing for Sprites frames if framesEnabled
-			if (framesEnabled && _image == null) 
+			if (framesEnabled && _graphic == null) 
 			{
 				var spriteFrame:Int = sprite.animation.frameIndex;
 				_recentFrames.unshift(spriteFrame);
@@ -249,7 +254,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 				}
 				
 				// and frame...
-				if (framesEnabled && _image == null) 
+				if (framesEnabled && _graphic == null) 
 				{
 					trailSprite.animation.frameIndex = _recentFrames[i];
 					trailSprite.facing = _recentFacings[i];
@@ -298,16 +303,15 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 		// Create the trail sprites
 		for (i in 0...Amount)
 		{
-			var trailSprite:FlxSprite = new FlxSprite(0, 0);
+			var trailSprite = new FlxSprite(0, 0);
 			
-			
-			if (_image == null) 
+			if (_graphic == null) 
 			{
 				trailSprite.loadGraphicFromSprite(sprite);
 			}
 			else 
 			{
-				trailSprite.loadGraphic(_image);
+				trailSprite.loadGraphic(_graphic);
 			}
 			trailSprite.exists = false;
 			add(trailSprite);
@@ -329,7 +333,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	 */
 	public function changeGraphic(Image:Dynamic):Void
 	{
-		_image = Image;
+		_graphic = Image;
 		
 		for (i in 0..._trailLength)
 		{
@@ -353,18 +357,12 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 		scalesEnabled = Scale;
 	}
 	
-	/**
-	 * Determines whether trailsprites are solid or not. False by default.
-	 */
-	public var solid(default, set):Bool = false;
-	
 	private function set_solid(Value:Bool):Bool
 	{
 		for (i in 0..._trailLength)
 		{
 			members[i].solid = Value; 
 		}
-		
 		return solid = Value;
 	}
 }

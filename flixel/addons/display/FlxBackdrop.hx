@@ -5,6 +5,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.system.FlxAssets.FlxGraphicSource;
 import flixel.system.layer.DrawStackItem;
 import flixel.system.layer.Region;
 import flixel.util.FlxDestroyUtil;
@@ -39,7 +40,7 @@ class FlxBackdrop extends FlxSprite
 	 * @param   RepeatX 	If the backdrop should repeat on the X axis.
 	 * @param   RepeatY 	If the backdrop should repeat on the Y axis.
 	 */
-	public function new(Graphic:Dynamic, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true) 
+	public function new(Graphic:FlxGraphicSource, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true) 
 	{
 		super();
 		

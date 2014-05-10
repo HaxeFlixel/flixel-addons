@@ -1,6 +1,7 @@
 package flixel.addons.nape;
 
 import flixel.FlxSprite;
+import flixel.system.FlxAssets;
 import flixel.util.FlxAngle;
 import nape.geom.Vec2;
 import nape.phys.Body;
@@ -54,7 +55,7 @@ class FlxNapeSprite extends FlxSprite
 	 * @param	CreateRectangularBody	Whether to create a rectangular body for this sprite (use false if you want to add a custom body).
 	 * @param	EnablePhysics			Whether to enable physics simulation on the rectangular body (only relevant if CreateRectangularBody == true).
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic, CreateRectangularBody:Bool = true, EnablePhysics:Bool = true) 
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicSource, CreateRectangularBody:Bool = true, EnablePhysics:Bool = true) 
 	{
 		super(X, Y, SimpleGraphic);
 		

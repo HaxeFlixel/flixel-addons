@@ -30,7 +30,6 @@ class FlxTileAnimation implements IFlxDestroyable
 	public var frameRate(default, set):Float;
 	
 	/**
-	 * Constructor
 	 * @param	Name		What this animation should be called (e.g. "run")
 	 * @param	Frames		An array of numbers indicating what frames to play in what order (e.g. 1, 2, 3)
 	 * @param	FrameRate	The speed in frames per second that the animation should play at (e.g. 40)

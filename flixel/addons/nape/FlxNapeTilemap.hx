@@ -2,6 +2,7 @@ package flixel.addons.nape;
 
 import flixel.addons.nape.FlxNapeState;
 import flixel.FlxG;
+import flixel.system.FlxAssets;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxPoint;
@@ -34,7 +35,7 @@ class FlxNapeTilemap extends FlxTilemap
 		super.update();
 	}
 	
-	override public function loadMap(MapData:Dynamic, TileGraphic:Dynamic, TileWidth:Int = 0, TileHeight:Int = 0, 
+	override public function loadMap(MapData:FlxTilemapSource, TileGraphic:FlxGraphicSource, TileWidth:Int = 0, TileHeight:Int = 0, 
 		?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
 	{
 		super.loadMap(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);

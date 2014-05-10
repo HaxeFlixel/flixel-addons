@@ -5,6 +5,7 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.system.FlxAssets;
 import flixel.util.FlxAngle;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxDestroyUtil;
@@ -73,7 +74,7 @@ class FlxNestedSprite extends FlxSprite
 	private var _parentGreen:Float = 1;
 	private var _parentBlue:Float = 1;
 	
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic) 
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicSource) 
 	{
 		super(X, Y, SimpleGraphic);
 		children = [];

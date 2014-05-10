@@ -21,9 +21,6 @@ class FlxShapeLightning extends FlxShapeLine
 {
 	public var lightningStyle(default, set):LightningStyle;
 	
-	//colors that surrounds it
-	private var halo_cols:Array<Dynamic>;
-	
 	//low number = higher detail
 	private var detail:Float;
 	

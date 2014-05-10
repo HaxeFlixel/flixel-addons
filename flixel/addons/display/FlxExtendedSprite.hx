@@ -3,6 +3,7 @@ package flixel.addons.display;
 import flixel.addons.plugin.FlxMouseControl;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.system.FlxAssets;
 import flixel.util.FlxCollision;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
@@ -184,7 +185,7 @@ class FlxExtendedSprite extends FlxSprite
 	 * @param	Y				The initial Y position of the sprite.
 	 * @param	SimpleGraphic	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic)
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicSource)
 	{
 		_rect = FlxRect.get();
 		
