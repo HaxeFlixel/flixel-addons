@@ -57,6 +57,10 @@ class TiledLayer
 		}
 	}
 	
+	public function getEncoding():String{
+		return _xmlData.att.encoding;
+	}
+	
 	private function getByteArrayData():ByteArray
 	{
 		var result:ByteArray = null;
@@ -88,6 +92,10 @@ class TiledLayer
 				result.uncompress();
 				#end
 			}
+		}
+		else
+		{
+			throw "Must use base64 encoding in order to get tileArray data.";
 		}
 		// Compressed or uncompressed, the endian must be little endian
 		result.endian = Endian.LITTLE_ENDIAN;
