@@ -57,7 +57,8 @@ class TiledLayer
 		}
 	}
 	
-	public function getEncoding():String{
+	public inline function getEncoding():String
+	{
 		return _xmlData.att.encoding;
 	}
 	
@@ -65,7 +66,7 @@ class TiledLayer
 	{
 		var result:ByteArray = null;
 		
-		if (_xmlData.att.encoding == "base64")
+		if (getEncoding() == "base64")
 		{
 			var chunk:String = _xmlData.innerData;
 			var compressed:Bool = false;
