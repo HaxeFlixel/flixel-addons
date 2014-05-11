@@ -74,7 +74,7 @@ class FlxNestedSprite extends FlxSprite
 	private var _parentGreen:Float = 1;
 	private var _parentBlue:Float = 1;
 	
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicSource) 
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
 		super(X, Y, SimpleGraphic);
 		children = [];

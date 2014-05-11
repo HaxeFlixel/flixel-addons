@@ -4,7 +4,7 @@ import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxSprite;
-import flixel.system.FlxAssets.FlxGraphicSource;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.layer.frames.FlxSpriteFrames;
 import flixel.util.FlxColor;
 import flixel.util.loaders.CachedGraphics;
@@ -24,7 +24,7 @@ class FlxSpriteAniRot extends FlxSprite
 	private var rotations:Float = 0;
 	private var angleIndex:Int = -1;
 
-	public function new(AnimatedGraphic:FlxGraphicSource, Rotations:Int, X:Float = 0, Y:Float = 0)
+	public function new(AnimatedGraphic:FlxGraphicAsset, Rotations:Int, X:Float = 0, Y:Float = 0)
 	{
 		super(X, Y);
 		// Just to get the number of frames

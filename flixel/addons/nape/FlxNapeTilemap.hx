@@ -35,7 +35,7 @@ class FlxNapeTilemap extends FlxTilemap
 		super.update();
 	}
 	
-	override public function loadMap(MapData:FlxTilemapSource, TileGraphic:FlxGraphicSource, TileWidth:Int = 0, TileHeight:Int = 0, 
+	override public function loadMap(MapData:FlxTilemapAsset, TileGraphic:FlxGraphicAsset, TileWidth:Int = 0, TileHeight:Int = 0, 
 		?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
 	{
 		super.loadMap(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);

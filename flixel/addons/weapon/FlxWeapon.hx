@@ -5,7 +5,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
-import flixel.system.FlxAssets.FlxGraphicSource;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.FlxSound;
 import flixel.input.touch.FlxTouch;
 import flixel.tile.FlxTilemap;
@@ -195,7 +195,7 @@ class FlxWeapon
 	 * @param	AntiAliasing	Whether to use high quality rotations when creating the graphic. Default is false.
 	 * @param	AutoBuffer		Whether to automatically increase the image size to accomodate rotated corners. Default is false. Will create frames that are 150% larger on each axis than the original frame or graphic.
 	 */
-	public function makeImageBullet(Quantity:Int, Graphic:FlxGraphicSource, OffsetX:Int = 0, OffsetY:Int = 0, AutoRotate:Bool = false, Rotations:Int = 16, Frame:Int = -1, AntiAliasing:Bool = false, AutoBuffer:Bool = false):Void
+	public function makeImageBullet(Quantity:Int, Graphic:FlxGraphicAsset, OffsetX:Int = 0, OffsetY:Int = 0, AutoRotate:Bool = false, Rotations:Int = 16, Frame:Int = -1, AntiAliasing:Bool = false, AutoBuffer:Bool = false):Void
 	{
 		group = new FlxTypedGroup<FlxBullet>(Quantity);
 		
@@ -239,7 +239,7 @@ class FlxWeapon
 	 * @param	OffsetX			When the bullet is fired if you need to offset it on the x axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
 	 * @param	OffsetY			When the bullet is fired if you need to offset it on the y axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
 	 */
-	public function makeAnimatedBullet(Quantity:Int, Graphic:FlxGraphicSource, FrameWidth:Int, FrameHeight:Int, Frames:Array<Int>, FrameRate:Int, Looped:Bool, OffsetX:Int = 0, OffsetY:Int = 0):Void
+	public function makeAnimatedBullet(Quantity:Int, Graphic:FlxGraphicAsset, FrameWidth:Int, FrameHeight:Int, Frames:Array<Int>, FrameRate:Int, Looped:Bool, OffsetX:Int = 0, OffsetY:Int = 0):Void
 	{
 		group = new FlxTypedGroup<FlxBullet>(Quantity);
 		

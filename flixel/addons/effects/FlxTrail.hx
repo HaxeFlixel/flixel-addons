@@ -60,7 +60,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	/**
 	 *  Stores the trailsprite image.
 	 */
-	private var _graphic:FlxGraphicSource;
+	private var _graphic:FlxGraphicAsset;
 	/**
 	 *  The alpha value for the next trailsprite.
 	 */
@@ -104,7 +104,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	 * @param	Alpha		The alpha value for the very first trailsprite.
 	 * @param	Diff		How much lower the alpha of the next trailsprite is.
 	 */
-	public function new(Sprite:FlxSprite, ?Graphic:FlxGraphicSource, Length:Int = 10, Delay:Int = 3, Alpha:Float = 0.4, Diff:Float = 0.05):Void
+	public function new(Sprite:FlxSprite, ?Graphic:FlxGraphicAsset, Length:Int = 10, Delay:Int = 3, Alpha:Float = 0.4, Diff:Float = 0.05):Void
 	{
 		super();
 
