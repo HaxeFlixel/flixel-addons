@@ -14,7 +14,12 @@ class FlxFSM<T> implements IFlxFSM<T>
 	private var currentState:IFlxFSMState<T>;
 	private var previousState:IFlxFSMState<T>;
 	
-	public function new() { }
+	public function new(?Owner:T) {
+		if (Owner != null)
+		{			
+			owner = Owner;
+		}
+	}
 	
 	/**
 	 * Changes the state of this FSM instance.
