@@ -5,11 +5,11 @@ import flash.filters.GlowFilter;
 import flash.geom.Matrix;
 import flixel.FlxG;
 import flixel.util.FlxColor;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRandom;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRandom;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
-import flixel.util.FlxVector;
+import flixel.math.FlxVector;
 
 /**
  * This creates a Lightning bolt drawn on top of a FlxSprite object. 

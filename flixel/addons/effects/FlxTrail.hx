@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
 import flixel.system.FlxAssets;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 /**
  * Nothing too fancy, just a handy little class to attach a trail effect to a FlxSprite.

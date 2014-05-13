@@ -9,8 +9,8 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxGradient;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRandom;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRandom;
 
 class FlxStarField2D extends FlxStarField
 {

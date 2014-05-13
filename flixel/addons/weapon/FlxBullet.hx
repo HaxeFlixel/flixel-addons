@@ -3,11 +3,11 @@ package flixel.addons.weapon;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.input.touch.FlxTouch;
-import flixel.util.FlxAngle;
-import flixel.util.FlxMath;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRandom;
-import flixel.util.FlxVelocity;
+import flixel.math.FlxAngle;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRandom;
+import flixel.math.FlxVelocity;
 
 /**
  * @link http://www.photonstorm.com

@@ -14,8 +14,8 @@ import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.tile.FlxTilemapBuffer;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxMath;
-import flixel.util.FlxPoint;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 
 
 /**

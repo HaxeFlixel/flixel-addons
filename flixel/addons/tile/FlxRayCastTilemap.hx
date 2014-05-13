@@ -1,7 +1,7 @@
 package flixel.addons.tile;
 
 import flixel.tile.FlxTilemap;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 /**
  * @author greglieberman

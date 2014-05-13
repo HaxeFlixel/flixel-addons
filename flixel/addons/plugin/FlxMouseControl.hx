@@ -4,9 +4,9 @@ package flixel.addons.plugin;
 import flixel.addons.display.FlxExtendedSprite;
 import flixel.FlxBasic;
 import flixel.FlxG;
-import flixel.util.FlxMath;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRect;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 
 /**
  * FlxMouseControl

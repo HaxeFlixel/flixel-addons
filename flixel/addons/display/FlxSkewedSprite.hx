@@ -8,9 +8,9 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets;
 import flixel.system.layer.DrawStackItem;
-import flixel.util.FlxAngle;
+import flixel.math.FlxAngle;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 /**
  * ...

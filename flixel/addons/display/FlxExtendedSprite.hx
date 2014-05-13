@@ -5,9 +5,9 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets;
 import flixel.util.FlxCollision;
-import flixel.util.FlxMath;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRect;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 
 /**
  * An enhanced FlxSprite that is capable of receiving mouse clicks, being dragged and thrown, mouse springs, gravity and other useful things

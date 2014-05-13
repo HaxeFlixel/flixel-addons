@@ -3,7 +3,7 @@ package flixel.addons.text;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.system.FlxSound;
-import flixel.util.FlxRandom;
+import flixel.math.FlxRandom;
 
 #if !FLX_NO_SOUND_SYSTEM
 import flash.media.Sound;

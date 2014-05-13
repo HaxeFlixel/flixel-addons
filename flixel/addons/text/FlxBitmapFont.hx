@@ -8,7 +8,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.system.layer.DrawStackItem;
 import flixel.system.layer.Region;
-import flixel.util.FlxAngle;
+import flixel.math.FlxAngle;
 import flixel.util.FlxColor;
 import flixel.util.loaders.CachedGraphics;
 import flixel.util.loaders.TextureRegion;

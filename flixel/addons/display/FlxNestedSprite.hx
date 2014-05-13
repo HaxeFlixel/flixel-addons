@@ -6,11 +6,11 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets;
-import flixel.util.FlxAngle;
+import flixel.math.FlxAngle;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxPoint;
-import flixel.util.FlxVelocity;
+import flixel.math.FlxPoint;
+import flixel.math.FlxVelocity;
 
 /**
  * Some sort of DisplayObjectContainer but very limited.

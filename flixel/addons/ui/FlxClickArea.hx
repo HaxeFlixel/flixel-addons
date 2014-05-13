@@ -7,7 +7,7 @@ import flash.Lib;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.ui.FlxButton;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 /**
  * Trimmed-down button, invisible click area, only responds to onUP

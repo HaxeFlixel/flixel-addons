@@ -6,7 +6,7 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.util.FlxAngle;
+import flixel.math.FlxAngle;
 import flixel.util.loaders.CachedGraphics;
 import flixel.util.loaders.TextureRegion;
 import haxe.ds.ObjectMap;

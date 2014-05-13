@@ -9,9 +9,9 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.FlxSound;
 import flixel.input.touch.FlxTouch;
 import flixel.tile.FlxTilemap;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRect;
-import flixel.util.FlxVelocity;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
+import flixel.math.FlxVelocity;
 
 /**
  * A Weapon can only fire 1 type of bullet. But it can fire many of them at once (in different directions if needed) via createBulletPattern

@@ -3,7 +3,7 @@ package flixel.addons.effects;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxRandom;
+import flixel.math.FlxRandom;
 
 /**
  * This creates a FlxSprite which copies a target FlxSprite and applies a non-destructive wave-distortion effect.

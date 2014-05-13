@@ -13,7 +13,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxGradient;
-import flixel.util.FlxMath;
+import flixel.math.FlxMath;
 import flixel.util.loaders.CachedGraphics;
 
 //TODO: Port to use touch as well

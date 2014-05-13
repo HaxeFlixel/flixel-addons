@@ -2,7 +2,7 @@ package flixel.addons.editors.ogmo;
 
 import flixel.FlxG;
 import flixel.tile.FlxTilemap;
-import flixel.util.FlxRect;
+import flixel.math.FlxRect;
 import haxe.xml.Fast;
 import haxe.xml.Parser;
 import openfl.Assets;

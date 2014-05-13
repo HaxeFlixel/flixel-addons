@@ -2,7 +2,7 @@ package flixel.addons.display.shapes;
 
 import flash.geom.Matrix;
 import flixel.util.FlxColor;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
 

@@ -6,7 +6,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxBasic;
 import flixel.FlxG;
-import flixel.util.FlxAngle;
+import flixel.math.FlxAngle;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 

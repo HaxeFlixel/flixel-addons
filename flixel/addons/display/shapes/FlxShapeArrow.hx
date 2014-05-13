@@ -3,9 +3,9 @@ package flixel.addons.display.shapes;
 import flash.geom.Matrix;
 import flixel.FlxG;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
-import flixel.util.FlxVector;
+import flixel.math.FlxVector;
 
 class FlxShapeArrow extends FlxShape
 {

@@ -6,9 +6,9 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.system.FlxSound;
-import flixel.util.FlxMath;
-import flixel.util.FlxPoint;
-import flixel.util.FlxVelocity;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
+import flixel.math.FlxVelocity;
 
 /**
  * 

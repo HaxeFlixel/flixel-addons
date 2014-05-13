@@ -1,5 +1,5 @@
 package flixel.addons.tile;
-import flixel.util.FlxRandom;
+import flixel.math.FlxRandom;
 
 /**
  * This class uses the cellular automata algorithm
