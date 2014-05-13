@@ -1,4 +1,5 @@
 package flixel.addons.plugin.screengrab;
+
 #if sys
 import systools.Dialogs;
 #end
