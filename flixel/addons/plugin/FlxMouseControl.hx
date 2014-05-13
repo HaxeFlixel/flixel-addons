@@ -4,7 +4,6 @@ package flixel.addons.plugin;
 import flixel.addons.display.FlxExtendedSprite;
 import flixel.FlxBasic;
 import flixel.FlxG;
-import flixel.plugin.FlxPlugin;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;
@@ -15,7 +14,7 @@ import flixel.util.FlxRect;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
-class FlxMouseControl extends FlxPlugin
+class FlxMouseControl extends FlxBasic
 {
 	/**
 	 * Use with sort() to sort in ascending order.

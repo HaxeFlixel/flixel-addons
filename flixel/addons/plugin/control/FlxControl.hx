@@ -3,7 +3,6 @@ package flixel.addons.plugin.control;
 #if !FLX_NO_KEYBOARD
 import flixel.FlxBasic;
 import flixel.FlxSprite;
-import flixel.plugin.FlxPlugin;
 import haxe.ds.ObjectMap;
 
 /**
@@ -12,7 +11,7 @@ import haxe.ds.ObjectMap;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
-class FlxControl extends FlxPlugin
+class FlxControl extends FlxBasic
 {
 	//	Quick references
 	public static var player1:FlxControlHandler;

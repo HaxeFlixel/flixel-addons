@@ -3,9 +3,8 @@ package flixel.addons.plugin;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flixel.*;
-import flixel.plugin.FlxPlugin;
 import flixel.addons.text.FlxBitmapFont;
+import flixel.FlxBasic;
 
 /**
  * FlxScrollingText
@@ -16,9 +15,9 @@ import flixel.addons.text.FlxBitmapFont;
  * @version 1.0 - May 5th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
- * @co-author Ungar Djordje / ArtBIT (HaXe port)
+ * @co-author Ungar Djordje / ArtBIT (Haxe port)
  */
-class FlxScrollingText extends FlxPlugin
+class FlxScrollingText extends FlxBasic
 {
 	private static var members:Map<FlxSprite, Dynamic> = new Map<FlxSprite, Dynamic>();
 	private static var zeroPoint:Point = new Point(0,0);

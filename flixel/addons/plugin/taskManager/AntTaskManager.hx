@@ -2,7 +2,6 @@ package flixel.addons.plugin.taskManager;
 
 import flixel.FlxBasic;
 import flixel.FlxG;
-import flixel.plugin.FlxPlugin;
 import flixel.util.FlxDestroyUtil;
 
 /**
