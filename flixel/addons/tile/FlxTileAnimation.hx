@@ -1,6 +1,6 @@
 package flixel.addons.tile;
 
-import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxDestroyUtil;
 
 class FlxTileAnimation implements IFlxDestroyable
 {

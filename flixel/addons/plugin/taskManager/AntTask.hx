@@ -1,6 +1,5 @@
 package flixel.addons.plugin.taskManager;
 
-import flixel.interfaces.IFlxDestroyable;
 import flixel.util.FlxDestroyUtil;
 
 /**
