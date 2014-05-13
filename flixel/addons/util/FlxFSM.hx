@@ -1,4 +1,5 @@
 package flixel.addons.util;
+import flixel.interfaces.IFlxDestroyable;
 
 /**
  * A generic Finite-state machine implementation.
@@ -10,7 +11,6 @@ class FlxFSM<T> implements IFlxFSM<T>
 	 */
 	public var owner:T;
 	
-	private var lock:Bool;
 	private var currentState:IFlxFSMState<T>;
 	private var previousState:IFlxFSMState<T>;
 	
@@ -25,12 +25,10 @@ class FlxFSM<T> implements IFlxFSM<T>
 	 * Changes the state of this FSM instance.
 	 * 
 	 * @param	State	FlxFSMState instance to change to
-	 * @param	Force	By default you can't change states more than once each update loop, unless Force is set as true
 	 */
-	public function changeState(State:IFlxFSMState<T>, Force:Bool = false)
+	public function changeState(State:IFlxFSMState<T>)
 	{
-		if (lock && !Force) return;
-		if (owner == null) throw "Can't change states if owner is null.";
+		if (this.owner == null) throw "Can't change states if owner is null.";
 		if (currentState != null)
 		{
 			currentState.exit(owner);
@@ -38,7 +36,22 @@ class FlxFSM<T> implements IFlxFSM<T>
 		}
 		currentState = State;
 		currentState.enter(owner, this);
-		lock = true;
+	}
+	
+	/**
+	 * Reverts back to earlier state if present.
+	 */
+	public function revertState()
+	{
+		if (this.owner == null) throw "Can't change states if owner is null.";
+		if (previousState != null)
+		{
+			currentState.exit(owner);
+			var state = currentState;
+			currentState = previousState;
+			currentState.enter(owner, this);
+			previousState = state;
+		}
 	}
 	
 	/**
@@ -48,7 +61,6 @@ class FlxFSM<T> implements IFlxFSM<T>
 	{
 		if (currentState == null) return;
 		if (owner == null) throw "Can't update states if owner is null.";
-		lock = false;
 		currentState.update(owner, this);
 	}
 	
@@ -79,6 +91,17 @@ class FlxFSM<T> implements IFlxFSM<T>
 			return (Type.getClass(previousState) == StateClass);
 		}
 		return false;
+	}
+	
+	public function destroy():Void
+	{
+		previousState = null;
+		if (currentState != null && owner != null)
+		{
+			currentState.exit(owner);
+		}
+		currentState = null;
+		owner = null;
 	}
 	
 }
@@ -112,19 +135,22 @@ class FlxFSMState<T> implements IFlxFSMState<T>
 	 * @param	Owner	The object the state controls
 	 */
 	public function exit(Owner:T):Void { }
+	
+	public function destroy():Void { }
 }
 
-interface IFlxFSMState<T>
+interface IFlxFSMState<T> extends IFlxDestroyable
 {
 	public function enter(Owner:T, FSM:IFlxFSM<T>):Void;
 	public function update(Owner:T, FSM:IFlxFSM<T>):Void;
 	public function exit(Owner:T):Void;
 }
 
-interface IFlxFSM<T>
+interface IFlxFSM<T> extends IFlxDestroyable
 {
 	public var owner:T;
-	public function changeState(State:IFlxFSMState<T>, Force:Bool = false):Void;
+	public function changeState(State:IFlxFSMState<T>):Void;
+	public function revertState():Void;
 	public function update():Void;
 	public function currently(StateClass:Class<IFlxFSMState<T>>):Bool;
 	public function previously(StateClass:Class<IFlxFSMState<T>>):Bool;
