@@ -1,4 +1,7 @@
 package flixel.addons.plugin.screengrab;
+#if sys
+import systools.Dialogs;
+#end
 
 #if !js
 import flash.display.Bitmap;
@@ -157,9 +160,29 @@ class FlxScreenGrab extends FlxBasic
 		file.save(png, Filename);
 		#else
 		var png:ByteArray = screenshot.bitmapData.encode('x');
-		var f = sys.io.File.write(Filename, true);
-		f.writeString(png.readUTFBytes(png.length));
-		f.close();
+		var path:String = "";
+		var documentsDirectory = "";
+		var saveFile:Dynamic=null;
+		try
+		{
+			documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+			#if (systools <= 1)
+				path = Dialogs.saveFile("", "", documentsDirectory);
+			#else
+				path = Dialogs.saveFile("", "", "", { count:1, descriptions:["png files"], extensions:["*.png"] } );
+			#end
+		}
+		catch (msg:String)
+		{
+			path = Filename;			//if there was an error write out to default directory (game install directory)
+		}
+		
+		if (path != "" && path != null)	//if path is empty, the user cancelled the save operation and we can safely do nothing
+		{
+			var f = sys.io.File.write(path, true);
+			f.writeString(png.readUTFBytes(png.length));
+			f.close();
+		}
 		#end
 	}
 	
