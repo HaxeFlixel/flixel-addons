@@ -68,8 +68,7 @@ class FlxFSM<T> implements IFlxFSM<T>
 	 */
 	public function destroy():Void
 	{
-		state = null;
-		owner = null;
+		set(null, null);
 	}
 	
 	private function set_owner(Owner:T):T
