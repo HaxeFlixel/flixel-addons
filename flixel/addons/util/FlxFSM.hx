@@ -4,7 +4,7 @@ import flixel.interfaces.IFlxDestroyable;
 /**
  * A generic Finite-state machine implementation.
  */
-class FlxFSM<T> implements IFlxFSM<T>
+class FlxFSM<T> implements IFlxDestroyable
 {
 	/**
 	 * The owner of this FSM instance. Gets passed to each state.
@@ -14,12 +14,12 @@ class FlxFSM<T> implements IFlxFSM<T>
 	/**
 	 * Current state
 	 */
-	public var state(get, set):IFlxFSMState<T>;
+	public var state(get, set):FlxFSMState<T>;
 	
 	private var _owner:T;
-	private var _state:IFlxFSMState<T>;
+	private var _state:FlxFSMState<T>;
 	
-	public function new(?Owner:T, ?State:IFlxFSMState<T>) {
+	public function new(?Owner:T, ?State:FlxFSMState<T>) {
 		set(Owner, State);
 	}
 	
@@ -28,7 +28,7 @@ class FlxFSM<T> implements IFlxFSM<T>
 	 * @param	Owner
 	 * @param	State
 	 */
-	public function set(Owner:T, State:IFlxFSMState<T>):Void
+	public function set(Owner:T, State:FlxFSMState<T>):Void
 	{
 		var stateIsDifferent:Bool = (Type.getClass(_state) != Type.getClass(State));
 		var ownerIsDifferent:Bool = (owner != Owner);
@@ -82,13 +82,13 @@ class FlxFSM<T> implements IFlxFSM<T>
 		return _owner;
 	}
 	
-	private function set_state(State:IFlxFSMState<T>):IFlxFSMState<T>
+	private function set_state(State:FlxFSMState<T>):FlxFSMState<T>
 	{
 		set(owner, State);
 		return state;
 	}
 	
-	private function get_state():IFlxFSMState<T>
+	private function get_state():FlxFSMState<T>
 	{
 		return _state;
 	}
@@ -98,7 +98,7 @@ class FlxFSM<T> implements IFlxFSM<T>
 /**
  * A generic FSM State implementation
  */
-class FlxFSMState<T> implements IFlxFSMState<T>
+class FlxFSMState<T> implements IFlxDestroyable
 {
 	public function new() { }
 	
@@ -108,7 +108,7 @@ class FlxFSMState<T> implements IFlxFSMState<T>
 	 * @param	Owner	The object the state controls
 	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
-	public function enter(Owner:T, FSM:IFlxFSM<T>):Void { }
+	public function enter(Owner:T, FSM:FlxFSM<T>):Void { }
 	
 	/**
 	 * Called every update loop.
@@ -116,7 +116,7 @@ class FlxFSMState<T> implements IFlxFSMState<T>
 	 * @param	Owner	The object the state controls
 	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
-	public function update(Owner:T, FSM:IFlxFSM<T>):Void { }
+	public function update(Owner:T, FSM:FlxFSM<T>):Void { }
 	
 	/**
 	 * Called when the state becomes inactive.
@@ -126,19 +126,4 @@ class FlxFSMState<T> implements IFlxFSMState<T>
 	public function exit(Owner:T):Void { }
 	
 	public function destroy():Void { }
-}
-
-interface IFlxFSMState<T> extends IFlxDestroyable
-{
-	public function enter(Owner:T, FSM:IFlxFSM<T>):Void;
-	public function update(Owner:T, FSM:IFlxFSM<T>):Void;
-	public function exit(Owner:T):Void;
-}
-
-interface IFlxFSM<T> extends IFlxDestroyable
-{
-	public var owner(get, set):T;
-	public var state(get, set):IFlxFSMState<T>;
-	public function set(Owner:T, State:IFlxFSMState<T>):Void;
-	public function update():Void;
 }
