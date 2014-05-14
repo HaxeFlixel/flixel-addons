@@ -9,48 +9,48 @@ class FlxFSM<T> implements IFlxFSM<T>
 	/**
 	 * The owner of this FSM instance. Gets passed to each state.
 	 */
-	public var owner:T;
+	public var owner(get, set):T;
 	
-	private var currentState:IFlxFSMState<T>;
-	private var previousState:IFlxFSMState<T>;
+	/**
+	 * Current state
+	 */
+	public var state(get, set):IFlxFSMState<T>;
 	
-	public function new(?Owner:T) {
-		if (Owner != null)
-		{			
-			owner = Owner;
-		}
+	private var _owner:T;
+	private var _state:IFlxFSMState<T>;
+	
+	public function new(?Owner:T, ?State:IFlxFSMState<T>) {
+		set(Owner, State);
 	}
 	
 	/**
-	 * Changes the state of this FSM instance.
-	 * 
-	 * @param	State	FlxFSMState instance to change to
+	 * Set the owner and state simultaneously.
+	 * @param	Owner
+	 * @param	State
 	 */
-	public function changeState(State:IFlxFSMState<T>)
+	public function set(Owner:T, State:IFlxFSMState<T>):Void
 	{
-		if (this.owner == null) throw "Can't change states if owner is null.";
-		if (currentState != null)
+		var stateIsDifferent:Bool = (Type.getClass(_state) != Type.getClass(State));
+		var ownerIsDifferent:Bool = (owner != Owner);
+		
+		if (stateIsDifferent || ownerIsDifferent)
 		{
-			currentState.exit(owner);
-			previousState = currentState;
-		}
-		currentState = State;
-		currentState.enter(owner, this);
-	}
-	
-	/**
-	 * Reverts back to earlier state if present.
-	 */
-	public function revertState()
-	{
-		if (this.owner == null) throw "Can't change states if owner is null.";
-		if (previousState != null)
-		{
-			currentState.exit(owner);
-			var state = currentState;
-			currentState = previousState;
-			currentState.enter(owner, this);
-			previousState = state;
+			if (_owner != null && _state != null)
+			{
+				_state.exit(_owner);
+			}
+			if (stateIsDifferent)
+			{
+				_state = State;
+			}
+			if (ownerIsDifferent)
+			{
+				_owner = Owner;
+			}
+			if (_state != null && owner != null)
+			{
+				_state.enter(_owner, this);
+			}
 		}
 	}
 	
@@ -59,49 +59,39 @@ class FlxFSM<T> implements IFlxFSM<T>
 	 */
 	public function update():Void
 	{
-		if (currentState == null) return;
-		if (owner == null) throw "Can't update states if owner is null.";
-		currentState.update(owner, this);
+		if (_state == null || _owner == null) return;
+		_state.update(_owner, this);
 	}
 	
 	/**
-	 * Tells if a given class is the active state
-	 * 
-	 * @param	StateClass
-	 * @return	True if current state is an instance of StateClass
+	 * Calls exit on current state
 	 */
-	public function currently(StateClass:Class<IFlxFSMState<T>>):Bool
-	{
-		if (currentState != null)
-		{
-			return (Type.getClass(currentState) == StateClass);
-		}
-		return false;
-	}
-	
-	/**
-	 * Tells if a given class is the previous state.
-	 * @param	StateClass
-	 * @return	True if previous state is an instance of StateClass
-	 */
-	public function previously(StateClass:Class<IFlxFSMState<T>>):Bool
-	{
-		if (previousState != null)
-		{
-			return (Type.getClass(previousState) == StateClass);
-		}
-		return false;
-	}
-	
 	public function destroy():Void
 	{
-		previousState = null;
-		if (currentState != null && owner != null)
-		{
-			currentState.exit(owner);
-		}
-		currentState = null;
+		state = null;
 		owner = null;
+	}
+	
+	private function set_owner(Owner:T):T
+	{
+		set(Owner, _state);
+		return owner;
+	}
+	
+	private function get_owner():T
+	{
+		return _owner;
+	}
+	
+	private function set_state(State:IFlxFSMState<T>):IFlxFSMState<T>
+	{
+		set(owner, State);
+		return state;
+	}
+	
+	private function get_state():IFlxFSMState<T>
+	{
+		return _state;
 	}
 	
 }
@@ -148,10 +138,8 @@ interface IFlxFSMState<T> extends IFlxDestroyable
 
 interface IFlxFSM<T> extends IFlxDestroyable
 {
-	public var owner:T;
-	public function changeState(State:IFlxFSMState<T>):Void;
-	public function revertState():Void;
+	public var owner(get, set):T;
+	public var state(get, set):IFlxFSMState<T>;
+	public function set(Owner:T, State:IFlxFSMState<T>):Void;
 	public function update():Void;
-	public function currently(StateClass:Class<IFlxFSMState<T>>):Bool;
-	public function previously(StateClass:Class<IFlxFSMState<T>>):Bool;
 }
