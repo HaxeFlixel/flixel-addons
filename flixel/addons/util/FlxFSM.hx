@@ -17,11 +17,14 @@ class FlxFSM<T> implements IFlxDestroyable
 	 */
 	public var state(get, set):FlxFSMState<T>;
 	
+	public var transitions:FlxFSMTransitionTable<T>;
+	
 	private var _owner:T;
 	private var _state:FlxFSMState<T>;
 	
 	public function new(?Owner:T, ?State:FlxFSMState<T>)
 	{
+		transitions = new FlxFSMTransitionTable<T>();
 		set(Owner, State);
 	}
 	
@@ -61,6 +64,7 @@ class FlxFSM<T> implements IFlxDestroyable
 	{
 		if (_state == null || _owner == null) return;
 		_state.update(_owner, this);
+		state = transitions.poll(this);
 	}
 	
 	/**
@@ -125,4 +129,61 @@ class FlxFSMState<T> implements IFlxDestroyable
 	public function exit(Owner:T):Void { }
 	
 	public function destroy():Void { }
+}
+
+class FlxFSMTransitionTable<T>
+{
+	private var table:Array<TransitionRow<T>>;
+	
+	public function new()
+	{
+		table = new Array<TransitionRow<T>>();
+	}
+	
+	/**
+	 * Polls the transition table for active states
+	 * @param	FSM	The FlxFSMState the table belongs to
+	 * @return	The state that should become or remain active.
+	 */
+	public function poll(FSM:FlxFSM<T>):FlxFSMState<T>
+	{
+		var currentState = FSM.state;
+		var currentOwner = FSM.owner;
+		for (transition in table)
+		{
+			if (Type.getClass(transition.from) == Type.getClass(currentState))
+			{
+				if (transition.condition(currentOwner) == true)
+				{
+					return transition.to;
+				}
+			}
+		}
+		return currentState;
+	}
+	
+	/**
+	 * Adds a transition condition to the table
+	 * @param	From	The state the condition applies to
+	 * @param	To		The state to transition
+	 * @param	Condition	Function that returns true if the transition conditions are met
+	 */
+	public function add(From:FlxFSMState<T>, To:FlxFSMState<T>, Condition:T->Bool)
+	{
+		table.push(new TransitionRow<T>(From, To, Condition));
+		return this;
+	}
+}
+
+private class TransitionRow<T>
+{
+	public function new(From:FlxFSMState<T>, To:FlxFSMState<T>, Condition:T->Bool)
+	{
+		from = From;
+		condition = Condition;
+		to = To;
+	}
+	public var from:FlxFSMState<T>;
+	public var condition:T->Bool;
+	public var to:FlxFSMState<T>;
 }
