@@ -133,11 +133,11 @@ class FlxFSMState<T> implements IFlxDestroyable
 
 class FlxFSMTransitionTable<T>
 {
-	private var table:Array<TransitionRow<T>>;
+	private var _table:Array<TransitionRow<T>>;
 	
 	public function new()
 	{
-		table = new Array<TransitionRow<T>>();
+		_table = new Array<TransitionRow<T>>();
 	}
 	
 	/**
@@ -149,7 +149,7 @@ class FlxFSMTransitionTable<T>
 	{
 		var currentState = FSM.state;
 		var currentOwner = FSM.owner;
-		for (transition in table)
+		for (transition in _table)
 		{
 			if (Type.getClass(transition.from) == Type.getClass(currentState))
 			{
@@ -170,7 +170,7 @@ class FlxFSMTransitionTable<T>
 	 */
 	public function add(From:FlxFSMState<T>, To:FlxFSMState<T>, Condition:T->Bool)
 	{
-		table.push(new TransitionRow<T>(From, To, Condition));
+		_table.push(new TransitionRow<T>(From, To, Condition));
 		return this;
 	}
 }
