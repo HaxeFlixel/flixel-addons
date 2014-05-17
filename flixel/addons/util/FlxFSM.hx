@@ -32,10 +32,17 @@ class FlxFSM<T> implements IFlxDestroyable
 	{
 		var stateIsDifferent:Bool = (Type.getClass(_state) != Type.getClass(State));
 		var ownerIsDifferent:Bool = (owner != Owner);
+		var currentRemainsInStack:Bool = false;
+		var newComesFromStack:Bool = false;
 		
 		if (stateIsDifferent || ownerIsDifferent)
 		{
-			if (_owner != null && _state != null)
+			if (State != null && _state != null)
+			{
+				currentRemainsInStack = stateInStack(_state, State);
+				newComesFromStack = stateInStack(State, _state);
+			}
+			if (_owner != null && _state != null && currentRemainsInStack == false)
 			{
 				_state.exit(_owner);
 			}
@@ -49,7 +56,10 @@ class FlxFSM<T> implements IFlxDestroyable
 			}
 			if (_state != null && owner != null)
 			{
-				_state.enter(_owner, this);
+				if (ownerIsDifferent || newComesFromStack == false)
+				{
+					_state.enter(_owner, this);
+				}
 			}
 		}
 	}
@@ -69,6 +79,25 @@ class FlxFSM<T> implements IFlxDestroyable
 	public function destroy():Void
 	{
 		set(null, null);
+	}
+	
+	private function stateInStack(State:FlxFSMState<T>, Stack:FlxFSMState<T>):Bool
+	{
+		var inspect:FlxFSMState<T> = Stack;
+		var iteratorCount = 128;
+		while (inspect.next != null)
+		{
+			inspect = inspect.next;
+			if (inspect == State)
+			{
+				return true;
+			}
+			if (--iteratorCount <= 0)
+			{
+				throw 'Stack $Stack is either in infinite loop or dangerously long with over 128 states!';
+			}
+		}
+		return false;
 	}
 	
 	private function set_owner(Owner:T):T
@@ -100,6 +129,11 @@ class FlxFSM<T> implements IFlxDestroyable
 class FlxFSMState<T> implements IFlxDestroyable
 {
 	public function new() { }
+	
+	/**
+	 * A stack of states
+	 */
+	public var next:FlxFSMState<T>;
 	
 	/**
 	 * Called when state becomes active.
