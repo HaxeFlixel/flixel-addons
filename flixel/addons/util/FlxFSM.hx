@@ -173,6 +173,27 @@ class FlxFSMTransitionTable<T>
 		_table.push(new TransitionRow<T>(From, To, Condition));
 		return this;
 	}
+	
+	/**
+	 * Removes a transition condition from the table
+	 * @param	From	From State
+	 * @param	To		To State
+	 * @param	Condition	Condition function
+	 * @return	True when removed, false if not in table
+	 */
+	public function remove(From:FlxFSMState<T>, To:FlxFSMState<T>, Condition:T->Bool):Bool
+	{
+		for (transition in _table)
+		{
+			if (Type.getClass(transition.from) == Type.getClass(From)
+				&& Type.getClass(transition.to) == Type.getClass(To)
+				&& transition.condition == Condition)
+			{
+				return _table.remove(transition);
+			}
+		}
+		return false;
+	}
 }
 
 private class TransitionRow<T>
