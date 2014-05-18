@@ -1,6 +1,5 @@
 package flixel.addons.util;
-
-import flixel.util.FlxDestroyUtil;
+import flixel.interfaces.IFlxDestroyable;
 
 /**
  * A generic Finite-state machine implementation.
@@ -20,13 +19,14 @@ class FlxFSM<T> implements IFlxDestroyable
 	private var _owner:T;
 	private var _state:FlxFSMState<T>;
 	
-	public function new(?Owner:T, ?State:FlxFSMState<T>)
-	{
+	public function new(?Owner:T, ?State:FlxFSMState<T>) {
 		set(Owner, State);
 	}
 	
 	/**
 	 * Set the owner and state simultaneously.
+	 * @param	Owner
+	 * @param	State
 	 */
 	public function set(Owner:T, State:FlxFSMState<T>):Void
 	{
@@ -121,6 +121,7 @@ class FlxFSM<T> implements IFlxDestroyable
 	{
 		return _state;
 	}
+	
 }
 
 /**
