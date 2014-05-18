@@ -4,6 +4,7 @@ import flixel.addons.nape.FlxNapeState;
 import flixel.FlxG;
 import flixel.system.FlxAssets;
 import flixel.tile.FlxTilemap;
+import flixel.tile.FlxBaseTilemap;
 import flixel.util.FlxArrayUtil;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
