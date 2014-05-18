@@ -17,6 +17,9 @@ class FlxFSM<T> implements IFlxDestroyable
 	 */
 	public var state(get, set):FlxFSMState<T>;
 	
+	/**
+	 * Transition table
+	 */
 	public var transitions:FlxFSMTransitionTable<T>;
 	
 	private var _owner:T;
