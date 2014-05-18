@@ -161,3 +161,23 @@ class FlxFSMState<T> implements IFlxDestroyable
 	
 	public function destroy():Void { }
 }
+
+typedef FlxFSMStack<T> = Array < FlxFSM<T> >;
+
+class FlxFSMGroup<T>
+{
+	private var stacks:Array<FlxFSMStack<T>>;
+	
+	public function new() { }
+	
+	public function update()
+	{
+		for (stack in stacks)
+		{
+			if (stack.length > 0)
+			{
+				stack[0].update();
+			}
+		}
+	}
+}
