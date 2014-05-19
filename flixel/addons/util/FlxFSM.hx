@@ -10,15 +10,12 @@ class FlxFSM<T> implements IFlxDestroyable
 	/**
 	 * The owner of this FSM instance. Gets passed to each state.
 	 */
-	public var owner(get, set):T;
+	public var owner(default, set):T;
 	
 	/**
 	 * Current state
 	 */
-	public var state(get, set):FlxFSMState<T>;
-	
-	private var _owner:T;
-	private var _state:FlxFSMState<T>;
+	public var state(default, set):FlxFSMState<T>;
 	
 	public function new(?Owner:T, ?State:FlxFSMState<T>)
 	{
@@ -30,26 +27,26 @@ class FlxFSM<T> implements IFlxDestroyable
 	 */
 	public function set(Owner:T, State:FlxFSMState<T>):Void
 	{
-		var stateIsDifferent:Bool = (Type.getClass(_state) != Type.getClass(State));
+		var stateIsDifferent:Bool = (Type.getClass(state) != Type.getClass(State));
 		var ownerIsDifferent:Bool = (owner != Owner);
 		
 		if (stateIsDifferent || ownerIsDifferent)
 		{
-			if (_owner != null && _state != null)
+			if (owner != null && state != null)
 			{
-				_state.exit(_owner);
+				state.exit(owner);
 			}
 			if (stateIsDifferent)
 			{
-				_state = State;
+				state = State;
 			}
 			if (ownerIsDifferent)
 			{
-				_owner = Owner;
+				owner = Owner;
 			}
-			if (_state != null && owner != null)
+			if (state != null && owner != null)
 			{
-				_state.enter(_owner, this);
+				state.enter(owner, this);
 			}
 		}
 	}
@@ -59,8 +56,8 @@ class FlxFSM<T> implements IFlxDestroyable
 	 */
 	public function update():Void
 	{
-		if (_state == null || _owner == null) return;
-		_state.update(_owner, this);
+		if (state == null || owner == null) return;
+		state.update(owner, this);
 	}
 	
 	/**
@@ -73,24 +70,14 @@ class FlxFSM<T> implements IFlxDestroyable
 	
 	private function set_owner(Owner:T):T
 	{
-		set(Owner, _state);
+		set(Owner, state);
 		return owner;
-	}
-	
-	private function get_owner():T
-	{
-		return _owner;
 	}
 	
 	private function set_state(State:FlxFSMState<T>):FlxFSMState<T>
 	{
 		set(owner, State);
 		return state;
-	}
-	
-	private function get_state():FlxFSMState<T>
-	{
-		return _state;
 	}
 }
 
