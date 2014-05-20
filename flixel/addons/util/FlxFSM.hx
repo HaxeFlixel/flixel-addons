@@ -179,7 +179,10 @@ class FlxFSMTransitionTable<T>
 	 */
 	public function add(From:Class<FlxFSMState<T>>, To:Class<FlxFSMState<T>>, Condition:T->Bool)
 	{
-		_table.push(new TransitionRow<T>(From, To, Condition));
+		if (hasTransition(From, To, Condition) == false)
+		{
+			_table.push(new TransitionRow<T>(From, To, Condition));
+		}
 		return this;
 	}
 	
@@ -204,13 +207,19 @@ class FlxFSMTransitionTable<T>
 		return false;
 	}
 	
-	public function has(State:Class<FlxFSMState<T>>):Bool
+	public function hasTransition(From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool):Bool
 	{
+		var pattern = [From, To, Condition];
 		for (transition in _table)
 		{
-			if (transition.from == State || transition.to == State)
+			switch(pattern)
 			{
-				return true;
+				case [f, null, null] if (f == transition.from):
+					return true;
+				case [f, t, null] if (f == transition.from && t == transition.to):
+					return true;
+				case [f, t, c] if (f == transition.from && t == transition.to && c == transition.condition):
+					return true;
 			}
 		}
 		return false;
@@ -229,7 +238,7 @@ private class TransitionRow<T>
 		condition = Condition;
 		to = To;
 	}
-	public var from:FlxFSMState<T>;
+	public var from:Class<FlxFSMState<T>>;
 	public var condition:T->Bool;
-	public var to:FlxFSMState<T>;
+	public var to:Class<FlxFSMState<T>>;
 }
