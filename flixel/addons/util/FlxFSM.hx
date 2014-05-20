@@ -209,18 +209,32 @@ class FlxFSMTransitionTable<T>
 	
 	public function hasTransition(From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool):Bool
 	{
-		var pattern = [From, To, Condition];
-		for (transition in _table)
+		switch([From, To, Condition])
 		{
-			switch(pattern)
-			{
-				case [f, null, null] if (f == transition.from):
-					return true;
-				case [f, t, null] if (f == transition.from && t == transition.to):
-					return true;
-				case [f, t, c] if (f == transition.from && t == transition.to && c == transition.condition):
-					return true;
-			}
+			case [f, null, null]:
+				for (transition in _table)
+				{
+					if (From == transition.from)
+					{
+						return true;
+					}
+				}
+			case [f, t, null]:
+				for (transition in _table)
+				{
+					if (From == transition.from && To == transition.to)
+					{
+						return true;
+					}
+				}
+			case [f, t, c]:
+				for (transition in _table)
+				{
+					if (From == transition.from && To == transition.to && Condition == transition.condition)
+					{
+						return true;
+					}
+				}
 		}
 		return false;
 	}
