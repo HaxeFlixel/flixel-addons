@@ -138,6 +138,8 @@ class FlxFSMTransitionTable<T>
 {
 	private var _table:Array<TransitionRow<T>>;
 	
+	public var states:Map<Class<FlxFSMState<T>, FlxFSMState<T>>;
+	
 	public function new()
 	{
 		_table = new Array<TransitionRow<T>>();
@@ -154,11 +156,15 @@ class FlxFSMTransitionTable<T>
 		var currentOwner = FSM.owner;
 		for (transition in _table)
 		{
-			if (Type.getClass(transition.from) == Type.getClass(currentState))
+			if (transition.from == Type.getClass(currentState))
 			{
 				if (transition.condition(currentOwner) == true)
 				{
-					return transition.to;
+					if (states.exists(transition.to) == false)  // Create only when needed
+					{
+						states.set(transition.to, Type.createEmptyInstance(transition.to))
+					}
+					return states.get(transition.to);
 				}
 			}
 		}
@@ -171,7 +177,7 @@ class FlxFSMTransitionTable<T>
 	 * @param	To		The state to transition
 	 * @param	Condition	Function that returns true if the transition conditions are met
 	 */
-	public function add(From:FlxFSMState<T>, To:FlxFSMState<T>, Condition:T->Bool)
+	public function add(From:Class<FlxFSMState<T>>, To:Class<FlxFSMState<T>>, Condition:T->Bool)
 	{
 		_table.push(new TransitionRow<T>(From, To, Condition));
 		return this;
@@ -184,15 +190,27 @@ class FlxFSMTransitionTable<T>
 	 * @param	Condition	Condition function
 	 * @return	True when removed, false if not in table
 	 */
-	public function remove(From:FlxFSMState<T>, To:FlxFSMState<T>, Condition:T->Bool):Bool
+	public function remove(From:Class<FlxFSMState<T>>, To:Class<FlxFSMState<T>>, Condition:T->Bool):Bool
 	{
 		for (transition in _table)
 		{
-			if (Type.getClass(transition.from) == Type.getClass(From)
-				&& Type.getClass(transition.to) == Type.getClass(To)
+			if (transition.from == From
+				&& transition.to == To
 				&& transition.condition == Condition)
 			{
 				return _table.remove(transition);
+			}
+		}
+		return false;
+	}
+	
+	public function has(State:Class<FlxFSMState<T>>):Bool
+	{
+		for (transition in _table)
+		{
+			if (transition.from == State || transition.to == State)
+			{
+				return true;
 			}
 		}
 		return false;
@@ -201,7 +219,11 @@ class FlxFSMTransitionTable<T>
 
 private class TransitionRow<T>
 {
-	public function new(From:FlxFSMState<T>, To:FlxFSMState<T>, Condition:T->Bool)
+	public function new(From:Class<FlxFSMState<T>>, To:Class<FlxFSMState<T>>, Condition:T->Bool)
+	{
+		set(From, To, Condition);
+	}
+	public function set(From:Class<FlxFSMState<T>>, To:Class<FlxFSMState<T>>, Condition:T->Bool)
 	{
 		from = From;
 		condition = Condition;
