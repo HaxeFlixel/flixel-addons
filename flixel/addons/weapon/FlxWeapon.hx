@@ -4,7 +4,7 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.group.FlxTypedGroup;
+import flixel.group.FlxGroup;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.FlxSound;
 import flixel.input.touch.FlxTouch;

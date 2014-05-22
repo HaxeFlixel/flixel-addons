@@ -8,7 +8,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.group.FlxTypedGroup;
+import flixel.group.FlxGroup;
 import flixel.math.FlxAngle;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
