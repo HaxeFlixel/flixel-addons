@@ -1,11 +1,11 @@
 package flixel.addons.ui;
+import flixel.util.FlxColor;
 
 #if !FLX_NO_MOUSE
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
-import flixel.util.FlxColorUtil;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
@@ -116,12 +116,12 @@ class FlxSlider extends FlxSpriteGroup
 	 * The color of the slider - make sure to call createSlider() if you
 	 * want to change this.
 	 */
-	private var _color:Int;
+	private var _color:FlxColor;
 	/**
 	 * The color of the handle - make sure to call createSlider() if you
 	 * want to change this.
 	 */
-	private var _handleColor:Int;
+	private var _handleColor:FlxColor;
 	/**
 	 * Stores a reference to parent object.
 	 */
@@ -201,7 +201,7 @@ class FlxSlider extends FlxSpriteGroup
 		
 		// Creating the "body" of the slider
 		body = new FlxSprite(offset.x, offset.y);
-		var colorKey:String = "slider:W=" + _width + "H=" + _height + "C=" + FlxColorUtil.ARGBtoHexString(_color) + "T=" + _thickness;
+		var colorKey:String = "slider:W=" + _width + "H=" + _height + "C=" + _color.toHexString() + "T=" + _thickness;
 		body.makeGraphic(_width, _height, 0, false, colorKey);
 		body.scrollFactor.set();
 		FlxSpriteUtil.drawLine(body, 0, _height / 2, _width, _height / 2, { color:_color, thickness:_thickness }); 
