@@ -450,7 +450,7 @@ class FlxTilemapExt extends FlxTilemap
 			#end
 			
 			#if !FLX_NO_DEBUG
-			FlxBasic._VISIBLECOUNT++;
+			FlxBasic.visibleCount++;
 			#end
 		}
 	}

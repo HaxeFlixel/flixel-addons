@@ -198,7 +198,7 @@ class FlxSkewedSprite extends FlxSprite
 			drawItem.position = currIndex;
 #end
 			#if !FLX_NO_DEBUG
-			FlxBasic._VISIBLECOUNT++;
+			FlxBasic.activeCount++;
 			#end
 		}
 	}
