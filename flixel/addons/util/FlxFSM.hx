@@ -154,15 +154,19 @@ private class FlxFSMTransitionTable<T>
 		var currentOwner = FSM.owner;
 		for (transition in _table)
 		{
-			if (transition.from == currentStateClass && transition.condition(currentOwner) == true)
+			if (transition.from == currentStateClass || transition.from == null)
 			{
-					var className = Type.getClassName(transition.to);
-					if (states.exists(className) == false)
-					{
-						states.set(className, Type.createEmptyInstance(transition.to));
-					}
-					return states.get(className);
+				if (transition.condition(currentOwner) == true)
+				{
+						var className = Type.getClassName(transition.to);
+						if (states.exists(className) == false)
+						{
+							states.set(className, Type.createEmptyInstance(transition.to));
+						}
+						return states.get(className);
+				}
 			}
+			
 		}
 		return FSM.state;
 	}
@@ -178,6 +182,20 @@ private class FlxFSMTransitionTable<T>
 		if (hasTransition(From, To, Condition) == false)
 		{
 			_table.push(new TransitionRow<T>(From, To, Condition));
+		}
+		return this;
+	}
+	
+	/**
+	 * Adds a global transition condition to the table.
+	 * @param	To		The state to transition
+	 * @param	Condition	Function that returns true if the transition conditions are met
+	 */
+	public function addGlobal(To:Class<FlxFSMState<T>>, Condition:T->Bool)
+	{
+		if (hasTransition(null, To, Condition) == false)
+		{
+			_table.push(new TransitionRow<T>(null, To, Condition));
 		}
 		return this;
 	}
@@ -223,7 +241,7 @@ private class FlxFSMTransitionTable<T>
 	 * @param	Condition	Condition function
 	 * @return	True when removed, false if not in table
 	 */
-	public function remove(From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool)
+	public function remove(?From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool)
 	{
 		var removeThese = [];
 		switch([From, To, Condition])
@@ -240,6 +258,14 @@ private class FlxFSMTransitionTable<T>
 				for (transition in _table)
 				{
 					if (From == transition.from && To == transition.to)
+					{
+						removeThese.push(transition);
+					}
+				}
+			case [null, t, c]:
+				for (transition in _table)
+				{
+					if (To == transition.to && Condition == transition.condition)
 					{
 						removeThese.push(transition);
 					}
@@ -261,12 +287,12 @@ private class FlxFSMTransitionTable<T>
 	
 	/**
 	 * Tells if the table contains specific transition or transitions.
-	 * @param	From	From State
+	 * @param	?From	From State
 	 * @param	?To		To State
 	 * @param	?Condition	Condition function
 	 * @return	True if match found
 	 */
-	public function hasTransition(From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool):Bool
+	public function hasTransition(?From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool):Bool
 	{
 		switch([From, To, Condition])
 		{
@@ -286,6 +312,14 @@ private class FlxFSMTransitionTable<T>
 						return true;
 					}
 				}
+			case [null, t, c]:
+				for (transition in _table)
+				{
+					if (To == transition.to && Condition == transition.condition)
+					{
+						return true;
+					}
+				}
 			case [f, t, c]:
 				for (transition in _table)
 				{
@@ -301,12 +335,12 @@ private class FlxFSMTransitionTable<T>
 
 private class TransitionRow<T>
 {
-	public function new(From:Class<FlxFSMState<T>>, To:Class<FlxFSMState<T>>, Condition:T->Bool)
+	public function new(?From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool)
 	{
 		set(From, To, Condition);
 	}
 	
-	public function set(From:Class<FlxFSMState<T>>, To:Class<FlxFSMState<T>>, Condition:T->Bool)
+	public function set(?From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool)
 	{
 		from = From;
 		condition = Condition;
