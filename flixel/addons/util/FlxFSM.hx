@@ -22,6 +22,11 @@ class FlxFSM<T> implements IFlxDestroyable
 	 */
 	public var transitions:FlxFSMTransitionTable<T>;
 	
+	/**
+	 * The stack this FSM belongs to or null
+	 */
+	public var stack:FlxFSMStack<T>;
+	
 	public function new(?Owner:T, ?State:FlxFSMState<T>)
 	{
 		transitions = new FlxFSMTransitionTable<T>();
@@ -52,6 +57,7 @@ class FlxFSM<T> implements IFlxDestroyable
 	{
 		owner = null;
 		state = null;
+		stack = null;
 	}
 	
 	private function set_owner(Owner:T):T
@@ -122,25 +128,87 @@ class FlxFSMState<T> implements IFlxDestroyable
 	public function destroy():Void { }
 }
 
-typedef FlxFSMStack<T> = Array < FlxFSM<T> > ;
-typedef FlxFSMStackMap<T> = Map < String, FlxFSMStack<T> > ;
-
-class FlxFSMGroup<T>
+class FlxFSMStack<T> implements IFlxDestroyable
 {
-	private var _stacks:FlxFSMStackMap<T>;
+	/**
+	 * Test if the stack is empty
+	 */
+	public var isEmpty(get, never):Bool;
+	
+	/**
+	 * The manager of this stack or null
+	 */
+	public var manager:FlxFSMManager<T>;
+	
+	private var _fsms:Array<FlxFSM<T>>;
 	
 	public function new() {
-		_stacks = new FlxFSMStackMap<T>();
+		_fsms = [];
+	}
+	
+	/**
+	 * Updates the first FSM in stack.
+	 */
+	public function update()
+	{
+		if (_fsms.length > 0)
+		{
+			_fsms[0].update();
+		}
+	}
+	
+	/**
+	 * Adds the FSM to the front of the stack
+	 * @param	FSM
+	 */
+	public function add(FSM:FlxFSM<T>)
+	{
+		FSM.stack = this;
+		_fsms.unshift(FSM);
+	}
+	
+	/**
+	 * Removes the FSM from the stack and destroys it
+	 * @param	FSM
+	 */
+	public function remove(FSM:FlxFSM<T>)
+	{
+		if (_fsms.remove(FSM))
+		{
+			FlxDestroyUtil.destroy(FSM);
+		}
+	}
+	
+	/**
+	 * Destroys every member in stack and self
+	 */
+	public function destroy():Void {
+		for (fsm in _fsms)
+		{
+			FlxDestroyUtil.destroy(fsm);
+		}
+		manager = null;
+	}
+	
+	private function get_isEmpty():Bool
+	{
+		return (_fsms.length == 0);
+	}
+}
+
+class FlxFSMManager<T>
+{
+	private var _stacks:Map < String, FlxFSMStack<T> >;
+	
+	public function new() {
+		_stacks = new Map();
 	}
 	
 	public function update()
 	{
 		for (stack in _stacks)
 		{
-			if (stack.length > 0)
-			{
-				stack[0].update();
-			}
+			stack.update();
 		}
 	}
 	
@@ -148,47 +216,31 @@ class FlxFSMGroup<T>
 	{
 		if (_stacks.exists(Key))
 		{
-			for (fsm in _stacks.get(Key))
-			{
-				FlxDestroyUtil.destroy(fsm);
-			}
-			return _stacks.remove(Key);
+			FlxDestroyUtil.destroy(_stacks.get(Key));
+			_stacks.remove(Key);
 		}
-		return;
 	}
 	
 	public function pushToStack(FSM:FlxFSM<T>, Key:String = "__Default__")
 	{
 		if (_stacks.exists(Key) == false)
 		{
-			_stacks.set(Key, new FlxFSMStack<T>());
+			var stack = new FlxFSMStack<T>();
+			stack.manager = this;
+			_stacks.set(Key, stack);
 		}
-		_stacks.get(Key).unshift(FSM);
+		_stacks.get(Key).add(FSM);
 	}
 	
 	public function removeFromStack(FSM:FlxFSM<T>, Key:String = "__Default__")
 	{
 		if (_stacks.exists(Key))
 		{
-			var newStack = new FlxFSMStack<T>();
-			for (fsm in _stacks.get(Key))
-			{
-				if (Type.getClass(fsm) != Type.getClass(FSM))
-				{
-					newStack.push(fsm);
-				}
-				else
-				{
-					FlxDestroyUtil.destroy(fsm);
-				}
-			}
-			if (newStack.length == 0)
+			var stack = _stacks.get(Key);
+			stack.remove(FSM);
+			if (stack.isEmpty)
 			{
 				_stacks.remove(Key);
-			}
-			else
-			{				
-				_stacks.set(Key, newStack);
 			}
 		}
 	}
@@ -199,6 +251,7 @@ class FlxFSMGroup<T>
 		{
 			removeStack(key);
 		}
+		_stacks = null;
 	}
 }
 
