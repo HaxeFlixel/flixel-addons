@@ -204,6 +204,9 @@ class FlxFSMManager<T>
 		_stacks = new Map();
 	}
 	
+	/**
+	 * Updates all the stacks within this manager
+	 */
 	public function update()
 	{
 		for (stack in _stacks)
@@ -212,6 +215,10 @@ class FlxFSMManager<T>
 		}
 	}
 	
+	/**
+	 * Destroys the given stack and removes it from the list
+	 * @param	Key
+	 */
 	public function removeStack(Key:String = "__Default__")
 	{
 		if (_stacks.exists(Key))
@@ -221,6 +228,11 @@ class FlxFSMManager<T>
 		}
 	}
 	
+	/**
+	 * Adds the given FSM to specified stack. If the stack with given Key does not exist, it is created.
+	 * @param	FSM
+	 * @param	Key
+	 */
 	public function pushToStack(FSM:FlxFSM<T>, Key:String = "__Default__")
 	{
 		if (_stacks.exists(Key) == false)
@@ -232,6 +244,11 @@ class FlxFSMManager<T>
 		_stacks.get(Key).add(FSM);
 	}
 	
+	/**
+	 * Removes the given FSM from the specified stack.
+	 * @param	FSM
+	 * @param	Key
+	 */
 	public function removeFromStack(FSM:FlxFSM<T>, Key:String = "__Default__")
 	{
 		if (_stacks.exists(Key))
