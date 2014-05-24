@@ -140,10 +140,13 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	 */
 	public var manager:FlxFSMManager<T>;
 	
+	public var updateMode:StackUpdateMode;
+	
 	private var _fsms:Array<FlxFSM<T>>;
 	
 	public function new() {
 		_fsms = [];
+		updateMode = StackUpdateMode.All;
 	}
 	
 	/**
@@ -153,7 +156,16 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	{
 		if (_fsms.length > 0)
 		{
-			_fsms[0].update();
+			switch (updateMode)
+			{
+				case StackUpdateMode.All:
+					for (fsm in _fsms)
+					{
+						fsm.update();
+					}
+				case StackUpdateMode.First:
+					_fsms[0].update();
+			}
 		}
 	}
 	
@@ -194,6 +206,13 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	{
 		return (_fsms.length == 0);
 	}
+}
+
+@:enum
+abstract StackUpdateMode(Int) from Int to Int
+{
+	var First = 0;
+	var All = 1;
 }
 
 class FlxFSMManager<T>
@@ -239,6 +258,7 @@ class FlxFSMManager<T>
 		{
 			var stack = new FlxFSMStack<T>();
 			stack.manager = this;
+			stack.updateMode = StackUpdateMode.First;
 			_stacks.set(Key, stack);
 		}
 		_stacks.get(Key).add(FSM);
