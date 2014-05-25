@@ -101,7 +101,10 @@ class FlxFSM<T> implements IFlxDestroyable
  */
 class FlxFSMState<T> implements IFlxDestroyable
 {
-	public function new() { }
+	public function new()
+	{
+		
+	}
 	
 	/**
 	 * Called when state becomes active.
@@ -109,7 +112,10 @@ class FlxFSMState<T> implements IFlxDestroyable
 	 * @param	Owner	The object the state controls
 	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
-	public function enter(Owner:T, FSM:FlxFSM<T>):Void { }
+	public function enter(Owner:T, FSM:FlxFSM<T>):Void
+	{
+		
+	}
 	
 	/**
 	 * Called every update loop.
@@ -117,16 +123,25 @@ class FlxFSMState<T> implements IFlxDestroyable
 	 * @param	Owner	The object the state controls
 	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
-	public function update(Owner:T, FSM:FlxFSM<T>):Void { }
+	public function update(Owner:T, FSM:FlxFSM<T>):Void
+	{
+		
+	}
 	
 	/**
 	 * Called when the state becomes inactive.
 	 * 
 	 * @param	Owner	The object the state controls
 	 */
-	public function exit(Owner:T):Void { }
+	public function exit(Owner:T):Void
+	{
+		
+	}
 	
-	public function destroy():Void { }
+	public function destroy():Void
+	{
+		
+	}
 }
 
 @:enum
@@ -165,7 +180,8 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	private var _fsms:Array<FlxFSM<T>>;
 	private var _updateIndex:Int = 0;
 	
-	public function new() {
+	public function new()
+	{
 		_fsms = [];
 		updateMode = StackUpdateMode.All;
 	}
@@ -224,7 +240,8 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	/**
 	 * Destroys every member in stack and self
 	 */
-	public function destroy():Void {
+	public function destroy():Void
+	{
 		for (fsm in _fsms)
 		{
 			FlxDestroyUtil.destroy(fsm);
@@ -245,7 +262,8 @@ class FlxFSMManager<T>
 {
 	private var _stacks:Map < String, FlxFSMStack<T> >;
 	
-	public function new() {
+	public function new()
+	{
 		_stacks = new Map();
 	}
 	
