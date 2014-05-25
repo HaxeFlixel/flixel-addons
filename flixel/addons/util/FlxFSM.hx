@@ -1,6 +1,7 @@
 package flixel.addons.util;
 
 import flixel.util.FlxDestroyUtil;
+import flixel.math.FlxRandom;
 
 /**
  * A generic Finite-state machine implementation.
@@ -96,7 +97,7 @@ class FlxFSM<T> implements IFlxDestroyable
 }
 
 /**
- * A generic FSM State implementation
+ * A generic FSM State implementation. Extend this class to create new states.
  */
 class FlxFSMState<T> implements IFlxDestroyable
 {
@@ -128,6 +129,18 @@ class FlxFSMState<T> implements IFlxDestroyable
 	public function destroy():Void { }
 }
 
+@:enum
+abstract StackUpdateMode(Int) from Int to Int
+{
+	var First = 0;
+	var All = 1;
+	var Turns = 2;
+	var Random = 3;
+}
+
+/**
+ * Used for grouping FSM instances and updating them according to the stack's updateMode.
+ */
 class FlxFSMStack<T> implements IFlxDestroyable
 {
 	/**
@@ -140,9 +153,17 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	 */
 	public var manager:FlxFSMManager<T>;
 	
+	/**
+	 * How the stack updates the states.
+	 * First:  Only the last inserted FSM receives the update call.
+	 * All:    Every FSM is updated in order.
+	 * Turns:  The FSMs are updated in turns every update call.
+	 * Random: FSMs are updated in random order.
+	 */
 	public var updateMode:StackUpdateMode;
 	
 	private var _fsms:Array<FlxFSM<T>>;
+	private var _updateIndex:Int = 0;
 	
 	public function new() {
 		_fsms = [];
@@ -150,7 +171,7 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	}
 	
 	/**
-	 * Updates the first FSM in stack.
+	 * Updates the stack according to updateMode
 	 */
 	public function update()
 	{
@@ -158,13 +179,22 @@ class FlxFSMStack<T> implements IFlxDestroyable
 		{
 			switch (updateMode)
 			{
+				case StackUpdateMode.First:
+					_fsms[0].update();
 				case StackUpdateMode.All:
 					for (fsm in _fsms)
 					{
 						fsm.update();
 					}
-				case StackUpdateMode.First:
-					_fsms[0].update();
+				case StackUpdateMode.Turns:
+					if (_updateIndex >= _fsms.length)
+					{
+						_updateIndex = 0;
+					}
+					_fsms[_updateIndex].update();
+					_updateIndex = (_updateIndex + 1) % _fsms.length;
+				case StackUpdateMode.Random:
+					FlxRandom.getObject(_fsms).update();
 			}
 		}
 	}
@@ -208,13 +238,9 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	}
 }
 
-@:enum
-abstract StackUpdateMode(Int) from Int to Int
-{
-	var First = 0;
-	var All = 1;
-}
-
+/**
+ * Creates, alters, updates and destroys stacks.
+ */
 class FlxFSMManager<T>
 {
 	private var _stacks:Map < String, FlxFSMStack<T> >;
@@ -292,6 +318,9 @@ class FlxFSMManager<T>
 	}
 }
 
+/**
+ * Contains the information on when to transition from a given state to another.
+ */
 private class FlxFSMTransitionTable<T>
 {
 	/**
