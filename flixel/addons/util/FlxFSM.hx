@@ -296,15 +296,15 @@ class FlxFSMManager<T>
 	 * @param	FSM
 	 * @param	Key
 	 */
-	public function pushToStack(FSM:FlxFSM<T>, Key:String = "__Default__")
+	public function pushToStack(FSM:FlxFSM<T>, Key:String = "__Default__", UpdateMode:StackUpdateMode = StackUpdateMode.First)
 	{
 		if (_stacks.exists(Key) == false)
 		{
 			var stack = new FlxFSMStack<T>();
 			stack.manager = this;
-			stack.updateMode = StackUpdateMode.First;
 			_stacks.set(Key, stack);
 		}
+		_stacks.get(Key).updateMode = UpdateMode;
 		_stacks.get(Key).add(FSM);
 	}
 	
