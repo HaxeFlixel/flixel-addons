@@ -93,7 +93,7 @@ class FlxStarField3D extends FlxStarField
 				star.r = FlxRandom.float() * Math.PI * 2;
 				star.x = 0;
 				star.y = 0;
-				star.speed = FlxRandom.floatRanged(_minSpeed, _maxSpeed);
+				star.speed = FlxRandom.float(_minSpeed, _maxSpeed);
 				
 				_stars[star.index] = star;
 			}
@@ -124,8 +124,8 @@ private class FlxStarField extends FlxSprite
 		{
 			var star = new FlxStar();
 			star.index = i;
-			star.x = FlxRandom.intRanged(0, Width);
-			star.y = FlxRandom.intRanged(0, Height);
+			star.x = FlxRandom.int(0, Width);
+			star.y = FlxRandom.int(0, Height);
 			star.d = 1;
 			star.r = FlxRandom.float() * Math.PI * 2;
 			_stars.push(star);
@@ -178,7 +178,7 @@ private class FlxStarField extends FlxSprite
 		
 		for (star in _stars)
 		{
-			star.speed = FlxRandom.floatRanged(Min, Max);
+			star.speed = FlxRandom.float(Min, Max);
 		}
 	}
 }
