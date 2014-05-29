@@ -368,11 +368,11 @@ class FlxTypeText extends FlxText
 				{
 					if (_typing)
 					{
-						_timer = FlxRandom.floatRanged( -delay * _typeVarPercent / 2, delay * _typeVarPercent / 2);
+						_timer = FlxRandom.float( -delay * _typeVarPercent / 2, delay * _typeVarPercent / 2);
 					}
 					else
 					{
-						_timer = FlxRandom.floatRanged( -eraseDelay * _typeVarPercent / 2, eraseDelay * _typeVarPercent / 2);
+						_timer = FlxRandom.float( -eraseDelay * _typeVarPercent / 2, eraseDelay * _typeVarPercent / 2);
 					}
 				}
 				else

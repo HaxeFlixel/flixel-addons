@@ -79,7 +79,7 @@ class FlxGlitchSprite extends FlxSprite
 					_flashRect2.setTo(0, p, target.frameWidth, size);
 					if (_flashRect2.bottom > target.frameHeight)
 						_flashRect2.bottom = target.frameHeight;
-					_flashPoint.setTo(FlxRandom.intRanged( -strength, strength) + strength, p);
+					_flashPoint.setTo(FlxRandom.int( -strength, strength) + strength, p);
 					p += Std.int(_flashRect2.height);
 					pixels.copyPixels(target.framePixels, _flashRect2, _flashPoint);
 				}
@@ -91,7 +91,7 @@ class FlxGlitchSprite extends FlxSprite
 					_flashRect2.setTo(p, 0, size, target.frameHeight);
 					if (_flashRect2.right > target.frameWidth)
 						_flashRect2.right = target.frameWidth;
-					_flashPoint.setTo(p, FlxRandom.intRanged( -strength, strength) + strength);
+					_flashPoint.setTo(p, FlxRandom.int( -strength, strength) + strength);
 					p += Std.int(_flashRect2.width);
 					pixels.copyPixels(target.framePixels, _flashRect2, _flashPoint);
 				}
