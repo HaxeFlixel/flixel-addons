@@ -167,11 +167,7 @@ class FlxScreenGrab extends FlxBasic
 		try
 		{
 			documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
-			#if (systools <= 1)
-				path = Dialogs.saveFile("", "", documentsDirectory);
-			#else
-				path = Dialogs.saveFile("", "", "", { count:1, descriptions:["png files"], extensions:["*.png"] } );
-			#end
+			path = Dialogs.saveFile("", "", "", { count:1, descriptions:["png files"], extensions:["*.png"] } );
 		}
 		catch (msg:String)
 		{
