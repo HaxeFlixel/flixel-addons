@@ -334,6 +334,7 @@ private class FlxFSMTransitionTable<T>
 	
 	private var _table:Array<TransitionRow<T>>;
 	private var _startState:String;
+	private var _garbagecollect:Bool = false;
 	
 	public function new()
 	{
@@ -354,6 +355,31 @@ private class FlxFSMTransitionTable<T>
 		}
 		var currentStateClass = Type.getClass(FSM.state);
 		var currentOwner = FSM.owner;
+		
+		if (_garbagecollect)
+		{
+			_garbagecollect = false;
+			var removeThese = [];
+			for (transition in _table)
+			{
+				if (transition.remove == true)
+				{
+					if (transition.from == currentStateClass)
+					{
+						_garbagecollect = true;
+					}
+					else
+					{
+						removeThese.push(transition);
+					}
+				}
+			}
+			for (transition in removeThese)
+			{
+				_table.remove(transition);
+			}
+		}
+		
 		for (transition in _table)
 		{
 			if (transition.from == currentStateClass || transition.from == null)
@@ -368,7 +394,6 @@ private class FlxFSMTransitionTable<T>
 						return states.get(className);
 				}
 			}
-			
 		}
 		return FSM.state;
 	}
@@ -427,11 +452,22 @@ private class FlxFSMTransitionTable<T>
 		{
 			if (transition.to == Target)
 			{
-				transition.to = Replacement;
+				transition.remove = true;
+				if (transition.from == null)
+				{
+					addGlobal(Replacement, transition.condition);
+				}
+				else
+				{					
+					add(transition.from, Replacement, transition.condition);
+				}
+				_garbagecollect = true;
 			}
 			if (transition.from == Target)
 			{
-				transition.from = Replacement;
+				transition.remove = true;
+				add(Replacement, transition.to, transition.condition);
+				_garbagecollect = true;
 			}
 		}
 	}
@@ -445,7 +481,6 @@ private class FlxFSMTransitionTable<T>
 	 */
 	public function remove(?From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool)
 	{
-		var removeThese = [];
 		switch([From, To, Condition])
 		{
 			case [f, null, null]:
@@ -453,7 +488,8 @@ private class FlxFSMTransitionTable<T>
 				{
 					if (From == transition.from)
 					{
-						removeThese.push(transition);
+						transition.remove = true;
+						_garbagecollect = true;
 					}
 				}
 			case [f, t, null]:
@@ -461,7 +497,8 @@ private class FlxFSMTransitionTable<T>
 				{
 					if (From == transition.from && To == transition.to)
 					{
-						removeThese.push(transition);
+						transition.remove = true;
+						_garbagecollect = true;
 					}
 				}
 			case [null, t, c]:
@@ -469,7 +506,8 @@ private class FlxFSMTransitionTable<T>
 				{
 					if (To == transition.to && Condition == transition.condition)
 					{
-						removeThese.push(transition);
+						transition.remove = true;
+						_garbagecollect = true;
 					}
 				}
 			case [f, t, c]:
@@ -477,13 +515,10 @@ private class FlxFSMTransitionTable<T>
 				{
 					if (From == transition.from && To == transition.to && Condition == transition.condition)
 					{
-						removeThese.push(transition);
+						transition.remove = true;
+						_garbagecollect = true;
 					}
 				}
-		}
-		for (transition in removeThese)
-		{
-			_table.remove(transition);
 		}
 	}
 	
@@ -501,7 +536,7 @@ private class FlxFSMTransitionTable<T>
 			case [f, null, null]:
 				for (transition in _table)
 				{
-					if (From == transition.from)
+					if (From == transition.from && transition.remove == false)
 					{
 						return true;
 					}
@@ -509,7 +544,7 @@ private class FlxFSMTransitionTable<T>
 			case [f, t, null]:
 				for (transition in _table)
 				{
-					if (From == transition.from && To == transition.to)
+					if (From == transition.from && To == transition.to && transition.remove == false)
 					{
 						return true;
 					}
@@ -517,7 +552,7 @@ private class FlxFSMTransitionTable<T>
 			case [null, t, c]:
 				for (transition in _table)
 				{
-					if (To == transition.to && Condition == transition.condition)
+					if (To == transition.to && Condition == transition.condition && transition.remove == false)
 					{
 						return true;
 					}
@@ -525,7 +560,7 @@ private class FlxFSMTransitionTable<T>
 			case [f, t, c]:
 				for (transition in _table)
 				{
-					if (From == transition.from && To == transition.to && Condition == transition.condition)
+					if (From == transition.from && To == transition.to && Condition == transition.condition && transition.remove == false)
 					{
 						return true;
 					}
@@ -552,4 +587,5 @@ private class TransitionRow<T>
 	public var from:Class<FlxFSMState<T>>;
 	public var condition:T->Bool;
 	public var to:Class<FlxFSMState<T>>;
+	public var remove:Bool = false;
 }
