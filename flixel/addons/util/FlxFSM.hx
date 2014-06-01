@@ -431,7 +431,7 @@ private class FlxFSMTransitionTable<T>
 			}
 			if (transition.from == Target)
 			{
-				transition.to = Replacement;
+				transition.from = Replacement;
 			}
 		}
 	}
