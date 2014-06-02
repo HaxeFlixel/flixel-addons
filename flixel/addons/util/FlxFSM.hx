@@ -2,6 +2,7 @@ package flixel.addons.util;
 
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxRandom;
+import flixel.FlxG;
 
 /**
  * A generic Finite-state machine implementation.
@@ -24,6 +25,11 @@ class FlxFSM<T> implements IFlxDestroyable
 	public var transitions:FlxFSMTransitionTable<T>;
 	
 	/**
+	 * The age of the active state
+	 */
+	public var age:Float;
+	
+	/**
 	 * The stack this FSM belongs to or null
 	 */
 	public var stack:FlxFSMStack<T>;
@@ -31,6 +37,7 @@ class FlxFSM<T> implements IFlxDestroyable
 	public function new(?Owner:T, ?State:FlxFSMState<T>)
 	{
 		transitions = new FlxFSMTransitionTable<T>();
+		age = 0;
 		owner = Owner;
 		state = State;
 	}
@@ -46,6 +53,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		}
 		if (state != null && owner != null)
 		{
+			age += FlxG.elapsed;
 			state.update(owner, this);
 			state = transitions.poll(this);
 		}
@@ -72,6 +80,7 @@ class FlxFSM<T> implements IFlxDestroyable
 			owner = Owner;
 			if (owner != null && state != null)
 			{
+				age = 0;
 				state.enter(Owner, this);
 			}
 		}
@@ -89,6 +98,7 @@ class FlxFSM<T> implements IFlxDestroyable
 			state = State;
 			if (state != null && owner != null)
 			{
+				age = 0;
 				state.enter(owner, this);
 			}
 		}
