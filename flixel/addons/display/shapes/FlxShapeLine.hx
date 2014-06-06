@@ -33,7 +33,7 @@ class FlxShapeLine extends FlxShape
 		a.putWeak();
 		b.putWeak();
 		
-		var strokeBuffer:Float = (lineStyle.thickness);
+		var strokeBuffer:Float = (LineStyle_.thickness);
 		
 		var trueWidth:Float = Math.abs(a.x - b.x);	//actual geometric size
 		var trueHeight:Float = Math.abs(a.y - b.y);
