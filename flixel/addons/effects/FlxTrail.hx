@@ -4,6 +4,7 @@ import flixel.animation.FlxAnimation;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.system.FlxAssets;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
@@ -15,7 +16,7 @@ import flixel.math.FlxPoint;
  * Feel free to use this class and adjust it to your needs.
  * @author Gama11
  */
-class FlxTrail extends FlxTypedGroup<FlxSprite>
+class FlxTrail extends FlxSpriteGroup
 {		
 	/**
 	 * Stores the FlxSprite the trail is attached to.
@@ -45,10 +46,6 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	 * Whether to check for frame changes of the "parent" FlxSprite or not.
 	 */
 	public var framesEnabled:Bool = true;
-	/**
-	 * Determines whether trailsprites are solid or not. False by default.
-	 */
-	public var solid(default, set):Bool = false;
 	
 	/**
 	 *  Counts the frames passed.
@@ -343,14 +340,5 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 		xEnabled = X;
 		yEnabled = Y;
 		scalesEnabled = Scale;
-	}
-	
-	private function set_solid(Value:Bool):Bool
-	{
-		for (i in 0..._trailLength)
-		{
-			members[i].solid = Value; 
-		}
-		return solid = Value;
 	}
 }
