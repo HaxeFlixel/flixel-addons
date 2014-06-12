@@ -181,7 +181,7 @@ class FlxTrailArea extends FlxSprite
 					{
 						framePixels.copyPixels(member.getFlxFrameBitmapData(), 
 												new Rectangle(0, 0, member.frameWidth, member.frameHeight), 
-												new Point(member.x - x, member.y - y), null, null, true);
+												new Point(member.x - x - member.offset.x, member.y - y - member.offset.y), null, null, true);
 					}
 					else 
 					{
