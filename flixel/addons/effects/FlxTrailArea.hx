@@ -201,7 +201,7 @@ class FlxTrailArea extends FlxSprite
 							}
 							_matrix.translate((member.origin.x), (member.origin.y));
 						}
-						_matrix.translate(member.x - x, member.y - y);
+						_matrix.translate(member.x - x - member.offset.x, member.y - y - member.offset.y);
 						framePixels.draw(member.getFlxFrameBitmapData(), _matrix, member.colorTransform, blendMode, null, antialiasing);
 					}
 					
