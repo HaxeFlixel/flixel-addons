@@ -220,14 +220,39 @@ class FlxFSMStack<T> implements IFlxDestroyable
 		}
 	}
 	
+	public function add(FSM:FlxFSM<T>)
+	{
+		unshift(FSM);
+	}
 	/**
 	 * Adds the FSM to the front of the stack
 	 * @param	FSM
 	 */
-	public function add(FSM:FlxFSM<T>)
+	public function unshift(FSM:FlxFSM<T>)
 	{
 		FSM.stack = this;
 		_fsms.unshift(FSM);
+	}
+	
+	/**
+	 * Adds the FSM to the end of the stack
+	 * @param	FSM
+	 */
+	public function push(FSM:FlxFSM<T>)
+	{
+		FSM.stack = this;
+		_fsms.push(FSM);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public function pop():FlxFSM<T>
+	{
+		var FSM = _fsms.pop();
+		FlxDestroyUtil.destroy(FSM);
+		return FSM;
 	}
 	
 	/**
@@ -346,20 +371,14 @@ class FlxFSMManager<T>
  */
 class FlxFSMTransitionTable<T>
 {
-	/**
-	 * Storage of activated states. You can add states manually with class path => state instance
-	 * pairs in case your states are pooled and should not be created separately.
-	 */
-	public var states:Map<String, FlxFSMState<T>>;
 	
 	private var _table:Array<TransitionRow<T>>;
-	private var _startState:String;
+	private var _startState:Class<FlxFSMState<T>>;
 	private var _garbagecollect:Bool = false;
 	
 	public function new()
 	{
 		_table = new Array<TransitionRow<T>>();
-		states = new Map();
 	}
 	
 	/**
@@ -367,12 +386,13 @@ class FlxFSMTransitionTable<T>
 	 * @param	FSM	The FlxFSMState the table belongs to
 	 * @return	The state that should become or remain active.
 	 */
-	public function poll(FSM:FlxFSM<T>):FlxFSMState<T>
+	public function poll(FSM:FlxFSM<T>):Class<FlxFSMState<T>>
 	{
 		if (FSM.state == null && _startState != null)
 		{
-			return states.get(_startState);
+			return _startState;
 		}
+		
 		var currentStateClass = Type.getClass(FSM.state);
 		var currentOwner = FSM.owner;
 		
@@ -406,16 +426,12 @@ class FlxFSMTransitionTable<T>
 			{
 				if (transition.condition(currentOwner) == true)
 				{
-						var className = Type.getClassName(transition.to);
-						if (states.exists(className) == false)
-						{
-							states.set(className, Type.createEmptyInstance(transition.to));
-						}
-						return states.get(className);
+						return transition.to;
 				}
 			}
 		}
-		return FSM.state;
+		
+		return currentStateClass;
 	}
 	
 	/**
@@ -454,10 +470,6 @@ class FlxFSMTransitionTable<T>
 	public function start(With:Class<FlxFSMState<T>>)
 	{
 		_startState = Type.getClassName(With);
-		if (states.exists(_startState) == false)
-		{
-			states.set(_startState, Type.createEmptyInstance(With));
-		}
 		return this;
 	}
 	
