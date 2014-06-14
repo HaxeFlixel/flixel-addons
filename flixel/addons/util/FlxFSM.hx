@@ -3,6 +3,42 @@ package flixel.addons.util;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxRandom;
 import flixel.FlxG;
+import flixel.util.FlxPool;
+
+/**
+ * A generic FSM State implementation. Extend this class to create new states.
+ */
+class FlxFSMState<T> implements IFlxDestroyable
+{
+	
+	public function new() { }
+	
+	/**
+	 * Called when state becomes active.
+	 * 
+	 * @param	Owner	The object the state controls
+	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
+	 */
+	public function enter(Owner:T, FSM:FlxFSM<T>):Void { }
+	
+	/**
+	 * Called every update loop.
+	 * 
+	 * @param	Owner	The object the state controls
+	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
+	 */
+	public function update(Owner:T, FSM:FlxFSM<T>):Void { }
+	
+	/**
+	 * Called when the state becomes inactive.
+	 * 
+	 * @param	Owner	The object the state controls
+	 */
+	public function exit(Owner:T):Void { }
+	
+	public function destroy():Void { }
+	
+}
 
 /**
  * A generic Finite-state machine implementation.
@@ -20,11 +56,6 @@ class FlxFSM<T> implements IFlxDestroyable
 	public var state(default, set):FlxFSMState<T>;
 	
 	/**
-	 * Transition table
-	 */
-	public var transitions:FlxFSMTransitionTable<T>;
-	
-	/**
 	 * The age of the active state
 	 */
 	public var age:Float;
@@ -34,11 +65,14 @@ class FlxFSM<T> implements IFlxDestroyable
 	 */
 	public var stack:FlxFSMStack<T>;
 	
+	public var active:Bool = false;
+	
 	public function new(?Owner:T, ?State:FlxFSMState<T>)
 	{
 		age = 0;
 		owner = Owner;
 		state = State;
+		active = true;
 	}
 	
 	/**
@@ -46,26 +80,10 @@ class FlxFSM<T> implements IFlxDestroyable
 	 */
 	public function update():Void
 	{
-		if (transitions != null)
+		if (active == true && state != null && owner != null)
 		{
-			if (state == null)
-			{
-				state = transitions.poll(this);
-			}
-			if (state != null && owner != null)
-			{
-				age += FlxG.elapsed;
-				state.update(owner, this);
-				state = transitions.poll(this);
-			}
-		}
-		else
-		{
-			if (state != null && owner != null)
-			{
-				age += FlxG.elapsed;
-				state.update(owner, this);
-			}
+			age += FlxG.elapsed;
+			state.update(owner, this);
 		}
 	}
 	
@@ -77,6 +95,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		owner = null;
 		state = null;
 		stack = null;
+		active = false;
 	}
 	
 	private function set_owner(Owner:T):T
@@ -117,45 +136,74 @@ class FlxFSM<T> implements IFlxDestroyable
 }
 
 /**
- * A generic FSM State implementation. Extend this class to create new states.
+ * Helper typedef for FlxExtendedFSM's pools
  */
-class FlxFSMState<T> implements IFlxDestroyable
-{
-	public function new() {	}
-	
-	/**
-	 * Called when state becomes active.
-	 * 
-	 * @param	Owner	The object the state controls
-	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
-	 */
-	public function enter(Owner:T, FSM:FlxFSM<T>):Void { }
-	
-	/**
-	 * Called every update loop.
-	 * 
-	 * @param	Owner	The object the state controls
-	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
-	 */
-	public function update(Owner:T, FSM:FlxFSM<T>):Void { }
-	
-	/**
-	 * Called when the state becomes inactive.
-	 * 
-	 * @param	Owner	The object the state controls
-	 */
-	public function exit(Owner:T):Void { }
-	
-	public function destroy():Void { }
-}
+typedef StatePool<T> = Map<String, FlxPool<FlxFSMState<T>>>
 
-@:enum
-abstract StackUpdateMode(Int) from Int to Int
+
+/**
+ * Extended FSM that implements transition tables and pooling.
+ */
+class FlxExtendedFSM<T> extends FlxFSM<T>
 {
-	var First = 0;
-	var All = 1;
-	var Turns = 2;
-	var Random = 3;
+	/**
+	 * The transition table for this FSM
+	 */
+	public var transitions:FlxFSMTransitionTable<T>;
+	
+	/**
+	 * A Map object containing FlxPools for FlxFSMStates
+	 */
+	public var pools:StatePool<T>;
+	
+	private var currentState:Class<FlxFSMState<T>>;
+	
+	public function new(?Owner:T, ?Transitions:FlxFSMTransitionTable<T>, ?Pool:StatePool<T>)
+	{
+		super(Owner);
+		transitions = Transitions;
+		if (Pool != null)
+		{			
+			pools = Pool;
+		}
+		else
+		{
+			pools = new StatePool();
+		}
+	}
+	
+	override public function update():Void
+	{
+		super.update();
+		
+		if (transitions != null && pools != null)
+		{
+			var newState = transitions.poll(currentState, this.owner);
+			
+			if (newState != currentState)
+			{
+				var currentName = Type.getClassName(currentState);
+				var newName = Type.getClassName(newState);
+				
+				if (pools.exists(newName) == false)
+				{
+					pools.set(newName, new FlxPool<FlxFSMState<T>>(newState));
+				}
+				
+				var returnToPool = state;
+				
+				state = pools.get(newName).get();
+				
+				if (pools.exists(currentName))
+				{
+					pools.get(currentName).put(returnToPool);
+				}
+				
+				currentState = newState;
+			}
+		}
+	}
+	
 }
 
 /**
@@ -168,27 +216,11 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	 */
 	public var isEmpty(get, never):Bool;
 	
-	/**
-	 * The manager of this stack or null
-	 */
-	public var manager:FlxFSMManager<T>;
-	
-	/**
-	 * How the stack updates the states.
-	 * First:  Only the last inserted FSM receives the update call.
-	 * All:    Every FSM is updated in order.
-	 * Turns:  The FSMs are updated in turns every update call.
-	 * Random: FSMs are updated in random order.
-	 */
-	public var updateMode:StackUpdateMode;
-	
 	private var _fsms:Array<FlxFSM<T>>;
-	private var _updateIndex:Int = 0;
 	
 	public function new()
 	{
 		_fsms = [];
-		updateMode = StackUpdateMode.All;
 	}
 	
 	/**
@@ -196,27 +228,9 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	 */
 	public function update()
 	{
-		if (_fsms.length > 0)
+		for (fsm in _fsms)
 		{
-			switch (updateMode)
-			{
-				case StackUpdateMode.First:
-					_fsms[0].update();
-				case StackUpdateMode.All:
-					for (fsm in _fsms)
-					{
-						fsm.update();
-					}
-				case StackUpdateMode.Turns:
-					if (_updateIndex >= _fsms.length)
-					{
-						_updateIndex = 0;
-					}
-					_fsms[_updateIndex].update();
-					_updateIndex = (_updateIndex + 1) % _fsms.length;
-				case StackUpdateMode.Random:
-					FlxRandom.getObject(_fsms).update();
-			}
+			fsm.update();
 		}
 	}
 	
@@ -276,93 +290,11 @@ class FlxFSMStack<T> implements IFlxDestroyable
 		{
 			FlxDestroyUtil.destroy(fsm);
 		}
-		manager = null;
 	}
 	
 	private function get_isEmpty():Bool
 	{
 		return (_fsms.length == 0);
-	}
-}
-
-/**
- * Creates, alters, updates and destroys stacks.
- */
-class FlxFSMManager<T>
-{
-	private var _stacks:Map < String, FlxFSMStack<T> >;
-	
-	public function new()
-	{
-		_stacks = new Map();
-	}
-	
-	/**
-	 * Updates all the stacks within this manager
-	 */
-	public function update()
-	{
-		for (stack in _stacks)
-		{
-			stack.update();
-		}
-	}
-	
-	/**
-	 * Destroys the given stack and removes it from the list
-	 * @param	Key
-	 */
-	public function removeStack(Key:String = "__Default__")
-	{
-		if (_stacks.exists(Key))
-		{
-			FlxDestroyUtil.destroy(_stacks.get(Key));
-			_stacks.remove(Key);
-		}
-	}
-	
-	/**
-	 * Adds the given FSM to specified stack. If the stack with given Key does not exist, it is created.
-	 * @param	FSM
-	 * @param	Key
-	 */
-	public function pushToStack(FSM:FlxFSM<T>, Key:String = "__Default__", UpdateMode:StackUpdateMode = StackUpdateMode.First)
-	{
-		if (_stacks.exists(Key) == false)
-		{
-			var stack = new FlxFSMStack<T>();
-			stack.manager = this;
-			_stacks.set(Key, stack);
-		}
-		_stacks.get(Key).updateMode = UpdateMode;
-		_stacks.get(Key).add(FSM);
-	}
-	
-	/**
-	 * Removes the given FSM from the specified stack.
-	 * @param	FSM
-	 * @param	Key
-	 */
-	public function removeFromStack(FSM:FlxFSM<T>, Key:String = "__Default__")
-	{
-		if (_stacks.exists(Key))
-		{
-			var stack = _stacks.get(Key);
-			stack.remove(FSM);
-			if (stack.isEmpty)
-			{
-				_stacks.remove(Key);
-			}
-		}
-	}
-	
-	public function destroy():Void
-	{
-		for (key in _stacks.keys())
-		{
-			removeStack(key);
-		}
-		_stacks = null;
 	}
 }
 
@@ -386,15 +318,12 @@ class FlxFSMTransitionTable<T>
 	 * @param	FSM	The FlxFSMState the table belongs to
 	 * @return	The state that should become or remain active.
 	 */
-	public function poll(FSM:FlxFSM<T>):Class<FlxFSMState<T>>
+	public function poll(CurrentState:Class<FlxFSMState<T>>, Owner:T):Class<FlxFSMState<T>>
 	{
-		if (FSM.state == null && _startState != null)
+		if (CurrentState == null && _startState != null)
 		{
 			return _startState;
 		}
-		
-		var currentStateClass = Type.getClass(FSM.state);
-		var currentOwner = FSM.owner;
 		
 		if (_garbagecollect)
 		{
@@ -404,7 +333,7 @@ class FlxFSMTransitionTable<T>
 			{
 				if (transition.remove == true)
 				{
-					if (transition.from == currentStateClass)
+					if (transition.from == CurrentState)
 					{
 						_garbagecollect = true;
 					}
@@ -422,16 +351,16 @@ class FlxFSMTransitionTable<T>
 		
 		for (transition in _table)
 		{
-			if (transition.from == currentStateClass || transition.from == null)
+			if (transition.from == CurrentState || transition.from == null)
 			{
-				if (transition.condition(currentOwner) == true)
+				if (transition.condition(Owner) == true)
 				{
 						return transition.to;
 				}
 			}
 		}
 		
-		return currentStateClass;
+		return CurrentState;
 	}
 	
 	/**
@@ -469,7 +398,7 @@ class FlxFSMTransitionTable<T>
 	 */
 	public function start(With:Class<FlxFSMState<T>>)
 	{
-		_startState = Type.getClassName(With);
+		_startState = With;
 		return this;
 	}
 	
