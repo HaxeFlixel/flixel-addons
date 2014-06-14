@@ -36,7 +36,6 @@ class FlxFSM<T> implements IFlxDestroyable
 	
 	public function new(?Owner:T, ?State:FlxFSMState<T>)
 	{
-		transitions = new FlxFSMTransitionTable<T>();
 		age = 0;
 		owner = Owner;
 		state = State;
@@ -47,15 +46,26 @@ class FlxFSM<T> implements IFlxDestroyable
 	 */
 	public function update():Void
 	{
-		if (state == null)
+		if (transitions != null)
 		{
-			state = transitions.poll(this);
+			if (state == null)
+			{
+				state = transitions.poll(this);
+			}
+			if (state != null && owner != null)
+			{
+				age += FlxG.elapsed;
+				state.update(owner, this);
+				state = transitions.poll(this);
+			}
 		}
-		if (state != null && owner != null)
+		else
 		{
-			age += FlxG.elapsed;
-			state.update(owner, this);
-			state = transitions.poll(this);
+			if (state != null && owner != null)
+			{
+				age += FlxG.elapsed;
+				state.update(owner, this);
+			}
 		}
 	}
 	
@@ -334,7 +344,7 @@ class FlxFSMManager<T>
 /**
  * Contains the information on when to transition from a given state to another.
  */
-private class FlxFSMTransitionTable<T>
+class FlxFSMTransitionTable<T>
 {
 	/**
 	 * Storage of activated states. You can add states manually with class path => state instance
