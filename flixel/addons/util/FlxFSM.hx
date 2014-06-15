@@ -71,6 +71,11 @@ class FlxFSM<T> implements IFlxDestroyable
 	public var name:String;
 	
 	/**
+	 * Binary flag. Used for locking/unlocking when in a stack.
+	 */
+	public var type:Int;
+	
+	/**
 	 * The stack this FSM belongs to or null
 	 */
 	public var stack:FlxFSMStack<T>;
@@ -80,6 +85,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		this.age = 0;
 		this.owner = owner;
 		this.state = state;
+		this.type = FSMType.any;
 	}
 	
 	/**
@@ -102,6 +108,8 @@ class FlxFSM<T> implements IFlxDestroyable
 		owner = null;
 		state = null;
 		stack = null;
+		name = null;
+		type = FSMType.any;
 	}
 	
 	private function set_owner(owner:T):T
@@ -141,6 +149,34 @@ class FlxFSM<T> implements IFlxDestroyable
 		}
 		return state;
 	}
+}
+
+/**
+ * Sample bitflags for FSM's type
+ */
+@:enum
+abstract FSMType(Int) from Int to Int
+{
+	var any = 1;
+	var actor = 2;
+	var ai = 4;
+	var animation = 8;
+	var area = 16;
+	var audio = 32;
+	var collision = 64;
+	var damage = 128;
+	var effect = 256;
+	var environment = 512;
+	var game = 1024;
+	var machine = 2048;
+	var menu = 4096;
+	var npc = 8192;
+	var particle = 16384;
+	var physics = 32768;
+	var pickup = 65536;
+	var player = 131072;
+	var projectile = 262144;
+	var text = 524288;
 }
 
 /**
@@ -237,12 +273,15 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	
 	private var _locked:Array<String>;
 	
+	private var _lockedTypes:Int;
+	
 	private var _lockRemaining:Bool;
 	
 	public function new()
 	{
 		_stack = [];
 		_locked = [];
+		_lockedTypes = 0;
 	}
 	
 	/**
@@ -250,9 +289,6 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	 */
 	public function update()
 	{
-		_locked = [];
-		_lockRemaining = false;
-		
 		if (_alteredStack != null) // Stack was edited during the last loop. Adopt the changes
 		{
 			_stack = _alteredStack.copy();
@@ -261,11 +297,15 @@ class FlxFSMStack<T> implements IFlxDestroyable
 		
 		for (fsm in _stack)
 		{
-			if (_lockRemaining == false && _locked.indexOf(fsm.name) == -1)
+			if (_lockRemaining == false && (fsm.type & _lockedTypes) == 0 && _locked.indexOf(fsm.name) == -1)
 			{				
 				fsm.update();
 			}
 		}
+		
+		_locked = [];
+		_lockRemaining = false;
+		_lockedTypes = 0;
 	}
 	
 	/**
@@ -286,6 +326,15 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	public function lockRemaining():Void
 	{
 		_lockRemaining = true;
+	}
+	
+	/**
+	 * Locks by type, so that if `FSM.type & bitflag != 0`, the FSM gets locked.
+	 * @param	bitflag		You can use `FSMType` abstract for values or build your own.
+	 */
+	public function lockType(bitflag:Int):Void
+	{
+		_lockedTypes |= bitflag;
 	}
 	
 	/**
