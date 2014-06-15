@@ -4,6 +4,7 @@ import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxRandom;
 import flixel.FlxG;
 import flixel.util.FlxPool;
+import flixel.util.FlxSignal.FlxTypedSignal;
 
 /**
  * A generic FSM State implementation. Extend this class to create new states.
@@ -38,6 +39,34 @@ class FlxFSMState<T> implements IFlxDestroyable
 	
 	public function destroy():Void { }
 	
+}
+
+/**
+ * Sample bitflags for FSM's type
+ */
+@:enum
+abstract FSMType(Int) from Int to Int
+{
+	var any = 1;
+	var actor = 2;
+	var ai = 4;
+	var animation = 8;
+	var area = 16;
+	var audio = 32;
+	var collision = 64;
+	var damage = 128;
+	var effect = 256;
+	var environment = 512;
+	var game = 1024;
+	var machine = 2048;
+	var menu = 4096;
+	var npc = 8192;
+	var particle = 16384;
+	var physics = 32768;
+	var pickup = 65536;
+	var player = 131072;
+	var projectile = 262144;
+	var text = 524288;
 }
 
 /**
@@ -152,34 +181,6 @@ class FlxFSM<T> implements IFlxDestroyable
 }
 
 /**
- * Sample bitflags for FSM's type
- */
-@:enum
-abstract FSMType(Int) from Int to Int
-{
-	var any = 1;
-	var actor = 2;
-	var ai = 4;
-	var animation = 8;
-	var area = 16;
-	var audio = 32;
-	var collision = 64;
-	var damage = 128;
-	var effect = 256;
-	var environment = 512;
-	var game = 1024;
-	var machine = 2048;
-	var menu = 4096;
-	var npc = 8192;
-	var particle = 16384;
-	var physics = 32768;
-	var pickup = 65536;
-	var player = 131072;
-	var projectile = 262144;
-	var text = 524288;
-}
-
-/**
  * Helper typedef for FlxExtendedFSM's pools
  */
 typedef StatePool<T> = Map<String, FlxPool<FlxFSMState<T>>>
@@ -260,7 +261,7 @@ class FlxExtendedFSM<T> extends FlxFSM<T>
 /**
  * Used for grouping FSM instances and updating them according to the stack's updateMode.
  */
-class FlxFSMStack<T> implements IFlxDestroyable
+class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 {
 	/**
 	 * Test if the stack is empty
@@ -271,7 +272,9 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	
 	private var _alteredStack:Array<FlxFSM<T>>;
 	
-	private var _locked:Array<String>;
+	private var _hasLocks:Bool;
+	
+	private var _lockedNames:Array<String>;
 	
 	private var _lockedTypes:Int;
 	
@@ -279,9 +282,12 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	
 	public function new()
 	{
+		super();
 		_stack = [];
-		_locked = [];
+		_lockedNames = [];
 		_lockedTypes = 0;
+		_hasLocks = false;
+		FlxFSMStackSignal._lockSignal.add(lockType);
 	}
 	
 	/**
@@ -297,15 +303,26 @@ class FlxFSMStack<T> implements IFlxDestroyable
 		
 		for (fsm in _stack)
 		{
-			if (_lockRemaining == false && (fsm.type & _lockedTypes) == 0 && _locked.indexOf(fsm.name) == -1)
-			{				
+			if (_hasLocks)
+			{
+				if (_lockRemaining == false && (fsm.type & _lockedTypes) == 0 && _lockedNames.indexOf(fsm.name) == -1)
+				{				
+					fsm.update();
+				}
+			}
+			else
+			{
 				fsm.update();
 			}
 		}
 		
-		_locked = [];
+		if (_lockedNames.length != 0)
+		{			
+			_lockedNames = [];
+		}
 		_lockRemaining = false;
 		_lockedTypes = 0;
+		_hasLocks = false;
 	}
 	
 	/**
@@ -314,9 +331,10 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	 */
 	public function lock(name:String):Void
 	{
-		if (_locked.indexOf(name) == -1)
+		if (_lockedNames.indexOf(name) == -1)
 		{
-			_locked.push(name);
+			_lockedNames.push(name);
+			_hasLocks = true;
 		}
 	}
 	
@@ -326,6 +344,7 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	public function lockRemaining():Void
 	{
 		_lockRemaining = true;
+		_hasLocks = true;
 	}
 	
 	/**
@@ -335,6 +354,7 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	public function lockType(bitflag:Int):Void
 	{
 		_lockedTypes |= bitflag;
+		_hasLocks = true;
 	}
 	
 	/**
@@ -408,7 +428,7 @@ class FlxFSMStack<T> implements IFlxDestroyable
 		}
 		if (_alteredStack.remove(FSM))
 		{
-			lock(FSM.name); // FSM isn't updated during the remainder the loop current
+			lock(FSM.name); // FSM isn't updated during the remainder the current loop
 			FlxDestroyUtil.destroy(FSM);
 		}
 	}
@@ -418,19 +438,13 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	 * @param	The removed FSM
 	 */
 	public function removeByName(name:String)
-	{	
-		var toRemove:FlxFSM<T> = null;
+	{
 		for (fsm in _stack)
 		{
 			if (fsm.name == name)
 			{
-				toRemove = fsm;
-				break;
+				remove(fsm);
 			}
-		}
-		if (toRemove != null)
-		{			
-			remove(toRemove);
 		}
 	}
 	
@@ -444,12 +458,43 @@ class FlxFSMStack<T> implements IFlxDestroyable
 			FlxDestroyUtil.destroy(fsm);
 		}
 		lockRemaining();
+		FlxFSMStackSignal._lockSignal.remove(lockType);
 	}
 	
 	private function get_isEmpty():Bool
 	{
 		return (_stack.length == 0);
 	}
+}
+
+/**
+ * Base class for `FlxFSMStack<T>`
+ * Only function is to create a static `FlxTypedSignal` that's shared between stacks.
+ * Otherwise signals would be type specific, and `FlxFSMStack<A>` could not dispatch
+ * to `FlxFSMStack<B>`
+ */
+private class FlxFSMStackSignal
+{
+	
+	private static var _lockSignal:FlxTypedSignal< Int->Void >;
+	
+	public function new()
+	{
+		if (FlxFSMStackSignal._lockSignal == null)
+		{
+			FlxFSMStackSignal._lockSignal = new FlxTypedSignal < Int->Void > ();
+		}
+	}
+	
+	/**
+	 * Sends a message to all active FSMStacks to lock given types.
+	 * @param	type	You can use `FSMType` abstract for values or build your own.
+	 */
+	public function globalLock(type:Int):Void
+	{
+		FlxFSMStackSignal._lockSignal.dispatch(type);
+	}
+	
 }
 
 /**
