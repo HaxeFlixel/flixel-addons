@@ -56,23 +56,30 @@ class FlxFSM<T> implements IFlxDestroyable
 	public var state(default, set):FlxFSMState<T>;
 	
 	/**
+	 * Class of current state
+	 */
+	public var stateClass:Class<FlxFSMState<T>>;
+	
+	/**
 	 * The age of the active state
 	 */
 	public var age:Float;
+	
+	/**
+	 * Name of this FSM. Used for locking/unlocking when in a stack.
+	 */
+	public var name:String;
 	
 	/**
 	 * The stack this FSM belongs to or null
 	 */
 	public var stack:FlxFSMStack<T>;
 	
-	public var active:Bool = false;
-	
-	public function new(?Owner:T, ?State:FlxFSMState<T>)
+	public function new(?owner:T, ?state:FlxFSMState<T>)
 	{
-		age = 0;
-		owner = Owner;
-		state = State;
-		active = true;
+		this.age = 0;
+		this.owner = owner;
+		this.state = state;
 	}
 	
 	/**
@@ -80,7 +87,7 @@ class FlxFSM<T> implements IFlxDestroyable
 	 */
 	public function update():Void
 	{
-		if (active == true && state != null && owner != null)
+		if (state != null && owner != null)
 		{
 			age += FlxG.elapsed;
 			state.update(owner, this);
@@ -95,41 +102,42 @@ class FlxFSM<T> implements IFlxDestroyable
 		owner = null;
 		state = null;
 		stack = null;
-		active = false;
 	}
 	
-	private function set_owner(Owner:T):T
+	private function set_owner(owner:T):T
 	{
-		if (owner != Owner)
+		if (this.owner != owner)
 		{
-			if (owner != null && state != null)
+			if (this.owner != null && state != null)
 			{
-				state.exit(owner);
+				state.exit(this.owner);
 			}
-			owner = Owner;
-			if (owner != null && state != null)
+			this.owner = owner;
+			if (this.owner != null && state != null)
 			{
 				age = 0;
-				state.enter(Owner, this);
+				state.enter(this.owner, this);
 			}
 		}
-		return owner;
+		return this.owner;
 	}
 	
-	private function set_state(State:FlxFSMState<T>):FlxFSMState<T>
+	private function set_state(state:FlxFSMState<T>):FlxFSMState<T>
 	{
-		if (Type.getClass(state) != Type.getClass(State))
+		var newClass = Type.getClass(state);
+		if (this.stateClass != newClass)
 		{
-			if (owner != null && state != null)
+			if (owner != null && this.state != null)
 			{
-				state.exit(owner);
+				this.state.exit(owner);
 			}
-			state = State;
-			if (state != null && owner != null)
+			this.state = state;
+			if (this.state != null && owner != null)
 			{
 				age = 0;
-				state.enter(owner, this);
+				this.state.enter(owner, this);
 			}
+			this.stateClass = newClass;
 		}
 		return state;
 	}
@@ -139,7 +147,6 @@ class FlxFSM<T> implements IFlxDestroyable
  * Helper typedef for FlxExtendedFSM's pools
  */
 typedef StatePool<T> = Map<String, FlxPool<FlxFSMState<T>>>
-
 
 /**
  * Extended FSM that implements transition tables and pooling.
@@ -156,50 +163,58 @@ class FlxExtendedFSM<T> extends FlxFSM<T>
 	 */
 	public var pools:StatePool<T>;
 	
-	private var currentState:Class<FlxFSMState<T>>;
-	
-	public function new(?Owner:T, ?Transitions:FlxFSMTransitionTable<T>, ?Pool:StatePool<T>)
+	public function new(?owner:T, ?transitions:FlxFSMTransitionTable<T>, ?pool:StatePool<T>)
 	{
-		super(Owner);
-		transitions = Transitions;
-		if (Pool != null)
+		super(owner);
+		
+		if (transitions != null)
 		{			
-			pools = Pool;
+			this.transitions = transitions;
 		}
 		else
 		{
-			pools = new StatePool();
+			this.transitions = new FlxFSMTransitionTable();
+		}
+
+		if (pool != null)
+		{			
+			this.pools = pool;
+		}
+		else
+		{
+			this.pools = new StatePool();
 		}
 	}
 	
+	/**
+	 * Updates FSM and inits transitions
+	 */
 	override public function update():Void
 	{
 		super.update();
 		
 		if (transitions != null && pools != null)
 		{
-			var newState = transitions.poll(currentState, this.owner);
+			var newStateClass = transitions.poll(stateClass, this.owner);
 			
-			if (newState != currentState)
+			if (newStateClass != stateClass)
 			{
-				var currentName = Type.getClassName(currentState);
-				var newName = Type.getClassName(newState);
+				var curName = Type.getClassName(stateClass);
+				var newName = Type.getClassName(newStateClass);
 				
 				if (pools.exists(newName) == false)
 				{
-					pools.set(newName, new FlxPool<FlxFSMState<T>>(newState));
+					pools.set(newName, new FlxPool<FlxFSMState<T>>(newStateClass));
 				}
 				
 				var returnToPool = state;
 				
 				state = pools.get(newName).get();
 				
-				if (pools.exists(currentName))
+				if (pools.exists(curName))
 				{
-					pools.get(currentName).put(returnToPool);
+					pools.get(curName).put(returnToPool);
 				}
-				
-				currentState = newState;
 			}
 		}
 	}
@@ -216,36 +231,90 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	 */
 	public var isEmpty(get, never):Bool;
 	
-	private var _fsms:Array<FlxFSM<T>>;
+	private var _stack:Array<FlxFSM<T>>;
+	
+	private var _alteredStack:Array<FlxFSM<T>>;
+	
+	private var _locked:Array<String>;
+	
+	private var _lockRemaining:Bool;
 	
 	public function new()
 	{
-		_fsms = [];
+		_stack = [];
+		_locked = [];
 	}
 	
 	/**
-	 * Updates the stack according to updateMode
+	 * Updates the states that have not been locked
 	 */
 	public function update()
 	{
-		for (fsm in _fsms)
+		_locked = [];
+		_lockRemaining = false;
+		
+		if (_alteredStack != null) // Stack was edited during the last loop. Adopt the changes
 		{
-			fsm.update();
+			_stack = _alteredStack.copy();
+			_alteredStack = null;
+		}
+		
+		for (fsm in _stack)
+		{
+			if (_lockRemaining == false && _locked.indexOf(fsm.name) == -1)
+			{				
+				fsm.update();
+			}
 		}
 	}
 	
-	public function add(FSM:FlxFSM<T>)
+	/**
+	 * Locks the specified FSM for the duration of the update loop
+	 * @param	name
+	 */
+	public function lock(name:String):Void
 	{
-		unshift(FSM);
+		if (_locked.indexOf(name) == -1)
+		{
+			_locked.push(name);
+		}
 	}
+	
+	/**
+	 * Locks the remaining FSMs for the duration of the update loop
+	 */
+	public function lockRemaining():Void
+	{
+		_lockRemaining = true;
+	}
+	
 	/**
 	 * Adds the FSM to the front of the stack
 	 * @param	FSM
 	 */
 	public function unshift(FSM:FlxFSM<T>)
 	{
+		if (_alteredStack == null)
+		{
+			_alteredStack = _stack.copy();
+		}
 		FSM.stack = this;
-		_fsms.unshift(FSM);
+		_alteredStack.unshift(FSM);
+	}
+	
+	/**
+	 * Removes the first FSM from the stack
+	 * @return	The removed FSM
+	 */
+	public function shift():FlxFSM<T>
+	{
+		if (_alteredStack == null)
+		{
+			_alteredStack = _stack.copy();
+		}
+		var FSM = _alteredStack.shift();
+		FlxDestroyUtil.destroy(FSM);
+		return FSM;
 	}
 	
 	/**
@@ -254,30 +323,65 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	 */
 	public function push(FSM:FlxFSM<T>)
 	{
+		if (_alteredStack == null)
+		{
+			_alteredStack = _stack.copy();
+		}
 		FSM.stack = this;
-		_fsms.push(FSM);
+		_alteredStack.push(FSM);
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Removes the first FSM from the stack
+	 * @return	The removed FSM
 	 */
 	public function pop():FlxFSM<T>
 	{
-		var FSM = _fsms.pop();
+		if (_alteredStack == null)
+		{
+			_alteredStack = _stack.copy();
+		}
+		var FSM = _alteredStack.pop();
+		lock(FSM.name);	// FSM isn't updated during the remainder the loop current
 		FlxDestroyUtil.destroy(FSM);
 		return FSM;
 	}
 	
 	/**
 	 * Removes the FSM from the stack and destroys it
-	 * @param	FSM
+	 * @param	The removed FSM
 	 */
 	public function remove(FSM:FlxFSM<T>)
 	{
-		if (_fsms.remove(FSM))
+		if (_alteredStack == null)
 		{
+			_alteredStack = _stack.copy();
+		}
+		if (_alteredStack.remove(FSM))
+		{
+			lock(FSM.name); // FSM isn't updated during the remainder the loop current
 			FlxDestroyUtil.destroy(FSM);
+		}
+	}
+	
+	/**
+	 * Removes the FSM with given name from the stack and destroys it
+	 * @param	The removed FSM
+	 */
+	public function removeByName(name:String)
+	{	
+		var toRemove:FlxFSM<T> = null;
+		for (fsm in _stack)
+		{
+			if (fsm.name == name)
+			{
+				toRemove = fsm;
+				break;
+			}
+		}
+		if (toRemove != null)
+		{			
+			remove(toRemove);
 		}
 	}
 	
@@ -286,15 +390,16 @@ class FlxFSMStack<T> implements IFlxDestroyable
 	 */
 	public function destroy():Void
 	{
-		for (fsm in _fsms)
+		for (fsm in _stack)
 		{
 			FlxDestroyUtil.destroy(fsm);
 		}
+		lockRemaining();
 	}
 	
 	private function get_isEmpty():Bool
 	{
-		return (_fsms.length == 0);
+		return (_stack.length == 0);
 	}
 }
 
@@ -318,9 +423,9 @@ class FlxFSMTransitionTable<T>
 	 * @param	FSM	The FlxFSMState the table belongs to
 	 * @return	The state that should become or remain active.
 	 */
-	public function poll(CurrentState:Class<FlxFSMState<T>>, Owner:T):Class<FlxFSMState<T>>
+	public function poll(currentState:Class<FlxFSMState<T>>, owner:T):Class<FlxFSMState<T>>
 	{
-		if (CurrentState == null && _startState != null)
+		if (currentState == null && _startState != null)
 		{
 			return _startState;
 		}
@@ -333,7 +438,7 @@ class FlxFSMTransitionTable<T>
 			{
 				if (transition.remove == true)
 				{
-					if (transition.from == CurrentState)
+					if (transition.from == currentState)
 					{
 						_garbagecollect = true;
 					}
@@ -351,16 +456,16 @@ class FlxFSMTransitionTable<T>
 		
 		for (transition in _table)
 		{
-			if (transition.from == CurrentState || transition.from == null)
+			if (transition.from == currentState || transition.from == null)
 			{
-				if (transition.condition(Owner) == true)
+				if (transition.condition(owner) == true)
 				{
 						return transition.to;
 				}
 			}
 		}
 		
-		return CurrentState;
+		return currentState;
 	}
 	
 	/**
@@ -369,11 +474,11 @@ class FlxFSMTransitionTable<T>
 	 * @param	To		The state to transition
 	 * @param	Condition	Function that returns true if the transition conditions are met
 	 */
-	public function add(From:Class<FlxFSMState<T>>, To:Class<FlxFSMState<T>>, Condition:T->Bool)
+	public function add(from:Class<FlxFSMState<T>>, to:Class<FlxFSMState<T>>, condition:T->Bool)
 	{
-		if (hasTransition(From, To, Condition) == false)
+		if (hasTransition(from, to, condition) == false)
 		{
-			_table.push(new TransitionRow<T>(From, To, Condition));
+			_table.push(new TransitionRow<T>(from, to, condition));
 		}
 		return this;
 	}
@@ -383,11 +488,11 @@ class FlxFSMTransitionTable<T>
 	 * @param	To		The state to transition
 	 * @param	Condition	Function that returns true if the transition conditions are met
 	 */
-	public function addGlobal(To:Class<FlxFSMState<T>>, Condition:T->Bool)
+	public function addGlobal(to:Class<FlxFSMState<T>>, condition:T->Bool)
 	{
-		if (hasTransition(null, To, Condition) == false)
+		if (hasTransition(null, to, condition) == false)
 		{
-			_table.push(new TransitionRow<T>(null, To, Condition));
+			_table.push(new TransitionRow<T>(null, to, condition));
 		}
 		return this;
 	}
@@ -396,9 +501,9 @@ class FlxFSMTransitionTable<T>
 	 * Sets the starting State
 	 * @param	With
 	 */
-	public function start(With:Class<FlxFSMState<T>>)
+	public function start(with:Class<FlxFSMState<T>>)
 	{
-		_startState = With;
+		_startState = with;
 		return this;
 	}
 	
@@ -407,27 +512,27 @@ class FlxFSMTransitionTable<T>
 	 * @param	Target			State class to replace
 	 * @param	Replacement		State class to replace with
 	 */
-	public function replace(Target:Class<FlxFSMState<T>>, Replacement:Class<FlxFSMState<T>>)
+	public function replace(target:Class<FlxFSMState<T>>, replacement:Class<FlxFSMState<T>>)
 	{
 		for (transition in _table)
 		{
-			if (transition.to == Target)
+			if (transition.to == target)
 			{
 				transition.remove = true;
 				if (transition.from == null)
 				{
-					addGlobal(Replacement, transition.condition);
+					addGlobal(replacement, transition.condition);
 				}
 				else
 				{					
-					add(transition.from, Replacement, transition.condition);
+					add(transition.from, replacement, transition.condition);
 				}
 				_garbagecollect = true;
 			}
-			if (transition.from == Target)
+			if (transition.from == target)
 			{
 				transition.remove = true;
-				add(Replacement, transition.to, transition.condition);
+				add(replacement, transition.to, transition.condition);
 				_garbagecollect = true;
 			}
 		}
@@ -440,14 +545,14 @@ class FlxFSMTransitionTable<T>
 	 * @param	Condition	Condition function
 	 * @return	True when removed, false if not in table
 	 */
-	public function remove(?From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool)
+	public function remove(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:T->Bool)
 	{
-		switch([From, To, Condition])
+		switch([from, to, condition])
 		{
 			case [f, null, null]:
 				for (transition in _table)
 				{
-					if (From == transition.from)
+					if (from == transition.from)
 					{
 						transition.remove = true;
 						_garbagecollect = true;
@@ -456,7 +561,7 @@ class FlxFSMTransitionTable<T>
 			case [f, t, null]:
 				for (transition in _table)
 				{
-					if (From == transition.from && To == transition.to)
+					if (from == transition.from && to == transition.to)
 					{
 						transition.remove = true;
 						_garbagecollect = true;
@@ -465,7 +570,7 @@ class FlxFSMTransitionTable<T>
 			case [null, t, c]:
 				for (transition in _table)
 				{
-					if (To == transition.to && Condition == transition.condition)
+					if (to == transition.to && condition == transition.condition)
 					{
 						transition.remove = true;
 						_garbagecollect = true;
@@ -474,7 +579,7 @@ class FlxFSMTransitionTable<T>
 			case [f, t, c]:
 				for (transition in _table)
 				{
-					if (From == transition.from && To == transition.to && Condition == transition.condition)
+					if (from == transition.from && to == transition.to && condition == transition.condition)
 					{
 						transition.remove = true;
 						_garbagecollect = true;
@@ -490,14 +595,14 @@ class FlxFSMTransitionTable<T>
 	 * @param	?Condition	Condition function
 	 * @return	True if match found
 	 */
-	public function hasTransition(?From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool):Bool
+	public function hasTransition(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:T->Bool):Bool
 	{
-		switch([From, To, Condition])
+		switch([from, to, condition])
 		{
 			case [f, null, null]:
 				for (transition in _table)
 				{
-					if (From == transition.from && transition.remove == false)
+					if (from == transition.from && transition.remove == false)
 					{
 						return true;
 					}
@@ -505,7 +610,7 @@ class FlxFSMTransitionTable<T>
 			case [f, t, null]:
 				for (transition in _table)
 				{
-					if (From == transition.from && To == transition.to && transition.remove == false)
+					if (from == transition.from && to == transition.to && transition.remove == false)
 					{
 						return true;
 					}
@@ -513,7 +618,7 @@ class FlxFSMTransitionTable<T>
 			case [null, t, c]:
 				for (transition in _table)
 				{
-					if (To == transition.to && Condition == transition.condition && transition.remove == false)
+					if (to == transition.to && condition == transition.condition && transition.remove == false)
 					{
 						return true;
 					}
@@ -521,7 +626,7 @@ class FlxFSMTransitionTable<T>
 			case [f, t, c]:
 				for (transition in _table)
 				{
-					if (From == transition.from && To == transition.to && Condition == transition.condition && transition.remove == false)
+					if (from == transition.from && to == transition.to && condition == transition.condition && transition.remove == false)
 					{
 						return true;
 					}
@@ -533,16 +638,16 @@ class FlxFSMTransitionTable<T>
 
 private class TransitionRow<T>
 {
-	public function new(?From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool)
+	public function new(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:T->Bool)
 	{
-		set(From, To, Condition);
+		set(from, to, condition);
 	}
 	
-	public function set(?From:Class<FlxFSMState<T>>, ?To:Class<FlxFSMState<T>>, ?Condition:T->Bool)
+	public function set(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:T->Bool)
 	{
-		from = From;
-		condition = Condition;
-		to = To;
+		this.from = from;
+		this.condition = condition;
+		this.to = to;
 	}
 	
 	public var from:Class<FlxFSMState<T>>;
