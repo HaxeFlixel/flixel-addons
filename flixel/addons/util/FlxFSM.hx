@@ -503,13 +503,13 @@ private class FlxFSMStackSignal
 class FlxFSMTransitionTable<T>
 {
 	
-	private var _table:Array<TransitionRow<T>>;
+	private var _table:Array<Transition<T>>;
 	private var _startState:Class<FlxFSMState<T>>;
 	private var _garbagecollect:Bool = false;
 	
 	public function new()
 	{
-		_table = new Array<TransitionRow<T>>();
+		_table = new Array<Transition<T>>();
 	}
 	
 	/**
@@ -552,7 +552,7 @@ class FlxFSMTransitionTable<T>
 		{
 			if (transition.from == currentState || transition.from == null)
 			{
-				if (transition.condition(owner) == true)
+				if (transition.evaluate(owner) == true)
 				{
 						return transition.to;
 				}
@@ -572,7 +572,11 @@ class FlxFSMTransitionTable<T>
 	{
 		if (hasTransition(from, to, condition) == false)
 		{
-			_table.push(new TransitionRow<T>(from, to, condition));
+			var row = new Transition<T>();
+			row.from = from;
+			row.to = to;
+			row.condition = condition;
+			_table.push(row);
 		}
 		return this;
 	}
@@ -586,9 +590,20 @@ class FlxFSMTransitionTable<T>
 	{
 		if (hasTransition(null, to, condition) == false)
 		{
-			_table.push(new TransitionRow<T>(null, to, condition));
+			var row = new Transition<T>();
+			row.to = to;
+			row.condition = condition;
+			_table.push(row);
 		}
 		return this;
+	}
+	
+	public function addTransition(transition:Transition<T>)
+	{
+		if (_table.indexOf(transition) == -1)
+		{
+			_table.push(transition);
+		}
 	}
 	
 	/**
@@ -730,22 +745,39 @@ class FlxFSMTransitionTable<T>
 	}
 }
 
-private class TransitionRow<T>
+class Transition<T>
 {
-	public function new(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:T->Bool)
+	public function new() {	}
+	
+	/**
+	 * If this function returns true, the transition becomes active.
+	 * Note: you can override this function if you don't want to use functions passed as variables.
+	 * @param	target
+	 * @return
+	 */
+	public function evaluate(target:T):Bool
 	{
-		set(from, to, condition);
+		return condition(target);
 	}
 	
-	public function set(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:T->Bool)
-	{
-		this.from = from;
-		this.condition = condition;
-		this.to = to;
-	}
-	
+	/**
+	 * The state this transition applies to, or null for global transition, ie. from any state
+	 */
 	public var from:Class<FlxFSMState<T>>;
-	public var condition:T->Bool;
+	
+	/**
+	 * The state this transition leads to
+	 */
 	public var to:Class<FlxFSMState<T>>;
+	
+	/**
+	 * Function used for evaluation.
+	 * The evaluation function may be overridden, in which case this param may be redundant.
+	 */
+	public var condition:T->Bool;
+	
+	/**
+	 * Used to mark this transition for removal
+	 */
 	public var remove:Bool = false;
 }
