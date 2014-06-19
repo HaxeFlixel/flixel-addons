@@ -31,7 +31,9 @@ import flixel.math.FlxVelocity;
  * TODO: Bullet uses random sprite from sprite sheet (for rainbow style bullets), or cycles through them in sequence?
  * TODO: Some Weapon base classes like shotgun, lazer, etc?
  */
-class FlxWeapon 
+typedef FlxWeapon = FlxTypedWeapon<FlxBullet>;
+
+class FlxTypedWeapon<TBullet:FlxBullet>
 {
 	// Quick firing direction angle constants
 	public static inline var BULLET_UP:Int = -90;
@@ -50,12 +52,12 @@ class FlxWeapon
 	/**
 	 * The FlxGroup into which all the bullets for this weapon are drawn. This should be added to your display and collision checked against it.
 	 */
-	public var group:FlxTypedGroup<FlxBullet>;
+	public var group:FlxTypedGroup<TBullet>;
 	
 	/**
 	 * The bullet class associated with this weapon
 	 */
-	private var bulletType:Class<FlxBullet>;
+	private var bulletType:Class<TBullet>;
 	
 	/**
 	 * Optional ID applied to the bullets. Useful for determining 
@@ -87,7 +89,7 @@ class FlxWeapon
 	/**
 	 * A reference to the Bullet that was fired
 	 */
-	public var currentBullet:FlxBullet;
+	public var currentBullet:TBullet;
 	
 	// Callbacks
 	public var onPreFireCallback:Void->Void;
@@ -136,7 +138,7 @@ class FlxWeapon
 	 * @param	BulletType	Class of the bullet to be associated with this FlxWeapon, must inherit FlxBullet
 	 * @param	BulletID	An optional ID for the bullet. Can be accessed through FlxBullet.ID
 	 */
-	public function new(Name:String, ?ParentRef:FlxSprite, ?BulletType:Class<FlxBullet>, ?BulletID:Int = 0)
+	public function new(Name:String, ?ParentRef:FlxSprite, ?BulletType:Class<TBullet>, ?BulletID:Int = 0)
 	{
 		rndFactorPosition = FlxPoint.get();
 		bounds = FlxRect.get(0, 0, FlxG.width, FlxG.height);
@@ -146,7 +148,7 @@ class FlxWeapon
 		name = Name;
 		
 		if (BulletType == null)
-			BulletType = FlxBullet;
+			throw "FlxTypedWeapon: Please supply bulletType";
 			
 		bulletType = BulletType;
 		bulletID = BulletID;
@@ -169,11 +171,11 @@ class FlxWeapon
 	 */
 	public function makePixelBullet(Quantity:Int, Width:Int = 2, Height:Int = 2, Color:Int = 0xffffffff, OffsetX:Int = 0, OffsetY:Int = 0):Void
 	{
-		group = new FlxTypedGroup<FlxBullet>(Quantity);
+		group = new FlxTypedGroup(Quantity);
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:FlxBullet = Type.createInstance(bulletType, [this, bulletID]);
+			var tempBullet:TBullet = Type.createInstance(bulletType, [this, bulletID]);
 			tempBullet.makeGraphic(Width, Height, Color);
 			group.add(tempBullet);
 		}
@@ -197,13 +199,13 @@ class FlxWeapon
 	 */
 	public function makeImageBullet(Quantity:Int, Graphic:FlxGraphicAsset, OffsetX:Int = 0, OffsetY:Int = 0, AutoRotate:Bool = false, Rotations:Int = 16, Frame:Int = -1, AntiAliasing:Bool = false, AutoBuffer:Bool = false):Void
 	{
-		group = new FlxTypedGroup<FlxBullet>(Quantity);
+		group = new FlxTypedGroup(Quantity);
 		
 		_rotateToAngle = AutoRotate;
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:FlxBullet = Type.createInstance(bulletType, [this, bulletID]);
+			var tempBullet:TBullet = Type.createInstance(bulletType, [this, bulletID]);
 			
 			#if FLX_RENDER_BLIT
 			if (AutoRotate)
@@ -241,11 +243,11 @@ class FlxWeapon
 	 */
 	public function makeAnimatedBullet(Quantity:Int, Graphic:FlxGraphicAsset, FrameWidth:Int, FrameHeight:Int, Frames:Array<Int>, FrameRate:Int, Looped:Bool, OffsetX:Int = 0, OffsetY:Int = 0):Void
 	{
-		group = new FlxTypedGroup<FlxBullet>(Quantity);
+		group = new FlxTypedGroup(Quantity);
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:FlxBullet = Type.createInstance(bulletType, [this, bulletID]);
+			var tempBullet:TBullet = Type.createInstance(bulletType, [this, bulletID]);
 			
 			tempBullet.loadGraphic(Graphic, true, FrameWidth, FrameHeight);
 			tempBullet.addAnimation("fire", Frames, FrameRate, Looped);
@@ -570,7 +572,7 @@ class FlxWeapon
 	 */
 	public function setBulletGravity(ForceX:Int, ForceY:Int):Void
 	{
-		group.forEach(function (b:FlxBullet) {
+		group.forEach(function (b:TBullet) {
 			b.acceleration.x = ForceX;
 			b.acceleration.y = ForceY;
 		});
@@ -590,13 +592,13 @@ class FlxWeapon
 	{
 		if (AccelerationX == 0 && AccelerationY == 0)
 		{
-			group.forEach(function (b:FlxBullet) {
+			group.forEach(function (b) {
 				b.accelerates = false;
 			});
 		}
 		else
 		{
-			group.forEach(function (b:FlxBullet) {
+			group.forEach(function (b) {
 				b.accelerates = true;
 				b.xAcceleration = AccelerationX;
 				b.yAcceleration = AccelerationY;
@@ -667,9 +669,9 @@ class FlxWeapon
 	 * 
 	 * @return	A FlxBullet
 	 */
-	private function getFreeBullet():FlxBullet
+	private function getFreeBullet():TBullet
 	{
-		var result:FlxBullet = null;
+		var result = null;
 		
 		if (group == null || group.length == 0)
 		{
@@ -677,7 +679,7 @@ class FlxWeapon
 			return null;
 		}
 		
-		var bullet:FlxBullet;
+		var bullet;
 		
 		for (i in 0...(group.members.length))
 		{
