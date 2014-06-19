@@ -20,7 +20,7 @@ class FlxFSMState<T> implements IFlxDestroyable
 	 * @param	Owner	The object the state controls
 	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
-	public function enter(Owner:T, FSM:FlxFSM<T>):Void { }
+	public function enter(owner:T, fsm:FlxFSM<T>):Void { }
 	
 	/**
 	 * Called every update loop.
@@ -28,14 +28,14 @@ class FlxFSMState<T> implements IFlxDestroyable
 	 * @param	Owner	The object the state controls
 	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
-	public function update(Owner:T, FSM:FlxFSM<T>):Void { }
+	public function update(owner:T, fsm:FlxFSM<T>):Void { }
 	
 	/**
 	 * Called when the state becomes inactive.
 	 * 
 	 * @param	Owner	The object the state controls
 	 */
-	public function exit(Owner:T):Void { }
+	public function exit(owner:T):Void { }
 	
 	public function destroy():Void { }
 	
@@ -68,6 +68,11 @@ abstract FSMType(Int) from Int to Int
 	var projectile = 262144;
 	var text = 524288;
 }
+
+/**
+ * Helper typedef for FlxExtendedFSM's pools
+ */
+typedef StatePool<T> = Map<String, FlxPool<FlxFSMState<T>>>
 
 /**
  * A generic Finite-state machine implementation.
@@ -109,6 +114,16 @@ class FlxFSM<T> implements IFlxDestroyable
 	 */
 	public var stack:FlxFSMStack<T>;
 	
+	/**
+	 * Optional transition table for this FSM
+	 */
+	public var transitions:FlxFSMTransitionTable<T>;
+	
+	/**
+	 * Optional map object containing FlxPools for FlxFSMStates
+	 */
+	public var pools:StatePool<T>;
+	
 	public function new(?owner:T, ?state:FlxFSMState<T>)
 	{
 		this.age = 0;
@@ -127,6 +142,31 @@ class FlxFSM<T> implements IFlxDestroyable
 			age += FlxG.elapsed;
 			state.update(owner, this);
 		}
+		
+		if (transitions != null && pools != null)
+		{
+			var newStateClass = transitions.poll(stateClass, this.owner);
+			
+			if (newStateClass != stateClass)
+			{
+				var curName = Type.getClassName(stateClass);
+				var newName = Type.getClassName(newStateClass);
+				
+				if (pools.exists(newName) == false)
+				{
+					pools.set(newName, new FlxPool<FlxFSMState<T>>(newStateClass));
+				}
+				
+				var returnToPool = state;
+				
+				state = pools.get(newName).get();
+				
+				if (pools.exists(curName))
+				{
+					pools.get(curName).put(returnToPool);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -138,6 +178,8 @@ class FlxFSM<T> implements IFlxDestroyable
 		state = null;
 		stack = null;
 		name = null;
+		transitions = null;
+		pools = null;
 		type = FSMType.any;
 	}
 	
@@ -180,83 +222,7 @@ class FlxFSM<T> implements IFlxDestroyable
 	}
 }
 
-/**
- * Helper typedef for FlxExtendedFSM's pools
- */
-typedef StatePool<T> = Map<String, FlxPool<FlxFSMState<T>>>
 
-/**
- * Extended FSM that implements transition tables and pooling.
- */
-class FlxExtendedFSM<T> extends FlxFSM<T>
-{
-	/**
-	 * The transition table for this FSM
-	 */
-	public var transitions:FlxFSMTransitionTable<T>;
-	
-	/**
-	 * A Map object containing FlxPools for FlxFSMStates
-	 */
-	public var pools:StatePool<T>;
-	
-	public function new(?owner:T, ?transitions:FlxFSMTransitionTable<T>, ?pool:StatePool<T>)
-	{
-		super(owner);
-		
-		if (transitions != null)
-		{			
-			this.transitions = transitions;
-		}
-		else
-		{
-			this.transitions = new FlxFSMTransitionTable();
-		}
-
-		if (pool != null)
-		{			
-			this.pools = pool;
-		}
-		else
-		{
-			this.pools = new StatePool();
-		}
-	}
-	
-	/**
-	 * Updates FSM and inits transitions
-	 */
-	override public function update():Void
-	{
-		super.update();
-		
-		if (transitions != null && pools != null)
-		{
-			var newStateClass = transitions.poll(stateClass, this.owner);
-			
-			if (newStateClass != stateClass)
-			{
-				var curName = Type.getClassName(stateClass);
-				var newName = Type.getClassName(newStateClass);
-				
-				if (pools.exists(newName) == false)
-				{
-					pools.set(newName, new FlxPool<FlxFSMState<T>>(newStateClass));
-				}
-				
-				var returnToPool = state;
-				
-				state = pools.get(newName).get();
-				
-				if (pools.exists(curName))
-				{
-					pools.get(curName).put(returnToPool);
-				}
-			}
-		}
-	}
-	
-}
 
 /**
  * Used for grouping FSM instances and updating them according to the stack's updateMode.
@@ -598,6 +564,10 @@ class FlxFSMTransitionTable<T>
 		return this;
 	}
 	
+	/**
+	 * Add a transition directly
+	 * @param	transition
+	 */
 	public function addTransition(transition:Transition<T>)
 	{
 		if (_table.indexOf(transition) == -1)
