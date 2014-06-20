@@ -1,6 +1,7 @@
 package flixel.addons.text;
 
 import flixel.FlxG;
+import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
 import flixel.system.FlxSound;
 import flixel.math.FlxRandom;
@@ -66,7 +67,7 @@ class FlxTypeText extends FlxText
 	/**
 	 * An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
 	 */
-	public var skipKeys:Array<String> = [];
+	public var skipKeys:Array<FlxKey> = [];
 	/**
 	 * This function is called when the message is done typing.
 	 */
@@ -141,15 +142,17 @@ class FlxTypeText extends FlxText
 	/**
 	 * Start the text animation.
 	 * 
-	 * @param	Delay			Optionally, set the delay between characters. Can also be set separately.
-	 * @param	ForceRestart	Whether or not to start this animation over if currently animating; false by default.
-	 * @param	AutoErase		Whether or not to begin the erase animation when the typing animation is complete. Can also be set separately.
-	 * @param	Sound			A FlxSound object to play when a character is typed. Can also be set separately.
-	 * @param	SkipKeys		An array of keys as string values (e.g. "SPACE", "L") that will advance the text. Can also be set separately.
-	 * @param	Callback		An optional callback function, to be called when the typing animation is complete.
-	 * @param 	Params			Optional parameters to pass to the callback function.
+	 * @param   Delay          Optionally, set the delay between characters. Can also be set separately.
+	 * @param   ForceRestart   Whether or not to start this animation over if currently animating; false by default.
+	 * @param   AutoErase      Whether or not to begin the erase animation when the typing animation is complete.
+	 *                         Can also be set separately.
+	 * @param   Sound          A FlxSound object to play when a character is typed. Can also be set separately.
+	 * @param   SkipKeys       An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
+	 *                         Can also be set separately.
+	 * @param   Callback       An optional callback function, to be called when the typing animation is complete.
 	 */
-	public function start(?Delay:Float, ForceRestart:Bool = false, AutoErase:Bool = false, ?Sound:FlxSound, ?SkipKeys:Array<String>, ?Callback:Void->Void):Void
+	public function start(?Delay:Float, ForceRestart:Bool = false, AutoErase:Bool = false, ?Sound:FlxSound, 
+		?SkipKeys:Array<FlxKey>, ?Callback:Void->Void):Void
 	{
 		if (Delay != null)
 		{
@@ -201,7 +204,7 @@ class FlxTypeText extends FlxText
 	 * @param	Callback		An optional callback function, to be called when the erasing animation is complete.
 	 * @param	Params			Optional parameters to pass to the callback function.
 	 */
-	public function erase(?Delay:Float, ForceRestart:Bool = false, ?Sound:FlxSound, ?SkipKeys:Array<String>, ?Callback:Void->Void):Void
+	public function erase(?Delay:Float, ForceRestart:Bool = false, ?Sound:FlxSound, ?SkipKeys:Array<FlxKey>, ?Callback:Void->Void):Void
 	{
 		_erasing = true;
 		_typing = false;
