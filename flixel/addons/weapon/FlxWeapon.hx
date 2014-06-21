@@ -138,7 +138,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * @param	BulletType	Class of the bullet to be associated with this FlxWeapon, must inherit FlxBullet
 	 * @param	BulletID	An optional ID for the bullet. Can be accessed through FlxBullet.ID
 	 */
-	public function new(Name:String, ?ParentRef:FlxSprite, ?BulletType:Class<TBullet>, ?BulletID:Int = 0)
+	public function new(Name:String, ?ParentRef:FlxSprite, BulletType:Class<TBullet>, ?BulletID:Int = 0)
 	{
 		rndFactorPosition = FlxPoint.get();
 		bounds = FlxRect.get(0, 0, FlxG.width, FlxG.height);
