@@ -572,7 +572,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public function setBulletGravity(ForceX:Int, ForceY:Int):Void
 	{
-		group.forEach(function (b:TBullet) {
+		group.forEach(function (b) {
 			b.acceleration.x = ForceX;
 			b.acceleration.y = ForceY;
 		});
