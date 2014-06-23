@@ -60,13 +60,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	/**
 	 * The factory function to create a bullet
 	 */
-	private var bulletFactory:FlxTypedWeapon<TBullet>->Int->TBullet;
-	
-	/**
-	 * Optional ID applied to the bullets. Useful for determining 
-	 * what kind of bullet it is in collision functions
-	 */
-	private var bulletID:Int;
+	private var bulletFactory:FlxTypedWeapon<TBullet>->TBullet;	
 	
 	// Internal variables, use with caution
 	public var nextFire:Int = 0;
@@ -139,7 +133,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * @param	BulletType	Class of the bullet to be associated with this FlxWeapon, must inherit FlxBullet
 	 * @param	BulletID	An optional ID for the bullet. Can be accessed through FlxBullet.ID
 	 */
-	public function new(Name:String, ?ParentRef:FlxSprite, BulletFactory:FlxTypedWeapon<TBullet>->Int->TBullet, ?BulletID:Int = 0)
+	public function new(Name:String, ?ParentRef:FlxSprite, BulletFactory:FlxTypedWeapon<TBullet>->TBullet)
 	{
 		rndFactorPosition = FlxPoint.get();
 		bounds = FlxRect.get(0, 0, FlxG.width, FlxG.height);
@@ -150,7 +144,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 			
 		bulletFactory = BulletFactory;
-		bulletID = BulletID;
 		
 		if (ParentRef != null)
 		{
@@ -174,7 +167,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:TBullet = createBullet(bulletID);
+			var tempBullet:TBullet = createBullet();
 			tempBullet.makeGraphic(Width, Height, Color);
 			group.add(tempBullet);
 		}
@@ -204,7 +197,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:TBullet = createBullet(bulletID);
+			var tempBullet:TBullet = createBullet();
 			
 			#if FLX_RENDER_BLIT
 			if (AutoRotate)
@@ -246,7 +239,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:TBullet = createBullet(bulletID);
+			var tempBullet:TBullet = createBullet();
 			
 			tempBullet.loadGraphic(Graphic, true, FrameWidth, FrameHeight);
 			tempBullet.animation.add("fire", Frames, FrameRate, Looped);
@@ -778,9 +771,9 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		Bullet.kill();
 	}
 	
-	private inline function createBullet(bulletID:Int):TBullet
+	private inline function createBullet():TBullet
 	{
-		return bulletFactory(this, bulletID);
+		return bulletFactory(this);
 	}
 	
 	

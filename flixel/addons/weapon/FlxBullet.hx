@@ -25,12 +25,11 @@ class FlxBullet extends FlxSprite
 	@:allow(flixel.addons.weapon)
 	private var bounds:FlxRect;
 	
-	public function new(Weapon:FlxTypedWeapon<Dynamic>, BulletID:Int)
+	public function new(Weapon:FlxTypedWeapon<Dynamic>)
 	{
 		super(0, 0);
 		
 		weapon = Weapon;
-		ID = BulletID;
 		
 		exists = false;
 	}
