@@ -348,7 +348,9 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		
 		currentBullet.bounds = bounds;
-		currentBullet.postFire();
+		
+		if (currentBullet.animation.getByName("fire") != null)
+			currentBullet.animation.play("fire");
 		
 		if (bulletElasticity > 0)
 		{

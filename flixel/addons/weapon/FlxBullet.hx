@@ -34,12 +34,6 @@ class FlxBullet extends FlxSprite
 		exists = false;
 	}
 	
-	public function postFire():Void
-	{
-		if (animation.getByName("fire") != null)
-			animation.play("fire");
-	}
-	
 	override public function update():Void
 	{
 		if (lifespan > 0)
