@@ -130,8 +130,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * 
 	 * @param	Name		The name of your weapon (i.e. "lazer" or "shotgun"). For your internal reference really, but could be displayed in-game.
 	 * @param	ParentRef	If this weapon belongs to a parent sprite, specify it here (bullets will fire from the sprites x/y vars as defined below).
-	 * @param	BulletType	Class of the bullet to be associated with this FlxWeapon, must inherit FlxBullet
-	 * @param	BulletID	An optional ID for the bullet. Can be accessed through FlxBullet.ID
+	 * @param	BulletFactory	FlxWeapon use this factory function the actually create a bullet
 	 */
 	public function new(Name:String, ?ParentRef:FlxSprite, BulletFactory:FlxTypedWeapon<TBullet>->TBullet)
 	{
