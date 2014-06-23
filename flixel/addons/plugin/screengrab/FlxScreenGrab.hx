@@ -12,6 +12,7 @@ import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 import flixel.addons.util.PNGEncoder;
 import flixel.FlxG;
+import flixel.input.keyboard.FlxKey;
 
 #if flash
 import flash.net.FileReference;
@@ -27,7 +28,7 @@ class FlxScreenGrab extends FlxBasic
 {
 	public static var screenshot:Bitmap;
 	
-	private static var _hotkeys:Array<String>;
+	private static var _hotkeys:Array<FlxKey>;
 	private static var _autoSave:Bool = false;
 	private static var _autoHideMouse:Bool = false;
 	private static var _region:Rectangle;
@@ -59,11 +60,11 @@ class FlxScreenGrab extends FlxBasic
 	 * Specify which key will capture a screen shot. Use the String value of the key in the same way FlxG.keys does (so "F1" for example)
 	 * Optionally save the image to a file immediately. This uses the file systems "Save as" dialog window and pauses your game during the process.
 	 * 
-	 * @param	Key			The key(s) you press to capture the screen (i.e. ["F1", "SPACE"])
+	 * @param	Key			The key(s) you press to capture the screen (i.e. [F1, SPACE])
 	 * @param	SaveToFile	If true it will immediately encodes the grab to a PNG and open a "Save As" dialog window when the hotkey is pressed
 	 * @param	HideMouse	If true the mouse will be hidden before capture and displayed afterwards when the hotkey is pressed
 	 */
-	public static function defineHotKeys(Keys:Array<String>, SaveToFile:Bool = false, HideMouse:Bool = false):Void
+	public static function defineHotKeys(Keys:Array<FlxKey>, SaveToFile:Bool = false, HideMouse:Bool = false):Void
 	{
 		_hotkeys = Keys;
 		_autoSave = SaveToFile;
