@@ -1,13 +1,10 @@
 package flixel.addons.weapon;
 
+import flixel.addons.weapon.FlxWeapon.FlxTypedWeapon;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.input.touch.FlxTouch;
-import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
-import flixel.math.FlxRandom;
-import flixel.math.FlxVelocity;
+import flixel.math.FlxRect;
 
 /**
  * @link http://www.photonstorm.com
@@ -22,196 +19,26 @@ class FlxBullet extends FlxSprite
 	public var xAcceleration:Int;
 	public var yAcceleration:Int;
 	
-	public var rndFactorAngle:Int;
-	public var rndFactorSpeed:Int;
-	public var rndFactorLifeSpan:Int;
-	public var lifespan:Float;
+	public var lifespan:Float;	
+	public var weapon(default, null):FlxTypedWeapon<Dynamic>;
 	
-	private var _weapon:FlxWeapon;
-	private var _animated:Bool = false;
-	private var _bulletSpeed:Int = 0;
+	@:allow(flixel.addons.weapon)
+	private var bounds:FlxRect;
 	
-	public function new(Weapon:FlxWeapon, WeaponID:Int)
+	public function new(Weapon:FlxTypedWeapon<Dynamic>, BulletID:Int)
 	{
 		super(0, 0);
 		
-		_weapon = Weapon;
-		ID = WeaponID;
+		weapon = Weapon;
+		ID = BulletID;
 		
 		exists = false;
 	}
 	
-	/**
-	 * Adds a new animation to the sprite.
-	 * 
-	 * @param	Name		What this animation should be called (e.g. "run").
-	 * @param	Frames		An array of numbers indicating what frames to play in what order (e.g. 1, 2, 3).
-	 * @param	FrameRate	The speed in frames per second that the animation should play at (e.g. 40 fps).
-	 * @param	Looped		Whether or not the animation is looped or just plays once.
-	 */
-	public function addAnimation(Name:String, Frames:Array<Int>, FrameRate:Int = 0, Looped:Bool = true):Void
+	public function postFire():Void
 	{
-		animation.add(Name, Frames, FrameRate, Looped);
-		
-		_animated = true;
-	}
-	
-	public function fire(FromX:Float, FromY:Float, VelX:Float, VelY:Float):Void
-	{
-		x = FromX + FlxRandom.float( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.float( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
-		
-		if (accelerates)
-		{
-			acceleration.x = xAcceleration + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed);
-			acceleration.y = yAcceleration + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed);
-		}
-		else
-		{
-			velocity.x = VelX + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed);
-			velocity.y = VelY + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed);
-		}
-		
-		postFire();
-	}
-	
-	#if !FLX_NO_MOUSE
-	public function fireAtMouse(FromX:Float, FromY:Float, Speed:Int, RotateBulletTowards = true):Void
-	{
-		x = FromX + FlxRandom.float( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.float( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
-		
-		if (accelerates)
-		{
-			FlxVelocity.accelerateTowardsMouse(this, Speed + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed), Math.floor(maxVelocity.x), Math.floor(maxVelocity.y));
-		}
-		else
-		{
-			FlxVelocity.moveTowardsMouse(this, Speed + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed));
-		}
-		
-		if (RotateBulletTowards)
-		{
-			angle = FlxAngle.angleBetweenMouse(_weapon.parent, true);
-		}
-		
-		postFire();
-	}
-	#end
-	
-	#if !FLX_NO_TOUCH
-	public function fireAtTouch(FromX:Float, FromY:Float, Touch:FlxTouch, Speed:Int, RotateBulletTowards = true):Void
-	{
-		x = FromX + FlxRandom.float( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.float( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
-		
-		if (accelerates)
-		{
-			FlxVelocity.accelerateTowardsTouch(this, Touch, Speed + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed), Math.floor(maxVelocity.x), Math.floor(maxVelocity.y));
-		}
-		else
-		{
-			FlxVelocity.moveTowardsTouch(this, Touch, Speed + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed));
-		}
-		
-		if (RotateBulletTowards)
-		{
-			angle = FlxAngle.angleBetweenTouch(_weapon.parent, Touch, true);
-		}
-		
-		postFire();
-	}
-	#end
-	
-	public function fireAtPosition(FromX:Float, FromY:Float, ToX:Float, ToY:Float, Speed:Int):Void
-	{
-		x = FromX + FlxRandom.float( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.float( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
-		
-		if (accelerates)
-		{
-			FlxVelocity.accelerateTowardsPoint(this, FlxPoint.get(ToX, ToY), Speed + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed), Math.floor(maxVelocity.x), Math.floor(maxVelocity.y));
-		}
-		else
-		{
-			FlxVelocity.moveTowardsPoint(this, FlxPoint.get(ToX, ToY), Speed + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed));
-		}
-		
-		postFire();
-	}
-	
-	public function fireAtTarget(FromX:Float, FromY:Float, Target:FlxSprite, Speed:Int):Void
-	{
-		x = FromX + FlxRandom.float( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.float( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
-		
-		if (accelerates)
-		{
-			FlxVelocity.accelerateTowardsObject(this, Target, Speed + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed), Math.floor(maxVelocity.x), Math.floor(maxVelocity.y));
-		}
-		else
-		{
-			FlxVelocity.moveTowardsObject(this, Target, Speed + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed));
-		}
-		
-		postFire();
-	}
-	
-	public function fireFromAngle(FromX:Float, FromY:Float, FireAngle:Int, Speed:Int):Void
-	{
-		x = FromX + FlxRandom.float( -_weapon.rndFactorPosition.x, _weapon.rndFactorPosition.x);
-		y = FromY + FlxRandom.float( -_weapon.rndFactorPosition.y, _weapon.rndFactorPosition.y);
-		
-		var newVelocity:FlxPoint = FlxVelocity.velocityFromAngle(FireAngle + FlxRandom.int( -_weapon.rndFactorAngle, _weapon.rndFactorAngle), Speed + FlxRandom.int( -_weapon.rndFactorSpeed, _weapon.rndFactorSpeed));
-		
-		if (accelerates)
-		{
-			acceleration.x = newVelocity.x;
-			acceleration.y = newVelocity.y;
-		}
-		else
-		{
-			velocity.x = newVelocity.x;
-			velocity.y = newVelocity.y;
-		}
-		
-		postFire();
-	}
-	
-	private function postFire():Void
-	{
-		if (_animated)
-		{
+		if (animation.getByName("fire") != null)
 			animation.play("fire");
-		}
-		
-		if (_weapon.bulletElasticity > 0)
-		{
-			elasticity = _weapon.bulletElasticity;
-		}
-		
-		exists = true;
-		
-		// Reset last x and y position in case we were recycled.
-		last.x = x;
-		last.y = y;
-		
-		if (_weapon.bulletLifeSpan > 0)
-		{
-			lifespan = _weapon.bulletLifeSpan + FlxRandom.float( -_weapon.rndFactorLifeSpan, _weapon.rndFactorLifeSpan);
-		}
-		
-		if (_weapon.onFireCallback != null)
-		{
-			_weapon.onFireCallback();
-		}
-		
-		#if !FLX_NO_SOUND_SYSTEM
-		if (_weapon.onFireSound != null)
-		{
-			_weapon.onFireSound.play();
-		}
-		#end
 	}
 	
 	override public function update():Void
@@ -226,7 +53,7 @@ class FlxBullet extends FlxSprite
 			}
 		}
 		
-		if (!FlxMath.pointInFlxRect(Math.floor(x), Math.floor(y), _weapon.bounds))
+		if (!FlxMath.pointInFlxRect(Math.floor(x), Math.floor(y), bounds))
 		{
 			kill();
 		}

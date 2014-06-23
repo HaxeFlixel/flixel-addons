@@ -1,17 +1,20 @@
 package flixel.addons.weapon;
 
+import flixel.addons.weapon.FlxWeapon.FlxTypedWeapon;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup;
-import flixel.system.FlxAssets.FlxGraphicAsset;
-import flixel.system.FlxSound;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.touch.FlxTouch;
-import flixel.tile.FlxTilemap;
+import flixel.math.FlxAngle;
 import flixel.math.FlxPoint;
+import flixel.math.FlxRandom;
 import flixel.math.FlxRect;
 import flixel.math.FlxVelocity;
+import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.system.FlxSound;
+import flixel.tile.FlxTilemap;
 
 /**
  * A Weapon can only fire 1 type of bullet. But it can fire many of them at once (in different directions if needed) via createBulletPattern
@@ -55,9 +58,9 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	public var group:FlxTypedGroup<TBullet>;
 	
 	/**
-	 * The bullet class associated with this weapon
+	 * The factory function to create a bullet
 	 */
-	private var bulletType:Class<TBullet>;
+	private var bulletFactory:FlxTypedWeapon<TBullet>->Int->TBullet;
 	
 	/**
 	 * Optional ID applied to the bullets. Useful for determining 
@@ -93,12 +96,10 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	
 	// Callbacks
 	public var onPreFireCallback:Void->Void;
-	public var onFireCallback:Void->Void;
 	public var onPostFireCallback:Void->Void;
 	
 	// Sounds
 	public var onPreFireSound:FlxSound;
-	public var onFireSound:FlxSound;
 	public var onPostFireSound:FlxSound;
 	
 	private static inline var FIRE:Int = 0;
@@ -138,7 +139,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * @param	BulletType	Class of the bullet to be associated with this FlxWeapon, must inherit FlxBullet
 	 * @param	BulletID	An optional ID for the bullet. Can be accessed through FlxBullet.ID
 	 */
-	public function new(Name:String, ?ParentRef:FlxSprite, BulletType:Class<TBullet>, ?BulletID:Int = 0)
+	public function new(Name:String, ?ParentRef:FlxSprite, BulletFactory:FlxTypedWeapon<TBullet>->Int->TBullet, ?BulletID:Int = 0)
 	{
 		rndFactorPosition = FlxPoint.get();
 		bounds = FlxRect.get(0, 0, FlxG.width, FlxG.height);
@@ -147,10 +148,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		name = Name;
 		
-		if (BulletType == null)
-			throw "FlxTypedWeapon: Please supply bulletType";
 			
-		bulletType = BulletType;
+		bulletFactory = BulletFactory;
 		bulletID = BulletID;
 		
 		if (ParentRef != null)
@@ -175,7 +174,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:TBullet = Type.createInstance(bulletType, [this, bulletID]);
+			var tempBullet:TBullet = createBullet(bulletID);
 			tempBullet.makeGraphic(Width, Height, Color);
 			group.add(tempBullet);
 		}
@@ -205,7 +204,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:TBullet = Type.createInstance(bulletType, [this, bulletID]);
+			var tempBullet:TBullet = createBullet(bulletID);
 			
 			#if FLX_RENDER_BLIT
 			if (AutoRotate)
@@ -247,10 +246,10 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		for (b in 0...Quantity)
 		{
-			var tempBullet:TBullet = Type.createInstance(bulletType, [this, bulletID]);
+			var tempBullet:TBullet = createBullet(bulletID);
 			
 			tempBullet.loadGraphic(Graphic, true, FrameWidth, FrameHeight);
-			tempBullet.addAnimation("fire", Frames, FrameRate, Looped);
+			tempBullet.animation.add("fire", Frames, FrameRate, Looped);
 			
 			group.add(tempBullet);
 		}
@@ -323,37 +322,59 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		// Faster (less CPU) to use this small if-else ladder than a switch statement
 		if (Method == FlxWeapon.FIRE)
 		{
-			currentBullet.fire(launchX, launchY, _velocity.x, _velocity.y);
+			internalFire(currentBullet, launchX, launchY, _velocity.x, _velocity.y);
 		}
 		else if (Method == FlxWeapon.FIRE_AT_POSITION)
 		{
-			currentBullet.fireAtPosition(launchX, launchY, X, Y, bulletSpeed);
+			internalFireAtPosition(currentBullet, launchX, launchY, X, Y, bulletSpeed);
 		}
 		else if (Method == FlxWeapon.FIRE_AT_TARGET)
 		{
-			currentBullet.fireAtTarget(launchX, launchY, Target, bulletSpeed);
+			internalFireAtTarget(currentBullet, launchX, launchY, Target, bulletSpeed);
 		}
 		else if (Method == FlxWeapon.FIRE_FROM_ANGLE)
 		{
-			currentBullet.fireFromAngle(launchX, launchY, Angle, bulletSpeed);
+			internalFireFromAngle(currentBullet, launchX, launchY, Angle, bulletSpeed);
 		}
 		else if (Method == FlxWeapon.FIRE_FROM_PARENT_ANGLE)
 		{
-			currentBullet.fireFromAngle(launchX, launchY, Math.floor(parent.angle), bulletSpeed);
+			internalFireFromAngle(currentBullet, launchX, launchY, Math.floor(parent.angle), bulletSpeed);
 		}
 		#if !FLX_NO_TOUCH
 		else if (Method == FlxWeapon.FIRE_AT_TOUCH)
 		{
 			if (_touchTarget != null)
-			currentBullet.fireAtTouch(launchX, launchY, _touchTarget, bulletSpeed);
+				internalFireAtTouch(currentBullet, launchX, launchY, _touchTarget, bulletSpeed);
 		}
 		#end
 		#if !FLX_NO_MOUSE
 		else if (Method == FlxWeapon.FIRE_AT_MOUSE)
 		{
-			currentBullet.fireAtMouse(launchX, launchY, bulletSpeed);
+			internalFireAtMouse(currentBullet, launchX, launchY, bulletSpeed);
 		}
 		#end
+		
+		
+		currentBullet.bounds = bounds;
+		currentBullet.postFire();
+		
+		if (bulletElasticity > 0)
+		{
+			currentBullet.elasticity = bulletElasticity;
+		}
+		
+		currentBullet.exists = true;
+		
+		// Reset last x and y position in case we were recycled.
+		currentBullet.last.x = currentBullet.x;
+		currentBullet.last.y = currentBullet.y;
+		
+		if (bulletLifeSpan > 0)
+		{
+			currentBullet.lifespan = bulletLifeSpan + getRandomizedLifeSpan();
+		}
+		
+		// Post fire stuff
 		if (onPostFireCallback != null)
 		{
 			onPostFireCallback();
@@ -708,18 +729,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	}
 	
 	/**
-	 * Sets a fire callback function and sound. These are played immediately as the bullet is fired.
-	 * 
-	 * @param	Callback	The function to call
-	 * @param	Sound		A FlxSound to play
-	 */
-	public function setFireCallback(?Callback:Void->Void, ?Sound:FlxSound):Void
-	{
-		onFireCallback = Callback;
-		onFireSound = Sound;
-	}
-	
-	/**
 	 * Sets a post-fire callback function and sound. These are played immediately after the bullet is fired.
 	 * 
 	 * @param	Callback	The function to call
@@ -768,4 +777,127 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	{
 		Bullet.kill();
 	}
+	
+	private inline function createBullet(bulletID:Int):TBullet
+	{
+		return bulletFactory(this, bulletID);
+	}
+	
+	
+	private function internalFire(Bullet:TBullet, FromX:Float, FromY:Float, VelX:Float, VelY:Float):Void
+	{
+		Bullet.x = FromX + getRandomizedPositionX();
+		Bullet.y = FromY + getRandomizedPositionY();
+		
+		if (Bullet.accelerates)
+		{
+			Bullet.acceleration.x = Bullet.xAcceleration + getRandomizedSpeed();
+			Bullet.acceleration.y = Bullet.yAcceleration + getRandomizedSpeed();
+		}
+		else
+		{
+			Bullet.velocity.x = VelX + getRandomizedSpeed();
+			Bullet.velocity.y = VelY + getRandomizedSpeed();
+		}
+	}
+	
+	#if !FLX_NO_MOUSE
+	private function internalFireAtMouse(Bullet:TBullet, FromX:Float, FromY:Float, Speed:Int, RotateBulletTowards = true):Void
+	{
+		Bullet.x = FromX + getRandomizedPositionX();
+		Bullet.y = FromY + getRandomizedPositionY();
+		
+		if (Bullet.accelerates)
+		{
+			FlxVelocity.accelerateTowardsMouse(Bullet, Speed + getRandomizedSpeed(), Math.floor(Bullet.maxVelocity.x), Math.floor(Bullet.maxVelocity.y));
+		}
+		else
+		{
+			FlxVelocity.moveTowardsMouse(Bullet, Speed + getRandomizedSpeed());
+		}
+		
+		if (RotateBulletTowards)
+		{
+			Bullet.angle = FlxAngle.angleBetweenMouse(parent, true);
+		}
+	}
+	#end
+	
+	#if !FLX_NO_TOUCH
+	private function internalFireAtTouch(Bullet:TBullet, FromX:Float, FromY:Float, Touch:FlxTouch, Speed:Int, RotateBulletTowards = true):Void
+	{
+		Bullet.x = FromX + getRandomizedPositionX();
+		Bullet.y = FromY + getRandomizedPositionY();
+		
+		if (Bullet.accelerates)
+		{
+			FlxVelocity.accelerateTowardsTouch(Bullet, Touch, Speed + getRandomizedSpeed(), Math.floor(Bullet.maxVelocity.x), Math.floor(Bullet.maxVelocity.y));
+		}
+		else
+		{
+			FlxVelocity.moveTowardsTouch(Bullet, Touch, Speed + getRandomizedSpeed());
+		}
+		
+		if (RotateBulletTowards)
+		{
+			Bullet.angle = FlxAngle.angleBetweenTouch(parent, Touch, true);
+		}
+	}
+	#end
+	
+	private function internalFireAtPosition(Bullet:TBullet, FromX:Float, FromY:Float, ToX:Float, ToY:Float, Speed:Int):Void
+	{
+		Bullet.x = FromX + getRandomizedPositionX();
+		Bullet.y = FromY + getRandomizedPositionY();
+		
+		if (Bullet.accelerates)
+		{
+			FlxVelocity.accelerateTowardsPoint(Bullet, FlxPoint.get(ToX, ToY), Speed + getRandomizedSpeed(), Math.floor(Bullet.maxVelocity.x), Math.floor(Bullet.maxVelocity.y));
+		}
+		else
+		{
+			FlxVelocity.moveTowardsPoint(Bullet, FlxPoint.get(ToX, ToY), Speed + getRandomizedSpeed());
+		}
+	}
+	
+	private function internalFireAtTarget(Bullet:TBullet, FromX:Float, FromY:Float, Target:FlxSprite, Speed:Int):Void
+	{
+		Bullet.x = FromX + getRandomizedPositionX();
+		Bullet.y = FromY + getRandomizedPositionY();
+		
+		if (Bullet.accelerates)
+		{
+			FlxVelocity.accelerateTowardsObject(Bullet, Target, Speed + getRandomizedSpeed(), Math.floor(Bullet.maxVelocity.x), Math.floor(Bullet.maxVelocity.y));
+		}
+		else
+		{
+			FlxVelocity.moveTowardsObject(Bullet, Target, Speed + getRandomizedSpeed());
+		}
+	}
+	
+	private function internalFireFromAngle(Bullet:TBullet, FromX:Float, FromY:Float, FireAngle:Int, Speed:Int):Void
+	{
+		Bullet.x = FromX + getRandomizedPositionX();
+		Bullet.y = FromY + getRandomizedPositionY();
+		
+		var newVelocity:FlxPoint = FlxVelocity.velocityFromAngle(FireAngle + getRandomizedAngle(), Speed + getRandomizedSpeed());
+		
+		if (Bullet.accelerates)
+		{
+			Bullet.acceleration.x = newVelocity.x;
+			Bullet.acceleration.y = newVelocity.y;
+		}
+		else
+		{
+			Bullet.velocity.x = newVelocity.x;
+			Bullet.velocity.y = newVelocity.y;
+		}
+	}
+	
+	
+	private inline function getRandomizedLifeSpan():Float return FlxRandom.float( -rndFactorLifeSpan, rndFactorLifeSpan);
+	private inline function getRandomizedAngle():Int return FlxRandom.int( -rndFactorAngle, rndFactorAngle);
+	private inline function getRandomizedSpeed():Int return FlxRandom.int( -rndFactorSpeed, rndFactorSpeed);
+	private inline function getRandomizedPositionX():Float return FlxRandom.float( -rndFactorPosition.x, rndFactorPosition.x);
+	private inline function getRandomizedPositionY():Float return FlxRandom.float( -rndFactorPosition.y, rndFactorPosition.y);
 }
