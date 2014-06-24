@@ -92,13 +92,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	public var onPreFireSound:FlxSound;
 	public var onPostFireSound:FlxSound;
 	
-	private static inline var FIRE:Int = 0;
-	private static inline var FIRE_AT_MOUSE:Int = 1;
-	private static inline var FIRE_AT_POSITION:Int = 2;
-	private static inline var FIRE_AT_TARGET:Int = 3;
-	private static inline var FIRE_FROM_ANGLE:Int = 4;
-	private static inline var FIRE_FROM_PARENT_ANGLE:Int = 5;
-	private static inline var FIRE_AT_TOUCH:Int = 6;
+	
 	
 	/**
 	 * The factory function to create a bullet
@@ -260,7 +254,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * @param	Target
 	 * @return	True if a bullet was fired or false if one wasn't available. The bullet last fired is stored in FlxWeapon.prevBullet
 	 */
-	private function runFire(Method:Int, X:Int = 0, Y:Int = 0, ?Target:FlxSprite, Angle:Int = 0):Bool
+	private function runFire(Method:FlxWeaponFireType, X:Int = 0, Y:Int = 0, ?Target:FlxSprite, Angle:Int = 0):Bool
 	{
 		if (fireRate > 0 && FlxG.game.ticks < nextFire)
 		{
@@ -312,41 +306,39 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 			_velocity = FlxVelocity.velocityFromFacing(parent, bulletSpeed);
 		}
 		
-		// Faster (less CPU) to use this small if-else ladder than a switch statement
-		if (Method == FlxWeapon.FIRE)
-		{
-			internalFire(currentBullet, launchX, launchY, _velocity.x, _velocity.y);
-		}
-		else if (Method == FlxWeapon.FIRE_AT_POSITION)
-		{
-			internalFireAtPosition(currentBullet, launchX, launchY, X, Y, bulletSpeed);
-		}
-		else if (Method == FlxWeapon.FIRE_AT_TARGET)
-		{
-			internalFireAtTarget(currentBullet, launchX, launchY, Target, bulletSpeed);
-		}
-		else if (Method == FlxWeapon.FIRE_FROM_ANGLE)
-		{
-			internalFireFromAngle(currentBullet, launchX, launchY, Angle, bulletSpeed);
-		}
-		else if (Method == FlxWeapon.FIRE_FROM_PARENT_ANGLE)
-		{
-			internalFireFromAngle(currentBullet, launchX, launchY, Math.floor(parent.angle), bulletSpeed);
-		}
-		#if !FLX_NO_TOUCH
-		else if (Method == FlxWeapon.FIRE_AT_TOUCH)
-		{
-			if (_touchTarget != null)
-				internalFireAtTouch(currentBullet, launchX, launchY, _touchTarget, bulletSpeed);
-		}
-		#end
-		#if !FLX_NO_MOUSE
-		else if (Method == FlxWeapon.FIRE_AT_MOUSE)
-		{
-			internalFireAtMouse(currentBullet, launchX, launchY, bulletSpeed);
-		}
-		#end
 		
+		currentBullet.x = launchX + getRandomizedPositionX();
+		currentBullet.y = launchY + getRandomizedPositionY();
+		
+		// Faster (less CPU) to use this small if-else ladder than a switch statement
+		switch(Method)
+		{
+			case FIRE:
+				internalFire(currentBullet, _velocity.x, _velocity.y);
+				
+			case FIRE_AT_POSITION:
+				internalFireAtPosition(currentBullet, X, Y, bulletSpeed);
+			
+			case FIRE_AT_TARGET:
+				internalFireAtTarget(currentBullet, Target, bulletSpeed);
+				
+			case FIRE_FROM_ANGLE:
+				internalFireFromAngle(currentBullet, Angle, bulletSpeed);
+				
+			case FIRE_FROM_PARENT_ANGLE:
+				internalFireFromAngle(currentBullet, Math.floor(parent.angle), bulletSpeed);
+				
+			#if !FLX_NO_TOUCH
+			case FIRE_AT_TOUCH:
+				if (_touchTarget != null)
+					internalFireAtTouch(currentBullet, _touchTarget, bulletSpeed);
+			#end
+			
+			#if !FLX_NO_MOUSE
+			case FIRE_AT_MOUSE:
+				internalFireAtMouse(currentBullet, bulletSpeed);
+			#end
+		}
 		
 		currentBullet.bounds = bounds;
 		
@@ -392,7 +384,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public inline function fire():Bool
 	{
-		return runFire(FlxWeapon.FIRE);
+		return runFire(FIRE);
 	}
 	
 	#if !FLX_NO_MOUSE
@@ -403,7 +395,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public inline function fireAtMouse():Bool
 	{
-		return runFire(FlxWeapon.FIRE_AT_MOUSE);
+		return runFire(FIRE_AT_MOUSE);
 	}
 	#end
 	
@@ -429,7 +421,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		if (_touchTarget != null) 
 		{
-			fired = runFire(FlxWeapon.FIRE_AT_TOUCH);
+			fired = runFire(FIRE_AT_TOUCH);
 			_touchTarget = null;
 		}
 		
@@ -446,7 +438,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public inline function fireAtPosition(X:Int, Y:Int):Bool
 	{
-		return runFire(FlxWeapon.FIRE_AT_POSITION, X, Y);
+		return runFire(FIRE_AT_POSITION, X, Y);
 	}
 	
 	/**
@@ -457,7 +449,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public inline function fireAtTarget(Target:FlxSprite):Bool
 	{
-		return runFire(FlxWeapon.FIRE_AT_TARGET, 0, 0, Target);
+		return runFire(FIRE_AT_TARGET, 0, 0, Target);
 	}
 	
 	/**
@@ -468,7 +460,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public inline function fireFromAngle(Angle:Int):Bool
 	{
-		return runFire(FlxWeapon.FIRE_FROM_ANGLE, 0, 0, null, Angle);
+		return runFire(FIRE_FROM_ANGLE, 0, 0, null, Angle);
 	}
 	
 	/**
@@ -478,7 +470,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public inline function fireFromParentAngle():Bool
 	{
-		return runFire(FlxWeapon.FIRE_FROM_PARENT_ANGLE);
+		return runFire(FIRE_FROM_PARENT_ANGLE);
 	}
 	
 	/**
@@ -779,11 +771,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	}
 	
 	
-	private function internalFire(Bullet:TBullet, FromX:Float, FromY:Float, VelX:Float, VelY:Float):Void
+	private function internalFire(Bullet:TBullet, VelX:Float, VelY:Float):Void
 	{
-		Bullet.x = FromX + getRandomizedPositionX();
-		Bullet.y = FromY + getRandomizedPositionY();
-		
 		if (Bullet.accelerates)
 		{
 			Bullet.acceleration.x = Bullet.xAcceleration + getRandomizedSpeed();
@@ -797,11 +786,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	}
 	
 	#if !FLX_NO_MOUSE
-	private function internalFireAtMouse(Bullet:TBullet, FromX:Float, FromY:Float, Speed:Int, RotateBulletTowards = true):Void
+	private function internalFireAtMouse(Bullet:TBullet, Speed:Int, RotateBulletTowards = true):Void
 	{
-		Bullet.x = FromX + getRandomizedPositionX();
-		Bullet.y = FromY + getRandomizedPositionY();
-		
 		if (Bullet.accelerates)
 		{
 			FlxVelocity.accelerateTowardsMouse(Bullet, Speed + getRandomizedSpeed(), Math.floor(Bullet.maxVelocity.x), Math.floor(Bullet.maxVelocity.y));
@@ -819,11 +805,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	#end
 	
 	#if !FLX_NO_TOUCH
-	private function internalFireAtTouch(Bullet:TBullet, FromX:Float, FromY:Float, Touch:FlxTouch, Speed:Int, RotateBulletTowards = true):Void
+	private function internalFireAtTouch(Bullet:TBullet, Touch:FlxTouch, Speed:Int, RotateBulletTowards = true):Void
 	{
-		Bullet.x = FromX + getRandomizedPositionX();
-		Bullet.y = FromY + getRandomizedPositionY();
-		
 		if (Bullet.accelerates)
 		{
 			FlxVelocity.accelerateTowardsTouch(Bullet, Touch, Speed + getRandomizedSpeed(), Math.floor(Bullet.maxVelocity.x), Math.floor(Bullet.maxVelocity.y));
@@ -840,11 +823,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	}
 	#end
 	
-	private function internalFireAtPosition(Bullet:TBullet, FromX:Float, FromY:Float, ToX:Float, ToY:Float, Speed:Int):Void
+	private function internalFireAtPosition(Bullet:TBullet, ToX:Float, ToY:Float, Speed:Int):Void
 	{
-		Bullet.x = FromX + getRandomizedPositionX();
-		Bullet.y = FromY + getRandomizedPositionY();
-		
 		if (Bullet.accelerates)
 		{
 			FlxVelocity.accelerateTowardsPoint(Bullet, FlxPoint.get(ToX, ToY), Speed + getRandomizedSpeed(), Math.floor(Bullet.maxVelocity.x), Math.floor(Bullet.maxVelocity.y));
@@ -855,11 +835,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 	
-	private function internalFireAtTarget(Bullet:TBullet, FromX:Float, FromY:Float, Target:FlxSprite, Speed:Int):Void
+	private function internalFireAtTarget(Bullet:TBullet, Target:FlxSprite, Speed:Int):Void
 	{
-		Bullet.x = FromX + getRandomizedPositionX();
-		Bullet.y = FromY + getRandomizedPositionY();
-		
 		if (Bullet.accelerates)
 		{
 			FlxVelocity.accelerateTowardsObject(Bullet, Target, Speed + getRandomizedSpeed(), Math.floor(Bullet.maxVelocity.x), Math.floor(Bullet.maxVelocity.y));
@@ -870,11 +847,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 	
-	private function internalFireFromAngle(Bullet:TBullet, FromX:Float, FromY:Float, FireAngle:Int, Speed:Int):Void
+	private function internalFireFromAngle(Bullet:TBullet, FireAngle:Int, Speed:Int):Void
 	{
-		Bullet.x = FromX + getRandomizedPositionX();
-		Bullet.y = FromY + getRandomizedPositionY();
-		
 		var newVelocity:FlxPoint = FlxVelocity.velocityFromAngle(FireAngle + getRandomizedAngle(), Speed + getRandomizedSpeed());
 		
 		if (Bullet.accelerates)
@@ -895,4 +869,21 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	private inline function getRandomizedSpeed():Int return FlxRandom.int( -rndFactorSpeed, rndFactorSpeed);
 	private inline function getRandomizedPositionX():Float return FlxRandom.float( -rndFactorPosition.x, rndFactorPosition.x);
 	private inline function getRandomizedPositionY():Float return FlxRandom.float( -rndFactorPosition.y, rndFactorPosition.y);
+}
+
+enum FlxWeaponFireType
+{
+	FIRE;
+	FIRE_AT_POSITION;
+	FIRE_AT_TARGET;
+	FIRE_FROM_ANGLE;
+	FIRE_FROM_PARENT_ANGLE;
+	
+#if !FLX_NO_TOUCH 
+	FIRE_AT_TOUCH;
+#end
+
+#if !FLX_NO_MOUSE
+	FIRE_AT_MOUSE;
+#end
 }
