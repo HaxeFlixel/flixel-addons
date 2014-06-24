@@ -108,7 +108,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	private var _fireY:Int;
 	
 	private var _lastFired:Int = 0;
-	private var _touchTarget:FlxTouch;
 	
 	//	When firing from a parent sprites position (i.e. Space Invaders)
 	private var _fireFromParent:Bool;
@@ -253,7 +252,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * @param	Target
 	 * @return	True if a bullet was fired or false if one wasn't available. The bullet last fired is stored in FlxWeapon.prevBullet
 	 */
-	private function runFire(Mode:FlxWeaponFireMode, X:Int = 0, Y:Int = 0, ?Target:FlxSprite, Angle:Int = 0):Bool
+	private function runFire(Mode:FlxWeaponFireMode):Bool
 	{
 		if (fireRate > 0 && FlxG.game.ticks < nextFire)
 		{
@@ -315,22 +314,22 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 			case FIRE:
 				internalFire(currentBullet, _velocity.x, _velocity.y);
 				
-			case FIRE_AT_POSITION:
-				internalFireAtPosition(currentBullet, X, Y, bulletSpeed);
+			case FIRE_AT_POSITION(x, y):
+				internalFireAtPosition(currentBullet, x, y, bulletSpeed);
 			
-			case FIRE_AT_TARGET:
-				internalFireAtTarget(currentBullet, Target, bulletSpeed);
+			case FIRE_AT_TARGET(target):
+				internalFireAtTarget(currentBullet, target, bulletSpeed);
 				
-			case FIRE_FROM_ANGLE:
-				internalFireFromAngle(currentBullet, Angle, bulletSpeed);
+			case FIRE_FROM_ANGLE(angle):
+				internalFireFromAngle(currentBullet, angle, bulletSpeed);
 				
 			case FIRE_FROM_PARENT_ANGLE:
 				internalFireFromAngle(currentBullet, Math.floor(parent.angle), bulletSpeed);
 				
 			#if !FLX_NO_TOUCH
-			case FIRE_AT_TOUCH:
-				if (_touchTarget != null)
-					internalFireAtTouch(currentBullet, _touchTarget, bulletSpeed);
+			case FIRE_AT_TOUCH(touch):
+				if (touch != null)
+					internalFireAtTouch(currentBullet, touch, bulletSpeed);
 			#end
 			
 			#if !FLX_NO_MOUSE
@@ -407,24 +406,11 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public function fireAtTouch(?Touch:FlxTouch):Bool
 	{
-		if (Touch == null) 
-		{
-			_touchTarget = FlxG.touches.getFirst();
-		} 
-		else 
-		{
-			_touchTarget = Touch;
-		}
-		
-		var fired = false;
-		
-		if (_touchTarget != null) 
-		{
-			fired = runFire(FIRE_AT_TOUCH);
-			_touchTarget = null;
-		}
-		
-		return fired;
+		var touch = Touch == null ? FlxG.touches.getFirst() : Touch;
+		if (touch != null) 
+			return runFire(FIRE_AT_TOUCH(touch));
+		else
+			return false;
 	}
 	#end
 	
@@ -437,7 +423,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public inline function fireAtPosition(X:Int, Y:Int):Bool
 	{
-		return runFire(FIRE_AT_POSITION, X, Y);
+		return runFire(FIRE_AT_POSITION(X, Y));
 	}
 	
 	/**
@@ -448,7 +434,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public inline function fireAtTarget(Target:FlxSprite):Bool
 	{
-		return runFire(FIRE_AT_TARGET, 0, 0, Target);
+		return runFire(FIRE_AT_TARGET(Target));
 	}
 	
 	/**
@@ -459,7 +445,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public inline function fireFromAngle(Angle:Int):Bool
 	{
-		return runFire(FIRE_FROM_ANGLE, 0, 0, null, Angle);
+		return runFire(FIRE_FROM_ANGLE(Angle));
 	}
 	
 	/**
@@ -873,13 +859,13 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 enum FlxWeaponFireMode
 {
 	FIRE;
-	FIRE_AT_POSITION;
-	FIRE_AT_TARGET;
-	FIRE_FROM_ANGLE;
+	FIRE_AT_POSITION(x:Float, y:Float);
+	FIRE_AT_TARGET(target:FlxSprite);
+	FIRE_FROM_ANGLE(angle:Int);
 	FIRE_FROM_PARENT_ANGLE;
 	
 #if !FLX_NO_TOUCH 
-	FIRE_AT_TOUCH;
+	FIRE_AT_TOUCH(touch:FlxTouch);
 #end
 
 #if !FLX_NO_MOUSE
