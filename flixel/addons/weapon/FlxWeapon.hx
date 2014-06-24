@@ -57,10 +57,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public var group:FlxTypedGroup<TBullet>;
 	
-	/**
-	 * The factory function to create a bullet
-	 */
-	private var bulletFactory:FlxTypedWeapon<TBullet>->TBullet;	
 	
 	// Internal variables, use with caution
 	public var nextFire:Int = 0;
@@ -103,6 +99,11 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	private static inline var FIRE_FROM_ANGLE:Int = 4;
 	private static inline var FIRE_FROM_PARENT_ANGLE:Int = 5;
 	private static inline var FIRE_AT_TOUCH:Int = 6;
+	
+	/**
+	 * The factory function to create a bullet
+	 */
+	private var bulletFactory:FlxTypedWeapon<TBullet>->TBullet;	
 	
 	private var _rotateToAngle:Bool;
 	private var _velocity:FlxPoint;

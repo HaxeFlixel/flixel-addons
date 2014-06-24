@@ -1,6 +1,5 @@
 package flixel.addons.weapon;
 
-import flixel.addons.weapon.FlxWeapon.FlxTypedWeapon;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
@@ -18,19 +17,14 @@ class FlxBullet extends FlxSprite
 	public var accelerates:Bool = false;
 	public var xAcceleration:Int;
 	public var yAcceleration:Int;
-	
 	public var lifespan:Float;	
-	public var weapon(default, null):FlxTypedWeapon<Dynamic>;
 	
 	@:allow(flixel.addons.weapon)
 	private var bounds:FlxRect;
 	
-	public function new(Weapon:FlxTypedWeapon<Dynamic>)
+	public function new()
 	{
 		super(0, 0);
-		
-		weapon = Weapon;
-		
 		exists = false;
 	}
 	
