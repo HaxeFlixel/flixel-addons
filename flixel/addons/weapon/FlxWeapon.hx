@@ -253,7 +253,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * @param	Target
 	 * @return	True if a bullet was fired or false if one wasn't available. The bullet last fired is stored in FlxWeapon.prevBullet
 	 */
-	private function runFire(Method:FlxWeaponFireType, X:Int = 0, Y:Int = 0, ?Target:FlxSprite, Angle:Int = 0):Bool
+	private function runFire(Mode:FlxWeaponFireMode, X:Int = 0, Y:Int = 0, ?Target:FlxSprite, Angle:Int = 0):Bool
 	{
 		if (fireRate > 0 && FlxG.game.ticks < nextFire)
 		{
@@ -310,7 +310,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		currentBullet.y = launchY + getRandomizedPositionY();
 		
 		// Faster (less CPU) to use this small if-else ladder than a switch statement
-		switch(Method)
+		switch(Mode)
 		{
 			case FIRE:
 				internalFire(currentBullet, _velocity.x, _velocity.y);
@@ -870,7 +870,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	private inline function getRandomizedPositionY():Float return FlxRandom.float( -rndFactorPosition.y, rndFactorPosition.y);
 }
 
-enum FlxWeaponFireType
+enum FlxWeaponFireMode
 {
 	FIRE;
 	FIRE_AT_POSITION;
