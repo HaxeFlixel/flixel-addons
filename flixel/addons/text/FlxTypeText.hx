@@ -65,6 +65,14 @@ class FlxTypeText extends FlxText
 	 */
 	public var sound:FlxSound;
 	/**
+	 * If enabled, will choose a random sound from the soundArray.
+	 */
+	public var useSoundArray:Bool = false;
+	/**
+	 * An array of FlxSounds that will randomly be played when text is typed.
+	 */
+	public var soundArray:Array<FlxSound>;
+	/**
 	 * An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
 	 */
 	public var skipKeys:Array<FlxKey> = [];
@@ -76,7 +84,6 @@ class FlxTypeText extends FlxText
 	 * This function is called when the message is done erasing, if that is enabled.
 	 */
 	public var eraseCallback:Void->Void;
-	
 	/**
 	 * The text that will ultimately be displayed.
 	 */
@@ -282,6 +289,16 @@ class FlxTypeText extends FlxText
 	}
 	
 	/**
+	 * Updates the sound array and sets useSoundArray to true.
+	 * @param	Sounds   An array of FlxSound objects.
+	 */
+	public function setSoundArray(Sounds:Array<FlxSound>):Void
+	{
+		soundArray = Sounds;
+		useSoundArray = true;
+	}
+	
+	/**
 	 * Internal function that is called when typing is complete.
 	 */
 	private function onComplete():Void
@@ -384,7 +401,16 @@ class FlxTypeText extends FlxText
 				}
 				
 				#if !FLX_NO_SOUND_SYSTEM
-				if (sound != null)
+				if (soundArray != null && (useSoundArray || sound == null))
+				{
+					for (sound in soundArray)
+					{
+						sound.stop();
+					}
+					
+					FlxRandom.getObject(soundArray).play(true);
+				}
+				else if (sound != null)
 				{
 					sound.play(true);
 				}
