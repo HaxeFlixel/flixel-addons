@@ -50,9 +50,13 @@ class FlxTypeText extends FlxText
 	 */
 	public var paused:Bool = false;
 	/**
-	 * The sound that is played when letters are added; optional.
+	 * The sounds that are played when letters are added; optional.
 	 */
 	public var sounds:Array<FlxSound>;
+	/**
+	 * Whether or not to use the default typing sound.
+	 */
+	public var useDefaultSound:Bool = false;
 	/**
 	 * An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
 	 */
@@ -109,6 +113,10 @@ class FlxTypeText extends FlxText
 	 * Helper string to reduce garbage generation.
 	 */
 	private static var helperString:String = "";
+	/**
+	 * Internal reference to the default sound object.
+	 */
+	private var _sound:FlxSound;
 	
 	/**
 	 * Create a FlxTypeText object, which is very similar to FlxText except that the text is initially hidden and can be
@@ -167,6 +175,11 @@ class FlxTypeText extends FlxText
 		{
 			completeCallback = Callback;
 		}
+		
+		if (useDefaultSound)
+		{
+			loadDefaultSound();
+		}
 	}
 	
 	/**
@@ -204,6 +217,11 @@ class FlxTypeText extends FlxText
 		if (Callback != null)
 		{
 			eraseCallback = Callback;
+		}
+		
+		if (useDefaultSound)
+		{
+			loadDefaultSound();
 		}
 	}
 	
@@ -346,7 +364,7 @@ class FlxTypeText extends FlxText
 					_timer = 0;
 				}
 				
-				if (sounds != null)
+				if (sounds != null && !useDefaultSound)
 				{
 					for (sound in sounds)
 					{
@@ -354,6 +372,10 @@ class FlxTypeText extends FlxText
 					}
 					
 					FlxRandom.getObject(sounds).play(true);
+				}
+				else if (useDefaultSound)
+				{
+					_sound.play(true);
 				}
 			}
 		}
@@ -413,5 +435,21 @@ class FlxTypeText extends FlxText
 		{
 			_length = _finalText.length;
 		}
+	}
+	
+	private function loadDefaultSound():Void
+	{
+		#if flash
+		var ext:String = "mp3";
+		#else
+		var ext:String = "ogg";
+		#end
+		
+		#if !FLX_NO_SOUND_SYSTEM
+		_sound = FlxG.sound.load("assets/sounds/type." + ext);
+		#else
+		_sound = new FlxSound();
+		_sound.loadEmbedded("assets/sounds/type." + ext);
+		#end
 	}
 }
