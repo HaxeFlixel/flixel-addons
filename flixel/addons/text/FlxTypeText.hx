@@ -6,13 +6,6 @@ import flixel.text.FlxText;
 import flixel.system.FlxSound;
 import flixel.math.FlxRandom;
 
-#if !FLX_NO_SOUND_SYSTEM
-import flash.media.Sound;
-
-@:sound("assets/sounds/typetext.wav")
-class TypeSound extends Sound {}
-#end
-
 /**
  * This is loosely based on the TypeText class by Noel Berry, who wrote it for his Ludum Dare 22 game - Abandoned
  * http://www.ludumdare.com/compo/ludum-dare-22/?action=preview&uid=1527
@@ -57,21 +50,9 @@ class FlxTypeText extends FlxText
 	 */
 	public var paused:Bool = false;
 	/**
-	 * If this is set to true, this class will use typetext.wav from flixel-addons for the type sound unless you specify another.
-	 */
-	public var useDefaultSound:Bool = false;
-	/**
 	 * The sound that is played when letters are added; optional.
 	 */
-	public var sound:FlxSound;
-	/**
-	 * If enabled, will choose a random sound from the soundArray.
-	 */
-	public var useSoundArray:Bool = false;
-	/**
-	 * An array of FlxSounds that will randomly be played when text is typed.
-	 */
-	public var soundArray:Array<FlxSound>;
+	public var sounds:Array<FlxSound>;
 	/**
 	 * An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
 	 */
@@ -153,13 +134,11 @@ class FlxTypeText extends FlxText
 	 * @param   ForceRestart   Whether or not to start this animation over if currently animating; false by default.
 	 * @param   AutoErase      Whether or not to begin the erase animation when the typing animation is complete.
 	 *                         Can also be set separately.
-	 * @param   Sound          A FlxSound object to play when a character is typed. Can also be set separately.
 	 * @param   SkipKeys       An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
 	 *                         Can also be set separately.
 	 * @param   Callback       An optional callback function, to be called when the typing animation is complete.
 	 */
-	public function start(?Delay:Float, ForceRestart:Bool = false, AutoErase:Bool = false, ?Sound:FlxSound, 
-		?SkipKeys:Array<FlxKey>, ?Callback:Void->Void):Void
+	public function start(?Delay:Float, ForceRestart:Bool = false, AutoErase:Bool = false, ?SkipKeys:Array<FlxKey>, ?Callback:Void->Void):Void
 	{
 		if (Delay != null)
 		{
@@ -179,17 +158,6 @@ class FlxTypeText extends FlxText
 		
 		autoErase = AutoErase;
 		
-		#if !FLX_NO_SOUND_SYSTEM
-		if (Sound != null)
-		{
-			sound = Sound;
-		}
-		else if (useDefaultSound)
-		{
-			sound = FlxG.sound.load(new TypeSound());
-		}
-		#end
-		
 		if (SkipKeys != null)
 		{
 			skipKeys = SkipKeys;
@@ -206,12 +174,11 @@ class FlxTypeText extends FlxText
 	 * 
 	 * @param	Delay			Optionally, set the delay between characters. Can also be set separately.
 	 * @param	ForceRestart	Whether or not to start this animation over if currently animating; false by default.
-	 * @param	Sound			A FlxSound object to play when a character is typed. Can also be set separately.
 	 * @param	SkipKeys		An array of keys as string values (e.g. "SPACE", "L") that will advance the text. Can also be set separately.
 	 * @param	Callback		An optional callback function, to be called when the erasing animation is complete.
 	 * @param	Params			Optional parameters to pass to the callback function.
 	 */
-	public function erase(?Delay:Float, ForceRestart:Bool = false, ?Sound:FlxSound, ?SkipKeys:Array<FlxKey>, ?Callback:Void->Void):Void
+	public function erase(?Delay:Float, ForceRestart:Bool = false, ?SkipKeys:Array<FlxKey>, ?Callback:Void->Void):Void
 	{
 		_erasing = true;
 		_typing = false;
@@ -228,17 +195,6 @@ class FlxTypeText extends FlxText
 			_length = _finalText.length;
 			text = _finalText;
 		}
-		
-		#if !FLX_NO_SOUND_SYSTEM
-		if (Sound != null)
-		{
-			sound = Sound;
-		}
-		else if (useDefaultSound)
-		{
-			sound = FlxG.sound.load(new TypeSound());
-		}
-		#end
 		
 		if (SkipKeys != null)
 		{
@@ -286,16 +242,6 @@ class FlxTypeText extends FlxText
 		{
 			_typeVarPercent = 0.5;
 		}
-	}
-	
-	/**
-	 * Updates the sound array and sets useSoundArray to true.
-	 * @param	Sounds   An array of FlxSound objects.
-	 */
-	public function setSoundArray(Sounds:Array<FlxSound>):Void
-	{
-		soundArray = Sounds;
-		useSoundArray = true;
 	}
 	
 	/**
@@ -400,21 +346,15 @@ class FlxTypeText extends FlxText
 					_timer = 0;
 				}
 				
-				#if !FLX_NO_SOUND_SYSTEM
-				if (soundArray != null && (useSoundArray || sound == null))
+				if (sounds != null)
 				{
-					for (sound in soundArray)
+					for (sound in sounds)
 					{
 						sound.stop();
 					}
 					
-					FlxRandom.getObject(soundArray).play(true);
+					FlxRandom.getObject(sounds).play(true);
 				}
-				else if (sound != null)
-				{
-					sound.play(true);
-				}
-				#end
 			}
 		}
 		
