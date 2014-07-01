@@ -4,8 +4,4 @@
 	<haxedef name="NAPE_NO_INLINE" if="neko"/>
 	
 	<haxelib name="systools" />
-	
-	<assets path="assets/sounds" include="*.ogg" if="html5" />
-	<assets path="assets/sounds" include="*.mp3" if="flash" embed="true" />
-	<assets path="assets/sounds" include="*.ogg" unless="flash || html5" embed="true" />
 </project>

@@ -7,6 +7,19 @@ import flixel.text.FlxText;
 import flixel.system.FlxSound;
 import flixel.math.FlxRandom;
 
+#if !js
+import flash.media.Sound;
+
+#if !flash
+@:sound("assets/sounds/type.ogg")
+class TypeSound extends Sound { }
+#else
+// Flash uses a WAV instead of MP3 because the sound is so short that MP3's encoding mutes most of it
+@:sound("assets/sounds/type.wav")
+class TypeSound extends Sound { }
+#end
+#end
+
 /**
  * This is loosely based on the TypeText class by Noel Berry, who wrote it for his Ludum Dare 22 game - Abandoned
  * http://www.ludumdare.com/compo/ludum-dare-22/?action=preview&uid=1527
@@ -441,10 +454,10 @@ class FlxTypeText extends FlxText
 	private function loadDefaultSound():Void
 	{
 		#if !FLX_NO_SOUND_SYSTEM
-		_sound = FlxG.sound.load(FlxAssets.getSound("assets/sounds/type"));
+		_sound = FlxG.sound.load(new TypeSound());
 		#else
 		_sound = new FlxSound();
-		_sound.loadEmbedded(FlxAssets.getSound("assets/sounds/type"));
+		_sound.loadEmbedded(new TypeSound());
 		#end
 	}
 }
