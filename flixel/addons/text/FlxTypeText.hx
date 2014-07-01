@@ -2,6 +2,7 @@ package flixel.addons.text;
 
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
+import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.system.FlxSound;
 import flixel.math.FlxRandom;
@@ -439,17 +440,11 @@ class FlxTypeText extends FlxText
 	
 	private function loadDefaultSound():Void
 	{
-		#if flash
-		var ext:String = "mp3";
-		#else
-		var ext:String = "ogg";
-		#end
-		
 		#if !FLX_NO_SOUND_SYSTEM
-		_sound = FlxG.sound.load("assets/sounds/type." + ext);
+		_sound = FlxG.sound.load(FlxAssets.getSound("assets/sounds/type"));
 		#else
 		_sound = new FlxSound();
-		_sound.loadEmbedded("assets/sounds/type." + ext);
+		_sound.loadEmbedded(FlxAssets.getSound("assets/sounds/type"));
 		#end
 	}
 }
