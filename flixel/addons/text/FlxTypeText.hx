@@ -453,11 +453,20 @@ class FlxTypeText extends FlxText
 	
 	private function loadDefaultSound():Void
 	{
+		#if !js
 		#if !FLX_NO_SOUND_SYSTEM
 		_sound = FlxG.sound.load(new TypeSound());
 		#else
 		_sound = new FlxSound();
 		_sound.loadEmbedded(new TypeSound());
+		#end
+		#else
+		#if !FLX_NO_SOUND_SYSTEM
+		_sound = FlxG.sound.load(FlxAssets.getSound("assets/sounds/type"));
+		#else
+		_sound = new FlxSound();
+		_sound.loadEmbedded(FlxAssets.getSound("assets/sounds/type"));
+		#end
 		#end
 	}
 }
