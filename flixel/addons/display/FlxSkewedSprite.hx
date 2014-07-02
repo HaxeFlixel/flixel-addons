@@ -189,9 +189,9 @@ class FlxSkewedSprite extends FlxSprite
 			
 			if (isColored)
 			{
-				currDrawData[currIndex++] = _red;
-				currDrawData[currIndex++] = _green;
-				currDrawData[currIndex++] = _blue;
+				currDrawData[currIndex++] = color.redFloat; 
+				currDrawData[currIndex++] = color.greenFloat;
+				currDrawData[currIndex++] = color.blueFloat;
 			}
 			currDrawData[currIndex++] = alpha;
 			

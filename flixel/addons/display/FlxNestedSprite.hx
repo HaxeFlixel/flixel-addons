@@ -425,9 +425,9 @@ class FlxNestedSprite extends FlxSprite
 		dirty = true;
 		
 		#if FLX_RENDER_TILE
-		_red = combinedRed;
-		_green = combinedGreen;
-		_blue = combinedBlue;
+		color.redFloat = combinedRed;
+		color.greenFloat = combinedGreen;
+		color.blueFloat = combinedBlue;
 		#end
 		
 		for (child in children)
