@@ -272,28 +272,10 @@ class FlxBitmapFont extends FlxSprite
 	#if FLX_RENDER_TILE
 	override public function draw():Void 
 	{
-		var j:Int = 0;
 		var textLength:Int = Std.int(_points.length / 3);
-		var currPosInArr:Int;
-		var currTileID:Float;
-		var currTileX:Float;
-		var currTileY:Float;
-		
-		var cos:Float;
-		var sin:Float;
-		var relativeX:Float;
-		var relativeY:Float;
-		
-		var drawItem:DrawStackItem;
-		var currDrawData:Array<Float>;
-		var currIndex:Int;
 		
 		for (camera in cameras)
 		{
-			drawItem = camera.getDrawStackItem(_fontSet, isColored, _blendInt, antialiasing);
-			currDrawData = drawItem.drawData;
-			currIndex = drawItem.position;
-			
 			if (!isOnScreen(camera) || !camera.visible || !camera.exists)
 			{
 				continue;
@@ -320,8 +302,8 @@ class FlxBitmapFont extends FlxSprite
 					_angleChanged = false;
 				}
 				
-				cos = _cosAngle;
-				sin = _sinAngle;
+				var cos = _cosAngle;
+				var sin = _sinAngle;
 				
 				x1 = (origin.x - _halfWidth);
 				y1 = (origin.y - _halfHeight);
@@ -332,38 +314,28 @@ class FlxBitmapFont extends FlxSprite
 				csy = cos * scale.y;
 			}
 			
+			var drawItem = camera.getDrawStackItem(_fontSet, isColored, _blendInt, antialiasing);
+			
+			var j = 0;
 			while (j < textLength)
 			{
-				currPosInArr = j * 3;
-				currTileID = _points[currPosInArr];
-				currTileX = _points[currPosInArr + 1] - x1;
-				currTileY = _points[currPosInArr + 2] - y1;
+				drawItem.position = j * 3;
 				
-				relativeX = (currTileX * csx - currTileY * ssy);
-				relativeY = (currTileX * ssx + currTileY * csy);
+				var currTileID = _points[drawItem.position];
 				
-				currDrawData[currIndex++] = (_point.x) + relativeX;
-				currDrawData[currIndex++] = (_point.y) + relativeY;
+				var currTileX = _points[drawItem.position + 1] - x1;
+				var currTileY = _points[drawItem.position + 2] - y1;
+				_point.set(currTileX, currTileY);
 				
-				currDrawData[currIndex++] = currTileID;
+				var relativeX = (currTileX * csx - currTileY * ssy);
+				var relativeY = (currTileX * ssx + currTileY * csy);
+				_point.add(relativeX, relativeY);
 				
-				currDrawData[currIndex++] = csx;
-				currDrawData[currIndex++] = ssx;
-				currDrawData[currIndex++] = -ssy;
-				currDrawData[currIndex++] = csy;
 				
-				if (isColored)
-				{
-					currDrawData[currIndex++] = color.redFloat; 
-					currDrawData[currIndex++] = color.greenFloat;
-					currDrawData[currIndex++] = color.blueFloat;
-				}
-				currDrawData[currIndex++] = alpha;
+				setDrawData(drawItem, camera, csx, ssx, -ssy, csy, currTileID);
 				
 				j++;
 			}
-			
-			drawItem.position = currIndex;
 		}
 	}
 	

@@ -152,10 +152,6 @@ class FlxTilemapExt extends FlxTilemap
 		var tileID:Int;
 		var drawX:Float;
 		var drawY:Float;
-		
-		var drawItem:DrawStackItem = Camera.getDrawStackItem(cachedGraphics, false, 0);
-		var currDrawData:Array<Float> = drawItem.drawData;
-		var currIndex:Int = drawItem.position;
 		#end
 		
 		// Copy tile images into the tile buffer
@@ -291,18 +287,10 @@ class FlxTilemapExt extends FlxTilemap
 					drawX += MATRIX.tx;
 					drawY += MATRIX.ty;
 					
-					currDrawData[currIndex++] = Math.floor(drawX) + 0.01;
-					currDrawData[currIndex++] = Math.floor(drawY) + 0.01;
-					currDrawData[currIndex++] = tileID;
+					_point.set(Math.floor(drawX) + 0.01, Math.floor(drawY) + 0.01);
 					
-					
-					currDrawData[currIndex++] = MATRIX.a; 
-					currDrawData[currIndex++] = MATRIX.b;
-					currDrawData[currIndex++] = MATRIX.c;
-					currDrawData[currIndex++] = MATRIX.d; 
-					
-					// Alpha
-					currDrawData[currIndex++] = alpha; 
+					var drawItem:DrawStackItem = Camera.getDrawStackItem(cachedGraphics, false, 0);
+					drawItem.setDrawData(_point, tileID, MATRIX.a, MATRIX.b, MATRIX.c, MATRIX.d);
 				}
 				#end
 				
@@ -315,10 +303,6 @@ class FlxTilemapExt extends FlxTilemap
 			_flashPoint.y += _tileHeight;
 			row++;
 		}
-		
-		#if FLX_RENDER_TILE
-		drawItem.position = currIndex;
-		#end
 		
 		Buffer.x = screenXInTiles * _tileWidth;
 		Buffer.y = screenYInTiles * _tileHeight;

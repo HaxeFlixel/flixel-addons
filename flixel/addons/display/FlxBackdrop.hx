@@ -161,36 +161,20 @@ class FlxBackdrop extends FlxSprite
 				return;
 			}
 			
-			var currDrawData:Array<Float>;
-			var currIndex:Int;
 			var drawItem:DrawStackItem = camera.getDrawStackItem(cachedGraphics, false, 0);
 			
-			currDrawData = drawItem.drawData;
-			currIndex = drawItem.position;
-			
-			var currPosInArr:Int;
-			var currTileX:Float;
-			var currTileY:Float;
-			
-			for (j in 0...(_numTiles))
+			for (j in 0..._numTiles)
 			{
-				currPosInArr = j * 2;
-				currTileX = _tileInfo[currPosInArr];
-				currTileY = _tileInfo[currPosInArr + 1];
-				currDrawData[currIndex++] = (_ppoint.x) + currTileX;
-				currDrawData[currIndex++] = (_ppoint.y) + currTileY;
-				currDrawData[currIndex++] = _tileID;
+				drawItem.position = j * 2;
 				
-				currDrawData[currIndex++] = 1;
-				currDrawData[currIndex++] = 0;
-				currDrawData[currIndex++] = 0;
-				currDrawData[currIndex++] = 1;
-				
-				// Alpha
-				currDrawData[currIndex++] = 1.0;	
+				var currTileX = _tileInfo[drawItem.position];
+				var currTileY = _tileInfo[drawItem.position + 1];
+				_ppoint.x = currTileX;
+				_ppoint.y = currTileY;
+				_point.copyFromFlash(_ppoint);
+		
+				setDrawData(drawItem, camera, 1, 0, 0, 1, _tileID);
 			}
-			
-			drawItem.position = currIndex;
 		#end
 		}
 	}

@@ -67,12 +67,6 @@ class FlxSkewedSprite extends FlxSprite
 			calcFrame();
 		}
 		
-		#if FLX_RENDER_TILE
-		var drawItem:DrawStackItem;
-		var currDrawData:Array<Float>;
-		var currIndex:Int;
-		#end
-		
 		var radians:Float;
 		var cos:Float;
 		var sin:Float;
@@ -83,20 +77,11 @@ class FlxSkewedSprite extends FlxSprite
 			{
 				continue;
 			}
+
+			getScreenPosition(_point, camera).subtractPoint(offset);
 			
-		#if FLX_RENDER_TILE
-			drawItem = camera.getDrawStackItem(cachedGraphics, isColored, _blendInt, antialiasing);
-			currDrawData = drawItem.drawData;
-			currIndex = drawItem.position;
-			
-			_point.x = x - (camera.scroll.x * scrollFactor.x) - (offset.x);
-			_point.y = y - (camera.scroll.y * scrollFactor.y) - (offset.y);
-			
-			_point.x = (_point.x) + origin.x;
-			_point.y = (_point.y) + origin.y;
-		#else
-			_point.x = x - (camera.scroll.x * scrollFactor.x) - (offset.x);
-			_point.y = y - (camera.scroll.y * scrollFactor.y) - (offset.y);
+		#if FLX_RENDER_TILE	
+			_point.addPoint(origin);
 		#end
 		
 #if FLX_RENDER_BLIT
@@ -177,25 +162,10 @@ class FlxSkewedSprite extends FlxSprite
 				csy = matrixToUse.d;
 			}
 			
-			currDrawData[currIndex++] = _point.x - x2;
-			currDrawData[currIndex++] = _point.y - y2;
+			_point.subtract(x2, y2);
 			
-			currDrawData[currIndex++] = frame.tileID;
-			
-			currDrawData[currIndex++] = csx;
-			currDrawData[currIndex++] = ssy;
-			currDrawData[currIndex++] = ssx;
-			currDrawData[currIndex++] = csy;
-			
-			if (isColored)
-			{
-				currDrawData[currIndex++] = color.redFloat; 
-				currDrawData[currIndex++] = color.greenFloat;
-				currDrawData[currIndex++] = color.blueFloat;
-			}
-			currDrawData[currIndex++] = alpha;
-			
-			drawItem.position = currIndex;
+			var drawItem = camera.getDrawStackItem(cachedGraphics, isColored, _blendInt, antialiasing);
+			setDrawData(drawItem, camera, csx, ssy, ssx, csy);
 #end
 			#if !FLX_NO_DEBUG
 			FlxBasic.activeCount++;
