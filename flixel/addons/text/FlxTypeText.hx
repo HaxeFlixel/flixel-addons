@@ -7,7 +7,7 @@ import flixel.text.FlxText;
 import flixel.system.FlxSound;
 import flixel.math.FlxRandom;
 
-#if !js
+#if !bitfive
 import flash.media.Sound;
 
 #if !flash
@@ -68,7 +68,7 @@ class FlxTypeText extends FlxText
 	 */
 	public var sounds:Array<FlxSound>;
 	/**
-	 * Whether or not to use the default typing sound.
+	 * Whether or not to use the default typing sound. Not available for openfl-bitfive.
 	 */
 	public var useDefaultSound:Bool = false;
 	/**
@@ -190,10 +190,12 @@ class FlxTypeText extends FlxText
 			completeCallback = Callback;
 		}
 		
+		#if !bitfive
 		if (useDefaultSound)
 		{
 			loadDefaultSound();
 		}
+		#end
 	}
 	
 	/**
@@ -233,10 +235,12 @@ class FlxTypeText extends FlxText
 			eraseCallback = Callback;
 		}
 		
+		#if !bitfive
 		if (useDefaultSound)
 		{
 			loadDefaultSound();
 		}
+		#end
 	}
 	
 	/**
@@ -389,7 +393,9 @@ class FlxTypeText extends FlxText
 				}
 				else if (useDefaultSound)
 				{
+					#if !bitfive
 					_sound.play(true);
+					#end
 				}
 			}
 		}
@@ -451,22 +457,15 @@ class FlxTypeText extends FlxText
 		}
 	}
 	
+	#if !bitfive
 	private function loadDefaultSound():Void
 	{
-		#if !js
 		#if !FLX_NO_SOUND_SYSTEM
 		_sound = FlxG.sound.load(new TypeSound());
 		#else
 		_sound = new FlxSound();
 		_sound.loadEmbedded(new TypeSound());
 		#end
-		#else
-		#if !FLX_NO_SOUND_SYSTEM
-		_sound = FlxG.sound.load(FlxAssets.getSound("assets/sounds/type"));
-		#else
-		_sound = new FlxSound();
-		_sound.loadEmbedded(FlxAssets.getSound("assets/sounds/type"));
-		#end
-		#end
 	}
+	#end
 }
