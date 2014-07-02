@@ -28,6 +28,7 @@ import flixel.util.helpers.FlxRange;
  * @author Touch added by Impaler / Beeblerox
  * 
  * TODO: Angled bullets
+ * TODO: multishot
  * TODO: Baked Rotation support for angled bullets
  * TODO: Bullet death styles (particle effects)
  * TODO: Bullet trails - blur FX style and Missile Command "draw lines" style? (could be another FX plugin)
@@ -96,9 +97,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public var positionOffset(default, null):FlxPoint;
 	
-	//TODO not being used in orginal code
-	public var multiShot:Int = 0;
-	
 	public var fireFrom:FlxWeaponFireFrom;
 	public var speedMode:FlxWeaponSpeedMode;
 	
@@ -107,11 +105,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * The bullet will be killed once it passes this lifespan, if still alive and in bounds.
 	 */
 	public var bulletLifeSpan:FlxBounds<Float>;
-	
-	/**
-	 * The damage of the bullet.
-	 */
-	public var bulletDamage:Float = 1;
 	
 	/**
 	 * The elasticity of the fired bullet controls how much it rebounds off collision surfaces.
