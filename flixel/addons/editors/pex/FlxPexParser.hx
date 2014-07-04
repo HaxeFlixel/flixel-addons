@@ -23,11 +23,15 @@ class FlxPexParser
 	 *  - Blend functions aren't supported. The default blend mode is ADD.
 	 * @param	pexFile			The pex file
 	 * @param	particleGraphic	The particle graphic
+	 * @param	emitter			(optional) A FlxEmitter. Most properties will be overwritten!
 	 * @return	A new emitter	
 	 */
-	public static function parse(pexFile:String, particleGraphic:FlxGraphicAsset):FlxEmitter
+	public static function parse<T:FlxEmitter>(pexFile:String, particleGraphic:FlxGraphicAsset, ?emitter:T):T
 	{
-		var emitter:FlxEmitter = new FlxEmitter();
+		if (emitter == null)
+		{
+			emitter = cast new FlxEmitter();
+		}
 
 		// Need to extract the particle graphic information
 		var particle:FlxParticle = new FlxParticle();
