@@ -37,7 +37,13 @@ class FlxPexParser
 		var particle:FlxParticle = new FlxParticle();
 		particle.loadGraphic(particleGraphic);
 		
-		var config:Fast = new Fast(Xml.parse(Assets.getText(pexFile)).firstElement());
+		var str = Assets.getText(pexFile);
+		if (str == null || str.length <= 0) 
+		{
+			throw 'The file "${pexFile}" doesn\'t exists.';
+		}
+		
+		var config:Fast = new Fast(Xml.parse(str).firstElement());
 		
 		var emitterType = Std.parseInt(config.node.emitterType.att.value);
 		if (emitterType != PexEmitterType.GRAVITY)
