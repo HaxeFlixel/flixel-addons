@@ -6,6 +6,7 @@ import flixel.FlxG;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import haxe.xml.Fast;
+import haxe.xml.Parser;
 import openfl.Assets;
 import openfl.display.BlendMode;
 
@@ -21,34 +22,28 @@ class FlxPexParser
 	 *  - It only supports the "Gravity" emitter type.
 	 *  - Tangential and radial acceleration aren't supported.
 	 *  - Blend functions aren't supported. The default blend mode is ADD.
-	 * @param	pexFile			The pex file
+	 * @param	data			The data to be parsed. It has to be an ID to the assets file, a file embedded with @:file(), a string with the content of the file or a XML object.
 	 * @param	particleGraphic	The particle graphic
 	 * @param	emitter			(optional) A FlxEmitter. Most properties will be overwritten!
 	 * @return	A new emitter	
 	 */
-	public static function parse<T:FlxEmitter>(pexFile:String, particleGraphic:FlxGraphicAsset, ?emitter:T):T
+	public static function parse<T:FlxEmitter>(data:Dynamic, particleGraphic:FlxGraphicAsset, ?emitter:T):T
 	{
 		if (emitter == null)
 		{
 			emitter = cast new FlxEmitter();
 		}
+		
+		var config:Fast = getFastNode(data);
 
 		// Need to extract the particle graphic information
 		var particle:FlxParticle = new FlxParticle();
 		particle.loadGraphic(particleGraphic);
 		
-		var str = Assets.getText(pexFile);
-		if (str == null || str.length <= 0) 
-		{
-			throw 'The file "${pexFile}" doesn\'t exists.';
-		}
-		
-		var config:Fast = new Fast(Xml.parse(str).firstElement());
-		
 		var emitterType = Std.parseInt(config.node.emitterType.att.value);
 		if (emitterType != PexEmitterType.GRAVITY)
 		{
-			FlxG.log.warn("FlxPexParser: This emitter type isn't supported. Only 'Gravity' emitter type is supported.");
+			FlxG.log.warn("FlxPexParser: This emitter type isn't supported. Only the 'Gravity' emitter type is supported.");
 		}
 		
 		var maxParticles:Int = Std.parseInt(config.node.maxParticles.att.value);
@@ -153,6 +148,53 @@ class FlxPexParser
 			minColor: FlxColor.fromRGBFloat(minR - varR, minG - varG, minB - varB, minA - varA),
 			maxColor: FlxColor.fromRGBFloat(minR + varR, minG + varG, minB + varB, minA + varA)
 		};
+	}
+	
+	private static function getFastNode(data:Dynamic):Fast
+	{
+		var str:String = "";
+		var firstElement:Xml = null;
+		
+		// data embedded with @:file
+		if (Std.is(data, Class)) 
+		{
+			str = Type.createInstance(data, []);
+		}
+		// data is a XML object
+		else if (Std.is(data, Xml)) 
+		{
+			firstElement = data.firstElement();
+		}
+		// data is an ID or the content
+		else if (Std.is(data, String)) 
+		{
+			// is the pexFile an ID to an asset or the content of the file?
+			if (Assets.exists(data))
+			{
+				str = Assets.getText(data);
+			}
+			else
+			{
+				str = data;
+			}
+		}
+		else
+		{
+			throw 'Unknown input data format. It has to be an ID to the assets file, a file embedded with @:file(), a string with the content of the file or a XML object.';
+		}
+		
+		// the data wasn't a XML object.
+		if (firstElement == null)
+		{
+			firstElement = Parser.parse(str).firstElement();
+		}
+		
+		if (firstElement == null || firstElement.nodeName != "particleEmitterConfig") 
+		{
+			throw 'The input data is incorrect.';
+		}
+		
+		return new Fast(firstElement);
 	}
 }
 
