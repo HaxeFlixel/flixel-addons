@@ -204,18 +204,18 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		switch (fireFrom)
 		{
 			case PARENT(parent, offset):
-				currentBullet.last.x = currentBullet.x = parent.x + FlxRandom.float(offset.min.x, offset.max.x);
-				currentBullet.last.y = currentBullet.y = parent.y + FlxRandom.float(offset.min.y, offset.max.y);
+				currentBullet.last.x = currentBullet.x = parent.x + FlxG.random.float(offset.min.x, offset.max.x);
+				currentBullet.last.y = currentBullet.y = parent.y + FlxG.random.float(offset.min.y, offset.max.y);
 				
 			case POSITION(position):
-				currentBullet.last.x = currentBullet.x = FlxRandom.float(position.min.x, position.max.x);
-				currentBullet.last.y = currentBullet.y = FlxRandom.float(position.min.y, position.max.y);
+				currentBullet.last.x = currentBullet.x = FlxG.random.float(position.min.x, position.max.x);
+				currentBullet.last.y = currentBullet.y = FlxG.random.float(position.min.y, position.max.y);
 		}
 		
 		currentBullet.exists = true;
 		currentBullet.bounds = bounds;
 		currentBullet.elasticity = bulletElasticity;
-		currentBullet.lifespan = FlxRandom.float(bulletLifeSpan.min, bulletLifeSpan.max);
+		currentBullet.lifespan = FlxG.random.float(bulletLifeSpan.min, bulletLifeSpan.max);
 		
 		switch(Mode)
 		{
@@ -230,13 +230,13 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 				p.put();
 				
 			case FIRE_FROM_ANGLE(angle):
-				internalFireFromAngle(currentBullet, FlxRandom.float(angle.min, angle.max));
+				internalFireFromAngle(currentBullet, FlxG.random.float(angle.min, angle.max));
 				
 			case FIRE_FROM_PARENT_ANGLE(angle):
-				internalFireFromAngle(currentBullet, parent.angle + FlxRandom.float(angle.min, angle.max));
+				internalFireFromAngle(currentBullet, parent.angle + FlxG.random.float(angle.min, angle.max));
 				
 			case FIRE_FROM_PARENT_FACING(angle):
-				internalFireFromAngle(currentBullet, FlxAngle.angleFromFacing(parent) + FlxRandom.float(angle.min, angle.max));
+				internalFireFromAngle(currentBullet, FlxAngle.angleFromFacing(parent) + FlxG.random.float(angle.min, angle.max));
 				
 			#if !FLX_NO_TOUCH
 			case FIRE_AT_TOUCH(touch):
@@ -424,14 +424,14 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		switch(speedMode)
 		{
 			case SPEED(speed):
-				FlxVelocity.moveTowardsPoint(bullet, point, FlxRandom.float(speed.min, speed.max));
+				FlxVelocity.moveTowardsPoint(bullet, point, FlxG.random.float(speed.min, speed.max));
 				
 			case ACCELERATION(acceleration, maxSpeed):
 				FlxVelocity.accelerateTowardsPoint(
 					bullet, 
 					point,
-					FlxRandom.float(acceleration.min, acceleration.max),
-					FlxRandom.float(maxSpeed.min, maxSpeed.max)
+					FlxG.random.float(acceleration.min, acceleration.max),
+					FlxG.random.float(maxSpeed.min, maxSpeed.max)
 				);
 		}
 		
@@ -447,7 +447,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		{
 			case SPEED(speed):
 				//TODO need to create a function: FlxVelocity.moveFromAngle(radians, speed);
-				var velocity = FlxVelocity.velocityFromAngle(FlxAngle.asDegrees(radians), FlxRandom.float(speed.min, speed.max));
+				var velocity = FlxVelocity.velocityFromAngle(FlxAngle.asDegrees(radians), FlxG.random.float(speed.min, speed.max));
 				bullet.velocity.x = velocity.x;
 				bullet.velocity.y = velocity.y;
 				
@@ -455,8 +455,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 				FlxVelocity.accelerateFromAngle(
 					bullet, 
 					radians, 
-					FlxRandom.float(acceleration.min, acceleration.max),
-					FlxRandom.float(maxSpeed.min, maxSpeed.max)
+					FlxG.random.float(acceleration.min, acceleration.max),
+					FlxG.random.float(maxSpeed.min, maxSpeed.max)
 				);
 		}
 		

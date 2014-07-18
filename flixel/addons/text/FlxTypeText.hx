@@ -370,11 +370,11 @@ class FlxTypeText extends FlxText
 				{
 					if (_typing)
 					{
-						_timer = FlxRandom.float( -delay * _typeVarPercent / 2, delay * _typeVarPercent / 2);
+						_timer = FlxG.random.float( -delay * _typeVarPercent / 2, delay * _typeVarPercent / 2);
 					}
 					else
 					{
-						_timer = FlxRandom.float( -eraseDelay * _typeVarPercent / 2, eraseDelay * _typeVarPercent / 2);
+						_timer = FlxG.random.float( -eraseDelay * _typeVarPercent / 2, eraseDelay * _typeVarPercent / 2);
 					}
 				}
 				else
@@ -389,7 +389,7 @@ class FlxTypeText extends FlxText
 						sound.stop();
 					}
 					
-					FlxRandom.getObject(sounds).play(true);
+					FlxG.random.getObject(sounds).play(true);
 				}
 				else if (useDefaultSound)
 				{
