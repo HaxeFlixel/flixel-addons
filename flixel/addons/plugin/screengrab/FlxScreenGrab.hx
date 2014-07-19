@@ -1,6 +1,6 @@
 package flixel.addons.plugin.screengrab;
 
-#if sys
+#if (sys && systools)
 import systools.Dialogs;
 #end
 
@@ -156,11 +156,11 @@ class FlxScreenGrab extends FlxBasic
 			Filename = Filename + ".png";
 		}
 		
-		#if flash
+	#if !sys
 		var png:ByteArray = PNGEncoder.encode(screenshot.bitmapData);
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
-		#else
+	#elseif systools
 		var png:ByteArray = screenshot.bitmapData.encode('x');
 		var path:String = "";
 		var documentsDirectory = "";
@@ -181,7 +181,9 @@ class FlxScreenGrab extends FlxBasic
 			f.writeString(png.readUTFBytes(png.length));
 			f.close();
 		}
-		#end
+	#else // sys target but no systools installed
+		FlxG.log.error("You need to include the 'systools' to use the save file dialog (or disable the SaveToFile option)");
+	#end
 	}
 	
 	override public function update():Void

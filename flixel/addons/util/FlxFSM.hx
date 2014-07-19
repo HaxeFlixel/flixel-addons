@@ -669,9 +669,9 @@ class FlxFSMTransitionTable<T>
 	
 	/**
 	 * Tells if the table contains specific transition or transitions.
-	 * @param	?From	From State
-	 * @param	?To		To State
-	 * @param	?Condition	Condition function
+	 * @param	From	From State
+	 * @param	To		To State
+	 * @param	Condition	Condition function
 	 * @return	True if match found
 	 */
 	public function hasTransition(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:T->Bool):Bool
