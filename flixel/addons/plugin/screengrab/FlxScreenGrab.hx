@@ -1,7 +1,6 @@
 package flixel.addons.plugin.screengrab;
-import flixel.input.keyboard.FlxKey;
 
-#if sys
+#if (sys && systools)
 import systools.Dialogs;
 #end
 
@@ -13,6 +12,7 @@ import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 import flixel.addons.util.PNGEncoder;
 import flixel.FlxG;
+import flixel.input.keyboard.FlxKey;
 
 #if flash
 import flash.net.FileReference;
@@ -117,10 +117,6 @@ class FlxScreenGrab extends FlxBasic
 		}
 		#end
 		
-		#if !FLX_RENDER_BLIT
-			trace("FLX_RENDER_BLIT is false");
-		#end
-		
 		theBitmap.bitmapData.draw(FlxG.stage, m);
 		
 		#if !FLX_NO_MOUSE
@@ -160,11 +156,11 @@ class FlxScreenGrab extends FlxBasic
 			Filename = Filename + ".png";
 		}
 		
-		#if flash
+	#if !sys
 		var png:ByteArray = PNGEncoder.encode(screenshot.bitmapData);
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
-		#else
+	#elseif systools
 		var png:ByteArray = screenshot.bitmapData.encode('x');
 		var path:String = "";
 		var documentsDirectory = "";
@@ -172,7 +168,7 @@ class FlxScreenGrab extends FlxBasic
 		try
 		{
 			documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
-			path = Dialogs.saveFile("", "", documentsDirectory);
+			path = Dialogs.saveFile("", "", "", { count:1, descriptions:["png files"], extensions:["*.png"] } );
 		}
 		catch (msg:String)
 		{
@@ -185,7 +181,9 @@ class FlxScreenGrab extends FlxBasic
 			f.writeString(png.readUTFBytes(png.length));
 			f.close();
 		}
-		#end
+	#else // sys target but no systools installed
+		FlxG.log.error("You need to include the 'systools' to use the save file dialog (or disable the SaveToFile option)");
+	#end
 	}
 	
 	override public function update():Void

@@ -165,7 +165,6 @@ class FlxExtendedSprite extends FlxSprite
 	private var _clickPixelPerfectAlpha:Int;
 	private var _clickCounter:Int = 0;
 	
-	private var _rect:FlxRect; 
 	private var _throwXFactor:Int;
 	private var _throwYFactor:Int;
 	
@@ -187,8 +186,6 @@ class FlxExtendedSprite extends FlxSprite
 	 */
 	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset)
 	{
-		_rect = FlxRect.get();
-		
 		super(X, Y, SimpleGraphic);
 	}
 	

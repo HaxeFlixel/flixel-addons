@@ -1,8 +1,10 @@
 package flixel.addons.effects;
 
+import flixel.animation.FlxAnimation;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.system.FlxAssets;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
@@ -14,7 +16,7 @@ import flixel.math.FlxPoint;
  * Feel free to use this class and adjust it to your needs.
  * @author Gama11
  */
-class FlxTrail extends FlxTypedGroup<FlxSprite>
+class FlxTrail extends FlxSpriteGroup
 {		
 	/**
 	 * Stores the FlxSprite the trail is attached to.
@@ -44,10 +46,6 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	 * Whether to check for frame changes of the "parent" FlxSprite or not.
 	 */
 	public var framesEnabled:Bool = true;
-	/**
-	 * Determines whether trailsprites are solid or not. False by default.
-	 */
-	public var solid(default, set):Bool = false;
 	
 	/**
 	 *  Counts the frames passed.
@@ -69,26 +67,14 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	 *  How much lower the alpha value of the next trailsprite is.
 	 */
 	private var _difference:Float;
-	/**
-	 *  Stores the sprites recent positions.
-	 */
-	private var _recentPositions:Array<FlxPoint>;
-	/**
-	 *  Stores the sprites recent angles.
-	 */
-	private var _recentAngles:Array<Float>;
-	/**
-	 *  Stores the sprites recent scale.
-	 */
-	private var _recentScales:Array<FlxPoint>;
-	/**
-	 *  Stores the sprites recent frame.
-	 */
-	private var _recentFrames:Array<Int>;
-	/**
-	 *  Stores the sprites recent facing.
-	 */
-	private var _recentFacings:Array<Int>;
+
+	private var _recentPositions:Array<FlxPoint> = [];
+	private var _recentAngles:Array<Float> = [];
+	private var _recentScales:Array<FlxPoint> = [];
+	private var _recentFrames:Array<Int> = [];
+	private var _recentFacings:Array<Int> = [];
+	private var _recentAnimations:Array<FlxAnimation> = [];
+	
 	/**
 	 *  Stores the sprite origin (rotation axis)
 	 */
@@ -98,22 +84,18 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	 * Creates a new FlxTrail effect for a specific FlxSprite.
 	 * 
 	 * @param	Sprite		The FlxSprite the trail is attached to.
-	 * @param  	Graphic   	The image to ues for the trailsprites. Optional, uses the sprite's graphic if null.
+	 * @param  	Graphic		The image to ues for the trailsprites. Optional, uses the sprite's graphic if null.
 	 * @param	Length		The amount of trailsprites to create. 
 	 * @param	Delay		How often to update the trail. 0 updates every frame.
 	 * @param	Alpha		The alpha value for the very first trailsprite.
 	 * @param	Diff		How much lower the alpha of the next trailsprite is.
 	 */
-	public function new(Sprite:FlxSprite, ?Graphic:FlxGraphicAsset, Length:Int = 10, Delay:Int = 3, Alpha:Float = 0.4, Diff:Float = 0.05):Void
+	public function new(Sprite:FlxSprite, ?Graphic:FlxGraphicAsset, Length:Int = 10, Delay:Int = 3, 
+		Alpha:Float = 0.4, Diff:Float = 0.05):Void
 	{
 		super();
 
-		_recentAngles = new Array<Float>();
-		_recentPositions = new Array<FlxPoint>();
-		_recentScales = new Array<FlxPoint>();
-		_recentFrames = new Array<Int>();
-		_recentFacings = new Array<Int>();
-		_spriteOrigin = FlxPoint.get(Sprite.origin.x, Sprite.origin.y);
+		_spriteOrigin = FlxPoint.get().copyFrom(Sprite.origin);
 
 		// Sync the vars 
 		sprite = Sprite;
@@ -129,21 +111,15 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 	
 	override public function destroy():Void
 	{
-		for (position in _recentPositions)
-		{
-			position = FlxDestroyUtil.put(position);
-		}
-		
-		for (scale in _recentScales)
-		{
-			scale = FlxDestroyUtil.put(scale);
-		}
+		FlxDestroyUtil.putArray(_recentPositions);
+		FlxDestroyUtil.putArray(_recentScales);
 		
 		_recentAngles = null;
 		_recentPositions = null;
 		_recentScales = null;
 		_recentFrames = null;
 		_recentFacings = null;
+		_recentAnimations = null;
 		_spriteOrigin = null;
 		
 		sprite = null;
@@ -227,6 +203,12 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 				{
 					_recentFacings.pop();
 				}
+				
+				_recentAnimations.unshift(sprite.animation.curAnim);
+				if (_recentAnimations.length > _trailLength)
+				{
+					_recentAnimations.pop();
+				}
 			}
 
 			// Now we need to update the all the Trailsprites' values
@@ -258,6 +240,8 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 				{
 					trailSprite.animation.frameIndex = _recentFrames[i];
 					trailSprite.facing = _recentFacings[i];
+					
+					trailSprite.animation.curAnim = _recentAnimations[i];
 				}
 
 				// Is the trailsprite even visible?
@@ -275,6 +259,7 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 		_recentScales.splice(0, _recentScales.length);
 		_recentFrames.splice(0, _recentFrames.length);
 		_recentFacings.splice(0, _recentFacings.length);
+		_recentAnimations.splice(0, _recentAnimations.length);
 		
 		for (i in 0...members.length) 
 		{
@@ -355,14 +340,5 @@ class FlxTrail extends FlxTypedGroup<FlxSprite>
 		xEnabled = X;
 		yEnabled = Y;
 		scalesEnabled = Scale;
-	}
-	
-	private function set_solid(Value:Bool):Bool
-	{
-		for (i in 0..._trailLength)
-		{
-			members[i].solid = Value; 
-		}
-		return solid = Value;
 	}
 }

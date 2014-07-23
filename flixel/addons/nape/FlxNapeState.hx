@@ -60,9 +60,14 @@ class FlxNapeState extends FlxState
 	public var positionIterations:Int = 10;
 	
 	/**
-	 * Whether the nape debug graphics are enabled or not.
+	 * Whether or not the nape debug graphics are enabled.
 	 */
 	public var napeDebugEnabled(default, set):Bool;
+	
+	/**
+	 * Whether or not a physics step is executed in update()
+	 */
+	public var napePhysicsEnabled:Bool = true;
 	
 	#if !FLX_NO_DEBUG
 	/**
@@ -143,7 +148,10 @@ class FlxNapeState extends FlxState
 	 */
 	override public function update():Void
 	{
-		space.step(FlxG.elapsed, velocityIterations, positionIterations);
+		if (napePhysicsEnabled)
+		{
+			space.step(FlxG.elapsed, velocityIterations, positionIterations);
+		}
 		super.update();
 	}
 
@@ -155,7 +163,7 @@ class FlxNapeState extends FlxState
 		super.draw();
 		
 		#if !FLX_NO_DEBUG
-		drawPhysDebug();
+			drawPhysDebug();
 		#end
 	}
 

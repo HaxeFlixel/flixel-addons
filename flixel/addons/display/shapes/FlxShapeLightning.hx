@@ -85,8 +85,8 @@ class FlxShapeLightning extends FlxShapeLine
 			var mid:FlxPoint = FlxPoint.get();
 			mid.x = (A.x + B.x) / 2;
 			mid.y = (A.y + B.y) / 2;
-			var dispX:Float = FlxRandom.floatRanged( -0.5, 0.5); 
-			var dispY:Float = FlxRandom.floatRanged( -0.5, 0.5);
+			var dispX:Float = FlxG.random.float( -0.5, 0.5); 
+			var dispY:Float = FlxG.random.float( -0.5, 0.5);
 			mid.x += dispX * Displacement;
 			mid.y += dispY * Displacement;
 			calculate(A, mid, Displacement / 2, Iteration);
