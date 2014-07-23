@@ -165,14 +165,10 @@ class FlxBackdrop extends FlxSprite
 			
 			for (j in 0..._numTiles)
 			{
-				drawItem.position = j * 2;
+				var currTileX = _tileInfo[j * 2];
+				var currTileY = _tileInfo[(j * 2) + 1];
 				
-				var currTileX = _tileInfo[drawItem.position];
-				var currTileY = _tileInfo[drawItem.position + 1];
-				_ppoint.x = currTileX;
-				_ppoint.y = currTileY;
-				_point.copyFromFlash(_ppoint);
-		
+				_point.set(_ppoint.x + currTileX, _ppoint.y + currTileY);
 				setDrawData(drawItem, camera, 1, 0, 0, 1, _tileID);
 			}
 		#end
