@@ -30,7 +30,7 @@ class FlxShapeCross extends FlxShape
 	
 	private var vertices:Array<FlxPoint>;
 	
-	public function new(X:Float, Y:Float, HLength:Float, HSize:Float, VLength:Float, VSize:Float, IntersectionH:Float, IntersectionV:Float, LineStyle_:LineStyle, FillStyle_:FillStyle) 
+	public function new(X:Float, Y:Float, HLength:Float, HSize:Float, VLength:Float, VSize:Float, IntersectionH:Float, IntersectionV:Float, LineStyle_:LineStyle, FillColor:FlxColor) 
 	{
 		shape_id = "cross";
 		
@@ -51,7 +51,7 @@ class FlxShapeCross extends FlxShape
 		if (h <= 0) 
 			h = strokeBuffer;
 		
-		super(X, Y, w, h, LineStyle_, FillStyle_, horizontalLength, verticalLength);
+		super(X, Y, w, h, LineStyle_, FillColor, horizontalLength, verticalLength);
 	}
 	
 	public override function destroy():Void 
@@ -132,7 +132,7 @@ class FlxShapeCross extends FlxShape
 		_matrix.identity();
 		_matrix.translate(lineStyle.thickness / 2, lineStyle.thickness / 2);
 		
-		FlxSpriteUtil.drawPolygon(this, vertices, fillStyle.color, lineStyle, fillStyle, { matrix: _matrix });
+		FlxSpriteUtil.drawPolygon(this, vertices, fillColor, lineStyle, { matrix: _matrix });
 		
 		fixBoundaries(horizontalLength, verticalLength);
 	}

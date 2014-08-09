@@ -1,13 +1,11 @@
 package flixel.addons.display.shapes;
 
 import flash.display.BlendMode;
-import flash.display.Shape;
 import flash.geom.Matrix;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
-import flixel.util.FlxSpriteUtil.FillStyle;
-import flixel.util.FlxSpriteUtil.LineStyle;
 import flixel.util.FlxSpriteUtil.DrawStyle;
+import flixel.util.FlxSpriteUtil.LineStyle;
 
 /**
  * A convenience class for wrapping vector shape drawing in FlxSprites, all ready to go.
@@ -17,7 +15,7 @@ import flixel.util.FlxSpriteUtil.DrawStyle;
 class FlxShape extends FlxSprite
 {
 	public var lineStyle(default, set):LineStyle;		//stroke settings
-	public var fillStyle(default, set):FillStyle;		//fill settings
+	public var fillColor(default, set):FlxColor;		//fill color, FlxColor.TRANSPARENT means no fill
 	
 	public var shape_id:String;						//string id of the shape
 	public var shapeDirty:Bool = false;				//flag to flip to force it to redraw the shape
@@ -33,11 +31,11 @@ class FlxShape extends FlxSprite
 	 * @param	CanvasWidth		Width of pixel canvas
 	 * @param	CanvasHeight	Height of pixel canvas
 	 * @param	LineStyle_		Drawing style for strokes -- see flixel.util.FlxSpriteUtil.LineStyle
-	 * @param	FillStyle_		Drawing style for fills -- see flixel.util.FlxSpriteUtil.FillStyle
+	 * @param	FillColor		Color of the fill. FlxColor.TRANSPARENT means no fill.
 	 * @param	TrueWidth		Width of raw unstyled geometric object, ignoring line thickness, filters, etc
 	 * @param	TrueHeight		Height of raw unstyled geometric object, ignoring line thickness, filters, etc
 	 */
-	public function new(X:Float, Y:Float, CanvasWidth:Float, CanvasHeight:Float, LineStyle_:LineStyle, FillStyle_:FillStyle, TrueWidth:Float=0, TrueHeight:Float=0) 
+	public function new(X:Float, Y:Float, CanvasWidth:Float, CanvasHeight:Float, LineStyle_:LineStyle, FillColor:FlxColor, TrueWidth:Float=0, TrueHeight:Float=0) 
 	{
 		super(X, Y);
 		
@@ -52,7 +50,7 @@ class FlxShape extends FlxSprite
 		makeGraphic(Std.int(width), Std.int(height), FlxColor.TRANSPARENT, true);
 		
 		lineStyle = LineStyle_;
-		fillStyle = FillStyle_;
+		fillColor = FillColor;
 		
 		//we'll eventually want a public drawStyle parameter, but we'll also need an internval _drawStyle to do 
 		//some specific tricks for various shapes (special matrices, punching holes in Donut shapes by using ERASE blend mode, etc)
@@ -70,7 +68,6 @@ class FlxShape extends FlxSprite
 	override public function destroy():Void 
 	{
 		lineStyle = null;
-		fillStyle = null;
 		super.destroy();
 	}
 	
@@ -129,11 +126,11 @@ class FlxShape extends FlxSprite
 		return lineStyle;
 	}
 	
-	private inline function set_fillStyle(fs:FillStyle):FillStyle 
+	private inline function set_fillColor(fc:FlxColor):FlxColor 
 	{
-		fillStyle = fs;
+		fillColor = fc;
 		shapeDirty = true;
-		return fillStyle;
+		return fillColor;
 	}
 	
 	private function getStrokeOffsetMatrix(matrix:Matrix):Matrix

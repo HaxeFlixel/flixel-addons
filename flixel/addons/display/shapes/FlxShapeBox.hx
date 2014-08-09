@@ -3,6 +3,7 @@ package flixel.addons.display.shapes;
 import flash.display.BitmapData;
 import flash.display.Shape;
 import flash.geom.Matrix;
+import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
 
@@ -16,7 +17,7 @@ class FlxShapeBox extends FlxShape
 	 * Creates a FlxSprite with a circle drawn on top of it. 
 	 * X/Y is where the SPRITE is, the circle's upper-left
 	 */
-	public function new(X:Float, Y:Float, W:Float, H:Float, LineStyle_:LineStyle, FillStyle_:FillStyle) 
+	public function new(X:Float, Y:Float, W:Float, H:Float, LineStyle_:LineStyle, FillColor:FlxColor) 
 	{
 		shape_id = "box";
 		
@@ -32,12 +33,12 @@ class FlxShapeBox extends FlxShape
 		if (h <= 0) 
 			h = strokeBuffer;
 		
-		super(X, Y, w, h, LineStyle_, FillStyle_, shapeWidth, shapeHeight);
+		super(X, Y, w, h, LineStyle_, FillColor, shapeWidth, shapeHeight);
 	}
 	
 	override public function drawSpecificShape(?matrix:Matrix):Void 
 	{
-		FlxSpriteUtil.drawRect(this, lineStyle.thickness/2, lineStyle.thickness/2, shapeWidth, shapeHeight, fillStyle.color, lineStyle);
+		FlxSpriteUtil.drawRect(this, lineStyle.thickness/2, lineStyle.thickness/2, shapeWidth, shapeHeight, fillColor, lineStyle);
 	}
 	
 	private inline function set_shapeWidth(f:Float):Float
