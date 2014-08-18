@@ -10,7 +10,7 @@ import flixel.system.layer.frames.FlxSpriteFrames;
 import flixel.util.FlxTimer;
 
 /**
- * FlxTransitionSprite
+ * 
  * @author Tim Hely
  */
 class FlxTransitionSprite extends FlxSprite
