@@ -31,16 +31,7 @@ class FlxTransition extends FlxSubState
 	public function new() 
 	{
 		super(FlxColor.TRANSPARENT);
-		
-		counter = 0;
-		maxCounter = 5;
-		
-		back = new FlxSprite();
-		back.makeGraphic(FlxG.width, FlxG.height, 0xFFFF0000);
-		add(back);
-		
-		/*_grpSprites = new FlxTypedGroup<FlxTransitionSprite>();
-		
+		_grpSprites = new FlxTypedGroup<FlxTransitionSprite>();
 		var delay:Float = 0;
 		var tx:Int = 0;
 		var ty:Int = 0;
@@ -61,12 +52,20 @@ class FlxTransition extends FlxSubState
 			yloops++;
 			delay = 0 + (yloops * .008);
 		}
-		add(_grpSprites);*/
-		_started = false;
+		add(_grpSprites);
+	}
+	
+	public override function create():Void {
+		super.create();
 	}
 	
 	public function start(NewStatus:TransitionStatus):Void
 	{
+		trace("START : " + NewStatus);
+		_started = true;
+		counter = 0;
+		maxCounter = 1;
+		
 		if (NewStatus == TransitionStatus.TRANS_IN)
 		{
 			_endStatus = TransitionStatus.TRANS_ON;
@@ -75,14 +74,8 @@ class FlxTransition extends FlxSubState
 		{
 			_endStatus = TransitionStatus.TRANS_OFF;
 		}
-		
-		counter = 0;
-		_started = true;
-		
-		/*back.alpha = startAlpha;
-		FlxTween.tween(back, {"alpha":endAlpha}, 1, {complete:onComplete});*/
 	
-		/*_grpSprites.forEach(function(t:FlxTransitionSprite) { t.start(NewStatus); } );*/
+		_grpSprites.forEach(function(t:FlxTransitionSprite) { t.start(NewStatus); } );
 		
 	}
 	
@@ -99,13 +92,16 @@ class FlxTransition extends FlxSubState
 	
 	public function setStatus(NewStatus:TransitionStatus):Void
 	{
- 		//_grpSprites.forEach(function(t:FlxTransitionSprite) { t.setStatus(NewStatus); } );
+		//counter = 0;
+ 		_grpSprites.forEach(function(t:FlxTransitionSprite) { t.setStatus(NewStatus); } );
 	}
 	
+	/*
 	override public function update():Void
 	{
 		super.update();
 		if (_started) {
+			trace("counter = " + counter);
 			
 			if (_endStatus == TransitionStatus.TRANS_ON)
 			{
@@ -117,9 +113,7 @@ class FlxTransition extends FlxSubState
 			}
 			
 			counter += FlxG.elapsed;
-			if (Std.int(counter) != lastCount) {
-				trace("counter = " + counter);
-			}
+			
 			lastCount = Std.int(counter);
 			if (counter > maxCounter)
 			{
@@ -130,9 +124,9 @@ class FlxTransition extends FlxSubState
 				}
 			}
 		}
-	}
+	}*/
 	
-	/*override public function update():Void 
+	override public function update():Void 
 	{
 		super.update();
 		
@@ -148,6 +142,6 @@ class FlxTransition extends FlxSubState
 				}
 			}
 		}
-	}*/
+	}
 	
 }
