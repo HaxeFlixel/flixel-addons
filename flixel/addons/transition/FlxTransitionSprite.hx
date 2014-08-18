@@ -18,8 +18,8 @@ class FlxTransitionSprite extends FlxSprite
 
 	private var _delay:Float;
 	private var _timer:Float;
-	public var status:TransitionStatus = TRANS_IN;
-	private var _newStatus:TransitionStatus = TRANS_NULL;
+	public var status:TransitionStatus = IN;
+	private var _newStatus:TransitionStatus = NULL;
 	
 
 	
@@ -28,7 +28,7 @@ class FlxTransitionSprite extends FlxSprite
 		super(X, Y);
 		_delay = Delay;
 		loadGraphic(Graphic, true, GraphicWidth, GraphicHeight);
-		animation.add("off", [0], 0, false);
+		animation.add("empty", [0], 0, false);
 		
 		var inArray:Array<Int> = [];
 		var outArray:Array<Int> = [];
@@ -40,9 +40,9 @@ class FlxTransitionSprite extends FlxSprite
 		outArray.reverse();
 		
 		animation.add("in", inArray, FrameRate, false);
-		animation.add("on", [frames-1], 0, false);
+		animation.add("full", [frames-1], 0, false);
 		animation.add("out", outArray, FrameRate, false);
-		setStatus(TRANS_ON);
+		setStatus(FULL);
 		_timer = -1;
 	}
 	
@@ -52,7 +52,7 @@ class FlxTransitionSprite extends FlxSprite
 		_newStatus = NewStatus;
 	}
 
-	private function startStatus(_, NewStatus:TransitionStatus):Void
+	private function startStatus(NewStatus:TransitionStatus):Void
 	{
 		setStatus(NewStatus);
 	}
@@ -60,17 +60,13 @@ class FlxTransitionSprite extends FlxSprite
 	
 	public function setStatus(Status:TransitionStatus):Void
 	{
-		var anim:String="off";
+		var anim:String="empty";
 		switch (Status) 
 		{
-			case TRANS_IN:
-				anim = "in";
-			case TRANS_OUT:
-				anim = "out";
-			case TRANS_OFF,TRANS_NULL:
-				anim = "off";
-			case TRANS_ON:
-				anim = "on";
+			case IN:	anim = "in";
+			case OUT:	anim = "out";
+			case EMPTY,NULL:	anim = "empty";
+			case FULL:	anim = "full";
 		}
 		
 		animation.play(anim);
@@ -86,17 +82,15 @@ class FlxTransitionSprite extends FlxSprite
 			if (_timer < 0)
 			{
 				setStatus(_newStatus);
-				_newStatus = TRANS_NULL;
+				_newStatus = NULL;
 			}
 		}
 		if (animation.finished)
 		{
 			switch (status) 
 			{
-				case TRANS_IN:
-					setStatus(TRANS_ON);
-				case TRANS_OUT:
-					setStatus(TRANS_OFF);
+				case IN:	setStatus(FULL);
+				case OUT:	setStatus(EMPTY);
 				default:
 			}
 		}
@@ -107,9 +101,9 @@ class FlxTransitionSprite extends FlxSprite
 @:enum
 abstract TransitionStatus(Int)
 {
-	var TRANS_IN = 0;
-	var TRANS_OUT = 1;
-	var TRANS_ON = 2;
-	var TRANS_OFF = 3;
-	var TRANS_NULL = -1;
+	var IN = 0;
+	var OUT = 1;
+	var EMPTY = 2;
+	var FULL = 3;
+	var NULL = -1;
 }

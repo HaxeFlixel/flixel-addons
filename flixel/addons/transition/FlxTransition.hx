@@ -28,7 +28,7 @@ class FlxTransition extends FlxSubState
 	
 	private var back:FlxSprite;
 	
-	public function new() 
+	public function new(data:TransitionData) 
 	{
 		super(FlxColor.TRANSPARENT);
 		_grpSprites = new FlxTypedGroup<FlxTransitionSprite>();
@@ -41,7 +41,7 @@ class FlxTransition extends FlxSubState
 		{
 			while (tx < FlxG.width)
 			{
-				_grpSprites.add(new FlxTransitionSprite(tx, ty, delay));
+				_grpSprites.add(new FlxTransitionSprite(tx, ty, delay, data.asset));
 				tx += 32;
 				xloops++;
 				delay += .008;
@@ -66,13 +66,13 @@ class FlxTransition extends FlxSubState
 		counter = 0;
 		maxCounter = 1;
 		
-		if (NewStatus == TransitionStatus.TRANS_IN)
+		if (NewStatus == IN)
 		{
-			_endStatus = TransitionStatus.TRANS_ON;
+			_endStatus = FULL;
 		}
 		else
 		{
-			_endStatus = TransitionStatus.TRANS_OFF;
+			_endStatus = EMPTY;
 		}
 	
 		_grpSprites.forEach(function(t:FlxTransitionSprite) { t.start(NewStatus); } );
@@ -95,36 +95,6 @@ class FlxTransition extends FlxSubState
 		//counter = 0;
  		_grpSprites.forEach(function(t:FlxTransitionSprite) { t.setStatus(NewStatus); } );
 	}
-	
-	/*
-	override public function update():Void
-	{
-		super.update();
-		if (_started) {
-			trace("counter = " + counter);
-			
-			if (_endStatus == TransitionStatus.TRANS_ON)
-			{
-				back.alpha = counter / maxCounter;
-			}
-			else
-			{
-				back.alpha = 1 - (counter / maxCounter);
-			}
-			
-			counter += FlxG.elapsed;
-			
-			lastCount = Std.int(counter);
-			if (counter > maxCounter)
-			{
-				_started = false;
-				if (finishCallback != null)
-				{
-					finishCallback();
-				}
-			}
-		}
-	}*/
 	
 	override public function update():Void 
 	{
