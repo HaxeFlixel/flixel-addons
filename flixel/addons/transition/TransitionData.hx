@@ -1,4 +1,6 @@
 package flixel.addons.transition;
+import com.leveluplabs.tdrpg.IDestroyable;
+import flixel.math.FlxPoint;
 import flixel.tweens.FlxTween.TweenOptions;
 import flixel.util.FlxColor;
 
@@ -15,33 +17,45 @@ typedef TransitionTileData =
 {
 	asset:String,
 	width:Int,
-	height:Int,
-	horizontal:Int,
-	vertical:Int
+	height:Int
 }
 
 /**
  * ...
  * @author larsiusprime
  */
-class TransitionData
+class TransitionData implements IDestroyable
 {
 	public var type:TransitionType;
 	public var tileData:TransitionTileData;
 	public var color:FlxColor;
 	public var duration:Float = 1.0;
+	public var direction:FlxPoint;
 	public var tweenOptions:TweenOptions;
 	
-	public function new(TransType:TransitionType=FADE,Color:FlxColor=FlxColor.WHITE,?TileData:TransitionTileData) 
+	public function destroy():Void
+	{
+		tileData = null;
+		direction = null;
+		tweenOptions.complete = null;
+		tweenOptions.ease = null;
+		tweenOptions = null;
+	}
+	
+	public function new(TransType:TransitionType=FADE,Color:FlxColor=FlxColor.WHITE,?Direction:FlxPoint,?TileData:TransitionTileData) 
 	{
 		type = TransType;
 		tileData = TileData;
 		color = Color;
+		direction = Direction;
+		if (direction == null) { direction = new FlxPoint(0, 0); }
+		if (direction.x < -1) { direction.x = -1; } if (direction.x > 1) { direction.x = 1; }
+		if (direction.y < -1) { direction.y = -1; } if (direction.y > 1) { direction.y = 1; }
 		if (TransType == TILES)
 		{
 			if (tileData == null)
 			{
-				tileData = {asset:null, vertical:1, horizontal:1, width:32, height:32};
+				tileData = {asset:null, width:32, height:32};
 			}
 			if (tileData.asset == null || tileData.asset == "")
 			{

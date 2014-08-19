@@ -1,0 +1,202 @@
+package flixel.addons.transition;
+import flash.display.BitmapData;
+import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
+import flixel.FlxSprite;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
+import flixel.util.FlxGradient;
+import openfl.Assets;
+import openfl.display.BitmapDataChannel;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+
+/**
+ * 
+ * @author larsiusprime
+ */
+class TransitionFade extends Transition
+{
+	private var back:FlxSprite;
+	private var tweenStr:String = "";
+	private var tweenStr2:String = "";
+	private var tweenValStart:Float = 0;
+	private var tweenValStart2:Float = 0;
+	private var tweenValEnd:Float = 0;
+	private var tweenValEnd2:Float = 0;
+	
+	private var lastbackx:Float = 9999999999999999999999999999;
+	
+	public function new(data:TransitionData) 
+	{
+		super(data);
+		
+		back = makeSprite(data.direction.x, data.direction.y);
+		add(back);
+	}
+	
+	public override function destroy():Void {
+		super.destroy();
+		back = null;
+	}
+	
+	public override function start(NewStatus:TransitionStatus):Void
+	{
+		super.start(NewStatus);
+		
+		setTweenValues(NewStatus, _data.direction.x, _data.direction.y);
+		
+		switch(tweenStr)
+		{
+			case "alpha":	back.alpha = tweenValStart;
+			case "x":		back.x = tweenValStart;
+			case "y":		back.y = tweenValStart;
+		}
+		switch(tweenStr2)
+		{
+			case "alpha":	back.alpha = tweenValStart2;
+			case "x": 		back.x = tweenValStart2;
+			case "y":		back.y = tweenValStart2;
+		}
+		
+		var Values:Dynamic = { };
+		Reflect.setField(Values, tweenStr, tweenValEnd);
+		if (tweenStr2 != "")
+		{
+			Reflect.setField(Values, tweenStr2, tweenValEnd2);
+		}
+		_data.tweenOptions.complete = finishTween;
+		FlxTween.tween(back, Values, _data.duration, _data.tweenOptions);
+	}
+	
+	private function setTweenValues(NewStatus:TransitionStatus, DirX:Float, DirY:Float):Void
+	{
+		if (DirX == 0 && DirY == 0)
+		{
+			//no direction
+			tweenStr = "alpha";
+			tweenValStart = NewStatus == IN ? 0.0 : 1.0;
+			tweenValEnd = NewStatus == IN ? 1.0 : 0.0;
+		}
+		else if (Math.abs(DirX) > 0 && DirY == 0)
+		{
+			//horizontal wipe
+			tweenStr = "x";
+			if (DirX > 0)
+			{
+				tweenValStart = NewStatus == IN ? -back.width : 0;
+				tweenValEnd = NewStatus == IN ? 0 : -back.width;
+			}
+			else
+			{
+				tweenValStart = NewStatus == IN ? FlxG.width : -back.width / 2;
+				tweenValEnd = NewStatus == IN ? -back.width / 2 : FlxG.width;
+			}
+		}
+		else if ((DirX == 0 && Math.abs(DirY) > 0))
+		{
+			//vertical wipe
+			tweenStr = "y";
+			if (DirY > 0)
+			{
+				tweenValStart = NewStatus == IN ? -back.height : 0;
+				tweenValEnd = NewStatus == IN ? 0 : -back.height;
+			}
+			else
+			{
+				tweenValStart = NewStatus == IN ? FlxG.height : -back.height / 2;
+				tweenValEnd = NewStatus == IN ? -back.height / 2 : FlxG.height;
+			}
+		}
+		else if (Math.abs(DirX) > 0 && Math.abs(DirY) > 0)
+		{
+			//diagonal wipe
+			tweenStr = "x";
+			tweenStr2 = "y";
+			if (DirX > 0)
+			{
+				tweenValStart = NewStatus == IN ? -back.width : 0;
+				tweenValEnd = NewStatus == IN ? 0 : -back.width;
+			}
+			else
+			{
+				tweenValStart = NewStatus == IN ? FlxG.width : -back.width * (2/3);
+				tweenValEnd = NewStatus == IN ? -back.width  * (2/3) : FlxG.width;
+			}
+			if (DirY > 0)
+			{
+				tweenValStart2 = NewStatus == IN ? -back.height : 0;
+				tweenValEnd2 = NewStatus == IN ? 0 : -back.height;
+			}
+			else
+			{
+				tweenValStart2 = NewStatus == IN ? FlxG.height : -back.height * (2/3);
+				tweenValEnd2 = NewStatus == IN ? -back.height * (2/3): FlxG.height;
+			}
+		}
+	}
+	
+	private function makeSprite(DirX:Float, DirY:Float):FlxSprite
+	{
+		var s = new FlxSprite(0, 0);
+		var locX:Float = 0;
+		var locY:Float = 0;
+		var angle:Int = 0;
+		var pixels:BitmapData = null;
+		if (DirX == 0 && DirY == 0)
+		{
+			//no direction
+			s.makeGraphic(FlxG.width, FlxG.height, _data.color);
+		}
+		else if (DirX == 0 && Math.abs(DirY) > 0)
+		{
+			//vertical wipe
+			locY = DirY > 0 ? FlxG.height : 0;
+			angle = DirY > 0 ? 90 : 270;
+			s.makeGraphic(FlxG.width, FlxG.height * 2, _data.color);
+			pixels = s.pixels;
+			var gvert = FlxGradient.createGradientBitmapData(FlxG.width, FlxG.height, [_data.color, FlxColor.TRANSPARENT], 1, angle);
+			pixels.copyPixels(gvert, gvert.rect, new Point(0, locY));
+			s.pixels = pixels;
+		}
+		else if (Math.abs(DirX) > 0 && DirY == 0)
+		{
+			//horizontal wipe
+			locX = DirX > 0 ? FlxG.width : 0;
+			angle = DirX > 0 ? 0 : 180;
+			s.makeGraphic(FlxG.width * 2, FlxG.height, _data.color);
+			pixels = s.pixels;
+			var ghorz = FlxGradient.createGradientBitmapData(FlxG.width, FlxG.height, [_data.color, FlxColor.TRANSPARENT], 1, angle);
+			pixels.copyPixels(ghorz, ghorz.rect, new Point(locX, 0));
+			s.pixels = pixels;
+		}
+		else if (Math.abs(DirX) > 0 && Math.abs(DirY) > 0)
+		{
+			//diagonal wipe
+			locY = DirY > 0 ? FlxG.height : 0;
+			s.loadGraphic(getGradient());
+			s.flipX = DirX < 0;
+			s.flipY = DirY < 0;
+		}
+		return s;
+	}
+	
+	private function getGradient():BitmapData
+	{
+		var gdiag = Assets.getBitmapData("assets/images/transitions/diagonal_gradient.png");
+		var gdiag_scaled:BitmapData = new BitmapData(FlxG.width * 2, FlxG.height * 2, true);
+		var m:Matrix = new Matrix();
+		m.scale(gdiag_scaled.width / gdiag.width, gdiag_scaled.height / gdiag.height);
+		gdiag_scaled.draw(gdiag, m, null, null, null, true);
+		var theColor:FlxColor = _data.color;
+		var final_pixels:BitmapData = new BitmapData(FlxG.width * 3, FlxG.height * 3, true, theColor);
+		final_pixels.copyChannel(gdiag_scaled, gdiag_scaled.rect, new Point(final_pixels.width-gdiag_scaled.width,final_pixels.height-gdiag_scaled.height), BitmapDataChannel.RED, BitmapDataChannel.ALPHA);
+		gdiag.dispose();
+		gdiag_scaled.dispose();
+		return final_pixels;
+	}
+	
+	private function finishTween(f:FlxTween):Void
+	{
+		finishCallback();
+	}
+}

@@ -101,8 +101,8 @@ class FlxTransitionState extends FlxState
 	{
 		switch(data.type)
 		{
-			case TILES:	return new TileTransition(data);
-			case FADE:	return new FadeTransition(data);
+			case TILES:	return new TransitionTiles(data);
+			case FADE:	return new TransitionFade(data);
 			default:
 		}
 		

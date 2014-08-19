@@ -21,8 +21,6 @@ class FlxTransitionSprite extends FlxSprite
 	public var status:TransitionStatus = IN;
 	private var _newStatus:TransitionStatus = NULL;
 	
-
-	
 	public function new(X:Float=0, Y:Float=0, Delay:Float, Graphic:FlxGraphicAsset="assets/images/transitions/diamond.png", GraphicWidth:Int=32, GraphicHeight:Int=32, FrameRate:Int=40) 
 	{
 		super(X, Y);
