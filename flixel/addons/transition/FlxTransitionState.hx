@@ -23,10 +23,6 @@ import flixel.FlxState;
  *  
  *  FlxG.switchState(new FooState());
  * 
- * WHEN EXITING:
- *  
- *  USE transitionToState(NextState) 
- * 
  */
 
 class FlxTransitionState extends FlxState
@@ -35,9 +31,8 @@ class FlxTransitionState extends FlxState
 	public static var defaultTransIn:TransitionData=null;
 	public static var defaultTransOut:TransitionData=null;
 	
-	//beginning & ending transitions for THIS state:
-	public var _transIn:TransitionData;
-	public var _transOut:TransitionData;
+	public var hasTransIn(get, null):Bool;
+	public var hasTransOut(get, null):Bool;
 	
 	public var transOutFinished(default, null):Bool = false;
 	
@@ -72,7 +67,6 @@ class FlxTransitionState extends FlxState
 	override public function create():Void 
 	{
 		super.create();
-		
 		if (_transIn != null && _transIn.type != NONE)
 		{
 			var _trans = getTransition(_transIn);
@@ -94,6 +88,23 @@ class FlxTransitionState extends FlxState
 			}
 		);
 	}
+	
+	private function get_hasTransIn():Bool
+	{
+		if (_transIn == null) return false;
+		if (_transIn.type == NONE) return false;
+		return true;
+	}
+	private function get_hasTransOut():Bool
+	{
+		if (_transOut == null) return false;
+		if (_transOut.type == NONE) return false;
+		return _transOut != null; 
+	}
+	
+	//beginning & ending transitions for THIS state:
+	private var _transIn:TransitionData;
+	private var _transOut:TransitionData;
 	
 	private var _onExit:Void->Void;
 	
@@ -121,7 +132,6 @@ class FlxTransitionState extends FlxState
 		{
 			_onExit();
 		}
-		//closeSubState();
 	}
 	
 	private function exitTransition(?OnExit:Void->Void):Void
