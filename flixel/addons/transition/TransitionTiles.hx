@@ -20,6 +20,11 @@ class TransitionTiles extends Transition
 		var yloops:Int = 0;
 		var xloops:Int = 0;
 		
+		if (data.tileData == null)
+		{
+			data.tileData = { asset:null, width:32, height:32 };
+		}
+		
 		var tilesX:Int = Math.ceil(FlxG.width / data.tileData.width);
 		var tilesY:Int = Math.ceil(FlxG.height / data.tileData.height);
 		

@@ -4,7 +4,7 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.tweens.FlxTween.TweenOptions;
 import flixel.util.FlxColor;
-
+import flixel.system.FlxAssets.FlxGraphicAsset;
 
 @:enum
 abstract TransitionType(String)
@@ -16,7 +16,7 @@ abstract TransitionType(String)
 
 typedef TransitionTileData = 
 {
-	asset:String,
+	asset:FlxGraphicAsset,
 	width:Int,
 	height:Int
 }
@@ -52,19 +52,6 @@ class TransitionData implements IDestroyable
 		if (direction == null) { direction = new FlxPoint(0, 0); }
 		FlxMath.bound(direction.x, -1, 1);
 		FlxMath.bound(direction.y, -1, 1);
-		if (TransType == TILES)
-		{
-			if (tileData == null)
-			{
-				tileData = {asset:null, width:32, height:32};
-			}
-			if (tileData.asset == null || tileData.asset == "")
-			{
-				tileData.asset = FlxTransitionSprite.DIAMOND;
-				tileData.width = 32;
-				tileData.height = 32;
-			}
-		}
 		tweenOptions = { complete:null };
 	}
 	

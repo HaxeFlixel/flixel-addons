@@ -10,9 +10,9 @@ import flixel.system.layer.frames.FlxSpriteFrames;
 import flixel.util.FlxTimer;
 import openfl.display.BitmapData;
 
-@:bitmap("assets/images/transitions/circle.png") private class TransTileGraphicCircle extends BitmapData { }
-@:bitmap("assets/images/transitions/diamond.png") private class TransTileGraphicDiamond extends BitmapData { }
-@:bitmap("assets/images/transitions/square.png") private class TransTileGraphicSquare extends BitmapData { }
+@:bitmap("assets/images/transitions/circle.png") private class GraphicTransTileCircle extends BitmapData { }
+@:bitmap("assets/images/transitions/diamond.png") private class GraphicTransTileDiamond extends BitmapData { }
+@:bitmap("assets/images/transitions/square.png") private class GraphicTransTileSquare extends BitmapData { }
 
 /**
  * 
@@ -20,22 +20,18 @@ import openfl.display.BitmapData;
  */
 class FlxTransitionSprite extends FlxSprite
 {
-	public static inline var CIRCLE = "circle";
-	public static inline var DIAMOND = "diamond";
-	public static inline var SQUARE = "square";
-	
 	private var _delay:Float;
 	public var status:TransitionStatus = IN;
 	private var _newStatus:TransitionStatus = NULL;
 	
-	public function new(X:Float=0, Y:Float=0, Delay:Float, Graphic:FlxGraphicAsset=DIAMOND, GraphicWidth:Int=32, GraphicHeight:Int=32, FrameRate:Int=40) 
+	public function new(X:Float=0, Y:Float=0, Delay:Float, Graphic:FlxGraphicAsset=null, GraphicWidth:Int=32, GraphicHeight:Int=32, FrameRate:Int=40) 
 	{
 		super(X, Y);
-		switch(Graphic)
+		if (Graphic == null)
 		{
-			case CIRCLE: Graphic = TransTileGraphicCircle;
-			case DIAMOND: Graphic = TransTileGraphicDiamond;
-			case SQUARE: Graphic = TransTileGraphicSquare;
+			Graphic = GraphicTransTileDiamond; 
+			GraphicWidth = 32;
+			GraphicHeight = 32;
 		}
 		_delay = Delay;
 		loadGraphic(Graphic, true, GraphicWidth, GraphicHeight);
