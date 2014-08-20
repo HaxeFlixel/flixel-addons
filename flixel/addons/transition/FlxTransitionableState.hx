@@ -3,11 +3,13 @@ package flixel.addons.transition;
 import flixel.FlxState;
 
 /**
- * FlxTransitionStates adds the ability to perform visual transitions when the state begins and ends.
+ * FlxTransitionableState
+ * 
+ * A FlxState which can perform visual transitions
  * 
  * Usage:
  * 
- * First, extend FlxTransitionState as ie, FooState
+ * First, extend FlxTransitionableState as ie, FooState
  * 
  * Method 1: 
  *  
@@ -18,23 +20,18 @@ import flixel.FlxState;
  * 
  * Method 2:
  * 
- *  FlxTransitionState.defaultTransIn = new TransitionData(...);
- *  FlxTransitionState.defaultTransOut = new TransitionData(...);
+ *  FlxTransitionableState.defaultTransIn = new TransitionData(...);
+ *  FlxTransitionableState.defaultTransOut = new TransitionData(...);
  *  
  *  FlxG.switchState(new FooState());
  * 
  */
 
-class FlxTransitionState extends FlxState
+class FlxTransitionableState extends FlxState
 {
 	//global default transitions for ALL states, used if _transIn/_transOut are null
 	public static var defaultTransIn:TransitionData=null;
 	public static var defaultTransOut:TransitionData=null;
-	
-	public var hasTransIn(get, null):Bool;
-	public var hasTransOut(get, null):Bool;
-	
-	public var transOutFinished(default, null):Bool = false;
 	
 	/**
 	 * Create a state with the ability to do visual transitions
@@ -79,8 +76,15 @@ class FlxTransitionState extends FlxState
 		}
 	}
 	
-	public function transitionToState(Next:FlxState):Void
+	public override function isTransitionNeeded():Bool
 	{
+		//If the transition exists and we have NOT yet finished our transition visual
+		return ((_transIn != null && _transIn.type != NONE) && (_transOutFinished == false));
+	}
+	
+	public override function transitionToState(Next:FlxState):Void
+	{
+		//play the exit transition, and when it's done call FlxG.switchState
 		exitTransition(
 			function():Void
 			{
@@ -89,22 +93,11 @@ class FlxTransitionState extends FlxState
 		);
 	}
 	
-	private function get_hasTransIn():Bool
-	{
-		if (_transIn == null) return false;
-		if (_transIn.type == NONE) return false;
-		return true;
-	}
-	private function get_hasTransOut():Bool
-	{
-		if (_transOut == null) return false;
-		if (_transOut.type == NONE) return false;
-		return _transOut != null; 
-	}
-	
 	//beginning & ending transitions for THIS state:
 	private var _transIn:TransitionData;
 	private var _transOut:TransitionData;
+	
+	private var _transOutFinished:Bool = false;
 	
 	private var _onExit:Void->Void;
 	
@@ -127,7 +120,7 @@ class FlxTransitionState extends FlxState
 	
 	private function finishTransOut()
 	{
-		transOutFinished = true;
+		_transOutFinished = true;
 		if (_onExit != null)
 		{
 			_onExit();

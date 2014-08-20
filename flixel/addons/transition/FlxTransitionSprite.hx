@@ -69,13 +69,12 @@ class FlxTransitionSprite extends FlxSprite
 	
 	public function setStatus(Status:TransitionStatus):Void
 	{
-		var anim:String="empty";
-		switch (Status) 
+		var anim:String = switch (Status) 
 		{
-			case IN:	anim = "in";
-			case OUT:	anim = "out";
-			case EMPTY,NULL:	anim = "empty";
-			case FULL:	anim = "full";
+			case IN: "in";
+			case OUT: "out";
+			case EMPTY,NULL: "empty";
+			case FULL: "full";
 		}
 		
 		animation.play(anim);
