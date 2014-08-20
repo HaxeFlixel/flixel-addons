@@ -177,7 +177,6 @@ class FlxShapeLightning extends FlxShapeLine
 			FlxSpriteUtil.drawLine(this, l.a.x+dw, l.a.y+dh, l.b.x+dw, l.b.y+dh, lineStyle);
 		
 		//lineStyle.thickness = 1;
-		var fillStyle:FillStyle = { hasFill:false };
 		
 		width = trueWidth;
 		height = trueHeight;
