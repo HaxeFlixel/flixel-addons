@@ -17,7 +17,7 @@ class FlxShapeDonut extends FlxShape
 	 * Creates a FlxSprite with a donut drawn on top of it. 
 	 * X/Y is where the SPRITE is, the donut's upper-left
 	 */
-	public function new(X:Float, Y:Float, RadiusOut:Float, RadiusIn:Float, LineStyle_:LineStyle, FillStyle_:FillStyle) 
+	public function new(X:Float, Y:Float, RadiusOut:Float, RadiusIn:Float, LineStyle_:LineStyle, FillColor:FlxColor) 
 	{
 		shape_id = "donut";
 		
@@ -37,14 +37,14 @@ class FlxShapeDonut extends FlxShape
 		if (h <= 0) 
 			h = strokeBuffer;
 		
-		super(X, Y, w, h, LineStyle_, FillStyle_, trueWidth, trueHeight);
+		super(X, Y, w, h, LineStyle_, FillColor, trueWidth, trueHeight);
 	}
 	
 	override public function drawSpecificShape(?matrix:Matrix):Void 
 	{
 		var cx:Float = Math.ceil(width / 2);
 		var cy:Float = Math.ceil(height / 2);
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillStyle.color, lineStyle, { matrix: matrix } );
+		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillColor, lineStyle, { matrix: matrix } );
 		
 		if (radius_in > 0) 
 			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.RED, null, { matrix: matrix, blendMode: BlendMode.ERASE, smoothing: true });

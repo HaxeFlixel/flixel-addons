@@ -1,6 +1,7 @@
 package flixel.addons.display.shapes;
 
 import flash.geom.Matrix;
+import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 
 class FlxShapeCircle extends FlxShape 
@@ -11,7 +12,7 @@ class FlxShapeCircle extends FlxShape
 	 * Creates a FlxSprite with a circle drawn on top of it. 
 	 * X/Y is where the SPRITE is, the circle's upper-left
 	 */
-	public function new(X:Float, Y:Float, Radius:Float, LineStyle_:LineStyle, FillStyle_:FillStyle) 
+	public function new(X:Float, Y:Float, Radius:Float, LineStyle_:LineStyle, FillColor:FlxColor) 
 	{
 		shape_id = "circle";
 		
@@ -30,12 +31,12 @@ class FlxShapeCircle extends FlxShape
 		if (h <= 0) 
 			h = strokeBuffer;
 		
-		super(X, Y, w, h, LineStyle_, FillStyle_, trueWidth, trueHeight);
+		super(X, Y, w, h, LineStyle_, FillColor, trueWidth, trueHeight);
 	}
 	
 	override public inline function drawSpecificShape(?matrix:Matrix):Void 
 	{
-		FlxSpriteUtil.drawCircle(this, Math.ceil(width / 2), Math.ceil(height / 2), radius, fillStyle.color, lineStyle, { matrix: matrix });
+		FlxSpriteUtil.drawCircle(this, Math.ceil(width / 2), Math.ceil(height / 2), radius, fillColor, lineStyle, { matrix: matrix });
 	}
 	
 	private inline function set_radius(r:Float):Float
