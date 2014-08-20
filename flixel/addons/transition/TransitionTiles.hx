@@ -1,4 +1,5 @@
  package flixel.addons.transition;
+import flash.display.BitmapData;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.group.FlxGroup.FlxTypedGroup;
 

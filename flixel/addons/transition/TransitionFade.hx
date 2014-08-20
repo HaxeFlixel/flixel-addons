@@ -10,6 +10,8 @@ import openfl.display.BitmapDataChannel;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 
+@:bitmap("assets/images/transitions/diagonal_gradient.png") private class DiagonalGradientGraphic extends BitmapData { }
+
 /**
  * 
  * @author larsiusprime
@@ -23,8 +25,6 @@ class TransitionFade extends Transition
 	private var tweenValStart2:Float = 0;
 	private var tweenValEnd:Float = 0;
 	private var tweenValEnd2:Float = 0;
-	
-	private var lastbackx:Float = 9999999999999999999999999999;
 	
 	public function new(data:TransitionData) 
 	{
@@ -182,7 +182,8 @@ class TransitionFade extends Transition
 	
 	private function getGradient():BitmapData
 	{
-		var gdiag = Assets.getBitmapData("assets/images/transitions/diagonal_gradient.png");
+		var rawBmp = Type.createInstance(cast(DiagonalGradientGraphic, Class<Dynamic>), [0, 0]);
+		var gdiag:BitmapData = cast rawBmp;
 		var gdiag_scaled:BitmapData = new BitmapData(FlxG.width * 2, FlxG.height * 2, true);
 		var m:Matrix = new Matrix();
 		m.scale(gdiag_scaled.width / gdiag.width, gdiag_scaled.height / gdiag.height);

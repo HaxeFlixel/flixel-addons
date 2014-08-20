@@ -1,5 +1,6 @@
 package flixel.addons.transition;
 import com.leveluplabs.tdrpg.IDestroyable;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.tweens.FlxTween.TweenOptions;
 import flixel.util.FlxColor;
@@ -49,8 +50,8 @@ class TransitionData implements IDestroyable
 		color = Color;
 		direction = Direction;
 		if (direction == null) { direction = new FlxPoint(0, 0); }
-		if (direction.x < -1) { direction.x = -1; } if (direction.x > 1) { direction.x = 1; }
-		if (direction.y < -1) { direction.y = -1; } if (direction.y > 1) { direction.y = 1; }
+		FlxMath.bound(direction.x, -1, 1);
+		FlxMath.bound(direction.y, -1, 1);
 		if (TransType == TILES)
 		{
 			if (tileData == null)
@@ -59,7 +60,7 @@ class TransitionData implements IDestroyable
 			}
 			if (tileData.asset == null || tileData.asset == "")
 			{
-				tileData.asset = "assets/images/transitions/diamond.png";
+				tileData.asset = FlxTransitionSprite.DIAMOND;
 				tileData.width = 32;
 				tileData.height = 32;
 			}
