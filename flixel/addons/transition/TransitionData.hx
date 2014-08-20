@@ -1,10 +1,10 @@
 package flixel.addons.transition;
-import com.leveluplabs.tdrpg.IDestroyable;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.tweens.FlxTween.TweenOptions;
 import flixel.util.FlxColor;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
 @:enum
 abstract TransitionType(String)
@@ -25,7 +25,7 @@ typedef TransitionTileData =
  * ...
  * @author larsiusprime
  */
-class TransitionData implements IDestroyable
+class TransitionData implements IFlxDestroyable
 {
 	public var type:TransitionType;
 	public var tileData:TransitionTileData;
@@ -43,10 +43,11 @@ class TransitionData implements IDestroyable
 		tweenOptions = null;
 	}
 	
-	public function new(TransType:TransitionType=FADE,Color:FlxColor=FlxColor.WHITE,?Direction:FlxPoint,?TileData:TransitionTileData) 
+	public function new(TransType:TransitionType=FADE,Color:FlxColor=FlxColor.WHITE,Duration:Float=1.0,?Direction:FlxPoint,?TileData:TransitionTileData) 
 	{
 		type = TransType;
 		tileData = TileData;
+		duration = Duration;
 		color = Color;
 		direction = Direction;
 		if (direction == null) { direction = new FlxPoint(0, 0); }
