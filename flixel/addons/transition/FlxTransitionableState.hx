@@ -33,6 +33,9 @@ class FlxTransitionableState extends FlxState
 	public static var defaultTransIn:TransitionData=null;
 	public static var defaultTransOut:TransitionData=null;
 	
+	public var hasTransIn(get, null):Bool;
+	public var hasTransOut(get, null):Bool;
+	
 	/**
 	 * Create a state with the ability to do visual transitions
 	 * @param	TransIn		Plays when the state begins
@@ -79,7 +82,7 @@ class FlxTransitionableState extends FlxState
 	public override function isTransitionNeeded():Bool
 	{
 		//If the transition exists and we have NOT yet finished our transition visual
-		return ((_transIn != null && _transIn.type != NONE) && (_transOutFinished == false));
+		return ((hasTransOut) && (_transOutFinished == false));
 	}
 	
 	public override function transitionToState(Next:FlxState):Void
@@ -100,6 +103,16 @@ class FlxTransitionableState extends FlxState
 	private var _transOutFinished:Bool = false;
 	
 	private var _onExit:Void->Void;
+	
+	private function get_hasTransIn():Bool
+	{
+		return _transIn != null && _transIn.type != NONE;
+	}
+	
+	private function get_hasTransOut():Bool
+	{
+		return _transOut != null && _transOut.type != NONE;
+	}
 	
 	private function getTransition(data:TransitionData):Transition
 	{
@@ -130,7 +143,7 @@ class FlxTransitionableState extends FlxState
 	private function exitTransition(?OnExit:Void->Void):Void
 	{
 		_onExit = OnExit;
-		if (_transOut != null && _transOut.type != NONE)
+		if (hasTransOut)
 		{
 			var _trans = getTransition(_transOut);
 			

@@ -1,7 +1,6 @@
 package flixel.addons.transition;
 
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
-import flixel.addons.util.FlxFSM.Transition;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
@@ -10,9 +9,9 @@ import flixel.system.layer.frames.FlxSpriteFrames;
 import flixel.util.FlxTimer;
 import openfl.display.BitmapData;
 
-@:bitmap("assets/images/transitions/circle.png") private class GraphicTransTileCircle extends BitmapData { }
-@:bitmap("assets/images/transitions/diamond.png") private class GraphicTransTileDiamond extends BitmapData { }
-@:bitmap("assets/images/transitions/square.png") private class GraphicTransTileSquare extends BitmapData { }
+@:bitmap("assets/images/transitions/circle.png") class GraphicTransTileCircle extends BitmapData { }
+@:bitmap("assets/images/transitions/diamond.png") class GraphicTransTileDiamond extends BitmapData { }
+@:bitmap("assets/images/transitions/square.png") class GraphicTransTileSquare extends BitmapData { }
 
 /**
  * 
