@@ -2,6 +2,7 @@
 import flash.display.BitmapData;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.util.FlxTimer;
 
 /**
  * 
@@ -10,6 +11,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 class TransitionTiles extends Transition
 {
 	private var _grpSprites:FlxTypedGroup<FlxTransitionSprite>;
+	private var _isCenter:Bool = false;
 	
 	public function new(data:TransitionData) 
 	{
@@ -72,6 +74,8 @@ class TransitionTiles extends Transition
 			delay = 0 + (iy * yDelay);
 		}
 		add(_grpSprites);
+		
+		_isCenter = (data.direction.x == 0 && data.direction.y == 0);
 	}
 	
 	public override function destroy():Void {
@@ -108,14 +112,19 @@ class TransitionTiles extends Transition
 		super.update();
 		if (_started)
 		{
-			if (_grpSprites.members[_grpSprites.members.length - 1].status == _endStatus)
+			var allDone:Bool = true;
+			for (sprite in _grpSprites.members)
+			{
+				if (sprite.status != _endStatus)
+				{
+					allDone = false;
+					break;
+				}
+			}
+			if (allDone)
 			{
 				_started = false;
-				
-				if (finishCallback != null)
-				{
-					finishCallback();
-				}
+				delayThenFinish();
 			}
 		}
 	}

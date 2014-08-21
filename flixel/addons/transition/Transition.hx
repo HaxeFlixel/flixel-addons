@@ -9,6 +9,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 
 /**
  * This substate is automatically created to play the actual transition visuals inside a FlxTransitionState.
@@ -21,6 +22,8 @@ class Transition extends FlxSubState
 	private var _started:Bool = false;
 	private var _endStatus:TransitionStatus;
 	private var _data:TransitionData;
+	
+	private var _finalDelayTime:Float = 0.0;
 	
 	public var finishCallback:Void->Void;
 	
@@ -52,5 +55,18 @@ class Transition extends FlxSubState
 	public function setStatus(NewStatus:TransitionStatus):Void
 	{
 		//override per subclass
+	}
+	
+	private function delayThenFinish():Void
+	{
+		new FlxTimer(_finalDelayTime, onFinish);	//force one last render call before exiting
+	}
+	
+	private function onFinish(f:FlxTimer):Void
+	{
+		if (finishCallback != null)
+		{
+			finishCallback();
+		}
 	}
 }

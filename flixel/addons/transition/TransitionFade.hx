@@ -5,12 +5,13 @@ import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
+import flixel.util.FlxTimer;
 import openfl.Assets;
 import openfl.display.BitmapDataChannel;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 
-@:bitmap("assets/images/transitions/diagonal_gradient.png") private class DiagonalGradientGraphic extends BitmapData { }
+@:bitmap("assets/images/transitions/diagonal_gradient.png") private class GraphicDiagonalGradient extends BitmapData { }
 
 /**
  * 
@@ -182,7 +183,7 @@ class TransitionFade extends Transition
 	
 	private function getGradient():BitmapData
 	{
-		var rawBmp = Type.createInstance(cast(DiagonalGradientGraphic, Class<Dynamic>), [0, 0]);
+		var rawBmp = new GraphicDiagonalGradient(0,0);
 		var gdiag:BitmapData = cast rawBmp;
 		var gdiag_scaled:BitmapData = new BitmapData(FlxG.width * 2, FlxG.height * 2, true);
 		var m:Matrix = new Matrix();
@@ -198,6 +199,6 @@ class TransitionFade extends Transition
 	
 	private function finishTween(f:FlxTween):Void
 	{
-		finishCallback();
+		delayThenFinish();
 	}
 }
