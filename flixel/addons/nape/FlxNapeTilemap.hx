@@ -1,13 +1,13 @@
 package flixel.addons.nape;
 
-import flixel.addons.nape.FlxNapeState;
+import flixel.addons.nape.FlxNapeSpace;
 import flixel.FlxG;
-import flixel.system.FlxAssets;
-import flixel.tile.FlxTilemap;
-import flixel.tile.FlxBaseTilemap;
-import flixel.util.FlxArrayUtil;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.tile.FlxTilemap;
+import flixel.util.FlxArrayUtil;
+import flixel.tile.FlxBaseTilemap;
+import flixel.system.FlxAssets;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -71,15 +71,18 @@ class FlxNapeTilemap extends FlxTilemap
 		vertices.push(Vec2.get(X, Y + _tileHeight));
 		
 		body.shapes.add(new Polygon(vertices, mat));
-		body.space = FlxNapeState.space;
+		body.space = FlxNapeSpace.space;
 	}
 	
-	public function placeCustomPolygon(tileIndices:Array<Int>, vertices:Array<Vec2>, ?mat:Material) {
+	public function placeCustomPolygon(tileIndices:Array<Int>, vertices:Array<Vec2>, ?mat:Material)
+	{
 		body.space = null;
 		var polygon:Polygon;
-		for (index in tileIndices) {
+		for (index in tileIndices)
+		{
 			var coords:Array<FlxPoint> = getTileCoords(index, false);
-			for (point in coords) {
+			for (point in coords)
+			{
 				polygon = new Polygon(vertices, mat);
 				polygon.translate(Vec2.get(point.x, point.y));
 				body.shapes.add(polygon);
@@ -87,7 +90,7 @@ class FlxNapeTilemap extends FlxTilemap
 			
 		}
 		
-		body.space = FlxNapeState.space;
+		body.space = FlxNapeSpace.space;
 	}
 	
 	/**
@@ -145,7 +148,7 @@ class FlxNapeTilemap extends FlxTilemap
 	#if !FLX_NO_DEBUG
 	override public function drawDebug():Void 
 	{
-		if (FlxNapeState.debug == null)
+		if (!FlxNapeSpace.drawDebug)
 		{
 			super.drawDebug();
 		}
@@ -225,7 +228,7 @@ class FlxNapeTilemap extends FlxTilemap
 		
 		if (body.space == null) 
 		{
-			body.space = FlxNapeState.space;
+			body.space = FlxNapeSpace.space;
 		}
 	}
 	
