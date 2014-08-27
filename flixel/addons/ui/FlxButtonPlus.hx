@@ -168,7 +168,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 	/**
 	 * Called by the game loop automatically, handles mouseover and click detection.
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		if (!_initialized)
 		{
@@ -179,7 +179,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 			}
 		}
 		
-		super.update();
+		super.update(elapsed);
 		
 		//Basic button logic
 		updateButton(); 

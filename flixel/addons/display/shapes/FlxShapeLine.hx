@@ -2,6 +2,7 @@ package flixel.addons.display.shapes;
 
 import flash.geom.Matrix;
 import flixel.math.FlxPoint;
+import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
 
@@ -46,7 +47,7 @@ class FlxShapeLine extends FlxShape
 		if (h <= 0) 
 			h = strokeBuffer;
 		
-		super(X, Y, w, h, LineStyle_, null, trueWidth, trueHeight);
+		super(X, Y, w, h, LineStyle_, FlxColor.TRANSPARENT, trueWidth, trueHeight);
 	}
 
 	override public function drawSpecificShape(?matrix:Matrix):Void 

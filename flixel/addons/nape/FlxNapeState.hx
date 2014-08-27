@@ -146,13 +146,13 @@ class FlxNapeState extends FlxState
 	/**
 	 * Override this method and add super.update().
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		if (napePhysicsEnabled)
 		{
-			space.step(FlxG.elapsed, velocityIterations, positionIterations);
+			space.step(elapsed, velocityIterations, positionIterations);
 		}
-		super.update();
+		super.update(elapsed);
 	}
 
 	/**

@@ -88,7 +88,7 @@ class FlxClickArea extends FlxObject
 	/**
 	 * Called by the game loop automatically, handles mouseover and click detection.
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		if (!_initialized)
 		{
@@ -103,7 +103,7 @@ class FlxClickArea extends FlxObject
 				_initialized = true;
 			}
 		}
-		super.update();
+		super.update(elapsed);
 		
 		updateButton(); //Basic button logic
 	}

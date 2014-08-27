@@ -119,16 +119,16 @@ class FlxTilemapExt extends FlxTilemap
 		#end
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
-		super.update();
+		super.update(elapsed);
 		if (_specialTiles != null && _specialTiles.length > 0) 
 		{
 			for (t in _specialTiles) 
 			{
 				if (t != null && t.hasAnimation()) 
 				{
-					t.update();
+					t.update(elapsed);
 				}
 			}
 		}

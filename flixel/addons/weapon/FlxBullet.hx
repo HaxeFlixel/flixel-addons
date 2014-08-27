@@ -28,11 +28,11 @@ class FlxBullet extends FlxSprite
 		exists = false;
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		if (lifespan > 0)
 		{
-			lifespan -= FlxG.elapsed;
+			lifespan -= elapsed;
 			
 			if (lifespan <= 0)
 			{
@@ -45,6 +45,6 @@ class FlxBullet extends FlxSprite
 			kill();
 		}
 		
-		super.update();
+		super.update(elapsed);
 	}
 }
