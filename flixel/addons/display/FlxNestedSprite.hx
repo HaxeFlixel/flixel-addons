@@ -182,7 +182,7 @@ class FlxNestedSprite extends FlxSprite
 		}
 	}
 	
-	public function preUpdate():Void 
+	public function preUpdate(elapsed:Float):Void 
 	{
 		#if !FLX_NO_DEBUG
 		FlxBasic.activeCount++;
@@ -195,59 +195,56 @@ class FlxNestedSprite extends FlxSprite
 		{
 			if (child.active && child.exists)
 			{
-				child.preUpdate();
+				child.preUpdate(elapsed);
 			}
 		}
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
-		preUpdate();
+		preUpdate(elapsed);
 		
 		for (child in children)
 		{
 			if (child.active && child.exists)
 			{
-				child.update();
+				child.update(elapsed);
 			}
 		}
 		
-		postUpdate();
+		postUpdate(elapsed);
 	}
 	
-	public function postUpdate():Void 
+	public function postUpdate(elapsed:Float):Void 
 	{
 		if (moves)
 		{
-			updateMotion();
+			updateMotion(elapsed);
 		}
 		
 		wasTouching = touching;
 		touching = FlxObject.NONE;
-		animation.update();
-		
+		animation.update(elapsed);
 		
 		var delta:Float;
 		var velocityDelta:Float;
-		var dt:Float = FlxG.elapsed;
 		
-		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeAngularVelocity, relativeAngularAcceleration, angularDrag, maxAngular) - relativeAngularVelocity);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeAngularVelocity, relativeAngularAcceleration, angularDrag, maxAngular, elapsed) - relativeAngularVelocity);
 		relativeAngularVelocity += velocityDelta; 
-		relativeAngle += relativeAngularVelocity * dt;
+		relativeAngle += relativeAngularVelocity * elapsed;
 		relativeAngularVelocity += velocityDelta;
 		
-		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocity.x, relativeAcceleration.x, drag.x, maxVelocity.x) - relativeVelocity.x);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocity.x, relativeAcceleration.x, drag.x, maxVelocity.x, elapsed) - relativeVelocity.x);
 		relativeVelocity.x += velocityDelta;
-		delta = relativeVelocity.x * dt;
+		delta = relativeVelocity.x * elapsed;
 		relativeVelocity.x += velocityDelta;
 		relativeX += delta;
 		
-		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocity.y, relativeAcceleration.y, drag.y, maxVelocity.y) - relativeVelocity.y);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocity.y, relativeAcceleration.y, drag.y, maxVelocity.y, elapsed) - relativeVelocity.y);
 		relativeVelocity.y += velocityDelta;
-		delta = relativeVelocity.y * dt;
+		delta = relativeVelocity.y * elapsed;
 		relativeVelocity.y += velocityDelta;
 		relativeY += delta;
-		
 		
 		for (child in children)
 		{
@@ -256,7 +253,7 @@ class FlxNestedSprite extends FlxSprite
 				child.velocity.x = child.velocity.y = 0;
 				child.acceleration.x = child.acceleration.y = 0;
 				child.angularVelocity = child.angularAcceleration = 0;
-				child.postUpdate();
+				child.postUpdate(elapsed);
 				
 				if (isSimpleRender(camera))
 				{

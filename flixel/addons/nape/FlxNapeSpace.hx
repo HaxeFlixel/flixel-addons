@@ -62,7 +62,7 @@ class FlxNapeSpace extends FlxBasic
 			space = new Space(new Vec2());
 		}
 		
-		FlxG.signals.stateSwitched.add(preStateCreation);
+		FlxG.signals.stateSwitched.add(onStateSwitch);
 		
 		#if !FLX_NO_DEBUG
 		// Add a button to toggle Nape debug shapes to the debugger
@@ -145,7 +145,7 @@ class FlxNapeSpace extends FlxBasic
 		return FlxNapeSpace.drawDebug = drawDebug;
 	}
 	
-	private static function preStateCreation():Void
+	private static function onStateSwitch():Void
 	{
 		if (space != null)
 		{
@@ -164,11 +164,11 @@ class FlxNapeSpace extends FlxBasic
 		#end
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		if (space != null)
 		{
-			space.step(FlxG.elapsed, velocityIterations, positionIterations);
+			space.step(elapsed, velocityIterations, positionIterations);
 		}
 	}
 	

@@ -60,12 +60,26 @@ class FlxGlitchSprite extends FlxSprite
 		initPixels();
 	}
 	
+	override public function update(elapsed:Float):Void
+	{
+		super.update(elapsed);
+		
+		if (_time > delay)
+		{
+			_time = 0;
+		}
+		else
+		{
+			_time += elapsed;
+		}
+	}
+	
 	override public function draw():Void
 	{
 		if (alpha == 0 || target == null)
 			return;
 			
-		if (_time > delay)
+		if (_time == 0)
 		{
 			_time = 0;
 			pixels.lock();
@@ -101,8 +115,7 @@ class FlxGlitchSprite extends FlxSprite
 			pixels.unlock();
 			dirty = true;
 		}
-		else
-			_time += FlxG.elapsed;
+		
 		super.draw();
 	}
 	

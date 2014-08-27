@@ -29,11 +29,11 @@ class FlxNapeTilemap extends FlxTilemap
 		body = new Body(BodyType.STATIC);
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
 		x = body.position.x;
 		y = body.position.y;
-		super.update();
+		super.update(elapsed);
 	}
 	
 	override public function loadMap(MapData:FlxTilemapAsset, TileGraphic:FlxGraphicAsset, TileWidth:Int = 0, TileHeight:Int = 0, 

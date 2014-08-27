@@ -115,11 +115,11 @@ class FlxSpine extends FlxSprite
 		super.destroy();
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 		
-		state.update(FlxG.elapsed * FlxG.timeScale);
+		state.update(elapsed * FlxG.timeScale);
 		state.apply(skeleton);
 		skeleton.updateWorldTransform();
 	}

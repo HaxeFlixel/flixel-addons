@@ -997,7 +997,7 @@ class FlxControlHandler
 	/**
 	 * Called by the FlxControl plugin
 	 */
-	public function update():Void
+	public function update(elapsed:Float):Void
 	{
 		if (_entity == null)
 		{

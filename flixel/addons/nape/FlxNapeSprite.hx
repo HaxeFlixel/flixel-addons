@@ -83,9 +83,9 @@ class FlxNapeSprite extends FlxSprite
 	/**
 	 * Override core physics velocity etc
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 		
 		if ((body != null) && moves)
 		{

@@ -138,7 +138,7 @@ class AntTaskManager extends FlxBasic
 	/**
 	 * Current task processing
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		if (_taskList != null)
 		{
@@ -166,7 +166,7 @@ class AntTaskManager extends FlxBasic
 	 */
 	private function taskPause(Delay:Float):Bool
 	{
-		_delay += FlxG.elapsed;
+		_delay += Delay;
 		
 		if (_delay > Delay)
 		{
