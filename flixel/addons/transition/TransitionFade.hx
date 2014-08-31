@@ -65,7 +65,7 @@ class TransitionFade extends Transition
 		{
 			Reflect.setField(Values, tweenStr2, tweenValEnd2);
 		}
-		_data.tweenOptions.complete = finishTween;
+		_data.tweenOptions.onComplete = finishTween;
 		FlxTween.tween(back, Values, _data.duration, _data.tweenOptions);
 	}
 	
