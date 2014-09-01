@@ -29,9 +29,13 @@ import flixel.FlxState;
 
 class FlxTransitionableState extends FlxState
 {
-	//global default transitions for ALL states, used if _transIn/_transOut are null
+	//global default transitions for ALL states, used if transIn/transOut are null
 	public static var defaultTransIn:TransitionData=null;
 	public static var defaultTransOut:TransitionData=null;
+	
+	//beginning & ending transitions for THIS state:
+	public var transIn:TransitionData;
+	public var transOut:TransitionData;
 	
 	public var hasTransIn(get, null):Bool;
 	public var hasTransOut(get, null):Bool;
@@ -44,33 +48,34 @@ class FlxTransitionableState extends FlxState
 	
 	public function new(?TransIn:TransitionData,?TransOut:TransitionData)
 	{
-		_transIn = TransIn;
-		_transOut = TransOut;
-		if (_transIn == null && defaultTransIn != null)
+		transIn = TransIn;
+		transOut = TransOut;
+		
+		if (transIn == null && defaultTransIn != null)
 		{
-			_transIn = defaultTransIn;
+			transIn = defaultTransIn;
 		}
-		if (_transOut == null && defaultTransOut != null)
+		if (transOut == null && defaultTransOut != null)
 		{
-			_transOut = defaultTransOut;
+			transOut = defaultTransOut;
 		}
 		super();
 	}
 	
 	override public function destroy():Void
 	{
-		_transIn = null;
-		_transOut = null;
+		transIn = null;
+		transOut = null;
 		_onExit = null;
 	}
 	
 	override public function create():Void 
 	{
 		super.create();
-		if (_transIn != null && _transIn.type != NONE)
+		if (transIn != null && transIn.type != NONE)
 		{
-			var _trans = getTransition(_transIn);
-		
+			var _trans = getTransition(transIn);
+			
 			_trans.setStatus(FULL);
 			openSubState(_trans);
 			
@@ -82,7 +87,7 @@ class FlxTransitionableState extends FlxState
 	public override function isTransitionNeeded():Bool
 	{
 		//If the transition exists and we have NOT yet finished our transition visual
-		return ((hasTransOut) && (_transOutFinished == false));
+		return ((hasTransOut) && (transOutFinished == false));
 	}
 	
 	public override function transitionToState(Next:FlxState):Void
@@ -96,22 +101,18 @@ class FlxTransitionableState extends FlxState
 		);
 	}
 	
-	//beginning & ending transitions for THIS state:
-	private var _transIn:TransitionData;
-	private var _transOut:TransitionData;
-	
-	private var _transOutFinished:Bool = false;
+	private var transOutFinished:Bool = false;
 	
 	private var _onExit:Void->Void;
 	
 	private function get_hasTransIn():Bool
 	{
-		return _transIn != null && _transIn.type != NONE;
+		return transIn != null && transIn.type != NONE;
 	}
 	
 	private function get_hasTransOut():Bool
 	{
-		return _transOut != null && _transOut.type != NONE;
+		return transOut != null && transOut.type != NONE;
 	}
 	
 	private function getTransition(data:TransitionData):Transition
@@ -133,7 +134,7 @@ class FlxTransitionableState extends FlxState
 	
 	private function finishTransOut()
 	{
-		_transOutFinished = true;
+		transOutFinished = true;
 		if (_onExit != null)
 		{
 			_onExit();
@@ -145,7 +146,7 @@ class FlxTransitionableState extends FlxState
 		_onExit = OnExit;
 		if (hasTransOut)
 		{
-			var _trans = getTransition(_transOut);
+			var _trans = getTransition(transOut);
 			
 			_trans.setStatus(EMPTY);
 			openSubState(_trans);
