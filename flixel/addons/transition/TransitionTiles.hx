@@ -107,9 +107,9 @@ class TransitionTiles extends Transition
 		);
 	}
 	
-	public override function update():Void 
+	public override function update(elapsed:Float):Void 
 	{
-		super.update();
+		super.update(elapsed);
 		if (_started)
 		{
 			var allDone:Bool = true;

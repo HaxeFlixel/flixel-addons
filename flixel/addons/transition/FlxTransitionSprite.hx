@@ -76,9 +76,9 @@ class FlxTransitionSprite extends FlxSprite
 		status = Status;
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
-		super.update();
+		super.update(elapsed);
 		if (animation.finished)
 		{
 			switch (status) 
