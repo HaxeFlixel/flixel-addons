@@ -146,13 +146,13 @@ class FlxControl extends FlxBasic
 	/**
 	 * Runs update on all currently active FlxControlHandlers
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		for (handler in _members)
 		{
 			if (handler.enabled == true)
 			{
-				handler.update();
+				handler.update(elapsed);
 			}
 		}
 	}

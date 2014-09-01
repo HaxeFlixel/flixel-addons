@@ -88,7 +88,7 @@ class FlxTypeText extends FlxText
 	 */
 	private var _finalText:String = "";
 	/**
-	 * This is incremented every frame by FlxG.elapsed, and when greater than delay, adds the next letter.
+	 * This is incremented every frame by elapsed, and when greater than delay, adds the next letter.
 	 */
 	private var _timer:Float = 0.0;
 	/**
@@ -315,7 +315,7 @@ class FlxTypeText extends FlxText
 		}
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		// If the skip key was pressed, complete the animation.
 		#if !FLX_NO_KEYBOARD
@@ -327,7 +327,7 @@ class FlxTypeText extends FlxText
 		
 		if (_waiting && !paused)
 		{
-			_waitTimer -= FlxG.elapsed;
+			_waitTimer -= elapsed;
 			
 			if (_waitTimer <= 0)
 			{
@@ -341,12 +341,12 @@ class FlxTypeText extends FlxText
 		{
 			if (_length < _finalText.length && _typing)
 			{
-				_timer += FlxG.elapsed;
+				_timer += elapsed;
 			}
 			
 			if (_length > 0 && _erasing)
 			{
-				_timer += FlxG.elapsed;
+				_timer += elapsed;
 			}
 		}
 		
@@ -406,7 +406,7 @@ class FlxTypeText extends FlxText
 		// Append the cursor if needed.
 		if (showCursor)
 		{
-			_cursorTimer += FlxG.elapsed;
+			_cursorTimer += elapsed;
 			
 			if (_cursorTimer > cursorBlinkSpeed / 2)
 			{
@@ -437,7 +437,7 @@ class FlxTypeText extends FlxText
 			}
 		}
 		
-		super.update();
+		super.update(elapsed);
 	}
 	
 	/**

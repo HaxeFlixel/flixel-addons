@@ -65,6 +65,12 @@ class FlxWaveSprite extends FlxSprite
 		dirty = true;
 	}
 	
+	override public function update(elapsed:Float):Void
+	{
+		super.update(elapsed);
+		_time += elapsed * speed;
+	}
+	
 	override public function draw():Void
 	{
 		if (!visible || alpha == 0)
@@ -110,7 +116,6 @@ class FlxWaveSprite extends FlxSprite
 			if (offset == _targetOffset)
 				_time = 0;
 		}
-		_time += FlxG.elapsed * speed;
 		
 		resetFrameBitmapDatas();
 		dirty = true;

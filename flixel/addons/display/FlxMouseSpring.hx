@@ -54,7 +54,7 @@ class FlxMouseSpring
 	/**
 	 * Updates the spring physics and repositions the sprite
 	 */
-	public function update():Void
+	public function update(elapsed:Float):Void
 	{
 		_dx = FlxG.mouse.x - sprite.springX;
 		_dy = FlxG.mouse.y - sprite.springY;

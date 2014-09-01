@@ -30,12 +30,12 @@ class FlxStarField2D extends FlxStarField
 		super.destroy();
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		for (star in _stars)
 		{
-			star.x += (starVelocityOffset.x * star.speed) * FlxG.elapsed;
-			star.y += (starVelocityOffset.y * star.speed) * FlxG.elapsed;
+			star.x += (starVelocityOffset.x * star.speed) * elapsed;
+			star.y += (starVelocityOffset.y * star.speed) * elapsed;
 			
 			// wrap the star
 			if (star.x > width)
@@ -57,7 +57,7 @@ class FlxStarField2D extends FlxStarField
 			}
 		}
 		
-		super.update();
+		super.update(elapsed);
 	}
 }
 
@@ -79,13 +79,13 @@ class FlxStarField3D extends FlxStarField
 		super.destroy();
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		for (star in _stars)
 		{
 			star.d *= 1.1;
-			star.x = center.x + ((Math.cos(star.r) * star.d) * star.speed) * FlxG.elapsed;
-			star.y = center.y + ((Math.sin(star.r) * star.d) * star.speed) * FlxG.elapsed;
+			star.x = center.x + ((Math.cos(star.r) * star.d) * star.speed) * elapsed;
+			star.y = center.y + ((Math.sin(star.r) * star.d) * star.speed) * elapsed;
 			
 			if ((star.x < 0) || (star.x > width) || (star.y < 0) || (star.y > height))
 			{
@@ -99,7 +99,7 @@ class FlxStarField3D extends FlxStarField
 			}
 		}
 		
-		super.update();
+		super.update(elapsed);
 	}
 }
 

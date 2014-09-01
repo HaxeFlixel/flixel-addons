@@ -242,7 +242,7 @@ class FlxSlider extends FlxSpriteGroup
 		add(maxLabel);
 	}
 
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		// Clicking and sound logic
 		if (FlxMath.mouseInFlxRect(false, _bounds)) 
@@ -310,7 +310,7 @@ class FlxSlider extends FlxSpriteGroup
 		// Finally, update the valueLabel
 		valueLabel.text = Std.string(FlxMath.roundDecimal(value, decimals));
 		
-		super.update();
+		super.update(elapsed);
 	}
 	
 	/**

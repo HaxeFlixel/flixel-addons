@@ -132,7 +132,7 @@ class FlxTrail extends FlxSpriteGroup
 	 * Updates positions and other values according to the delay that has been set.
 	 * 
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		// Count the frames
 		_counter++;
@@ -249,7 +249,7 @@ class FlxTrail extends FlxSpriteGroup
 			}
 		}
 
-		super.update();
+		super.update(elapsed);
 	}
 
 	public function resetTrail():Void

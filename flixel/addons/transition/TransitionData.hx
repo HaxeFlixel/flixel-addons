@@ -53,7 +53,6 @@ class TransitionData implements IFlxDestroyable
 		if (direction == null) { direction = new FlxPoint(0, 0); }
 		FlxMath.bound(direction.x, -1, 1);
 		FlxMath.bound(direction.y, -1, 1);
-		tweenOptions = { onComplete:null };
+		tweenOptions = { onComplete: null };
 	}
-	
 }

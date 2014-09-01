@@ -124,7 +124,7 @@ class FlxMouseControl extends FlxBasic
 	/**
 	 * Main Update Loop - checks mouse status and updates FlxExtendedSprites accordingly
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		// Update mouse speed
 		speedX = FlxG.mouse.screenX - _oldX;

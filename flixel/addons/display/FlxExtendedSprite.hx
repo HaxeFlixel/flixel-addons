@@ -397,7 +397,7 @@ class FlxExtendedSprite extends FlxSprite
 	/**
 	 * Core update loop
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		#if !FLX_NO_MOUSE
 		if (draggable == true && isDragged == true)
@@ -419,13 +419,13 @@ class FlxExtendedSprite extends FlxSprite
 		{
 			if (springOnPressed == false)
 			{
-				mouseSpring.update();
+				mouseSpring.update(elapsed);
 			}
 			else
 			{
 				if (isPressed == true)
 				{
-					mouseSpring.update();
+					mouseSpring.update(elapsed);
 				}
 				else
 				{
@@ -435,7 +435,7 @@ class FlxExtendedSprite extends FlxSprite
 		}
 		#end
 		
-		super.update();
+		super.update(elapsed);
 	}
 	
 	/**

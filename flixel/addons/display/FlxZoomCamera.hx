@@ -38,12 +38,12 @@ class FlxZoomCamera extends FlxCamera
 		targetZoom = Zoom;
 	}
 	
-	public override function update():Void
+	public override function update(elapsed:Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 		
 		// Update camera zoom
-		zoom += (targetZoom - zoom) / 2 * (FlxG.elapsed) * _zoomSpeed;
+		zoom += (targetZoom - zoom) / 2 * elapsed * _zoomSpeed;
 		
 		// If we are zooming in, align the camera (x, y)
 		if (target != null && zoom != 1)

@@ -11,7 +11,6 @@ import flixel.util.FlxSignal.FlxTypedSignal;
  */
 class FlxFSMState<T> implements IFlxDestroyable
 {
-	
 	public function new() { }
 	
 	/**
@@ -28,7 +27,7 @@ class FlxFSMState<T> implements IFlxDestroyable
 	 * @param	Owner	The object the state controls
 	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
-	public function update(owner:T, fsm:FlxFSM<T>):Void { }
+	public function update(elapsed:Float, owner:T, fsm:FlxFSM<T>):Void { }
 	
 	/**
 	 * Called when the state becomes inactive.
@@ -38,7 +37,6 @@ class FlxFSMState<T> implements IFlxDestroyable
 	public function exit(owner:T):Void { }
 	
 	public function destroy():Void { }
-	
 }
 
 /**
@@ -135,12 +133,12 @@ class FlxFSM<T> implements IFlxDestroyable
 	/**
 	 * Updates the active state instance.
 	 */
-	public function update():Void
+	public function update(elapsed:Float):Void
 	{
 		if (state != null && owner != null)
 		{
-			age += FlxG.elapsed;
-			state.update(owner, this);
+			age += elapsed;
+			state.update(elapsed, owner, this);
 		}
 		
 		if (transitions != null && pools != null)
@@ -259,7 +257,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 	/**
 	 * Updates the states that have not been locked
 	 */
-	public function update()
+	public function update(elapsed:Float)
 	{
 		if (_alteredStack != null) // Stack was edited during the last loop. Adopt the changes
 		{
@@ -273,12 +271,12 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 			{
 				if (_lockRemaining == false && (fsm.type & _lockedTypes) == 0 && _lockedNames.indexOf(fsm.name) == -1)
 				{				
-					fsm.update();
+					fsm.update(elapsed);
 				}
 			}
 			else
 			{
-				fsm.update();
+				fsm.update(elapsed);
 			}
 		}
 		

@@ -93,16 +93,16 @@ class FlxTileSpecial extends FlxBasic
 		_matrix = null;
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
-		super.update();
+		super.update(elapsed);
 		#if FLX_RENDER_BLIT
 		dirty = false;
 		#end
 		// Modified from updateAnimation() in FlxSprite
 		if (_animation != null && _animation.delay > 0) 
 		{
-			_frameTimer += FlxG.elapsed;
+			_frameTimer += elapsed;
 			if (_frameTimer > _animation.delay) 
 			{
 				_lastFrame = _currFrame;

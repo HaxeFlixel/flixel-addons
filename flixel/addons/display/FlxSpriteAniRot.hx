@@ -53,9 +53,9 @@ class FlxSpriteAniRot extends FlxSprite
 		super.destroy();
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
-		super.update();
+		super.update(elapsed);
 		
 		var oldIndex:Int = angleIndex;
 		var angleHelper:Int = Math.floor(angle % 360);
