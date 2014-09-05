@@ -166,7 +166,7 @@ class FlxNapeSpace extends FlxBasic
 	
 	override public function update(elapsed:Float):Void
 	{
-		if (space != null)
+		if (space != null && elapsed > 0)
 		{
 			space.step(elapsed, velocityIterations, positionIterations);
 		}
