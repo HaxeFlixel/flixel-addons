@@ -116,10 +116,6 @@ class FlxTrailArea extends FlxSprite
 	{
 		super(X, Y);
 		
-		setSize(Width, Height);
-		// this sets cachedGraphics, which would cause the default 16x16 image to be loaded if it's null in calcFrame
-		pixels = framePixels; 
-		
 		group = new FlxTypedGroup<FlxSprite>();
 		
 		//Sync variables
@@ -128,6 +124,9 @@ class FlxTrailArea extends FlxSprite
 		blendMode = TrailBlendMode;
 		antialiasing = Antialiasing;
 		alphaMultiplier = AlphaMultiplier;
+		
+		setSize(Width, Height);
+		pixels = framePixels;
 	}
 	
 	/**
@@ -138,13 +137,11 @@ class FlxTrailArea extends FlxSprite
 	 */
 	override public function setSize(Width:Float, Height:Float)
 	{
-		if (Width <= 0) {
-			Width = FlxG.width;
-		}
-		if (Height <= 0) {
-			Height = FlxG.height;
-		}
-		if ((Width != _width) || (Height != _height)) {
+		Width = (Width <= 0) ? FlxG.width : Width;
+		Height = (Height <= 0) ? FlxG.height : Height;
+		
+		if ((Width != _width) || (Height != _height)) 
+		{
 			_width = Width;
 			_height = Height;
 			framePixels = new BitmapData(Std.int(_width), Std.int(_height), true, FlxColor.TRANSPARENT);
@@ -209,9 +206,9 @@ class FlxTrailArea extends FlxSprite
 			}
 			
 			framePixels.unlock();
-			//Apply the updated bitmap
 			pixels = framePixels;
 		}
+		
 		super.draw();
 	}
 	
@@ -220,7 +217,8 @@ class FlxTrailArea extends FlxSprite
 	 */
 	public inline function resetTrail():Void
 	{
-		framePixels.fillRect(new Rectangle(0, 0, framePixels.width, framePixels.height), 0x00000000);
+		framePixels.fillRect(new Rectangle(0, 0, framePixels.width, framePixels.height), FlxColor.TRANSPARENT);
+		resetFrameBitmaps();
 	}
 	
 	/**
@@ -248,12 +246,13 @@ class FlxTrailArea extends FlxSprite
 	 */
 	override private function set_width(Width:Float):Float 
 	{
-		if (Width <= 0) {
-			Width = FlxG.width;
-		}
-		if (Width != _width) {
+		Width = (Width <= 0) ? FlxG.width : Width;
+		
+		if (Width != _width) 
+		{
 			framePixels = new BitmapData(Std.int(Width), Std.int(_height), true, FlxColor.TRANSPARENT);
 		}
+		
 		return _width = Width;
 	}
 	
@@ -270,12 +269,13 @@ class FlxTrailArea extends FlxSprite
 	 */
 	override private function set_height(Height:Float):Float
 	{
-		if (Height <= 0) {
-			Height = FlxG.height;
-		}
-		if (Height != _height) {
+		Height = (Height <= 0) ? FlxG.height : Height;
+		
+		if (Height != _height) 
+		{
 			framePixels = new BitmapData(Std.int(_width), Std.int(Height), true, FlxColor.TRANSPARENT);
 		}
+		
 		return _height = Height;
 	}
 }
