@@ -53,10 +53,7 @@ class FlxGlitchSprite extends FlxSprite
 		target = Target;
 		strength = Strength;
 		size = Size;
-		if (Direction != null)
-			direction = Direction;
-		else
-			direction = HORIZONTAL;
+		direction = (Direction != null) ? Direction : HORIZONTAL;
 		initPixels();
 	}
 	
@@ -87,7 +84,6 @@ class FlxGlitchSprite extends FlxSprite
 			var p:Int = 0;
 			if (direction == HORIZONTAL)
 			{
-				
 				while (p < target.frameHeight) 
 				{
 					_flashRect2.setTo(0, p, target.frameWidth, size);
@@ -111,7 +107,7 @@ class FlxGlitchSprite extends FlxSprite
 				}
 			}
 			
-			resetFrameBitmapDatas();
+			resetFrameBitmaps();
 			pixels.unlock();
 			dirty = true;
 		}

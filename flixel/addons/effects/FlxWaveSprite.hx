@@ -53,11 +53,9 @@ class FlxWaveSprite extends FlxSprite
 	public function new(Target:FlxSprite, ?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3) 
 	{
 		super();
-		if (Mode == null)
-			Mode = ALL;
 		_target = Target;
 		strength = Strength;
-		mode = Mode;
+		mode = (Mode == null) ? ALL : Mode;
 		speed = Speed;
 		if (Center < 0)
 			center = Std.int(_target.height * 0.5);
@@ -117,7 +115,7 @@ class FlxWaveSprite extends FlxSprite
 				_time = 0;
 		}
 		
-		resetFrameBitmapDatas();
+		resetFrameBitmaps();
 		dirty = true;
 		super.draw();
 	}

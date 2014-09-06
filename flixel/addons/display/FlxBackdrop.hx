@@ -64,7 +64,7 @@ class FlxBackdrop extends FlxSprite
 		{
 			w += FlxG.width;
 		}
-		if (RepeatY) 
+		if (RepeatY)
 		{
 			h += FlxG.height;
 		}
