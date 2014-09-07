@@ -3,6 +3,7 @@ package flixel.addons.transition;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
 import flixel.system.FlxAssets.FlxGraphicAsset;
@@ -30,9 +31,7 @@ class FlxTransitionSprite extends FlxSprite
 		
 		if (Graphic == null)
 		{
-			var bmd:BitmapData = FlxAssets.resolveBitmapData(GraphicTransTileDiamond);
-			var key:String = FlxAssets.resolveKey(GraphicTransTileDiamond);
-			Graphic = FlxG.bitmap.add(bmd, false, key);
+			Graphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
 			GraphicWidth = 32;
 			GraphicHeight = 32;
 		}
