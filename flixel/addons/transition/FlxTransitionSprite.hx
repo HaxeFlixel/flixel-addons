@@ -4,6 +4,7 @@ import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
+import flixel.system.FlxAssets;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.layer.frames.FlxSpriteFrames;
 import flixel.util.FlxTimer;
@@ -23,15 +24,19 @@ class FlxTransitionSprite extends FlxSprite
 	public var status:TransitionStatus = IN;
 	private var _newStatus:TransitionStatus = NULL;
 	
-	public function new(X:Float=0, Y:Float=0, Delay:Float, Graphic:FlxGraphicAsset=null, GraphicWidth:Int=32, GraphicHeight:Int=32, FrameRate:Int=40) 
+	public function new(X:Float = 0, Y:Float = 0, Delay:Float, Graphic:FlxGraphicAsset = null, GraphicWidth:Int = 32, GraphicHeight:Int = 32, FrameRate:Int = 40) 
 	{
 		super(X, Y);
+		
 		if (Graphic == null)
 		{
-			Graphic = GraphicTransTileDiamond; 
+			var bmd:BitmapData = FlxAssets.resolveBitmapData(GraphicTransTileDiamond);
+			var key:String = FlxAssets.resolveKey(GraphicTransTileDiamond);
+			Graphic = FlxG.bitmap.add(bmd, false, key);
 			GraphicWidth = 32;
 			GraphicHeight = 32;
 		}
+		
 		_delay = Delay;
 		loadGraphic(Graphic, true, GraphicWidth, GraphicHeight);
 		animation.add("empty", [0], 0, false);
@@ -90,7 +95,7 @@ class FlxTransitionSprite extends FlxSprite
 		}
 	}
 	
-	private function onTimer(f:FlxTimer=null):Void
+	private function onTimer(f:FlxTimer = null):Void
 	{
 		setStatus(_newStatus);
 		_newStatus = NULL;

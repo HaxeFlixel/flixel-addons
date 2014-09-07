@@ -43,7 +43,7 @@ class TransitionData implements IFlxDestroyable
 		tweenOptions = null;
 	}
 	
-	public function new(TransType:TransitionType=FADE,Color:FlxColor=FlxColor.WHITE,Duration:Float=1.0,?Direction:FlxPoint,?TileData:TransitionTileData) 
+	public function new(TransType:TransitionType = FADE, Color:FlxColor = FlxColor.WHITE, Duration:Float = 1.0, ?Direction:FlxPoint, ?TileData:TransitionTileData) 
 	{
 		type = TransType;
 		tileData = TileData;

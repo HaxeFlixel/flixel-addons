@@ -107,8 +107,8 @@ class FlxGlitchSprite extends FlxSprite
 				}
 			}
 			
-			resetFrameBitmaps();
 			pixels.unlock();
+			resetFrameBitmaps();
 			dirty = true;
 		}
 		

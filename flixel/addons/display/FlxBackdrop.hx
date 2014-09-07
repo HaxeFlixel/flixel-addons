@@ -11,6 +11,8 @@ import flixel.system.layer.Region;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.loaders.TextureRegion;
 
+// TODO: loadGraphic() and loadFrame() methods
+
 /**
  * Used for showing infinitely scrolling backgrounds.
  * @author Chevy Ray

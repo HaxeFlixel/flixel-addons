@@ -33,7 +33,8 @@ class Transition extends FlxSubState
 		super(FlxColor.TRANSPARENT);
 	}
 	
-	public override function destroy():Void {
+	public override function destroy():Void 
+	{
 		super.destroy();
 		_data = null;
 	}

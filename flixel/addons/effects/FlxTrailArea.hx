@@ -13,6 +13,8 @@ import flixel.math.FlxAngle;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
+// TODO: redo graphic generation (don't use framePixels for it, it should use pixels).
+
 /**
  * This provides an area in which the added sprites have a trail effect. Usage: Create the FlxTrailArea and 
  * add it to the display. Then add all sprites that should have a trail effect via the add function.
