@@ -13,8 +13,6 @@ import flixel.math.FlxAngle;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
-// TODO: redo graphic generation (don't use framePixels for it, it should use pixels).
-
 /**
  * This provides an area in which the added sprites have a trail effect. Usage: Create the FlxTrailArea and 
  * add it to the display. Then add all sprites that should have a trail effect via the add function.
@@ -101,6 +99,11 @@ class FlxTrailArea extends FlxSprite
 	 */
 	private var _height:Float = 1;
 	
+	/**
+	 * Internal helper var, linking to area's pixels
+	 */
+	private var _areaPixels:BitmapData;
+	
 	 /**
 	  * Creates a new FlxTrailArea, in which all added sprites get a trail effect.
 	  * 
@@ -128,7 +131,7 @@ class FlxTrailArea extends FlxSprite
 		alphaMultiplier = AlphaMultiplier;
 		
 		setSize(Width, Height);
-		pixels = framePixels;
+		pixels = _areaPixels;
 	}
 	
 	/**
@@ -146,7 +149,7 @@ class FlxTrailArea extends FlxSprite
 		{
 			_width = Width;
 			_height = Height;
-			framePixels = new BitmapData(Std.int(_width), Std.int(_height), true, FlxColor.TRANSPARENT);
+			_areaPixels = new BitmapData(Std.int(_width), Std.int(_height), true, FlxColor.TRANSPARENT);
 		}
 	}
 	
@@ -154,6 +157,7 @@ class FlxTrailArea extends FlxSprite
 	{
 		group = FlxDestroyUtil.destroy(group);
 		blendMode = null;
+		_areaPixels = null;
 		
 		super.destroy();
 	}
@@ -166,10 +170,10 @@ class FlxTrailArea extends FlxSprite
 		if (_counter >= delay) 
 		{
 			_counter = 0;
-			framePixels.lock();
+			_areaPixels.lock();
 			//Color transform bitmap
 			var cTrans = new ColorTransform(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset);
-			framePixels.colorTransform(new Rectangle(0, 0, framePixels.width, framePixels.height), cTrans);
+			_areaPixels.colorTransform(new Rectangle(0, 0, _areaPixels.width, _areaPixels.height), cTrans);
 			
 			//Copy the graphics of all sprites on the renderBitmap
 			for (member in group.members)
@@ -178,7 +182,7 @@ class FlxTrailArea extends FlxSprite
 				{
 					if (simpleRender) 
 					{
-						framePixels.copyPixels(member.getFlxFrameBitmapData(), 
+						_areaPixels.copyPixels(member.getFlxFrameBitmapData(), 
 												new Rectangle(0, 0, member.frameWidth, member.frameHeight), 
 												new Point(member.x - x, member.y - y), null, null, true);
 					}
@@ -201,14 +205,14 @@ class FlxTrailArea extends FlxSprite
 							_matrix.translate((member.origin.x), (member.origin.y));
 						}
 						_matrix.translate(member.x - x, member.y - y);
-						framePixels.draw(member.getFlxFrameBitmapData(), _matrix, member.colorTransform, blendMode, null, antialiasing);
+						_areaPixels.draw(member.getFlxFrameBitmapData(), _matrix, member.colorTransform, blendMode, null, antialiasing);
 					}
 					
 				}
 			}
 			
-			framePixels.unlock();
-			pixels = framePixels;
+			_areaPixels.unlock();
+			pixels = _areaPixels;
 		}
 		
 		super.draw();
@@ -219,7 +223,7 @@ class FlxTrailArea extends FlxSprite
 	 */
 	public inline function resetTrail():Void
 	{
-		framePixels.fillRect(new Rectangle(0, 0, framePixels.width, framePixels.height), FlxColor.TRANSPARENT);
+		_areaPixels.fillRect(new Rectangle(0, 0, _areaPixels.width, _areaPixels.height), FlxColor.TRANSPARENT);
 		resetFrameBitmaps();
 	}
 	
@@ -252,7 +256,7 @@ class FlxTrailArea extends FlxSprite
 		
 		if (Width != _width) 
 		{
-			framePixels = new BitmapData(Std.int(Width), Std.int(_height), true, FlxColor.TRANSPARENT);
+			_areaPixels = new BitmapData(Std.int(Width), Std.int(_height), true, FlxColor.TRANSPARENT);
 		}
 		
 		return _width = Width;
@@ -275,7 +279,7 @@ class FlxTrailArea extends FlxSprite
 		
 		if (Height != _height) 
 		{
-			framePixels = new BitmapData(Std.int(_width), Std.int(Height), true, FlxColor.TRANSPARENT);
+			_areaPixels = new BitmapData(Std.int(_width), Std.int(Height), true, FlxColor.TRANSPARENT);
 		}
 		
 		return _height = Height;
