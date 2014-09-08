@@ -157,6 +157,11 @@ class FlxTrailArea extends FlxSprite
 	{
 		group = FlxDestroyUtil.destroy(group);
 		blendMode = null;
+		
+		if (pixels != _areaPixels)
+		{
+			_areaPixels.dispose();
+		}
 		_areaPixels = null;
 		
 		super.destroy();
@@ -224,7 +229,6 @@ class FlxTrailArea extends FlxSprite
 	public inline function resetTrail():Void
 	{
 		_areaPixels.fillRect(new Rectangle(0, 0, _areaPixels.width, _areaPixels.height), FlxColor.TRANSPARENT);
-		resetFrameBitmaps();
 	}
 	
 	/**
