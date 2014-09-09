@@ -72,8 +72,7 @@ class FlxSkewedSprite extends FlxSprite
 		{
 			calcFrame();
 		}
-			
-		// TODO: check if i need this block of code
+		
 	#if FLX_RENDER_TILE
 		var drawItem:DrawStackItem;
 		
@@ -88,7 +87,6 @@ class FlxSkewedSprite extends FlxSprite
 			oy = frameHeight - oy;
 		}
 	#end
-		// end of TODO
 		
 		for (camera in cameras)
 		{
@@ -98,10 +96,6 @@ class FlxSkewedSprite extends FlxSprite
 			}
 
 			getScreenPosition(_point, camera).subtractPoint(offset);
-			
-		#if FLX_RENDER_TILE
-	//		_point.addPoint(origin);
-		#end
 		
 #if FLX_RENDER_BLIT
 			if (isSimpleRender(camera))
@@ -109,27 +103,31 @@ class FlxSkewedSprite extends FlxSprite
 				_point.floor().copyToFlash(_flashPoint);
 				camera.buffer.copyPixels(framePixels, _flashRect, _flashPoint, null, null, true);
 			}
-			else if (!matrixExposed)
+			else 
 			{
 				_matrix.identity();
 				_matrix.translate( -origin.x, -origin.y);
-				if ((angle != 0) && (bakedRotationAngle <= 0))
-				{
-					_matrix.rotate(angle * FlxAngle.TO_RAD);
-				}
-				_matrix.scale(scale.x, scale.y);
 				
-				updateSkewMatrix();
-				_matrix.concat(_skewMatrix);
+				if (matrixExposed)
+				{
+					_matrix.concat(transformMatrix);
+				}
+				else
+				{
+					if ((angle != 0) && (bakedRotationAngle <= 0))
+					{
+						_matrix.rotate(angle * FlxAngle.TO_RAD);
+					}
+					_matrix.scale(scale.x, scale.y);
+					
+					updateSkewMatrix();
+					_matrix.concat(_skewMatrix);
+				}
 				
 				_point.addPoint(origin).floor();
 				
 				_matrix.translate(_point.x, _point.y);
 				camera.buffer.draw(framePixels, _matrix, null, blend, null, antialiasing);
-			}
-			else
-			{
-				camera.buffer.draw(framePixels, transformMatrix, null, blend, null, antialiasing);
 			}
 #else
 			drawItem = camera.getDrawStackItem(frame.parent, isColored, _blendInt, antialiasing);
@@ -146,29 +144,32 @@ class FlxSkewedSprite extends FlxSprite
 			var y1:Float = (oy - frame.center.y);
 			_matrix.translate(x1, y1);
 			
-			// TODO: continue from here...
-			
-			/*var csx:Float = 1;
-			var ssy:Float = 0;
-			var ssx:Float = 0;
-			var csy:Float = 1;
-			
-			var x1:Float = (origin.x - frame.center.x);
-			var y1:Float = (origin.y - frame.center.y);
-			
-			var x2:Float = x1;
-			var y2:Float = y1;
-			
-			var sx:Float = scale.x * _facingHorizontalMult;
-			var sy:Float = scale.y * _facingVerticalMult;*/
-			
-			var sx:Float = scale.x * _facingHorizontalMult;
-			var sy:Float = scale.y * _facingVerticalMult;
-			_matrix.scale(sx * camera.totalScaleX, sy * camera.totalScaleY);
-			
-			if (!isSimpleRender(camera))
+			if (!matrixExposed)
 			{
+				var sx:Float = scale.x * _facingHorizontalMult;
+				var sy:Float = scale.y * _facingVerticalMult;
 				
+				if (_angleChanged && (bakedRotationAngle <= 0))
+				{
+					var radians:Float = angle * FlxAngle.TO_RAD;
+					_sinAngle = Math.sin(radians);
+					_cosAngle = Math.cos(radians);
+					_angleChanged = false;
+				}
+				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
+				
+				_matrix.scale(sx * camera.totalScaleX, sy * camera.totalScaleY);
+				
+				if (!isSimpleRender(camera))
+				{
+					updateSkewMatrix();
+					_matrix.concat(_skewMatrix);
+				}
+			}
+			else
+			{
+				_matrix.scale(camera.totalScaleX, camera.totalScaleY);
+				_matrix.concat(transformMatrix);
 			}
 			
 			_point.addPoint(origin);
@@ -184,50 +185,6 @@ class FlxSkewedSprite extends FlxSprite
 			_point.subtract(_matrix.tx, _matrix.ty);
 			
 			setDrawData(drawItem, camera, _matrix);
-			
-			/*
-			if (isSimpleRender(camera))
-			{
-				if (flipX)
-				{
-					csx = -csx;
-				}
-				if (flipY)
-				{
-					csy = -csy;
-				}
-			}
-			else
-			{
-				var matrixToUse:Matrix = _matrix;
-				if (!matrixExposed)
-				{
-					_matrix.identity();
-					_matrix.rotate(angle * FlxAngle.TO_RAD);
-					_matrix.scale(sx, sy);
-					
-					updateSkewMatrix();
-					_matrix.concat(_skewMatrix);
-				}
-				else
-				{
-					matrixToUse = transformMatrix;
-				}
-				
-				x2 = x1 * matrixToUse.a + y1 * matrixToUse.c + matrixToUse.tx;
-				y2 = x1 * matrixToUse.b + y1 * matrixToUse.d + matrixToUse.ty;
-				
-				csx = matrixToUse.a;
-				ssy = matrixToUse.b;
-				ssx = matrixToUse.c;
-				csy = matrixToUse.d;
-			}
-			
-			_point.subtract(x2, y2);
-			
-			
-			setDrawData(drawItem, camera, csx, ssy, ssx, csy);
-			*/
 #end
 			#if !FLX_NO_DEBUG
 			FlxBasic.activeCount++;
@@ -237,9 +194,10 @@ class FlxSkewedSprite extends FlxSprite
 	
 	private function updateSkewMatrix():Void
 	{
+		_skewMatrix.identity();
+		
 		if ((skew.x != 0) || (skew.y != 0))
 		{
-			_skewMatrix.identity();
 			_skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
 			_skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
 		}
@@ -247,6 +205,6 @@ class FlxSkewedSprite extends FlxSprite
 	
 	override public function isSimpleRender(?camera:FlxCamera):Bool
 	{
-		return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0);
+		return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0) && (!matrixExposed);
 	}
 }
