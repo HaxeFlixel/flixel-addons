@@ -7,6 +7,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
+import flixel.math.FlxPoint;
+import flixel.math.FlxPoint.FlxCallbackPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.layer.DrawStackItem;
 import flixel.util.FlxColor;
@@ -32,14 +34,10 @@ class FlxBackdrop extends FlxSprite
 	 */
 	private var _tileFrame:FlxFrame;
 	
-	private var _frameRect:Rectangle;
-	
 	#if FLX_RENDER_TILE
 	private var _tileID:Int;
 	private var _tileInfo:Array<Float>;
 	private var _numTiles:Int = 0;
-	#else
-	private var _data:BitmapData;
 	#end
 	
 	/**
@@ -55,11 +53,13 @@ class FlxBackdrop extends FlxSprite
 	{
 		super();
 		
+		scale = new FlxCallbackPoint(scaleCallback);
+		scale.set(1, 1);
+		
 		_repeatX = RepeatX;
 		_repeatY = RepeatY;
 		
 		_ppoint = new Point();
-		_frameRect = new Rectangle();
 		
 		scrollFactor.x = ScrollX;
 		scrollFactor.y = ScrollY;
@@ -69,12 +69,12 @@ class FlxBackdrop extends FlxSprite
 	
 	override public function destroy():Void 
 	{
-		#if FLX_RENDER_BLIT
-		_data = FlxDestroyUtil.dispose(_data);
-		#else
+		#if FLX_RENDER_TILE
 		_tileInfo = null;
 		#end
 		_ppoint = null;
+		
+		scale = FlxDestroyUtil.destroy(scale);
 		
 		// TODO: do something with _tileFrame
 	//	_tileFrame
@@ -93,53 +93,7 @@ class FlxBackdrop extends FlxSprite
 		_scrollW = w;
 		_scrollH = h;
 		
-		_frameRect.setTo(0, 0, _scrollW, _scrollH);
-		
-		if (_repeatX) 
-		{
-			w += FlxG.width;
-		}
-		if (_repeatY)
-		{
-			h += FlxG.height;
-		}
-		
-		#if FLX_RENDER_BLIT
-		makeGraphic(w, h, FlxColor.TRANSPARENT, true);
-		#end
-		
-		#if FLX_RENDER_TILE
-		_tileInfo = [];
-		_numTiles = 0;
-		#end
-		
-		_ppoint.x = _ppoint.y = 0;
-		
-		#if FLX_RENDER_BLIT
-		pixels.lock();
-		#end
-		
-		while (_ppoint.y < h)
-		{
-			while (_ppoint.x < w)
-			{
-				#if FLX_RENDER_BLIT
-				pixels.copyPixels(_tileFrame.getBitmap(), _frameRect, _ppoint);
-				#else
-				_tileInfo.push(_ppoint.x + 0.5 * _scrollW);
-				_tileInfo.push(_ppoint.y + 0.5 * _scrollH);
-				_numTiles++;
-				#end
-				_ppoint.x += _scrollW;
-			}
-			_ppoint.x = 0;
-			_ppoint.y += _scrollH;
-		}
-		
-		#if FLX_RENDER_BLIT
-		pixels.unlock();
-		resetFrameBitmaps();
-		#end
+		regenGraphic();
 		
 		return this;
 	}
@@ -147,6 +101,15 @@ class FlxBackdrop extends FlxSprite
 	public function loadFrame(Frame:FlxFrame):FlxBackdrop
 	{
 		// TODO: implement this
+		_tileFrame = Frame;
+		
+		var w:Int = Std.int(_tileFrame.sourceSize.x);
+		var h:Int = Std.int(_tileFrame.sourceSize.y);
+		
+		_scrollW = w;
+		_scrollH = h;
+		
+		regenGraphic();
 		
 		return this;
 	}
@@ -163,8 +126,8 @@ class FlxBackdrop extends FlxSprite
 			// Find x position
 			if (_repeatX)
 			{   
-				_ppoint.x = (x - camera.scroll.x * scrollFactor.x) % _scrollW;
-				if (_ppoint.x > 0) _ppoint.x -= _scrollW;
+				_ppoint.x = ((x - camera.scroll.x * scrollFactor.x) % (_scrollW * Math.abs(scale.x)));
+				if (_ppoint.x > 0) _ppoint.x -= _scrollW * Math.abs(scale.x);
 			}
 			else 
 			{
@@ -174,8 +137,8 @@ class FlxBackdrop extends FlxSprite
 			// Find y position
 			if (_repeatY)
 			{
-				_ppoint.y = (y - camera.scroll.y * scrollFactor.y) % _scrollH;
-				if (_ppoint.y > 0) _ppoint.y -= _scrollH;
+				_ppoint.y = ((y - camera.scroll.y * scrollFactor.y) % (_scrollH * Math.abs(scale.y)));
+				if (_ppoint.y > 0) _ppoint.y -= _scrollH * Math.abs(scale.y);
 			}
 			else 
 			{
@@ -204,5 +167,77 @@ class FlxBackdrop extends FlxSprite
 			}
 		#end
 		}
+	}
+	
+	private function regenGraphic():Void
+	{
+		var w:Int = _scrollW;
+		var h:Int = _scrollH;
+		
+		if (_repeatX) 
+		{
+			w += Math.ceil(FlxG.width / _scrollW) * _scrollW;
+		}
+		if (_repeatY)
+		{
+			h += Math.ceil(FlxG.height / _scrollH) * _scrollH;
+		}
+		
+		#if FLX_RENDER_BLIT
+		if (graphic == null || (graphic.width != w || graphic.height != h))
+		{
+			makeGraphic(w, h, FlxColor.TRANSPARENT, true);
+		}
+		#else
+		_tileInfo = [];
+		_numTiles = 0;
+		#end
+		
+		_ppoint.x = _ppoint.y = 0;
+		
+		var sx:Float = Math.abs(scale.x);
+		var sy:Float = Math.abs(scale.y);
+		
+		#if FLX_RENDER_BLIT
+		pixels.lock();
+		_flashRect2.setTo(0, 0, graphic.width, graphic.height);
+		pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
+		_matrix.identity();
+		_matrix.scale(sx, sy);
+		#end
+		
+		while (_ppoint.y < h / sy)
+		{
+			while (_ppoint.x < w / sx)
+			{
+				#if FLX_RENDER_BLIT
+				pixels.draw(_tileFrame.getBitmap(), _matrix);
+				_matrix.tx += _scrollW * sx;
+				#else
+				_tileInfo.push(_ppoint.x + 0.5 * _scrollW);
+				_tileInfo.push(_ppoint.y + 0.5 * _scrollH);
+				_numTiles++;
+				#end
+				
+				_ppoint.x += _scrollW;
+			}
+			#if FLX_RENDER_BLIT
+			_matrix.tx = 0;
+			_matrix.ty += _scrollH * sy;
+			#end
+			_ppoint.x = 0;
+			_ppoint.y += _scrollH;
+		}
+		
+		#if FLX_RENDER_BLIT
+		pixels.unlock();
+		resetFrameBitmaps();
+		#end
+	}
+	
+	private inline function scaleCallback(Scale:FlxPoint)
+	{ 
+		if (graphic != null)
+			regenGraphic();
 	}
 }
