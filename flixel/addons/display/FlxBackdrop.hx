@@ -123,11 +123,14 @@ class FlxBackdrop extends FlxSprite
 				continue;
 			}
 			
+			var ssw:Float = _scrollW * Math.abs(scale.x);
+			var ssh:Float = _scrollH * Math.abs(scale.y);
+			
 			// Find x position
 			if (_repeatX)
 			{   
-				_ppoint.x = ((x - camera.scroll.x * scrollFactor.x) % (_scrollW * Math.abs(scale.x)));
-				if (_ppoint.x > 0) _ppoint.x -= _scrollW * Math.abs(scale.x);
+				_ppoint.x = ((x - camera.scroll.x * scrollFactor.x) % ssw);
+				if (_ppoint.x > 0) _ppoint.x -= ssw;
 			}
 			else 
 			{
@@ -137,8 +140,8 @@ class FlxBackdrop extends FlxSprite
 			// Find y position
 			if (_repeatY)
 			{
-				_ppoint.y = ((y - camera.scroll.y * scrollFactor.y) % (_scrollH * Math.abs(scale.y)));
-				if (_ppoint.y > 0) _ppoint.y -= _scrollH * Math.abs(scale.y);
+				_ppoint.y = ((y - camera.scroll.y * scrollFactor.y) % ssh);
+				if (_ppoint.y > 0) _ppoint.y -= ssh;
 			}
 			else 
 			{
@@ -171,16 +174,19 @@ class FlxBackdrop extends FlxSprite
 	
 	private function regenGraphic():Void
 	{
-		var w:Int = _scrollW;
-		var h:Int = _scrollH;
+		var ssw:Int = Std.int(_scrollW * Math.abs(scale.x));
+		var ssh:Int = Std.int(_scrollH * Math.abs(scale.y));
+		
+		var w:Int = ssw;
+		var h:Int = ssh;
 		
 		if (_repeatX) 
 		{
-			w += Math.ceil(FlxG.width / _scrollW) * _scrollW;
+			w += FlxG.width;
 		}
 		if (_repeatY)
 		{
-			h += Math.ceil(FlxG.height / _scrollH) * _scrollH;
+			h += FlxG.height;
 		}
 		
 		#if FLX_RENDER_BLIT
@@ -206,27 +212,27 @@ class FlxBackdrop extends FlxSprite
 		_matrix.scale(sx, sy);
 		#end
 		
-		while (_ppoint.y < h / sy)
+		while (_ppoint.y < h)
 		{
-			while (_ppoint.x < w / sx)
+			while (_ppoint.x < w)
 			{
 				#if FLX_RENDER_BLIT
 				pixels.draw(_tileFrame.getBitmap(), _matrix);
-				_matrix.tx += _scrollW * sx;
+				_matrix.tx += ssw;
 				#else
-				_tileInfo.push(_ppoint.x + 0.5 * _scrollW);
-				_tileInfo.push(_ppoint.y + 0.5 * _scrollH);
+				_tileInfo.push(_ppoint.x + 0.5 * ssw);
+				_tileInfo.push(_ppoint.y + 0.5 * ssh);
 				_numTiles++;
 				#end
 				
-				_ppoint.x += _scrollW;
+				_ppoint.x += ssw;
 			}
 			#if FLX_RENDER_BLIT
 			_matrix.tx = 0;
-			_matrix.ty += _scrollH * sy;
+			_matrix.ty += ssh;
 			#end
 			_ppoint.x = 0;
-			_ppoint.y += _scrollH;
+			_ppoint.y += ssh;
 		}
 		
 		#if FLX_RENDER_BLIT
