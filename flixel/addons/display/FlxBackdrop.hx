@@ -14,9 +14,6 @@ import flixel.system.layer.DrawStackItem;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
-// TODO: loadGraphic() and loadFrame() methods
-// TODO: scale support.
-
 /**
  * Used for showing infinitely scrolling backgrounds.
  * @author Chevy Ray
@@ -73,11 +70,8 @@ class FlxBackdrop extends FlxSprite
 		_tileInfo = null;
 		#end
 		_ppoint = null;
-		
 		scale = FlxDestroyUtil.destroy(scale);
-		
-		// TODO: do something with _tileFrame
-	//	_tileFrame
+		setTileFrame(null);
 		
 		super.destroy();
 	}
@@ -85,7 +79,7 @@ class FlxBackdrop extends FlxSprite
 	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite 
 	{
 		var tileGraphic:FlxGraphic = FlxG.bitmap.add(Graphic);
-		_tileFrame = tileGraphic.imageFrame.frame;
+		setTileFrame(tileGraphic.imageFrame.frame);
 		
 		var w:Int = Std.int(_tileFrame.sourceSize.x);
 		var h:Int = Std.int(_tileFrame.sourceSize.y);
@@ -100,8 +94,7 @@ class FlxBackdrop extends FlxSprite
 	
 	public function loadFrame(Frame:FlxFrame):FlxBackdrop
 	{
-		// TODO: implement this
-		_tileFrame = Frame;
+		setTileFrame(Frame);
 		
 		var w:Int = Std.int(_tileFrame.sourceSize.x);
 		var h:Int = Std.int(_tileFrame.sourceSize.y);
@@ -153,12 +146,24 @@ class FlxBackdrop extends FlxSprite
 			_flashRect2.setTo(0, 0, graphic.width, graphic.height);
 			camera.buffer.copyPixels(frame.getBitmap(), _flashRect2, _ppoint, null, null, true);
 		#else
-			if (graphic == null)
+			if (_tileFrame == null)
 			{
 				return;
 			}
 			
-			var drawItem:DrawStackItem = camera.getDrawStackItem(cachedGraphics, false, 0);
+			var drawItem:DrawStackItem = camera.getDrawStackItem(_tileFrame.parent, false, 0);
+			
+			_matrix.identity();
+			
+			if (_tileFrame.angle != 0)
+			{
+				_tileFrame.prepareFrameMatrix(_matrix);
+			}
+			
+			_matrix.scale(scale.x * camera.totalScaleX, scale.y * camera.totalScaleY);
+			
+			_ppoint.x += _tileFrame.center.x * scale.x;
+			_ppoint.y += _tileFrame.center.y * scale.y;
 			
 			for (j in 0..._numTiles)
 			{
@@ -166,7 +171,11 @@ class FlxBackdrop extends FlxSprite
 				var currTileY = _tileInfo[(j * 2) + 1];
 				
 				_point.set(_ppoint.x + currTileX, _ppoint.y + currTileY);
-				setDrawData(drawItem, camera, 1, 0, 0, 1, _tileID);
+				
+				_point.x *= camera.totalScaleX;
+				_point.y *= camera.totalScaleY;
+				
+				setDrawData(drawItem, camera, _matrix, _tileFrame.tileID);
 			}
 		#end
 		}
@@ -174,8 +183,11 @@ class FlxBackdrop extends FlxSprite
 	
 	private function regenGraphic():Void
 	{
-		var ssw:Int = Std.int(_scrollW * Math.abs(scale.x));
-		var ssh:Int = Std.int(_scrollH * Math.abs(scale.y));
+		var sx:Float = Math.abs(scale.x);
+		var sy:Float = Math.abs(scale.y);
+		
+		var ssw:Int = Std.int(_scrollW * sx);
+		var ssh:Int = Std.int(_scrollH * sy);
 		
 		var w:Int = ssw;
 		var h:Int = ssh;
@@ -201,9 +213,6 @@ class FlxBackdrop extends FlxSprite
 		
 		_ppoint.x = _ppoint.y = 0;
 		
-		var sx:Float = Math.abs(scale.x);
-		var sy:Float = Math.abs(scale.y);
-		
 		#if FLX_RENDER_BLIT
 		pixels.lock();
 		_flashRect2.setTo(0, 0, graphic.width, graphic.height);
@@ -220,11 +229,10 @@ class FlxBackdrop extends FlxSprite
 				pixels.draw(_tileFrame.getBitmap(), _matrix);
 				_matrix.tx += ssw;
 				#else
-				_tileInfo.push(_ppoint.x + 0.5 * ssw);
-				_tileInfo.push(_ppoint.y + 0.5 * ssh);
+				_tileInfo.push(_ppoint.x);
+				_tileInfo.push(_ppoint.y);
 				_numTiles++;
 				#end
-				
 				_ppoint.x += ssw;
 			}
 			#if FLX_RENDER_BLIT
@@ -243,7 +251,25 @@ class FlxBackdrop extends FlxSprite
 	
 	private inline function scaleCallback(Scale:FlxPoint)
 	{ 
-		if (graphic != null)
+		if (_tileFrame != null)
 			regenGraphic();
+	}
+	
+	private function setTileFrame(Frame:FlxFrame):FlxFrame
+	{
+		if (Frame != _tileFrame)
+		{
+			if (_tileFrame != null)
+			{
+				_tileFrame.parent.useCount--;
+			}
+			
+			if (Frame != null)
+			{
+				Frame.parent.useCount++;
+			}
+		}
+		
+		return _tileFrame = Frame;
 	}
 }
