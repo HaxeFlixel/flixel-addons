@@ -5,13 +5,15 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.FlxFrame;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.layer.DrawStackItem;
-import flixel.system.layer.Region;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.loaders.TextureRegion;
 
 // TODO: loadGraphic() and loadFrame() methods
+// TODO: scale support.
 
 /**
  * Used for showing infinitely scrolling backgrounds.
@@ -24,6 +26,13 @@ class FlxBackdrop extends FlxSprite
 	private var _scrollH:Int;
 	private var _repeatX:Bool;
 	private var _repeatY:Bool;
+	
+	/**
+	 * Frame used for tiling
+	 */
+	private var _tileFrame:FlxFrame;
+	
+	private var _frameRect:Rectangle;
 	
 	#if FLX_RENDER_TILE
 	private var _tileID:Int;
@@ -46,69 +55,16 @@ class FlxBackdrop extends FlxSprite
 	{
 		super();
 		
-		cachedGraphics = FlxG.bitmap.add(Graphic);
-		
-		if (!Std.is(Graphic, TextureRegion))
-		{
-			region = new Region(0, 0, cachedGraphics.bitmap.width, cachedGraphics.bitmap.height);
-			region.width = cachedGraphics.bitmap.width;
-			region.height = cachedGraphics.bitmap.height;
-		}
-		else
-		{
-			region = cast(Graphic, TextureRegion).region.clone();
-		}
-		
-		var w:Int = region.width;
-		var h:Int = region.height;
-		
-		if (RepeatX) 
-		{
-			w += FlxG.width;
-		}
-		if (RepeatY)
-		{
-			h += FlxG.height;
-		}
-		
-		#if FLX_RENDER_BLIT
-		_data = new BitmapData(w, h);
-		#end
-		_ppoint = new Point();
-		
-		_scrollW = region.width;
-		_scrollH = region.height;
 		_repeatX = RepeatX;
 		_repeatY = RepeatY;
 		
-		#if FLX_RENDER_TILE
-		_tileInfo = [];
-		_numTiles = 0;
-		#else
-		var regionRect:Rectangle = new Rectangle(region.startX, region.startY, region.width, region.height);
-		#end
-		
-		while (_ppoint.y < h)
-		{
-			while (_ppoint.x < w)
-			{
-				#if FLX_RENDER_BLIT
-				_data.copyPixels(cachedGraphics.bitmap, regionRect, _ppoint);
-				#else
-				_tileInfo.push(_ppoint.x);
-				_tileInfo.push(_ppoint.y);
-				_numTiles++;
-				#end
-				_ppoint.x += region.width;
-			}
-			_ppoint.x = 0;
-			_ppoint.y += region.height;
-		}
+		_ppoint = new Point();
+		_frameRect = new Rectangle();
 		
 		scrollFactor.x = ScrollX;
 		scrollFactor.y = ScrollY;
 		
-		updateFrameData();
+		loadGraphic(Graphic);
 	}
 	
 	override public function destroy():Void 
@@ -120,7 +76,79 @@ class FlxBackdrop extends FlxSprite
 		#end
 		_ppoint = null;
 		
+		// TODO: do something with _tileFrame
+	//	_tileFrame
+		
 		super.destroy();
+	}
+	
+	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite 
+	{
+		var tileGraphic:FlxGraphic = FlxG.bitmap.add(Graphic);
+		_tileFrame = tileGraphic.imageFrame.frame;
+		
+		var w:Int = Std.int(_tileFrame.sourceSize.x);
+		var h:Int = Std.int(_tileFrame.sourceSize.y);
+		
+		_scrollW = w;
+		_scrollH = h;
+		
+		_frameRect.setTo(0, 0, _scrollW, _scrollH);
+		
+		if (_repeatX) 
+		{
+			w += FlxG.width;
+		}
+		if (_repeatY)
+		{
+			h += FlxG.height;
+		}
+		
+		#if FLX_RENDER_BLIT
+		makeGraphic(w, h, FlxColor.TRANSPARENT, true);
+		#end
+		
+		#if FLX_RENDER_TILE
+		_tileInfo = [];
+		_numTiles = 0;
+		#end
+		
+		_ppoint.x = _ppoint.y = 0;
+		
+		#if FLX_RENDER_BLIT
+		pixels.lock();
+		#end
+		
+		while (_ppoint.y < h)
+		{
+			while (_ppoint.x < w)
+			{
+				#if FLX_RENDER_BLIT
+				pixels.copyPixels(_tileFrame.getBitmap(), _frameRect, _ppoint);
+				#else
+				_tileInfo.push(_ppoint.x + 0.5 * _scrollW);
+				_tileInfo.push(_ppoint.y + 0.5 * _scrollH);
+				_numTiles++;
+				#end
+				_ppoint.x += _scrollW;
+			}
+			_ppoint.x = 0;
+			_ppoint.y += _scrollH;
+		}
+		
+		#if FLX_RENDER_BLIT
+		pixels.unlock();
+		resetFrameBitmaps();
+		#end
+		
+		return this;
+	}
+	
+	public function loadFrame(Frame:FlxFrame):FlxBackdrop
+	{
+		// TODO: implement this
+		
+		return this;
 	}
 
 	override public function draw():Void
@@ -156,9 +184,10 @@ class FlxBackdrop extends FlxSprite
 			
 			// Draw to the screen
 		#if FLX_RENDER_BLIT
-			camera.buffer.copyPixels(_data, _data.rect, _ppoint, null, null, true);
+			_flashRect2.setTo(0, 0, graphic.width, graphic.height);
+			camera.buffer.copyPixels(frame.getBitmap(), _flashRect2, _ppoint, null, null, true);
 		#else
-			if (cachedGraphics == null)
+			if (graphic == null)
 			{
 				return;
 			}
@@ -175,15 +204,5 @@ class FlxBackdrop extends FlxSprite
 			}
 		#end
 		}
-	}
-	
-	override public function updateFrameData():Void
-	{
-		#if FLX_RENDER_TILE
-		if (cachedGraphics != null)
-		{
-			_tileID = cachedGraphics.tilesheet.addTileRect(new Rectangle(region.startX, region.startY, _scrollW, _scrollH), new Point());
-		}
-		#end
 	}
 }
