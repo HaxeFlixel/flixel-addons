@@ -84,6 +84,7 @@ class FlxTransitionableState extends FlxState
 	override public function transitionToState(Next:FlxState):Void
 	{
 		//play the exit transition, and when it's done call FlxG.switchState
+		_exiting = true;
 		transitionOut(
 			function():Void
 			{
@@ -133,6 +134,7 @@ class FlxTransitionableState extends FlxState
 	
 	private var transOutFinished:Bool = false;
 	
+	private var _exiting:Bool = false;
 	private var _onExit:Void->Void;
 	
 	private function get_hasTransIn():Bool
@@ -163,7 +165,12 @@ class FlxTransitionableState extends FlxState
 	private function finishTransOut()
 	{
 		transOutFinished = true;
-		closeSubState();
+		
+		if (!_exiting)
+		{
+			closeSubState();
+		}
+		
 		if (_onExit != null)
 		{
 			_onExit();
