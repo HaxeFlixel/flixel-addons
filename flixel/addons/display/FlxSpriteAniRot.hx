@@ -64,6 +64,8 @@ class FlxSpriteAniRot extends FlxSprite
 			framesCache.push(helperSprite.frames);
 		}
 		
+		helperSprite.destroy();
+		
 		if (AutoBuffer)
 		{
 			width = frameToLoad.sourceSize.x;
