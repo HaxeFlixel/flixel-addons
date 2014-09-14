@@ -48,29 +48,6 @@ class FlxTilemapExt extends FlxTilemap
 	private var MATRIX:Matrix;
 	private var _specialTiles:Array<FlxTileSpecial>;
 	
-	// Alpha stuff
-	#if FLX_RENDER_BLIT
-	private var _flashAlpha:BitmapData;
-	private var _flashAlphaPoint:Point;
-	#end
-	public var alpha(default, set):Float = 1.0;
-	
-	private function set_alpha(alpha:Float):Float 
-	{
-		this.alpha = alpha;
-		#if FLX_RENDER_BLIT
-		if (_tileWidth == 0 || _tileHeight == 0) 
-		{
-			throw "You can't set the alpha of the tilemap before loading it";
-		}
-		var alphaCol:Int = (Math.floor(alpha * 255) << 24);
-		_flashAlpha = new BitmapData(_tileWidth, _tileHeight, true, alphaCol);
-		_flashAlphaPoint = new Point(0, 0);
-		#end
-		
-		return alpha;
-	}
-	
 	public function new()
 	{
 		super();
@@ -112,11 +89,6 @@ class FlxTilemapExt extends FlxTilemap
 		}
 		_specialTiles = null;
 		MATRIX = null;
-		
-		#if FLX_RENDER_BLIT
-		_flashAlpha = FlxDestroyUtil.dispose(_flashAlpha);
-		_flashAlphaPoint = null;
-		#end
 	}
 	
 	override public function update(elapsed:Float):Void 
@@ -153,6 +125,8 @@ class FlxTilemapExt extends FlxTilemap
 		var drawX:Float;
 		var drawY:Float;
 		#end
+		
+		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
 		
 		// Copy tile images into the tile buffer
 		_point.x = (Camera.scroll.x * scrollFactor.x) - x; //modified from getScreenXY()
@@ -215,8 +189,7 @@ class FlxTilemapExt extends FlxTilemap
 						{
 							Buffer.pixels.copyPixels(
 								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, cachedGraphics.bitmap),
-								special.tileRect,
-								_flashPoint, _flashAlpha, _flashAlphaPoint, true);
+								special.tileRect, _flashPoint, null, null, true);
 							
 							Buffer.dirty = (special.dirty || Buffer.dirty);
 						}
@@ -224,8 +197,8 @@ class FlxTilemapExt extends FlxTilemap
 					
 					if (!isSpecial) 
 					{
-						Buffer.pixels.copyPixels(cachedGraphics.bitmap, _flashRect, _flashPoint, _flashAlpha, _flashAlphaPoint, true);
-					} 
+						Buffer.pixels.copyPixels(cachedGraphics.bitmap, _flashRect, _flashPoint, null, null, true);
+					}
 					else 
 					{
 						isSpecial = false;
@@ -289,8 +262,8 @@ class FlxTilemapExt extends FlxTilemap
 					
 					_point.set(Math.floor(drawX) + 0.01, Math.floor(drawY) + 0.01);
 					
-					var drawItem:DrawStackItem = Camera.getDrawStackItem(cachedGraphics, false, 0);
-					drawItem.setDrawData(_point, tileID, MATRIX.a, MATRIX.b, MATRIX.c, MATRIX.d);
+					var drawItem:DrawStackItem = Camera.getDrawStackItem(cachedGraphics, isColored, _blendInt);
+					drawItem.setDrawData(_point, tileID, MATRIX.a, MATRIX.b, MATRIX.c, MATRIX.d, isColored, color, alpha);
 				}
 				#end
 				
@@ -306,6 +279,14 @@ class FlxTilemapExt extends FlxTilemap
 		
 		Buffer.x = screenXInTiles * _tileWidth;
 		Buffer.y = screenYInTiles * _tileHeight;
+		
+		#if FLX_RENDER_BLIT
+		if (isColored)
+		{
+			Buffer.colorTransform(colorTransform);
+		}
+		Buffer.blend = blend;
+		#end
 	}
 	
 	/**

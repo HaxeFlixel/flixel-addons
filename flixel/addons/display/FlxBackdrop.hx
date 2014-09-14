@@ -14,6 +14,8 @@ import flixel.system.layer.DrawStackItem;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
+// TODO: maybe add game resize handler
+
 /**
  * Used for showing infinitely scrolling backgrounds.
  * @author Chevy Ray

@@ -4,52 +4,82 @@ import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.FlxFrame;
+import flixel.graphics.frames.FlxFramesCollection;
 import flixel.system.FlxAssets.FlxGraphicAsset;
-import flixel.system.layer.frames.FlxSpriteFrames;
+import flixel.util.FlxBitmapDataUtil;
 import flixel.util.FlxColor;
-import flixel.util.loaders.CachedGraphics;
+import flixel.util.FlxSpriteUtil;
 
 /**
  * Creating animated and rotated sprite from an un-rotated animated image. 
- * THE ANIMATION MUST CONTAIN ONLY ONE ROW OF SPRITE FRAMES.
  * 
  * @version 1.0 - November 8th 2011
  * @link http://www.gameonaut.com
  * @author Simon Etienne Rozner / Gameonaut.com, ported to Haxe by Sam Batista
-*/
+ * @author Slightly updated by Beeblerox.
+ */
 class FlxSpriteAniRot extends FlxSprite
 {
-	private var cached:Array<CachedGraphics>;
-	private var framesCache:Array<FlxSpriteFrames>;
+	private var framesCache:Array<FlxFramesCollection>;
 	private var rotations:Float = 0;
 	private var angleIndex:Int = -1;
-
-	public function new(AnimatedGraphic:FlxGraphicAsset, Rotations:Int, X:Float = 0, Y:Float = 0)
+	
+	/**
+	 * Constructor, which creates array of prerotated spritesheets for each frame in provided AnimatedGraphic.
+	 * 
+	 * @param	AnimatedGraphic		The image you want to rotate and stamp.
+	 * @param	Rotations			The number of rotation frames the final sprite should have.  For small sprites this can be quite a large number (360 even) without any problems.
+	 * @param	AutoBuffer			Whether to automatically increase the image size to accomodate rotated corners.  Default is false.  Will create frames that are 150% larger on each axis than the original frame or graphic.	
+	 * @param	Antialiasing		Whether to use high quality rotations when creating the graphic.  Default is false.
+	 * @param	Width				The width of frame in provided spritesheet.
+	 * @param	Height				The height of frame in provided spritesheet
+	 * @param	X					The x component of sprite's position.
+	 * @param	Y					The y component of sprite's position.
+	 */
+	public function new(AnimatedGraphic:FlxGraphicAsset, Rotations:Int = 16, AutoBuffer:Bool = false, Antialiasing:Bool = false, Width:Int = 0, Height:Int = 0, X:Float = 0, Y:Float = 0)
 	{
 		super(X, Y);
-		// Just to get the number of frames
-		loadGraphic(AnimatedGraphic, true); 
 		
-		rotations = 360 / Rotations;
-		cached = [];
+		// Just to get the number of frames
+		loadGraphic(AnimatedGraphic, true, Width, Height);
+		graphic.destroyOnNoUse = false;
+		
+		rotations = Rotations;
 		framesCache = [];
 		
-		// Load the graphic, create rotations every 10 degrees
-		for (i in 0...frames)
+		var num:Int = numFrames;
+		var helperSprite:FlxSprite = new FlxSprite();
+		var frameToLoad:FlxFrame = null;
+		
+		// Load the graphic, create rotations every X degrees
+		for (i in 0...num)
 		{
+			frameToLoad = frames.frames[i];
+			
 			// Create the rotation spritesheet for that frame
-			loadRotatedGraphic(AnimatedGraphic, Rotations, i, true, false);
-			cached.push(cachedGraphics);
-			framesCache.push(framesData);
+			FlxSpriteUtil.loadRotatedFrame(helperSprite, frameToLoad, Rotations, Antialiasing, AutoBuffer);
+			helperSprite.graphic.destroyOnNoUse = false;
+			framesCache.push(helperSprite.frames);
 		}
-		bakedRotationAngle = 0;
+		
+		if (AutoBuffer)
+		{
+			width = frameToLoad.sourceSize.x;
+			height = frameToLoad.sourceSize.y;
+			frameWidth = Std.int(framesCache[0].frames[0].sourceSize.x);
+			frameHeight = Std.int(framesCache[0].frames[0].sourceSize.y);
+			centerOffsets();
+		}
+		
+		animation.destroyAnimations();
+		bakedRotationAngle = 360 / Rotations;
 	}
 	
 	override public function destroy():Void 
 	{
-		cached = null;
 		framesCache = null;
-		
 		super.destroy();
 	}
 	
@@ -65,8 +95,8 @@ class FlxSpriteAniRot extends FlxSprite
 			angleHelper += 360;
 		}
 		
-		angleIndex = Math.floor(angleHelper / rotations + 0.5);
-		angleIndex = Std.int(angleIndex % frames);
+		angleIndex = Math.floor(angleHelper / bakedRotationAngle + 0.5);
+		angleIndex = Std.int(angleIndex % rotations);
 		
 		if (oldIndex != angleIndex)
 		{
@@ -74,11 +104,6 @@ class FlxSpriteAniRot extends FlxSprite
 		}
 	}
 
-	/**
-	 * Internal function to update the current animation frame.
-	 * 
-	 * @param	RunOnCpp	Whether the frame should also be recalculated if we're on a non-flash target
-	 */
 	override private function calcFrame(RunOnCpp:Bool = false):Void
 	{
 		#if FLX_RENDER_TILE
@@ -88,8 +113,12 @@ class FlxSpriteAniRot extends FlxSprite
 		}
 		#end
 		
-		cachedGraphics = cached[animation.frameIndex];
-		frame = framesCache[animation.frameIndex].frames[angleIndex];
+		if (bakedRotationAngle != 0)
+		{
+			var idx:Int = (animation.frameIndex < 0) ? 0 : animation.frameIndex;
+			frame = framesCache[idx].frames[angleIndex];
+		}
+		
 		super.calcFrame();
 	}
 }
