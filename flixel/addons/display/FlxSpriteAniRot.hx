@@ -108,18 +108,18 @@ class FlxSpriteAniRot extends FlxSprite
 
 	override private function calcFrame(RunOnCpp:Bool = false):Void
 	{
+		if (bakedRotationAngle != 0)
+		{
+			var idx:Int = (animation.frameIndex < 0) ? 0 : animation.frameIndex;
+			frame = framesCache[idx].frames[angleIndex];
+		}
+		
 		#if FLX_RENDER_TILE
 		if (!RunOnCpp)
 		{
 			return;
 		}
 		#end
-		
-		if (bakedRotationAngle != 0)
-		{
-			var idx:Int = (animation.frameIndex < 0) ? 0 : animation.frameIndex;
-			frame = framesCache[idx].frames[angleIndex];
-		}
 		
 		super.calcFrame();
 	}
