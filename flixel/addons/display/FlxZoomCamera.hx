@@ -108,10 +108,4 @@ class FlxZoomCamera extends FlxCamera
 		
 		return Value;
 	}
-	
-	override public function setScale(X:Float, Y:Float):Void 
-	{
-		flashSprite.scaleX = X;
-		flashSprite.scaleY = Y;
-	}
 }

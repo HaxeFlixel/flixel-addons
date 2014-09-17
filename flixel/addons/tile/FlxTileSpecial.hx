@@ -7,6 +7,8 @@ import flash.geom.Rectangle;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.math.FlxAngle;
+import flixel.graphics.frames.FlxFrame;
+import flixel.graphics.frames.FlxFramesCollection;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
@@ -16,15 +18,12 @@ class FlxTileSpecial extends FlxBasic
 	public static inline var ROTATE_90 = 1;
 	public static inline var ROTATE_270 = 2;
 	
-	/**
-	 * The id of this tile in the tileset
-	 */
-	public var tileID:Int;
-	
 	public var flipX:Bool = false;
 	public var flipY:Bool = false;
 	
 	public var rotate:Int;
+	
+	public var frames(default, set):FlxFramesCollection;
 	
 	private var _tmp_flipH:Bool;
 	private var _tmp_flipV:Bool;
@@ -33,43 +32,34 @@ class FlxTileSpecial extends FlxBasic
 	#if FLX_RENDER_BLIT
 	private var _normalFrame:BitmapData;
 	private var _flippedFrame:BitmapData;
-	private var _point:Point;
-	
-	public var tileRect:Rectangle;
 	#end
 	
 	private var _matrix:Matrix;
 	
+	private var _currFrame:FlxFrame;
+	
 	// Animation stuff
 	private var _animation:FlxTileAnimation;
-	private var _currFrame:Int = 0;
-	private var _lastFrame:Int = -1;
+	private var _currIndex:Int = 0;
+	private var _lastIndex:Int = -1;
 	private var _currTileId:Int;
 	private var _currAnimParam:AnimParams;
 	private var _frameTimer:Float = 0.0;
 	
 	#if FLX_RENDER_BLIT
-	private var _animRects:Array<Rectangle>;
 	public var dirty:Bool = true;
 	#end
 	
-	public function new(TilesetId:Int, FlipX:Bool, FlipY:Bool, Rotate:Int) 
+	public function new(TilesetId:Int, FlipX:Bool, FlipY:Bool, Rotate:Int, Frames:FlxFramesCollection)
 	{
 		super();
-		tileID = TilesetId;
-		_currTileId = tileID;
+		
+		_currTileId = TilesetId;
+		frames = Frames;
+		
 		flipX = FlipX;
 		flipY = FlipY;
 		rotate = Rotate;
-		
-		#if FLX_RENDER_BLIT
-		_normalFrame = null;
-		_flippedFrame = null;
-		_point = new Point(0, 0);
-		
-		_animRects = null;
-		tileRect = new Rectangle();
-		#end
 		
 		_matrix = new Matrix();
 		_animation = null;
@@ -82,15 +72,14 @@ class FlxTileSpecial extends FlxBasic
 		#if FLX_RENDER_BLIT
 		_normalFrame = FlxDestroyUtil.dispose(_normalFrame);
 		_flippedFrame = FlxDestroyUtil.dispose(_flippedFrame);
-		
-		_point = null;
-		_animRects = null;
-		tileRect = null;
 		#end
 		
 		_animation = FlxDestroyUtil.destroy(_animation);
 		_currAnimParam = null;
 		_matrix = null;
+		
+		_currFrame = null;
+		frames = null;
 	}
 	
 	override public function update(elapsed:Float):Void 
@@ -105,28 +94,29 @@ class FlxTileSpecial extends FlxBasic
 			_frameTimer += elapsed;
 			if (_frameTimer > _animation.delay) 
 			{
-				_lastFrame = _currFrame;
+				_lastIndex = _currIndex;
 			}
 			while (_frameTimer > _animation.delay) 
 			{
 				_frameTimer = _frameTimer - _animation.delay;
-				if (_currFrame >= _animation.frames.length - 1)
+				if (_currIndex >= _animation.frames.length - 1)
 				{
-					_currFrame = 0;
+					_currIndex = 0;
 				}
 				else
 				{
-					_currFrame++;
+					_currIndex++;
 				}
 			}
-			_currTileId = _animation.frames[_currFrame];
+			_currTileId = _animation.frames[_currIndex];
+			_currFrame = frames.frames[_currTileId];
 			if (_animation.framesData != null) 
 			{
-				_currAnimParam = _animation.framesData[_currFrame];
+				_currAnimParam = _animation.framesData[_currIndex];
 			}
 			
 			#if FLX_RENDER_BLIT
-			dirty = !(_currFrame == _lastFrame);
+			dirty = !(_currIndex == _lastIndex);
 			#end
 		}
 	}
@@ -147,47 +137,29 @@ class FlxTileSpecial extends FlxBasic
 	}
 	
 	#if FLX_RENDER_BLIT
-	public function getBitmapData(width:Int, height:Int, rect:Rectangle, bitmap:BitmapData):BitmapData 
+	public function getBitmapData(width:Int, height:Int):BitmapData 
 	{
-		if (_normalFrame == null)
-		{
-			_normalFrame = new BitmapData(width, height, true, FlxColor.TRANSPARENT);
-		}
-		
 		var generateFlipped:Bool = (_flippedFrame == null);
-		if (generateFlipped)
-		{
-			_flippedFrame = new BitmapData(width, height, true, FlxColor.TRANSPARENT);
-		}
 
 		if (generateFlipped || dirty) 
 		{
-			tileRect.width = width;
-			tileRect.height = height;
+			_normalFrame = _currFrame.getBitmap();
 			
-			_normalFrame.fillRect(tileRect, FlxColor.TRANSPARENT);
-			_flippedFrame.fillRect(tileRect, FlxColor.TRANSPARENT);
-			
-			if (_animRects != null && _animRects[_currFrame] != null) 
+			if (generateFlipped)
 			{
-				rect = _animRects[_currFrame];
+				_flippedFrame = new BitmapData(width, height, true, FlxColor.TRANSPARENT);
+			}
+			else
+			{
+				_flippedFrame.fillRect(_flippedFrame.rect, FlxColor.TRANSPARENT);
 			}
 			
-			_normalFrame.copyPixels(bitmap, rect, _point, null, null, true);
 			_flippedFrame.draw(_normalFrame, getMatrix(width, height));
 			dirty = true;
+		
 		}
 		
 		return _flippedFrame;
-	}
-	
-	/**
-	 * Set the animation rectangles for flash
-	 * @param	rects	An array with rectangles
-	 */
-	public function setAnimationRects(rects:Array<Rectangle>):Void 
-	{
-		_animRects = rects;
 	}
 	#end
 	
@@ -214,7 +186,7 @@ class FlxTileSpecial extends FlxBasic
 	 * Get the animation tiles id if any
 	 * @return	An array of ids or null
 	 */
-	public function getAnimationTilesId():Array<Int> 
+	public function getAnimationIndices():Array<Int> 
 	{
 		return (_animation != null) ? _animation.frames : null;
 	}
@@ -267,8 +239,19 @@ class FlxTileSpecial extends FlxBasic
 		
 		return _matrix;
 	}
+	
+	private function set_frames(value:FlxFramesCollection):FlxFramesCollection
+	{
+		frames = value;
+		
+		if (value != null)
+		{
+			_currFrame = frames.frames[_currTileId];
+		}
+		
+		return frames;
+	}
 }
-
 
 typedef AnimParams = {
 	var flipX:Bool;

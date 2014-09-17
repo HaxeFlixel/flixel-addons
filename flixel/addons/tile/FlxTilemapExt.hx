@@ -9,6 +9,8 @@ import flixel.addons.tile.FlxTileSpecial;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
+import flixel.graphics.frames.FlxFrame;
+import flixel.graphics.frames.FrameType;
 import flixel.system.layer.DrawStackItem;
 import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
@@ -16,6 +18,7 @@ import flixel.tile.FlxTilemapBuffer;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.graphics.frames.FlxFramesCollection;
 
 
 /**
@@ -160,6 +163,7 @@ class FlxTilemapExt extends FlxTilemap
 		var column:Int;
 		var columnIndex:Int;
 		var tile:FlxTile;
+		var frame:FlxFrame;
 		var special:FlxTileSpecial;
 
 		#if !FLX_NO_DEBUG
@@ -177,61 +181,63 @@ class FlxTilemapExt extends FlxTilemap
 			while (column < screenColumns)
 			{
 				#if FLX_RENDER_BLIT
-				_flashRect = _rects[columnIndex];
-				
-				if (_flashRect != null)
+				if (_specialTiles != null && _specialTiles[columnIndex] != null) 
 				{
-					if (_specialTiles != null && _specialTiles[columnIndex] != null) 
+					special = _specialTiles[columnIndex];
+					isSpecial = special.isSpecial();
+					if (isSpecial) 
 					{
-						special = _specialTiles[columnIndex];
-						isSpecial = special.isSpecial();
-						if (isSpecial) 
-						{
-							Buffer.pixels.copyPixels(
-								special.getBitmapData(_tileWidth, _tileHeight, _flashRect, cachedGraphics.bitmap),
-								special.tileRect, _flashPoint, null, null, true);
-							
-							Buffer.dirty = (special.dirty || Buffer.dirty);
-						}
-					} 
-					
-					if (!isSpecial) 
-					{
-						Buffer.pixels.copyPixels(cachedGraphics.bitmap, _flashRect, _flashPoint, null, null, true);
-					}
-					else 
-					{
-						isSpecial = false;
-					}
-					
-					#if !FLX_NO_DEBUG
-					if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
-					{
-						tile = _tileObjects[_data[columnIndex]];
+						Buffer.pixels.copyPixels(
+							special.getBitmapData(_tileWidth, _tileHeight/*, _flashRect*/),
+							_flashRect, _flashPoint, null, null, true);
 						
-						if (tile != null)
-						{
-							if (tile.allowCollisions <= FlxObject.NONE)
-							{
-								// Blue
-								debugTile = _debugTileNotSolid; 
-							}
-							else if (tile.allowCollisions != FlxObject.ANY)
-							{
-								// Pink
-								debugTile = _debugTilePartial; 
-							}
-							else
-							{
-								// Green
-								debugTile = _debugTileSolid; 
-							}
-							
-							Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
-						}
+						Buffer.dirty = (special.dirty || Buffer.dirty);
 					}
-					#end
+				} 
+				
+				if (!isSpecial) 
+				{
+					tile = _tileObjects[_data[columnIndex]];
+					if (tile != null && tile.visible && tile.frame.type != FrameType.EMPTY)
+					{
+						frame = tile.frame;
+						
+						Buffer.pixels.copyPixels(frame.getBitmap(), _flashRect, _flashPoint, null, null, true);
+					}
 				}
+				else
+				{
+					isSpecial = false;
+				}
+				
+				#if !FLX_NO_DEBUG
+				if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
+				{
+					tile = _tileObjects[_data[columnIndex]];
+					
+					if (tile != null)
+					{
+						if (tile.allowCollisions <= FlxObject.NONE)
+						{
+							// Blue
+							debugTile = _debugTileNotSolid; 
+						}
+						else if (tile.allowCollisions != FlxObject.ANY)
+						{
+							// Pink
+							debugTile = _debugTilePartial; 
+						}
+						else
+						{
+							// Green
+							debugTile = _debugTileSolid; 
+						}
+						
+						Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
+					}
+				}
+				#end
+				
 				#else
 				tileID = _rectIDs[columnIndex];
 				
@@ -310,9 +316,10 @@ class FlxTilemapExt extends FlxTilemap
 				
 				#if FLX_RENDER_BLIT
 				// Update the tile animRects with the animation
+				/*
 				if (t.hasAnimation()) 
 				{
-					animIds = t.getAnimationTilesId();
+					animIds = t.getAnimationIndices();
 					if (animIds != null) 
 					{
 						var rectangles:Array<Rectangle> = new Array<Rectangle>();
@@ -330,7 +337,8 @@ class FlxTilemapExt extends FlxTilemap
 							t.setAnimationRects(rectangles);
 						}
 					}
-				}				
+				}	
+				*/			
 				#end
 			} 
 			else 
@@ -339,7 +347,7 @@ class FlxTilemapExt extends FlxTilemap
 			}
 		}
 	}
-	
+	/*
 	private function getRectangleFromTileset(id:Int):Rectangle 
 	{
 		// Copied from FlxTilemap updateTile()
@@ -359,7 +367,7 @@ class FlxTilemapExt extends FlxTilemap
 		}
 		return null;
 	}
-	
+	*/
 	/**
 	 * THIS IS A COPY FROM FlxTilemap
 	 * I've only swapped lines 386 and 387 to give DrawTilemap() a chance to set the buffer dirty
@@ -820,5 +828,11 @@ class FlxTilemapExt extends FlxTilemap
 		}	
 		
 		return false;
+	}
+	
+	// TODO: override it later to update special tiles frames (if any)
+	override private function set_frames(value:FlxFramesCollection):FlxFramesCollection
+	{
+		return super.set_frames(value);
 	}
 }
