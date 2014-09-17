@@ -202,8 +202,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		switch (fireFrom)
 		{
-			case PARENT(p, offset):
-				parent = p;
+			case PARENT(parent, offset):
 				currentBullet.last.x = currentBullet.x = parent.x + FlxG.random.float(offset.min.x, offset.max.x);
 				currentBullet.last.y = currentBullet.y = parent.y + FlxG.random.float(offset.min.y, offset.max.y);
 				
