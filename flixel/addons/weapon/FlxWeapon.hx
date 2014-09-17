@@ -77,10 +77,9 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	public var bounds:FlxRect;
 	
 	/**
-	 * If parent is not null, the Weapon will fire from the parents x/y value, as seen in Space Invaders and most shoot-em-ups.
-	 * Otherwise, the weapon will fire from the position defined by firePosition
+	 * Only accessible when fireFrom is "PARENT"
 	 */
-	public var parent:FlxSprite;
+	public var parent(default, null):FlxSprite;
 	
 	/**
 	 * If true, when fired the bullet direction is based on parent sprites facing value (up/down/left/right)
@@ -97,7 +96,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public var positionOffset(default, null):FlxPoint;
 	
-	public var fireFrom:FlxWeaponFireFrom;
+	public var fireFrom(default, set):FlxWeaponFireFrom;
 	public var speedMode:FlxWeaponSpeedMode;
 	
 	/**
@@ -464,6 +463,18 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		{
 			bullet.angle = FlxAngle.asDegrees(radians);
 		}
+	}
+	
+	private inline function set_fireFrom(v:FlxWeaponFireFrom):FlxWeaponFireFrom
+	{
+		switch (v) 
+		{
+			case PARENT(p, o): 
+				parent = p;
+			default: 
+				parent = null;
+		}
+		return fireFrom = v;
 	}
 }
 
