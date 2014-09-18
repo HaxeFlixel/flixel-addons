@@ -26,6 +26,7 @@ class FlxTileSpecial extends FlxBasic
 	public var frames(default, set):FlxFramesCollection;
 	
 	public var currTileId(default, set):Int = 0;
+	public var currFrame(default, null):FlxFrame;
 	
 	private var _tmp_flipH:Bool;
 	private var _tmp_flipV:Bool;
@@ -37,8 +38,6 @@ class FlxTileSpecial extends FlxBasic
 	#end
 	
 	private var _matrix:Matrix;
-	
-	private var _currFrame:FlxFrame;
 	
 	// Animation stuff
 	public var animation:FlxTileAnimation;
@@ -79,7 +78,7 @@ class FlxTileSpecial extends FlxBasic
 		_currAnimParam = null;
 		_matrix = null;
 		
-		_currFrame = null;
+		currFrame = null;
 		frames = null;
 	}
 	
@@ -137,13 +136,13 @@ class FlxTileSpecial extends FlxBasic
 	}
 	
 	#if FLX_RENDER_BLIT
-	public function getBitmapData(width:Int, height:Int):BitmapData 
+	public function getBitmapData():BitmapData 
 	{
 		var generateFlipped:Bool = (_flippedFrame == null);
 
 		if (generateFlipped || dirty) 
 		{
-			_normalFrame = _currFrame.getBitmap();
+			_normalFrame = currFrame.getBitmap();
 			
 			if (generateFlipped)
 			{
@@ -154,7 +153,7 @@ class FlxTileSpecial extends FlxBasic
 				_flippedFrame.fillRect(_flippedFrame.rect, FlxColor.TRANSPARENT);
 			}
 			
-			_flippedFrame.draw(_normalFrame, getMatrix(width, height));
+			_flippedFrame.draw(_normalFrame, getMatrix());
 			dirty = true;
 		
 		}
@@ -179,7 +178,7 @@ class FlxTileSpecial extends FlxBasic
 	 * @param	height	the tile height
 	 * @return	The matrix calculated
 	 */
-	public function getMatrix(width:Int, height:Int):Matrix 
+	public function getMatrix():Matrix 
 	{
 		_tmp_flipH = flipX;
 		_tmp_flipV = flipY;
@@ -194,29 +193,33 @@ class FlxTileSpecial extends FlxBasic
 		
 		_matrix.identity();
 		
+		#if FLX_RENDER_TILE
+		_matrix.translate(currFrame.center.x, currFrame.center.y);
+		#end
+		
 		if (_tmp_rot != FlxTileSpecial.ROTATE_0) 
 		{
 			switch(_tmp_rot) 
 			{
 				case FlxTileSpecial.ROTATE_90:
 					_matrix.rotate(90 * FlxAngle.TO_RAD);
-					_matrix.translate(width, 0);
+					_matrix.translate(currFrame.sourceSize.x, 0);
 
 				case FlxTileSpecial.ROTATE_270:
 					_matrix.rotate(270 * FlxAngle.TO_RAD);
-					_matrix.translate(0, height);
+					_matrix.translate(0, currFrame.sourceSize.y);
 			}
 		}
 		
 		if (_tmp_flipH) 
 		{
 			_matrix.scale( -1, 1);
-			_matrix.translate(width, 0);
+			_matrix.translate(currFrame.sourceSize.x, 0);
 		}
 		if (_tmp_flipV) 
 		{
 			_matrix.scale(1, -1);
-			_matrix.translate(0, height);
+			_matrix.translate(0, currFrame.sourceSize.y);
 		}
 		
 		return _matrix;
@@ -228,7 +231,7 @@ class FlxTileSpecial extends FlxBasic
 		
 		if (value != null)
 		{
-			_currFrame = frames.frames[currTileId];
+			currFrame = frames.frames[currTileId];
 		}
 		
 		return frames;
@@ -238,7 +241,7 @@ class FlxTileSpecial extends FlxBasic
 	{
 		if (frames != null)
 		{
-			_currFrame = frames.frames[value];
+			currFrame = frames.frames[value];
 		}
 		
 		return currTileId = value;

@@ -48,7 +48,6 @@ class FlxTilemapExt extends FlxTilemap
 	private var _slopeCeilRight:Array<Int>;
 	
 	// Animated and flipped tiles related variables
-	private var MATRIX:Matrix;
 	private var _specialTiles:Array<FlxTileSpecial>;
 	
 	public function new()
@@ -65,7 +64,6 @@ class FlxTilemapExt extends FlxTilemap
 		
 		// Flipped/rotated tiles variables
 		_specialTiles = null;
-		MATRIX = new Matrix();
 	}
 	
 	override public function destroy():Void 
@@ -91,7 +89,6 @@ class FlxTilemapExt extends FlxTilemap
 			}
 		}
 		_specialTiles = null;
-		MATRIX = null;
 	}
 	
 	override public function update(elapsed:Float):Void 
@@ -120,13 +117,23 @@ class FlxTilemapExt extends FlxTilemap
 		#if FLX_RENDER_BLIT
 		Buffer.fill();
 		#else
+		getScreenPosition(_point, Camera).copyToFlash(_helperPoint);
 		
-		_helperPoint.x = x - Camera.scroll.x * scrollFactor.x; //copied from getScreenXY()
-		_helperPoint.y = y - Camera.scroll.y * scrollFactor.y;
+		_helperPoint.x *= Camera.totalScaleX;
+		_helperPoint.y *= Camera.totalScaleY;
 		
-		var tileID:Int;
+		_helperPoint.x = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.x) : _helperPoint.x;
+		_helperPoint.y = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.y) : _helperPoint.y;
+		
+		var scaledWidth:Float = _tileWidth * Camera.totalScaleX;
+		var scaledHeight:Float = _tileHeight * Camera.totalScaleY;
+		
+		var tileID:Int = -1;
 		var drawX:Float;
 		var drawY:Float;
+		
+		var _tileTransformMatrix:Matrix = null;
+		var drawItem:DrawStackItem;
 		#end
 		
 		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
@@ -180,41 +187,36 @@ class FlxTilemapExt extends FlxTilemap
 			
 			while (column < screenColumns)
 			{
-				#if FLX_RENDER_BLIT
+				isSpecial = false;
+				special = null;
+				tile = _tileObjects[_data[columnIndex]];
+				
 				if (_specialTiles != null && _specialTiles[columnIndex] != null) 
 				{
 					special = _specialTiles[columnIndex];
 					isSpecial = special.isSpecial();
-					if (isSpecial) 
-					{
-						Buffer.pixels.copyPixels(
-							special.getBitmapData(_tileWidth, _tileHeight),
-							_flashRect, _flashPoint, null, null, true);
-						
-						Buffer.dirty = (special.dirty || Buffer.dirty);
-					}
-				} 
+				}
 				
-				if (!isSpecial) 
+				#if FLX_RENDER_BLIT
+				if (isSpecial) 
 				{
-					tile = _tileObjects[_data[columnIndex]];
-					if (tile != null && tile.visible && tile.frame.type != FrameType.EMPTY)
-					{
-						frame = tile.frame;
-						
-						Buffer.pixels.copyPixels(frame.getBitmap(), _flashRect, _flashPoint, null, null, true);
-					}
+					Buffer.pixels.copyPixels(
+						special.getBitmapData(_tileWidth, _tileHeight),
+						_flashRect, _flashPoint, null, null, true);
+					
+					Buffer.dirty = (special.dirty || Buffer.dirty);
 				}
 				else
 				{
-					isSpecial = false;
+					if (tile != null && tile.visible && tile.frame.type != FrameType.EMPTY)
+					{
+						Buffer.pixels.copyPixels(tile.frame.getBitmap(), _flashRect, _flashPoint, null, null, true);
+					}
 				}
 				
 			#if !FLX_NO_DEBUG
 				if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
 				{
-					tile = _tileObjects[_data[columnIndex]];
-					
 					if (tile != null)
 					{
 						if (tile.allowCollisions <= FlxObject.NONE)
@@ -238,37 +240,49 @@ class FlxTilemapExt extends FlxTilemap
 				}
 			#end
 				#else
-				tileID = _rectIDs[columnIndex];
-				
-				if (tileID != -1)
+				if (isSpecial) 
 				{
-					if (_specialTiles != null) 
+					_tileTransformMatrix = special.getMatrix();
+					frame = special.currFrame;
+				}
+				else
+				{
+					frame = tile.frame;
+				}
+				
+				if (frame != null)
+				{
+					_matrix.identity();
+					
+					if (frame.angle != 0)
 					{
-						special = _specialTiles[columnIndex];
-					} 
-					else 
-					{
-						special = null;
+						frame.prepareFrameMatrix(_matrix);
 					}
 					
-					MATRIX.identity();
+					tileID = frame.tileID;
 					
-					if (special != null && special.isSpecial()) 
+					drawX = _helperPoint.x + (columnIndex % widthInTiles) * scaledWidth;
+					drawY = _helperPoint.y + Math.floor(columnIndex / widthInTiles) * scaledHeight;
+					
+					if (isSpecial)
 					{
-						MATRIX = special.getMatrix(_tileWidth, _tileHeight);
-						tileID = special.getCurrentTileId() - _startingIndex;
+						_matrix.concat(_tileTransformMatrix);
+						
+						drawX += _matrix.tx * Camera.totalScaleX;
+						drawY += _matrix.ty * Camera.totalScaleY;
+					}
+					else
+					{
+						drawX += frame.center.x * Camera.totalScaleX;
+						drawY += frame.center.y * Camera.totalScaleY;
 					}
 					
-					drawX = _helperPoint.x + (columnIndex % widthInTiles) * _tileWidth;
-					drawY = _helperPoint.y + Math.floor(columnIndex / widthInTiles) * _tileHeight;
+					_matrix.scale(Camera.totalScaleX, Camera.totalScaleY);
 					
-					drawX += MATRIX.tx;
-					drawY += MATRIX.ty;
+					_point.set(drawX, drawY);
 					
-					_point.set(Math.floor(drawX) + 0.01, Math.floor(drawY) + 0.01);
-					
-					var drawItem:DrawStackItem = Camera.getDrawStackItem(cachedGraphics, isColored, _blendInt);
-					drawItem.setDrawData(_point, tileID, MATRIX.a, MATRIX.b, MATRIX.c, MATRIX.d, isColored, color, alpha);
+					drawItem = Camera.getDrawStackItem(graphic, isColored, _blendInt);
+					drawItem.setDrawData(_point, tileID, _matrix.a, _matrix.b, _matrix.c, _matrix.d, isColored, color, alpha);
 				}
 				#end
 				
@@ -309,7 +323,7 @@ class FlxTilemapExt extends FlxTilemap
 		for (i in 0...tiles.length) 
 		{
 			t = tiles[i];
-			if (t != null && t.isSpecial()) 
+			if (t != null && t.isSpecial())
 			{
 				_specialTiles[i] = t;
 				
