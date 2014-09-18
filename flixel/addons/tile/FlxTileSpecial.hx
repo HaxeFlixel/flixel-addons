@@ -25,6 +25,8 @@ class FlxTileSpecial extends FlxBasic
 	
 	public var frames(default, set):FlxFramesCollection;
 	
+	public var currTileId(default, set):Int = 0;
+	
 	private var _tmp_flipH:Bool;
 	private var _tmp_flipV:Bool;
 	private var _tmp_rot:Int;
@@ -39,10 +41,10 @@ class FlxTileSpecial extends FlxBasic
 	private var _currFrame:FlxFrame;
 	
 	// Animation stuff
-	private var _animation:FlxTileAnimation;
+	public var animation:FlxTileAnimation;
+	
 	private var _currIndex:Int = 0;
 	private var _lastIndex:Int = -1;
-	private var _currTileId:Int;
 	private var _currAnimParam:AnimParams;
 	private var _frameTimer:Float = 0.0;
 	
@@ -54,7 +56,7 @@ class FlxTileSpecial extends FlxBasic
 	{
 		super();
 		
-		_currTileId = TilesetId;
+		currTileId = TilesetId;
 		frames = Frames;
 		
 		flipX = FlipX;
@@ -62,7 +64,6 @@ class FlxTileSpecial extends FlxBasic
 		rotate = Rotate;
 		
 		_matrix = new Matrix();
-		_animation = null;
 	}
 	
 	override public function destroy():Void 
@@ -74,7 +75,7 @@ class FlxTileSpecial extends FlxBasic
 		_flippedFrame = FlxDestroyUtil.dispose(_flippedFrame);
 		#end
 		
-		_animation = FlxDestroyUtil.destroy(_animation);
+		animation = FlxDestroyUtil.destroy(animation);
 		_currAnimParam = null;
 		_matrix = null;
 		
@@ -89,17 +90,17 @@ class FlxTileSpecial extends FlxBasic
 		dirty = false;
 		#end
 		// Modified from updateAnimation() in FlxSprite
-		if (_animation != null && _animation.delay > 0) 
+		if (animation != null && animation.delay > 0) 
 		{
 			_frameTimer += elapsed;
-			if (_frameTimer > _animation.delay) 
+			if (_frameTimer > animation.delay) 
 			{
 				_lastIndex = _currIndex;
 			}
-			while (_frameTimer > _animation.delay) 
+			while (_frameTimer > animation.delay) 
 			{
-				_frameTimer = _frameTimer - _animation.delay;
-				if (_currIndex >= _animation.frames.length - 1)
+				_frameTimer = _frameTimer - animation.delay;
+				if (_currIndex >= animation.frames.length - 1)
 				{
 					_currIndex = 0;
 				}
@@ -108,11 +109,10 @@ class FlxTileSpecial extends FlxBasic
 					_currIndex++;
 				}
 			}
-			_currTileId = _animation.frames[_currIndex];
-			_currFrame = frames.frames[_currTileId];
-			if (_animation.framesData != null) 
+			currTileId = animation.frames[_currIndex];
+			if (animation.framesData != null) 
 			{
-				_currAnimParam = _animation.framesData[_currIndex];
+				_currAnimParam = animation.framesData[_currIndex];
 			}
 			
 			#if FLX_RENDER_BLIT
@@ -133,7 +133,7 @@ class FlxTileSpecial extends FlxBasic
 	
 	public inline function hasAnimation():Bool 
 	{
-		return _animation != null;
+		return animation != null;
 	}
 	
 	#if FLX_RENDER_BLIT
@@ -170,25 +170,7 @@ class FlxTileSpecial extends FlxBasic
 	 */
 	public function addAnimation(tiles:Array<Int>, frameRate:Float = 30, ?framesData:Array<AnimParams>):Void 
 	{
-		_animation = new FlxTileAnimation("tileAnim", tiles, frameRate, true, framesData);
-	}
-	
-	/**
-	 * Returns the current tileID of this tile in the tileset
-	 * @return The current tileID
-	 */
-	public function getCurrentTileId():Int 
-	{
-		return _currTileId;
-	}
-	
-	/**
-	 * Get the animation tiles id if any
-	 * @return	An array of ids or null
-	 */
-	public function getAnimationIndices():Array<Int> 
-	{
-		return (_animation != null) ? _animation.frames : null;
+		animation = new FlxTileAnimation("tileAnim", tiles, frameRate, true, framesData);
 	}
 	
 	/**
@@ -246,10 +228,20 @@ class FlxTileSpecial extends FlxBasic
 		
 		if (value != null)
 		{
-			_currFrame = frames.frames[_currTileId];
+			_currFrame = frames.frames[currTileId];
 		}
 		
 		return frames;
+	}
+	
+	private function set_currTileId(value:Int):Int
+	{
+		if (frames != null)
+		{
+			_currFrame = frames.frames[value];
+		}
+		
+		return currTileId = value;
 	}
 }
 

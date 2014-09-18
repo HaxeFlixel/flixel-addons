@@ -188,7 +188,7 @@ class FlxTilemapExt extends FlxTilemap
 					if (isSpecial) 
 					{
 						Buffer.pixels.copyPixels(
-							special.getBitmapData(_tileWidth, _tileHeight/*, _flashRect*/),
+							special.getBitmapData(_tileWidth, _tileHeight),
 							_flashRect, _flashPoint, null, null, true);
 						
 						Buffer.dirty = (special.dirty || Buffer.dirty);
@@ -210,7 +210,7 @@ class FlxTilemapExt extends FlxTilemap
 					isSpecial = false;
 				}
 				
-				#if !FLX_NO_DEBUG
+			#if !FLX_NO_DEBUG
 				if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
 				{
 					tile = _tileObjects[_data[columnIndex]];
@@ -236,8 +236,7 @@ class FlxTilemapExt extends FlxTilemap
 						Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
 					}
 				}
-				#end
-				
+			#end
 				#else
 				tileID = _rectIDs[columnIndex];
 				
@@ -314,32 +313,20 @@ class FlxTilemapExt extends FlxTilemap
 			{
 				_specialTiles[i] = t;
 				
-				#if FLX_RENDER_BLIT
-				// Update the tile animRects with the animation
-				/*
+				t.currTileId -= _startingIndex;
+				
 				if (t.hasAnimation()) 
 				{
-					animIds = t.getAnimationIndices();
-					if (animIds != null) 
+					var animFrames:Array<Int> = t.animation.frames;
+					var preparedFrames:Array<Int> = [];
+					
+					for (j in 0...animFrames.length)
 					{
-						var rectangles:Array<Rectangle> = new Array<Rectangle>();
-						var rectangle:Rectangle;
-						for (id in animIds) 
-						{
-							rectangle = getRectangleFromTileset(id);
-							if (rectangle != null) 
-							{
-								rectangles.push(rectangle);
-							}
-						}
-						if (rectangles.length > 0) 
-						{
-							t.setAnimationRects(rectangles);
-						}
+						preparedFrames[j] = animFrames[j] - _startingIndex;
 					}
-				}	
-				*/			
-				#end
+					
+					t.animation.frames = preparedFrames;
+				}
 			} 
 			else 
 			{
@@ -347,27 +334,7 @@ class FlxTilemapExt extends FlxTilemap
 			}
 		}
 	}
-	/*
-	private function getRectangleFromTileset(id:Int):Rectangle 
-	{
-		// Copied from FlxTilemap updateTile()
-		var tile:FlxTile = _tileObjects[id];
-		if (tile != null) 
-		{
-			var rx:Int = (id - _startingIndex) * (_tileWidth + region.spacingX);
-			var ry:Int = 0;
-		
-			if (Std.int(rx) >= region.width)
-			{
-				ry = Std.int(rx / region.width) * (_tileHeight + region.spacingY);
-				rx %= region.width;
-			}
-			
-			return new Rectangle(rx + region.startX, ry + region.startY, _tileWidth, _tileHeight);
-		}
-		return null;
-	}
-	*/
+	
 	/**
 	 * THIS IS A COPY FROM FlxTilemap
 	 * I've only swapped lines 386 and 387 to give DrawTilemap() a chance to set the buffer dirty
