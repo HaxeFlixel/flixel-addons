@@ -3,12 +3,13 @@ package flixel.addons.plugin;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flixel.addons.text.FlxBitmapFont;
 import flixel.FlxBasic;
+import flixel.text.FlxBitmapTextField;
 
 /**
  * FlxScrollingText
  * -- Part of the Flixel Power Tools set
+ * -- Works only FLX_BLIT_RENDER mode for now
  * 
  * v1.0 First version released
  * 
@@ -23,11 +24,11 @@ class FlxScrollingText extends FlxBasic
 	private static var zeroPoint:Point = new Point(0,0);
 	
 	/**
-	 * Adds an FlxBitmapFont to the Scrolling Text Manager and returns an FlxSprite which contains the text scroller in it.
+	 * Adds an FlxBitmapTextField to the Scrolling Text Manager and returns an FlxSprite which contains the text scroller in it.
 	 * The FlxSprite will automatically update itself via this plugin, but can be treated as a normal FlxSprite in all other regards
 	 * re: positioning, collision, rotation, etc.
 	 * 
-	 * @param	bitmapFont			A pre-prepared FlxBitmapFont object (see the Test Suite examples for details on how this works)
+	 * @param	bitmapText			A pre-prepared FlxBitmapTextField object (see the Test Suite examples for details on how this works)
 	 * @param	region				A Rectangle that defines the size of the scrolling FlxSprite. The sprite will be placed at region.x/y and be region.width/height in size.
 	 * @param	pixels				The number of pixels to scroll per step. For a smooth (but slow) scroll use low values. Keep the value proportional to the font width, so if the font width is 16 use a value like 1, 2, 4 or 8.
 	 * @param	steps				How many steps should pass before the text is next scrolled? Default 0 means every step we scroll. Higher values slow things down.
@@ -37,17 +38,12 @@ class FlxScrollingText extends FlxBasic
 	 * 
 	 * @return	An FlxSprite of size region.width/height, positioned at region.x/y, that auto-updates its contents while this plugin runs
 	 */
-	public static function add(bitmapFont:FlxBitmapFont, region:Rectangle, pixels:Int = 1, steps:Int = 0, text:String = "FLIXEL ROCKS!", onlyScrollOnscreen:Bool = true, loopOnWrap:Bool = true):FlxSprite
+	public static function add(bitmapText:FlxBitmapTextField, region:Rectangle, pixels:Int = 1, steps:Int = 0, text:String = "FLIXEL ROCKS!", onlyScrollOnscreen:Bool = true, loopOnWrap:Bool = true):FlxSprite
 	{
 		var data:Dynamic = {};
 		
 		//	Sanity checks
-		if (pixels > bitmapFont.characterWidth)
-		{
-			pixels = bitmapFont.characterWidth;
-		}
-		
-		if (pixels == 0)
+		if (pixels <= 0)
 		{
 			pixels = 1;
 		}
@@ -57,10 +53,10 @@ class FlxScrollingText extends FlxBasic
 			text = " ";
 		}
 		
-		data.bitmapFont = cast(bitmapFont, FlxBitmapFont);
-		data.bitmapChar = data.bitmapFont.getCharacterAsBitmapData(text.charAt(0));
-		data.charWidth = bitmapFont.characterWidth;
-		data.charHeight = bitmapFont.characterHeight;
+		data.bitmapText = bitmapText;
+		data.bitmapChar = bitmapText.getCharacterAsBitmapData(text.charAt(0));
+		data.charWidth = bitmapText.characterWidth;
+		data.charHeight = bitmapText.characterHeight;
 		data.shiftRect = new Rectangle(pixels, 0, region.width - pixels, region.height);
 		data.bufferRect = new Rectangle(0, 0, region.width, region.height);
 		data.slice = new Rectangle(0, 0, pixels, data.charHeight);
@@ -111,18 +107,16 @@ class FlxScrollingText extends FlxBasic
 		{
 			members.get(source).text = members.get(source).text.concat(text);
 		}
-			
+		
 		members.get(source).maxChar = members.get(source).text.length;
 	}
 	
 	private static function scroll(data:Dynamic):Void
 	{
 		//	Have we reached enough steps?
-		
 		if (data.maxStep > 0 && (data.step < data.maxStep))
 		{
 			data.step++;
-			
 			return;
 		}
 		else
@@ -166,7 +160,7 @@ class FlxScrollingText extends FlxBasic
 				
 				if (data.complete == false)
 				{
-					data.bitmapChar = data.bitmapFont.getCharacterAsBitmapData(data.text.charAt(data.currentChar));
+					data.bitmapChar = data.bitmapText.getCharacterAsBitmapData(data.text.charAt(data.currentChar));
 					data.x = 0;
 				}
 			}
