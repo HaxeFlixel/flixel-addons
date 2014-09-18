@@ -146,7 +146,7 @@ class FlxTileSpecial extends FlxBasic
 			
 			if (generateFlipped)
 			{
-				_flippedFrame = new BitmapData(width, height, true, FlxColor.TRANSPARENT);
+				_flippedFrame = new BitmapData(Std.int(currFrame.sourceSize.x), Std.int(currFrame.sourceSize.y), true, FlxColor.TRANSPARENT);
 			}
 			else
 			{

@@ -78,17 +78,7 @@ class FlxTilemapExt extends FlxTilemap
 		
 		super.destroy();
 		
-		if (_specialTiles != null) 
-		{
-			for (t in _specialTiles) 
-			{
-				if (t != null)
-				{
-					t.destroy();
-				}
-			}
-		}
-		_specialTiles = null;
+		_specialTiles = FlxDestroyUtil.destroyArray(_specialTiles);
 	}
 	
 	override public function update(elapsed:Float):Void 
@@ -200,8 +190,7 @@ class FlxTilemapExt extends FlxTilemap
 				#if FLX_RENDER_BLIT
 				if (isSpecial) 
 				{
-					Buffer.pixels.copyPixels(
-						special.getBitmapData(_tileWidth, _tileHeight),
+					Buffer.pixels.copyPixels(special.getBitmapData(),
 						_flashRect, _flashPoint, null, null, true);
 					
 					Buffer.dirty = (special.dirty || Buffer.dirty);
@@ -811,9 +800,21 @@ class FlxTilemapExt extends FlxTilemap
 		return false;
 	}
 	
-	// TODO: override it later to update special tiles frames (if any)
 	override private function set_frames(value:FlxFramesCollection):FlxFramesCollection
 	{
-		return super.set_frames(value);
+		super.set_frames(value);
+		
+		if (value != null && _specialTiles != null && _specialTiles.length > 0)
+		{
+			for (t in _specialTiles) 
+			{
+				if (t != null) 
+				{
+					t.frames = frames;
+				}
+			}
+		}
+		
+		return value;
 	}
 }
