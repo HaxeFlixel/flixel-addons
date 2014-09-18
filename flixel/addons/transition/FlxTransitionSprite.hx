@@ -11,16 +11,16 @@ import flixel.system.layer.frames.FlxSpriteFrames;
 import flixel.util.FlxTimer;
 import openfl.display.BitmapData;
 
+@:bitmap("assets/images/transitions/circle.png") class GraphicTransTileCircle extends BitmapData { }
+@:bitmap("assets/images/transitions/diamond.png") class GraphicTransTileDiamond extends BitmapData { }
+@:bitmap("assets/images/transitions/square.png") class GraphicTransTileSquare extends BitmapData { }
+
 /**
  * 
  * @author Tim Hely
  */
 class FlxTransitionSprite extends FlxSprite
 {
-	public static inline var TransTileCircle:String = "assets/images/transitions/circle.png";
-	public static inline var TransTileDiamond:String = "assets/images/transitions/diamond.png";
-	public static inline var TransTileSquare:String = "assets/images/transitions/square.png";
-	
 	private var _delay:Float;
 	public var status:TransitionStatus = IN;
 	private var _newStatus:TransitionStatus = NULL;
@@ -31,7 +31,7 @@ class FlxTransitionSprite extends FlxSprite
 		
 		if (Graphic == null)
 		{
-			Graphic = FlxTransitionSprite.TransTileDiamond;
+			Graphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
 			GraphicWidth = 32;
 			GraphicHeight = 32;
 		}
