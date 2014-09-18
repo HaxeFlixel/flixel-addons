@@ -156,8 +156,6 @@ class FlxTilemapExt extends FlxTilemap
 		
 		var rowIndex:Int = screenYInTiles * widthInTiles + screenXInTiles;
 		_flashPoint.y = 0;
-		var row:Int = 0;
-		var column:Int;
 		var columnIndex:Int;
 		var tile:FlxTile;
 		var frame:FlxFrame;
@@ -169,13 +167,12 @@ class FlxTilemapExt extends FlxTilemap
 		
 		var isSpecial = false;
 		
-		while (row < screenRows)
+		for (row in 0...screenRows)
 		{
 			columnIndex = rowIndex;
-			column = 0;
 			_flashPoint.x = 0;
 			
-			while (column < screenColumns)
+			for (column in 0...screenColumns)
 			{
 				isSpecial = false;
 				special = null;
@@ -190,9 +187,7 @@ class FlxTilemapExt extends FlxTilemap
 				#if FLX_RENDER_BLIT
 				if (isSpecial) 
 				{
-					Buffer.pixels.copyPixels(special.getBitmapData(),
-						_flashRect, _flashPoint, null, null, true);
-					
+					Buffer.pixels.copyPixels(special.getBitmapData(), _flashRect, _flashPoint, null, null, true);
 					Buffer.dirty = (special.dirty || Buffer.dirty);
 				}
 				else
@@ -210,17 +205,14 @@ class FlxTilemapExt extends FlxTilemap
 					{
 						if (tile.allowCollisions <= FlxObject.NONE)
 						{
-							// Blue
 							debugTile = _debugTileNotSolid; 
 						}
 						else if (tile.allowCollisions != FlxObject.ANY)
 						{
-							// Pink
 							debugTile = _debugTilePartial; 
 						}
 						else
 						{
-							// Green
 							debugTile = _debugTileSolid; 
 						}
 						
@@ -229,32 +221,18 @@ class FlxTilemapExt extends FlxTilemap
 				}
 			#end
 				#else
-				if (isSpecial) 
-				{
-					_tileTransformMatrix = special.getMatrix();
-					frame = special.currFrame;
-				}
-				else
-				{
-					frame = tile.frame;
-				}
+				frame = (isSpecial) ? special.currFrame : tile.frame;
 				
 				if (frame != null)
 				{
 					_matrix.identity();
-					
-					if (frame.angle != 0)
-					{
-						frame.prepareFrameMatrix(_matrix);
-					}
-					
-					tileID = frame.tileID;
 					
 					drawX = _helperPoint.x + (columnIndex % widthInTiles) * scaledWidth;
 					drawY = _helperPoint.y + Math.floor(columnIndex / widthInTiles) * scaledHeight;
 					
 					if (isSpecial)
 					{
+						_tileTransformMatrix = special.getMatrix();
 						_matrix.concat(_tileTransformMatrix);
 						
 						drawX += _matrix.tx * Camera.totalScaleX;
@@ -262,6 +240,11 @@ class FlxTilemapExt extends FlxTilemap
 					}
 					else
 					{
+						if (frame.angle != 0)
+						{
+							frame.prepareFrameMatrix(_matrix);
+						}
+						
 						drawX += frame.center.x * Camera.totalScaleX;
 						drawY += frame.center.y * Camera.totalScaleY;
 					}
@@ -271,18 +254,20 @@ class FlxTilemapExt extends FlxTilemap
 					_point.set(drawX, drawY);
 					
 					drawItem = Camera.getDrawStackItem(graphic, isColored, _blendInt);
-					drawItem.setDrawData(_point, tileID, _matrix.a, _matrix.b, _matrix.c, _matrix.d, isColored, color, alpha);
+					drawItem.setMatrixDrawData(_point, frame.tileID, _matrix, isColored, color, alpha);
 				}
 				#end
 				
+				#if FLX_RENDER_BLIT
 				_flashPoint.x += _tileWidth;
-				column++;
+				#end
 				columnIndex++;
 			}
 			
 			rowIndex += widthInTiles;
+			#if FLX_RENDER_BLIT
 			_flashPoint.y += _tileHeight;
-			row++;
+			#end
 		}
 		
 		Buffer.x = screenXInTiles * _tileWidth;

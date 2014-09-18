@@ -1,7 +1,6 @@
 package flixel.addons.tile;
 
 import flash.display.BitmapData;
-import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxBasic;
@@ -9,6 +8,7 @@ import flixel.FlxG;
 import flixel.math.FlxAngle;
 import flixel.graphics.frames.FlxFrame;
 import flixel.graphics.frames.FlxFramesCollection;
+import flixel.math.FlxMatrix;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
@@ -37,11 +37,10 @@ class FlxTileSpecial extends FlxBasic
 	private var _flippedFrame:BitmapData;
 	#end
 	
-	private var _matrix:Matrix;
+	private var _matrix:FlxMatrix;
 	
 	// Animation stuff
 	public var animation:FlxTileAnimation;
-	
 	private var _currIndex:Int = 0;
 	private var _lastIndex:Int = -1;
 	private var _currAnimParam:AnimParams;
@@ -62,7 +61,7 @@ class FlxTileSpecial extends FlxBasic
 		flipY = FlipY;
 		rotate = Rotate;
 		
-		_matrix = new Matrix();
+		_matrix = new FlxMatrix();
 	}
 	
 	override public function destroy():Void 
@@ -178,7 +177,7 @@ class FlxTileSpecial extends FlxBasic
 	 * @param	height	the tile height
 	 * @return	The matrix calculated
 	 */
-	public function getMatrix():Matrix 
+	public function getMatrix():FlxMatrix 
 	{
 		_tmp_flipH = flipX;
 		_tmp_flipV = flipY;
@@ -194,6 +193,11 @@ class FlxTileSpecial extends FlxBasic
 		_matrix.identity();
 		
 		#if FLX_RENDER_TILE
+		if (currFrame.angle != 0)
+		{
+			currFrame.prepareFrameMatrix(_matrix);
+		}
+		
 		_matrix.translate(currFrame.center.x, currFrame.center.y);
 		#end
 		
