@@ -190,12 +190,9 @@ class FlxTilemapExt extends FlxTilemap
 					Buffer.pixels.copyPixels(special.getBitmapData(), _flashRect, _flashPoint, null, null, true);
 					Buffer.dirty = (special.dirty || Buffer.dirty);
 				}
-				else
+				else if (tile != null && tile.visible && tile.frame.type != FrameType.EMPTY)
 				{
-					if (tile != null && tile.visible && tile.frame.type != FrameType.EMPTY)
-					{
-						Buffer.pixels.copyPixels(tile.frame.getBitmap(), _flashRect, _flashPoint, null, null, true);
-					}
+					Buffer.pixels.copyPixels(tile.frame.getBitmap(), _flashRect, _flashPoint, null, null, true);
 				}
 				
 			#if !FLX_NO_DEBUG
