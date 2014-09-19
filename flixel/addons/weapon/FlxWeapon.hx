@@ -440,8 +440,9 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 	
-	private function internalFireFromAngle(bullet:TBullet, radians:Float):Void
+	private function internalFireFromAngle(bullet:TBullet, degrees:Float):Void
 	{
+		var radians = FlxAngle.asRadians(degrees);
 		switch(speedMode)
 		{
 			case SPEED(speed):
