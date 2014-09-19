@@ -40,7 +40,7 @@ class FlxScrollingText extends FlxBasic
 	 * 
 	 * @return	An FlxSprite of size region.width/height, positioned at region.x/y, that auto-updates its contents while this plugin runs
 	 */
-	public static function add(bitmapText:FlxBitmapTextField, region:Rectangle, pixels:Int = 1, steps:Int = 0, text:String = "FLIXEL ROCKS!", onlyScrollOnscreen:Bool = true, loopOnWrap:Bool = true):FlxSprite
+	public static function add(bitmapText:FlxBitmapTextField, region:Rectangle, pixels:Int = 1, steps:Int = 0, text:String = null, onlyScrollOnscreen:Bool = true, loopOnWrap:Bool = true):FlxSprite
 	{
 		var data:ScrollingTextData = new ScrollingTextData();
 		
@@ -50,14 +50,17 @@ class FlxScrollingText extends FlxBasic
 			pixels = 1;
 		}
 		
-		if (text == "")
-		{
-			text = " ";
-		}
-		
 		data.bitmapText = bitmapText;
 		
-		bitmapText.text = text;
+		if ((text == "" || text == null) && (bitmapText.text == "" || bitmapText.text == null))
+		{
+			bitmapText.text = " ";
+		}
+		else if (text != "" && text != null)
+		{
+			bitmapText.text = text;
+		}
+		
 		bitmapText.forceGraphicUpdate();
 		bitmapText.update(0);
 		
@@ -69,7 +72,6 @@ class FlxScrollingText extends FlxBasic
 		data.step = steps;
 		data.maxStep = steps;
 		data.pixels = pixels;
-		data.text = text;
 		
 		data.wrap = loopOnWrap;
 		data.complete = false;
@@ -97,14 +99,13 @@ class FlxScrollingText extends FlxBasic
 		
 		if (overwrite)
 		{
-			data.text = text;
+			data.bitmapText.text = text;
 		}
 		else
 		{
-			data.text += text;
+			data.bitmapText.text += text;
 		}
 		
-		data.bitmapText.text = data.text;
 		data.bitmapText.forceGraphicUpdate();
 		data.bitmapText.update(0);
 	}
@@ -284,7 +285,6 @@ class ScrollingTextData {
 	public var step:Int;
 	public var maxStep:Int;
 	public var pixels:Int;
-	public var text:String;
 	public var wrap:Bool;
 	public var complete:Bool;
 	public var scrolling:Bool;
