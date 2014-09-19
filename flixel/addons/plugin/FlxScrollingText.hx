@@ -6,6 +6,8 @@ import flash.geom.Rectangle;
 import flixel.FlxBasic;
 import flixel.text.FlxBitmapTextField;
 
+// TODO: make it work in tile render mode
+
 /**
  * FlxScrollingText
  * -- Part of the Flixel Power Tools set
@@ -20,7 +22,7 @@ import flixel.text.FlxBitmapTextField;
  */
 class FlxScrollingText extends FlxBasic
 {
-	private static var members:Map<FlxSprite, Dynamic> = new Map<FlxSprite, Dynamic>();
+	private static var members:Map<FlxSprite, ScrollingTextData> = new Map<FlxSprite, ScrollingTextData>();
 	private static var zeroPoint:Point = new Point(0,0);
 	
 	/**
@@ -40,7 +42,7 @@ class FlxScrollingText extends FlxBasic
 	 */
 	public static function add(bitmapText:FlxBitmapTextField, region:Rectangle, pixels:Int = 1, steps:Int = 0, text:String = "FLIXEL ROCKS!", onlyScrollOnscreen:Bool = true, loopOnWrap:Bool = true):FlxSprite
 	{
-		var data:Dynamic = {};
+		var data:ScrollingTextData = new ScrollingTextData();
 		
 		//	Sanity checks
 		if (pixels <= 0)
@@ -54,28 +56,20 @@ class FlxScrollingText extends FlxBasic
 		}
 		
 		data.bitmapText = bitmapText;
-		data.bitmapChar = bitmapText.getCharacterAsBitmapData(text.charAt(0));
-		data.charWidth = bitmapText.characterWidth;
-		data.charHeight = bitmapText.characterHeight;
-		data.shiftRect = new Rectangle(pixels, 0, region.width - pixels, region.height);
-		data.bufferRect = new Rectangle(0, 0, region.width, region.height);
-		data.slice = new Rectangle(0, 0, pixels, data.charHeight);
-		data.endPoint = new Point(region.width - pixels, 0);
+		
+		bitmapText.text = text;
+		bitmapText.forceGraphicUpdate();
+		bitmapText.update(0);
+		
+		data.shiftRect = new Rectangle(0, 0, region.width, region.height);
 		data.x = 0;
 		
 		data.sprite = new FlxSprite(Std.int(region.x), Std.int(region.y)).makeGraphic(Std.int(region.width), Std.int(region.height), 0x0, true);
-		data.buffer = new BitmapData(Std.int(region.width), Std.int(region.height), true, 0x0);
 		
-		data.region = region;
 		data.step = steps;
 		data.maxStep = steps;
 		data.pixels = pixels;
-		data.clearCount = 0;
-		data.clearDistance = region.width - pixels;
-		
 		data.text = text;
-		data.currentChar = 0;
-		data.maxChar = text.length;
 		
 		data.wrap = loopOnWrap;
 		data.complete = false;
@@ -99,19 +93,23 @@ class FlxScrollingText extends FlxBasic
 	 */
 	public static function addText(source:FlxSprite, text:String, overwrite:Bool = false):Void
 	{
+		var data:ScrollingTextData = members.get(source);
+		
 		if (overwrite)
 		{
-			members.get(source).text = text;
+			data.text = text;
 		}
 		else
 		{
-			members.get(source).text = members.get(source).text.concat(text);
+			data.text += text;
 		}
 		
-		members.get(source).maxChar = members.get(source).text.length;
+		data.bitmapText.text = data.text;
+		data.bitmapText.forceGraphicUpdate();
+		data.bitmapText.update(0);
 	}
 	
-	private static function scroll(data:Dynamic):Void
+	private static function scroll(data:ScrollingTextData):Void
 	{
 		//	Have we reached enough steps?
 		if (data.maxStep > 0 && (data.step < data.maxStep))
@@ -126,64 +124,48 @@ class FlxScrollingText extends FlxBasic
 		}
 		
 		//	CLS
-		data.buffer.fillRect(data.bufferRect, 0x0);
+		var pixels:BitmapData = data.sprite.pixels;
+		pixels.fillRect(pixels.rect, 0x0);
 		
 		//	Shift the current contents of the buffer along by "speed" pixels
-		data.buffer.copyPixels(cast(data.sprite, FlxSprite).pixels, data.shiftRect, zeroPoint, null, null, true);
+		data.shiftRect.x = data.x;
+		pixels.copyPixels(data.bitmapText.pixels, data.shiftRect, zeroPoint, null, null, true);
+		
+		if (data.wrap && data.shiftRect.right > data.bitmapText.frameWidth)
+		{
+			data.shiftRect.x = 0;
+			zeroPoint.x = data.bitmapText.frameWidth - data.x;
+			pixels.copyPixels(data.bitmapText.pixels, data.shiftRect, zeroPoint, null, null, true);
+			zeroPoint.x = 0;
+		}
 		
 		//	Copy the side of the character
 		if (data.complete == false)
 		{
-			data.buffer.copyPixels(data.bitmapChar, data.slice, data.endPoint, null, null, true);
-			
 			//	Update
 			data.x += data.pixels;
 			
-			if (data.x >= data.charWidth)
+			if (data.x >= data.bitmapText.frameWidth)
 			{
-				//	Get the next character
-				data.currentChar++;
-				
-				if (data.currentChar > data.maxChar)
+				//	At the end of the text
+				if (data.wrap)
 				{
-					//	At the end of the text
-					if (data.wrap)
-					{
-						data.currentChar = 0;
-					}
-					else
-					{
-						data.complete = true;
-						data.clearCount = 0;
-					}
+					data.x = 0;
+				}
+				else
+				{
+					data.complete = true;
+					data.scrolling = false;
 				}
 				
 				if (data.complete == false)
 				{
-					data.bitmapChar = data.bitmapText.getCharacterAsBitmapData(data.text.charAt(data.currentChar));
 					data.x = 0;
 				}
 			}
-			
-			if (data.complete == false)
-			{
-				data.slice.x = data.x;
-			}
-		}
-		else
-		{
-			data.clearCount += data.pixels;
-			
-			//	It's all over now
-			if (data.clearCount >= data.clearDistance)
-			{
-				//	No point updating something that has since left the screen
-				data.scrolling = false;
-			}
 		}
 		
-		cast(data.sprite, FlxSprite).pixels = data.buffer.clone();
-		data.sprite.dirty = true;
+		data.sprite.pixels = pixels;
 	}
 	
 	/**
@@ -195,7 +177,7 @@ class FlxScrollingText extends FlxBasic
 	{
 		for (obj in members)
 		{
-			members.remove(obj.sprite);
+			remove(obj.sprite);
 		}
 	}
 	
@@ -250,7 +232,7 @@ class FlxScrollingText extends FlxBasic
 	 */
 	public static function isScrolling(source:FlxSprite):Bool
 	{
-		if (members.get(source))
+		if (members.get(source) != null)
 		{
 			return members.get(source).scrolling;
 		}
@@ -268,8 +250,9 @@ class FlxScrollingText extends FlxBasic
 	{
 		if (members.exists(source))
 		{
+			var data = members.get(source);
+			data.destroy();
 			members.remove(source);
-			
 			return true;
 		}
 		
@@ -280,7 +263,7 @@ class FlxScrollingText extends FlxBasic
 	{
 		for (obj in members)
 		{
-			if (obj != null && (obj.onScreenScroller == true && obj.sprite.onScreen()) && obj.scrolling == true && obj.sprite.exists)
+			if (obj != null && (obj.onScreenScroller == true && obj.sprite.isOnScreen()) && obj.scrolling == true && obj.sprite.exists)
 			{
 				scroll(obj);
 			}
@@ -290,5 +273,32 @@ class FlxScrollingText extends FlxBasic
 	override public function destroy():Void
 	{
 		clear();
+	}
+}
+
+class ScrollingTextData {
+	public var bitmapText:FlxBitmapTextField;
+	public var shiftRect:Rectangle;
+	public var x:Int;
+	public var sprite:FlxSprite;
+	public var step:Int;
+	public var maxStep:Int;
+	public var pixels:Int;
+	public var text:String;
+	public var wrap:Bool;
+	public var complete:Bool;
+	public var scrolling:Bool;
+	public var onScreenScroller:Bool;
+	
+	public function new()
+	{
+		
+	}
+	
+	public function destroy():Void
+	{
+		bitmapText = null;
+		shiftRect = null;
+		sprite = null;
 	}
 }
