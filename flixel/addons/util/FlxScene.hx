@@ -1,0 +1,463 @@
+package flixel.addons.util;
+
+import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.FlxSprite;
+import flixel.group.FlxGroup;
+import flixel.text.FlxText;
+import flixel.ui.FlxButton;
+import flixel.tile.FlxTilemap;
+import flixel.util.FlxColor;
+import flixel.addons.display.FlxBackdrop;
+import openfl.Assets;
+import haxe.xml.Parser;
+import haxe.xml.Fast;
+using haxe.EnumTools;
+
+/**
+ * Loads a scene from XML file. Scenes contain layers of entities (custom FlxSprite),
+ * backgrounds, tilemaps, constants, UI and more.
+ * 
+ * Any question tween me @AndreiRegiani
+ */
+class FlxScene
+{
+	/**
+	 * <scene width=""> attribute.
+	 */
+	public var width(default, null):Int;
+	/**
+	 * <scene height=""> attribute.
+	 */
+	public var height(default, null):Int;
+	/**
+	 * <scene name=""> attribute.
+	 */
+	public var name(default, null):String;
+	/**
+	 * <scene description=""> attribute.
+	 */
+	public var description(default, null):String;
+	/**
+	 * <scene version=""> attribute.
+	 */
+	public var version(default, null):String;
+	/**
+	 * Base directory for all assets loaded inside FlxScene.
+	 */
+	public var assetsDirectory:String = "assets/";
+	/**
+	 * Tilemap reference.
+	 */
+	public var tilemap:FlxTilemap;
+	/**
+	 * Contains all constants declared in <constants>.
+	 */
+	private var _constants:Map<String, Dynamic>;
+	/**
+	 * Contains all objects with an "id" attribute.
+	 */
+	private var _objects:Map<String, Dynamic>;
+	/**
+	 * Internal XML.
+	 */
+	private var _xml:Xml;
+	/**
+	 * Internal xml.Fast.
+	 */
+	private var _fastXml:Fast;
+
+	/**
+	 * Set the current scene, loads from XML file.
+	 *
+	 * @param	file 	Location of XML.
+	 */
+	public function set(file:String):Void
+	{
+		_constants = new Map<String, Dynamic>();
+		_objects = new Map<String, Dynamic>();
+
+		var data:String = Assets.getText(file);
+
+		_xml = Parser.parse(data);
+		_fastXml = new Fast(_xml.firstElement());
+
+		// <scene> attributes
+		width = Std.parseInt(_fastXml.att.width);
+		height = Std.parseInt(_fastXml.att.height);
+		name = _fastXml.att.name;
+		description = _fastXml.att.description;
+		version = _fastXml.att.version;
+
+		// Set background color
+		FlxG.cameras.bgColor = FlxColor.fromString(_fastXml.att.bgColor);
+
+		loadConstants();
+	}
+
+	/**
+	 * Instantiate objects to state.
+	 *
+	 * @param container 	Add objects to this FlxTypedGroup (layer).
+	 * @param layerId 		Add objects only from this layer.
+	 */
+	public function spawn(?container:FlxTypedGroup<Dynamic>, ?layerId:String):Void
+	{
+		var layerNodes = _fastXml.nodes.layer;
+
+		// every <layer>
+		for (layer in layerNodes)
+		{
+			// only specific <layer id="layerId"> OR every if none is specified
+			if (layer.att.id == layerId || layerId == null)
+			{
+				// every <entity>, <sprite>, <text> inside specific layer (layerId)
+				for (element in layer.elements)
+				{
+					switch (element.name)
+					{
+						case "sprite":
+							var instance = new FlxSprite();
+							applySpriteProperties(instance, element);
+
+							addInstance(instance, container, element);
+
+						case "entity":
+							var instance = Type.createInstance(Type.resolveClass(element.att.type), []);
+							applySpriteProperties(instance, element);
+
+							addInstance(instance, container, element);
+
+						case "text":
+							var instance = new FlxText();
+							applySpriteProperties(instance, element);
+							applyTextProperties(instance, element);
+
+							addInstance(instance, container, element);
+
+						case "button":
+							var instance = new FlxButton();
+							applySpriteProperties(instance, element);
+							applyTextProperties(instance.label, element);
+
+							addInstance(instance, container, element);
+					}
+				}
+
+				if (layerId != null)
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Add backgrounds to state.
+	 *
+	 * @param container 	Add backgrounds to this FlxTypedGroup (layer).
+	 */
+	public function loadBackgrounds(?container:FlxTypedGroup<Dynamic>):Void
+	{
+		var backgroundsNode = _fastXml.node.resolve("backgrounds");
+
+		// <backgrounds>
+		for (element in backgroundsNode.elements)
+		{
+			// <backdrop>, <sprite>
+			switch (element.name)
+			{
+				case "backdrop":
+					var x_att:Float = Std.parseInt(element.att.x);
+					var y_att:Float = Std.parseInt(element.att.y);
+					var graphics:String = assetsDirectory + element.att.graphics;
+					var repeatX:Bool = parseBool(element.att.repeatX);
+					var repeatY:Bool = parseBool(element.att.repeatY);
+					var scrollFactorX:Float = Std.parseFloat(element.att.scrollFactorX);
+					var scrollFactorY:Float = Std.parseFloat(element.att.scrollFactorY);
+
+					var instance = new FlxBackdrop(graphics, scrollFactorX, scrollFactorY, repeatX, repeatY);
+					instance.x = x_att;
+					instance.y = y_att;
+
+					addInstance(instance, container, element);
+
+				case "sprite":
+					var instance = new FlxSprite();
+					applySpriteProperties(instance, element);
+
+					addInstance(instance, container, element);
+			}
+		}
+	}
+
+	/**
+	 * Add tilemap to state.
+	 *
+	 * @param container 	Add tilemap to this FlxTypedGroup (layer).
+	 */
+	public function loadTilemap(?container:FlxTypedGroup<Dynamic>):Void
+	{
+		var terrainNode = _fastXml.node.resolve("terrain");
+
+		// <terrain>
+		for (element in terrainNode.elements)
+		{
+			// <tilemap>, <tile>
+			switch (element.name)
+			{
+				case "tilemap":
+					var data:String = element.innerData;
+					var graphics:String = element.att.graphics;
+					var width:Int = Std.parseInt(element.att.tileWidth);
+					var height:Int = Std.parseInt(element.att.tileHeight);
+
+					tilemap = new FlxTilemap();
+					tilemap.loadMap(data, graphics, width, height);
+
+					addInstance(tilemap, container, element);
+
+				case "tile":
+					var id = Std.parseInt(element.att.id);
+					var collision = Std.parseInt(element.att.collision);
+
+					tilemap.setTileProperties(id, collision);
+			}
+		}
+	}
+
+	/**
+	 * Add everything (backgrounds, tilemap and all objects) to the state.
+	 */
+	public function loadEverything():Void
+	{
+		loadBackgrounds();
+		loadTilemap();
+		spawn();
+	}
+
+	/**
+	 * Make constants accesible through function: constants("id").
+	 */
+	private function loadConstants():Void
+	{
+		// <constants>
+		var constantsNode = _fastXml.node.resolve("constants");
+
+		// <const>
+		for (element in constantsNode.elements)
+		{
+			// Check if it's <const>, and has all attributes: id, type and value.
+			if (element.name == "const" && element.has.id && element.has.type && element.has.value)
+			{
+				switch (element.att.type)
+				{
+					case "Bool":
+						var const:Bool = parseBool(element.att.value);
+						_constants.arrayWrite(element.att.id, const);
+
+					case "Int":
+						var const:Int = Std.parseInt(element.att.value);
+						_constants.arrayWrite(element.att.id, const);
+					
+					case "Float":
+						var const:Float = Std.parseFloat(element.att.value);
+						_constants.arrayWrite(element.att.id, const);
+
+					case "String":
+						var const:String = element.att.value;
+						_constants.arrayWrite(element.att.id, const);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Add an instance into correct destination (a specific group or FlxG.state).
+	 * If has attribute "id" then make it accesible through function: object("id").
+	 *
+	 * @param 	instance 	Instance to be added to container.
+	 * @param 	container 	FlxTypedGroup.
+	 * @param 	element 	XML attributes.
+	 */
+	private function addInstance(instance:Dynamic, container:FlxTypedGroup<Dynamic>, element:Fast):Void
+	{
+		if (container == null)
+		FlxG.state.add(instance);
+
+		else
+		container.add(instance);
+
+		if (element.has.id)
+		_objects.arrayWrite(element.att.id, instance);
+	}
+
+	/**
+	 * Apply all FlxSprite properties to a given instance.
+	 *
+	 * @param 	instance 	Instance to set properties.
+	 * @param 	element 	XML attributes.
+	 */
+	private function applySpriteProperties(instance:FlxSprite, element:Fast):Void
+	{
+		// From FlxSprite
+
+		if (element.has.graphics)
+		instance.loadGraphic(assetsDirectory + element.att.graphics);
+
+		if (element.has.alpha)
+		instance.alpha = Std.parseFloat(element.att.alpha);
+
+		if (element.has.color)
+		instance.color = FlxColor.fromString(element.att.color);
+
+		if (element.has.flipX)
+		instance.flipX = parseBool(element.att.flipX);
+
+		if (element.has.flipY)
+		instance.flipY = parseBool(element.att.flipY);
+
+		if (element.has.originX)
+		instance.origin.x = Std.parseFloat(element.att.originX);
+
+		if (element.has.originY)
+		instance.origin.y = Std.parseFloat(element.att.originY);
+
+		if (element.has.offsetX)
+		instance.offset.x = Std.parseFloat(element.att.offsetX);
+
+		if (element.has.offsetY)
+		instance.offset.y = Std.parseFloat(element.att.offsetY);
+
+		if (element.has.scaleX)
+		instance.scale.x = Std.parseFloat(element.att.scaleX);
+
+		if (element.has.scaleY)
+		instance.scale.y = Std.parseFloat(element.att.scaleY);
+
+		// From FlxObject
+
+		if (element.has.x)
+		instance.x = Std.parseFloat(element.att.x);
+
+		if (element.has.y)
+		instance.y = Std.parseFloat(element.att.y);
+
+		if (element.has.width)
+		instance.width = Std.parseFloat(element.att.width);
+
+		if (element.has.height)
+		instance.height = Std.parseFloat(element.att.height);
+
+		if (element.has.angle)
+		instance.angle = Std.parseFloat(element.att.angle);
+
+		if (element.has.immovable)
+		instance.immovable = parseBool(element.att.immovable);
+
+		if (element.has.solid)
+		instance.solid = parseBool(element.att.solid);
+
+		if (element.has.scrollFactorX)
+		instance.scrollFactor.x = Std.parseFloat(element.att.scrollFactorX);
+
+		if (element.has.scrollFactorY)
+		instance.scrollFactor.y = Std.parseFloat(element.att.scrollFactorY);
+
+		// Alignment properties
+
+		if (element.has.alignBottom)
+		instance.y = FlxG.height - instance.height - Std.parseInt(element.att.alignBottom);
+		
+		if (element.has.alignRight)
+		instance.x = FlxG.width - instance.width - Std.parseInt(element.att.alignRight);
+
+		if (element.has.alignVertical)
+		instance.y = (FlxG.height / 2) - (instance.height / 2) + Std.parseInt(element.att.alignVertical);
+
+		if (element.has.alignHorizontal)
+		instance.x = (FlxG.width / 2) - (instance.width / 2) + Std.parseInt(element.att.alignHorizontal);
+
+		// From FlxBasic
+
+		if (element.has.visible)
+		instance.visible = parseBool(element.att.visible);
+	}
+
+	/**
+	 * Apply all FlxText properties to a given instance.
+	 *
+	 * @param 	instance 	Instance to set properties.
+	 * @param 	element 	XML attributes.
+	 */
+	private function applyTextProperties(instance:FlxText, element:Fast):Void
+	{
+		if (element.has.text)
+		instance.text = element.att.text;
+
+		if (element.has.size)
+		instance.size = Std.parseInt(element.att.size);
+
+		if (element.has.font)
+		instance.font = assetsDirectory + element.att.font;
+
+		if (element.has.alignment)
+		instance.alignment = element.att.alignment;
+
+		if (element.has.borderStyle)
+		instance.borderStyle = FlxTextBorderStyle.createByName(element.att.borderStyle.toUpperCase());
+
+		if (element.has.borderColor)
+		instance.borderColor = FlxColor.fromString(element.att.borderColor);
+
+		if (element.has.borderSize)
+		instance.borderSize = Std.parseInt(element.att.borderSize);
+
+		if (element.has.wordWrap)
+		instance.wordWrap = parseBool(element.att.wordWrap);
+	}
+
+	/**
+	 * Gets a specific constant by id.
+	 *
+	 * @param 	Id 	Constant name.
+	 * @return 	Bool, Int, Float or String.
+	 */
+	public function const(Id:String):Dynamic
+	{
+		if (_constants.exists(Id))
+		{
+			return _constants.get(Id);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets a specific object by id.
+	 *
+	 * @param 	Id 	Constant name.
+	 * @return 	
+	 */
+	public function object(Id:String):Dynamic
+	{
+		if (_objects.exists(Id))
+		{
+			return _objects.get(Id);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Helper function to parse Booleans from String to Bool
+	 *
+	 * @param Value 	String value
+	 */
+	private function parseBool(Value:String):Bool
+	{
+		if (Value == "false" || Std.parseInt(Value) == 0)
+		return false;
+
+		else
+		return true;
+	}
+}
