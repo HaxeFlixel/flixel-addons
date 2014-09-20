@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.system.FlxAssets;
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
 
@@ -72,7 +73,8 @@ class FlxTrail extends FlxSpriteGroup
 	private var _recentAngles:Array<Float> = [];
 	private var _recentScales:Array<FlxPoint> = [];
 	private var _recentFrames:Array<Int> = [];
-	private var _recentFacings:Array<Int> = [];
+	private var _recentFlipX:Array<Bool> = [];
+	private var _recentFlipY:Array<Bool> = [];
 	private var _recentAnimations:Array<FlxAnimation> = [];
 	
 	/**
@@ -118,7 +120,8 @@ class FlxTrail extends FlxSpriteGroup
 		_recentPositions = null;
 		_recentScales = null;
 		_recentFrames = null;
-		_recentFacings = null;
+		_recentFlipX = null;
+		_recentFlipY = null;
 		_recentAnimations = null;
 		_spriteOrigin = null;
 		
@@ -136,7 +139,7 @@ class FlxTrail extends FlxSpriteGroup
 	{
 		// Count the frames
 		_counter++;
-
+		
 		// Update the trail in case the intervall and there actually is one.
 		if (_counter >= delay && _trailLength >= 1)
 		{
@@ -159,13 +162,7 @@ class FlxTrail extends FlxSpriteGroup
 			// Also do the same thing for the Sprites angle if rotationsEnabled 
 			if (rotationsEnabled) 
 			{
-				var spriteAngle:Float = sprite.angle;
-				_recentAngles.unshift(spriteAngle);
-				
-				if (_recentAngles.length > _trailLength) 
-				{
-					_recentAngles.pop();
-				}
+				cacheValue(_recentAngles, sprite.angle);
 			}
 			
 			// Again the same thing for Sprites scales if scalesEnabled
@@ -188,27 +185,10 @@ class FlxTrail extends FlxSpriteGroup
 			// Again the same thing for Sprites frames if framesEnabled
 			if (framesEnabled && _graphic == null) 
 			{
-				var spriteFrame:Int = sprite.animation.frameIndex;
-				_recentFrames.unshift(spriteFrame);
-				
-				if (_recentFrames.length > _trailLength) 
-				{
-					_recentFrames.pop();
-				}
-				
-				var spriteFacing:Int = sprite.facing;
-				_recentFacings.unshift(spriteFacing);
-				
-				if (_recentFacings.length > _trailLength) 
-				{
-					_recentFacings.pop();
-				}
-				
-				_recentAnimations.unshift(sprite.animation.curAnim);
-				if (_recentAnimations.length > _trailLength)
-				{
-					_recentAnimations.pop();
-				}
+				cacheValue(_recentFrames, sprite.animation.frameIndex);
+				cacheValue(_recentFlipX, sprite.flipX);
+				cacheValue(_recentFlipY, sprite.flipY);
+				cacheValue(_recentAnimations, sprite.animation.curAnim);
 			}
 
 			// Now we need to update the all the Trailsprites' values
@@ -239,11 +219,12 @@ class FlxTrail extends FlxSpriteGroup
 				if (framesEnabled && _graphic == null) 
 				{
 					trailSprite.animation.frameIndex = _recentFrames[i];
-					trailSprite.facing = _recentFacings[i];
+					trailSprite.flipX = _recentFlipX[i];
+					trailSprite.flipY = _recentFlipY[i];
 					
 					trailSprite.animation.curAnim = _recentAnimations[i];
 				}
-
+	
 				// Is the trailsprite even visible?
 				trailSprite.exists = true; 
 			}
@@ -251,14 +232,21 @@ class FlxTrail extends FlxSpriteGroup
 
 		super.update(elapsed);
 	}
-
+	
+	private function cacheValue<T>(array:Array<T>, value:T)
+	{
+		array.unshift(value);
+		FlxArrayUtil.setLength(array, _trailLength);
+	}
+	
 	public function resetTrail():Void
 	{
 		_recentPositions.splice(0, _recentPositions.length);
 		_recentAngles.splice(0, _recentAngles.length);
 		_recentScales.splice(0, _recentScales.length);
 		_recentFrames.splice(0, _recentFrames.length);
-		_recentFacings.splice(0, _recentFacings.length);
+		_recentFlipX.splice(0, _recentFlipX.length);
+		_recentFlipY.splice(0, _recentFlipY.length);
 		_recentAnimations.splice(0, _recentAnimations.length);
 		
 		for (i in 0...members.length) 
