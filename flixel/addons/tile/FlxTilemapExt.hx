@@ -20,6 +20,7 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.graphics.frames.FlxFramesCollection;
 
+// TODO: add support for tilemap scaling
 
 /**
  * Extended FlxTilemap class that provides collision detection against slopes
