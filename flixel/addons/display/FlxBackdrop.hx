@@ -14,8 +14,6 @@ import flixel.system.layer.DrawStackItem;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
-// TODO: maybe add game resize handler
-
 /**
  * Used for showing infinitely scrolling backgrounds.
  * @author Chevy Ray
@@ -64,6 +62,8 @@ class FlxBackdrop extends FlxSprite
 		scrollFactor.y = ScrollY;
 		
 		loadGraphic(Graphic);
+		
+		FlxG.signals.gameResized.add(onGameResize);
 	}
 	
 	override public function destroy():Void 
@@ -74,6 +74,8 @@ class FlxBackdrop extends FlxSprite
 		_ppoint = null;
 		scale = FlxDestroyUtil.destroy(scale);
 		setTileFrame(null);
+		
+		FlxG.signals.gameResized.remove(onGameResize);
 		
 		super.destroy();
 	}
@@ -249,6 +251,12 @@ class FlxBackdrop extends FlxSprite
 		pixels.unlock();
 		resetFrameBitmaps();
 		#end
+	}
+	
+	private function onGameResize(_,_):Void
+	{
+		if (_tileFrame != null)
+			regenGraphic();
 	}
 	
 	private inline function scaleCallback(Scale:FlxPoint)
