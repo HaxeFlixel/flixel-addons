@@ -18,7 +18,7 @@ using haxe.EnumTools;
  * Loads a scene from XML file. Scenes contain layers of entities (custom FlxSprite),
  * backgrounds, tilemaps, constants, UI and more.
  * 
- * Any question tween me @AndreiRegiani
+ * Any questions tweet me @AndreiRegiani
  */
 class FlxScene
 {
@@ -68,6 +68,17 @@ class FlxScene
 	private var _fastXml:Fast;
 
 	/**
+	 * Optionally set the scene file already.
+	 *
+	 * @param	file 	Location of XML.
+	 */
+	public function new(?file:String)
+	{
+		if (file != null)
+		set(file);
+	}
+
+	/**
 	 * Set the current scene, loads from XML file.
 	 *
 	 * @param	file 	Location of XML.
@@ -83,15 +94,26 @@ class FlxScene
 		_fastXml = new Fast(_xml.firstElement());
 
 		// <scene> attributes
+
+		if (_fastXml.has.width)
 		width = Std.parseInt(_fastXml.att.width);
+
+		if (_fastXml.has.height)
 		height = Std.parseInt(_fastXml.att.height);
+
+		if (_fastXml.has.name)
 		name = _fastXml.att.name;
+
+		if (_fastXml.has.description)
 		description = _fastXml.att.description;
+
+		if (_fastXml.has.version)
 		version = _fastXml.att.version;
 
-		// Set background color
+		if (_fastXml.has.bgColor)
 		FlxG.cameras.bgColor = FlxColor.fromString(_fastXml.att.bgColor);
 
+		if (_fastXml.hasNode.constants)
 		loadConstants();
 	}
 
@@ -235,7 +257,7 @@ class FlxScene
 	}
 
 	/**
-	 * Make constants accesible through function: constants("id").
+	 * Make constants accesible through function FlxScene.constants("id").
 	 */
 	private function loadConstants():Void
 	{
@@ -418,14 +440,14 @@ class FlxScene
 	/**
 	 * Gets a specific constant by id.
 	 *
-	 * @param 	Id 	Constant name.
+	 * @param 	id 	Constant name.
 	 * @return 	Bool, Int, Float or String.
 	 */
-	public function const(Id:String):Dynamic
+	public function const(id:String):Dynamic
 	{
-		if (_constants.exists(Id))
+		if (_constants.exists(id))
 		{
-			return _constants.get(Id);
+			return _constants.get(id);
 		}
 
 		return null;
@@ -437,11 +459,11 @@ class FlxScene
 	 * @param 	Id 	Constant name.
 	 * @return 	
 	 */
-	public function object(Id:String):Dynamic
+	public function object(id:String):Dynamic
 	{
-		if (_objects.exists(Id))
+		if (_objects.exists(id))
 		{
-			return _objects.get(Id);
+			return _objects.get(id);
 		}
 
 		return null;
@@ -452,9 +474,9 @@ class FlxScene
 	 *
 	 * @param Value 	String value
 	 */
-	private function parseBool(Value:String):Bool
+	private function parseBool(value:String):Bool
 	{
-		if (Value == "false" || Std.parseInt(Value) == 0)
+		if (value == "false" || Std.parseInt(value) == 0)
 		return false;
 
 		else
