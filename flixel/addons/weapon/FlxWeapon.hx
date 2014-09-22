@@ -195,6 +195,10 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		// Get a free bullet from the pool
 		currentBullet = group.recycle(null, bulletFactory.bind(this));
+		if (currentBullet == null)
+		{
+			return false;
+		}
 		
 		// Clear any velocity that may have been previously set from the pool
 		currentBullet.velocity.x = 0; //TODO is this really necessary?
