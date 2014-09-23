@@ -131,7 +131,7 @@ class FlxScene
 		for (layer in layerNodes)
 		{
 			// only specific <layer id="layerId"> OR every if none is specified
-			if (layer.att.id == layerId || layerId == null)
+			if (layerId == null || layer.att.id == layerId)
 			{
 				// every <entity>, <sprite>, <text> inside specific layer (layerId)
 				for (element in layer.elements)
@@ -322,8 +322,8 @@ class FlxScene
 	{
 		// From FlxSprite
 
-		if (element.has.graphics)
-		instance.loadGraphic(assetsDirectory + element.att.graphics);
+		if (element.has.graphic)
+		instance.loadGraphic(assetsDirectory + element.att.graphic);
 
 		if (element.has.alpha)
 		instance.alpha = Std.parseFloat(element.att.alpha);
