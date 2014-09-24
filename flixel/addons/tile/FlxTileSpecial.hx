@@ -50,13 +50,11 @@ class FlxTileSpecial extends FlxBasic
 	public var dirty:Bool = true;
 	#end
 	
-	public function new(TilesetId:Int, FlipX:Bool, FlipY:Bool, Rotate:Int, Frames:FlxFramesCollection)
+	public function new(TilesetId:Int, FlipX:Bool, FlipY:Bool, Rotate:Int)
 	{
 		super();
 		
 		currTileId = TilesetId;
-		frames = Frames;
-		
 		flipX = FlipX;
 		flipY = FlipY;
 		rotate = Rotate;

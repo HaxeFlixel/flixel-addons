@@ -301,6 +301,7 @@ class FlxTilemapExt extends FlxTilemap
 				_specialTiles[i] = t;
 				
 				t.currTileId -= _startingIndex;
+				t.frames = this.frames;
 				
 				if (t.hasAnimation()) 
 				{
