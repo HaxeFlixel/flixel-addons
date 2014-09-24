@@ -72,6 +72,32 @@ class FlxTransitionableState extends FlxState
 	override public function create():Void 
 	{
 		super.create();
+		transitionIn();
+	}
+	
+	override public function isTransitionNeeded():Bool
+	{
+		//If the transition exists and we have NOT yet finished our transition visual
+		return ((hasTransOut) && (transOutFinished == false));
+	}
+	
+	override public function transitionToState(Next:FlxState):Void
+	{
+		//play the exit transition, and when it's done call FlxG.switchState
+		_exiting = true;
+		transitionOut(
+			function():Void
+			{
+				FlxG.switchState(Next);
+			}
+		);
+	}
+	
+	/**
+	 * Starts the in-transition. Can be called manually at any time.
+	 */
+	public function transitionIn():Void
+	{
 		if (transIn != null && transIn.type != NONE)
 		{
 			var _trans = getTransition(transIn);
@@ -84,25 +110,31 @@ class FlxTransitionableState extends FlxState
 		}
 	}
 	
-	public override function isTransitionNeeded():Bool
+	/**
+	 * Starts the out-transition. Can be called manually at any time.
+	 */
+	public function transitionOut(?OnExit:Void->Void):Void
 	{
-		//If the transition exists and we have NOT yet finished our transition visual
-		return ((hasTransOut) && (transOutFinished == false));
-	}
-	
-	public override function transitionToState(Next:FlxState):Void
-	{
-		//play the exit transition, and when it's done call FlxG.switchState
-		exitTransition(
-			function():Void
-			{
-				FlxG.switchState(Next);
-			}
-		);
+		_onExit = OnExit;
+		if (hasTransOut)
+		{
+			var _trans = getTransition(transOut);
+			
+			_trans.setStatus(EMPTY);
+			openSubState(_trans);
+			
+			_trans.finishCallback = finishTransOut;
+			_trans.start(IN);
+		}
+		else
+		{
+			_onExit();
+		}
 	}
 	
 	private var transOutFinished:Bool = false;
 	
+	private var _exiting:Bool = false;
 	private var _onExit:Void->Void;
 	
 	private function get_hasTransIn():Bool
@@ -117,14 +149,12 @@ class FlxTransitionableState extends FlxState
 	
 	private function getTransition(data:TransitionData):Transition
 	{
-		switch(data.type)
+		return switch(data.type)
 		{
-			case TILES:	return new TransitionTiles(data);
-			case FADE:	return new TransitionFade(data);
-			default:
+			case TILES: new TransitionTiles(data);
+			case FADE: new TransitionFade(data);
+			default: null;
 		}
-		
-		return null;
 	}
 	
 	private function finishTransIn()
@@ -135,26 +165,13 @@ class FlxTransitionableState extends FlxState
 	private function finishTransOut()
 	{
 		transOutFinished = true;
+		
+		if (!_exiting)
+		{
+			closeSubState();
+		}
+		
 		if (_onExit != null)
-		{
-			_onExit();
-		}
-	}
-	
-	private function exitTransition(?OnExit:Void->Void):Void
-	{
-		_onExit = OnExit;
-		if (hasTransOut)
-		{
-			var _trans = getTransition(transOut);
-			
-			_trans.setStatus(EMPTY);
-			openSubState(_trans);
-			
-			_trans.finishCallback = finishTransOut;
-			_trans.start(IN);
-		}
-		else
 		{
 			_onExit();
 		}
