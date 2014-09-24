@@ -8,6 +8,8 @@ import flixel.text.FlxBitmapTextField;
 
 // TODO: make it work in tile render mode
 
+// TODO: port "scroll sprite" plugin as well
+
 /**
  * FlxScrollingText
  * -- Part of the Flixel Power Tools set
