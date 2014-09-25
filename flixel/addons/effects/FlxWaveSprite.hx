@@ -133,7 +133,7 @@ class FlxWaveSprite extends FlxSprite
 		makeGraphic(Std.int(_target.frameWidth + (strength * 2)), _target.frameHeight, FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo(strength, 0);
 		pixels.copyPixels(_target.pixels, _target.pixels.rect, _flashPoint);
-		resetFrameBitmaps();
+		frame.destroyBitmaps();
 	}
 	
 	private function set_strength(value:Int):Int 
