@@ -7,7 +7,6 @@ import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
 import flixel.system.FlxAssets.FlxGraphicAsset;
-import flixel.system.layer.frames.FlxSpriteFrames;
 import flixel.util.FlxTimer;
 import openfl.display.BitmapData;
 
@@ -42,7 +41,7 @@ class FlxTransitionSprite extends FlxSprite
 		
 		var inArray:Array<Int> = [];
 		var outArray:Array<Int> = [];
-		for (i in 1...frames-1)
+		for (i in 1...(numFrames - 1))
 		{
 			inArray.push(i);
 		}
@@ -50,7 +49,7 @@ class FlxTransitionSprite extends FlxSprite
 		outArray.reverse();
 		
 		animation.add("in", inArray, FrameRate, false);
-		animation.add("full", [frames-1], 0, false);
+		animation.add("full", [numFrames - 1], 0, false);
 		animation.add("out", outArray, FrameRate, false);
 		setStatus(FULL);
 	}
