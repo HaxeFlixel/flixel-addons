@@ -108,7 +108,7 @@ class FlxGlitchSprite extends FlxSprite
 			}
 			
 			pixels.unlock();
-			resetFrameBitmaps();
+			frame.destroyBitmaps();
 			dirty = true;
 		}
 		
@@ -121,7 +121,8 @@ class FlxGlitchSprite extends FlxSprite
 		setPosition(target.x - (direction == HORIZONTAL ? strength : 0), target.y - (direction == VERTICAL ? strength : 0));
 		makeGraphic(Std.int(target.frameWidth + (direction == HORIZONTAL ? strength * 2 : 0)), Std.int(target.frameHeight + (direction == VERTICAL ? strength * 2 : 0 )), FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo((direction == HORIZONTAL ? strength : 0), (direction == VERTICAL ? strength : 0));
-		pixels.copyPixels(target.pixels, target.pixels.rect, _flashPoint); 
+		pixels.copyPixels(target.pixels, target.pixels.rect, _flashPoint);
+		frame.destroyBitmaps();
 		dirty = true;
 	}
 	
