@@ -35,8 +35,7 @@ class TransitionFade extends Transition
 		add(back);
 	}
 	
-	public override function destroy():Void 
-	{
+	public override function destroy():Void {
 		super.destroy();
 		back = null;
 	}

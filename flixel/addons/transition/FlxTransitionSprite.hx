@@ -5,7 +5,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
-import flixel.system.FlxAssets;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxTimer;
 import openfl.display.BitmapData;
@@ -20,30 +19,24 @@ import openfl.display.BitmapData;
  */
 class FlxTransitionSprite extends FlxSprite
 {
-	private var _frameRate:Int = 0;
 	private var _delay:Float;
 	public var status:TransitionStatus = IN;
 	private var _newStatus:TransitionStatus = NULL;
 	
-	public function new(X:Float = 0, Y:Float = 0, Delay:Float, Graphic:FlxGraphicAsset = null, GraphicWidth:Int = 32, GraphicHeight:Int = 32, FrameRate:Int = 40) 
+	public function new(X:Float=0, Y:Float=0, Delay:Float, Graphic:FlxGraphicAsset=null, GraphicWidth:Int=32, GraphicHeight:Int=32, FrameRate:Int=40) 
 	{
 		super(X, Y);
-		
 		if (Graphic == null)
 		{
 			Graphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
 			GraphicWidth = 32;
 			GraphicHeight = 32;
 		}
-		
 		_delay = Delay;
-		_frameRate = FrameRate;
 		loadGraphic(Graphic, true, GraphicWidth, GraphicHeight);
-	}
-	
-	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite 
-	{
-		super.loadGraphic(Graphic, Animated, Width, Height, Unique, Key);
+		
+		graphic.persist = true;
+		graphic.destroyOnNoUse = false;
 		
 		animation.add("empty", [0], 0, false);
 		
@@ -56,14 +49,10 @@ class FlxTransitionSprite extends FlxSprite
 		outArray = inArray.copy();
 		outArray.reverse();
 		
-		FlxG.log.warn(inArray);
-		
-		animation.add("in", inArray, _frameRate, false);
+		animation.add("in", inArray, FrameRate, false);
 		animation.add("full", [numFrames - 1], 0, false);
-		animation.add("out", outArray, _frameRate, false);
+		animation.add("out", outArray, FrameRate, false);
 		setStatus(FULL);
-		
-		return this;
 	}
 	
 	public function start(NewStatus:TransitionStatus):Void
@@ -86,9 +75,6 @@ class FlxTransitionSprite extends FlxSprite
 			case EMPTY,NULL: "empty";
 			case FULL: "full";
 		}
-		
-		FlxG.log.warn(Status);
-		FlxG.log.warn(anim);
 		
 		animation.play(anim);
 		status = Status;
