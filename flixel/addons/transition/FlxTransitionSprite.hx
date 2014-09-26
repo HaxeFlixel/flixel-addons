@@ -20,6 +20,7 @@ import openfl.display.BitmapData;
  */
 class FlxTransitionSprite extends FlxSprite
 {
+	private var _frameRate:Int = 0;
 	private var _delay:Float;
 	public var status:TransitionStatus = IN;
 	private var _newStatus:TransitionStatus = NULL;
@@ -36,7 +37,14 @@ class FlxTransitionSprite extends FlxSprite
 		}
 		
 		_delay = Delay;
+		_frameRate = FrameRate;
 		loadGraphic(Graphic, true, GraphicWidth, GraphicHeight);
+	}
+	
+	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite 
+	{
+		super.loadGraphic(Graphic, Animated, Width, Height, Unique, Key);
+		
 		animation.add("empty", [0], 0, false);
 		
 		var inArray:Array<Int> = [];
@@ -48,10 +56,14 @@ class FlxTransitionSprite extends FlxSprite
 		outArray = inArray.copy();
 		outArray.reverse();
 		
-		animation.add("in", inArray, FrameRate, false);
+		FlxG.log.warn(inArray);
+		
+		animation.add("in", inArray, _frameRate, false);
 		animation.add("full", [numFrames - 1], 0, false);
-		animation.add("out", outArray, FrameRate, false);
+		animation.add("out", outArray, _frameRate, false);
 		setStatus(FULL);
+		
+		return this;
 	}
 	
 	public function start(NewStatus:TransitionStatus):Void
@@ -74,6 +86,9 @@ class FlxTransitionSprite extends FlxSprite
 			case EMPTY,NULL: "empty";
 			case FULL: "full";
 		}
+		
+		FlxG.log.warn(Status);
+		FlxG.log.warn(anim);
 		
 		animation.play(anim);
 		status = Status;

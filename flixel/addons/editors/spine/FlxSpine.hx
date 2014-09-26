@@ -6,9 +6,12 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.AtlasFrames;
+import flixel.graphics.frames.ImageFrame;
 import flixel.math.FlxAngle;
-import flixel.util.loaders.CachedGraphics;
-import flixel.util.loaders.TextureRegion;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import haxe.ds.ObjectMap;
 import openfl.Assets;
 import spinehx.AnimationState;
@@ -207,21 +210,29 @@ class FlxSpine extends FlxSprite
 		var region:AtlasRegion = cast regionAttachment.getRegion();
 		var texture:FlixelTexture = cast region.getTexture();
 		
-		var cachedGraphic:CachedGraphics = FlxG.bitmap.add(texture.bd);
-		var atlasRegion:TextureRegion = new TextureRegion(cachedGraphic, region.getRegionX(), region.getRegionY());
+		var graph:FlxGraphic = FlxG.bitmap.add(texture.bd);
+		var atlasFrames:AtlasFrames = (graph.atlasFrames == null) ? new AtlasFrames(graph) : graph.atlasFrames;
 		
-		if (region.rotate) 
+		var rotated:Bool = region.rotate;
+		var name:String = region.name;
+		var offset:FlxPoint = FlxPoint.get(0, 0);
+		var angle:Float = 0;
+		var frameRect:FlxRect = null;
+		
+		if (rotated)
 		{
-			atlasRegion.region.tileWidth = atlasRegion.region.width = region.getRegionHeight();
-			atlasRegion.region.tileHeight = atlasRegion.region.height = region.getRegionWidth();
+			frameRect = new FlxRect(region.getRegionX(), region.getRegionY(), region.getRegionHeight(), region.getRegionWidth());
 		}
-		else 
+		else
 		{
-			atlasRegion.region.tileWidth = atlasRegion.region.width = region.getRegionWidth();
-			atlasRegion.region.tileHeight = atlasRegion.region.height = region.getRegionHeight();
+			frameRect = new FlxRect(region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight());
 		}
 		
-		var wrapper:FlxSprite = new FlxSprite(0, 0, atlasRegion);
+		var sourceSize:FlxPoint = FlxPoint.get(frameRect.width, frameRect.height);
+		var imageFrame:ImageFrame = ImageFrame.fromFrame(atlasFrames.addAtlasFrame(frameRect, sourceSize, offset, name, angle));
+		
+		var wrapper:FlxSprite = new FlxSprite(0, 0);
+		wrapper.frames = imageFrame;
 		wrapper.antialiasing = antialiasing;
 		wrapper.origin.x = regionAttachment.width / 2; // Registration point.
 		wrapper.origin.y = regionAttachment.height / 2;
