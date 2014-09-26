@@ -38,8 +38,6 @@ class FlxTransitionSprite extends FlxSprite
 		graphic.persist = true;
 		graphic.destroyOnNoUse = false;
 		
-		animation.add("empty", [0], 0, false);
-		
 		var inArray:Array<Int> = [];
 		var outArray:Array<Int> = [];
 		for (i in 1...(numFrames - 1))
@@ -49,9 +47,11 @@ class FlxTransitionSprite extends FlxSprite
 		outArray = inArray.copy();
 		outArray.reverse();
 		
+		animation.add("empty", [0], 0, false);
 		animation.add("in", inArray, FrameRate, false);
 		animation.add("full", [numFrames - 1], 0, false);
 		animation.add("out", outArray, FrameRate, false);
+		
 		setStatus(FULL);
 	}
 	
