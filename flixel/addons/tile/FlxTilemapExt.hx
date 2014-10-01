@@ -81,6 +81,7 @@ class FlxTilemapExt extends FlxTilemap
 		super.destroy();
 		
 		_specialTiles = FlxDestroyUtil.destroyArray(_specialTiles);
+		MATRIX = null;
 	}
 	
 	override public function update(elapsed:Float):Void 
