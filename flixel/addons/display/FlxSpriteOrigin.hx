@@ -6,12 +6,13 @@ import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
-import flixel.graphics.frames.FrameType;
+import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
+import flixel.graphics.frames.FlxFrame.FlxFrameType;
+import flixel.graphics.tile.FlxDrawStackItem;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.math.FlxMatrix;
 import flixel.math.FlxPoint;
-import flixel.system.layer.DrawStackItem;
 
 @:bitmap("assets/images/logo/default.png")
 private class GraphicDefault extends BitmapData {}
@@ -31,7 +32,7 @@ class FlxSpriteOrigin extends FlxSprite
 			loadGraphic(FlxGraphic.fromClass(GraphicDefault));
 		}
 		
-		if (alpha == 0 || frame.type == FrameType.EMPTY)
+		if (alpha == 0 || frame.type == FlxFrameType.EMPTY)
 		{
 			return;
 		}
@@ -42,7 +43,7 @@ class FlxSpriteOrigin extends FlxSprite
 		}
 		
 	#if FLX_RENDER_TILE
-		var drawItem:DrawStackItem;
+		var drawItem:FlxDrawStackItem;
 		
 		var ox:Float = origin.x;
 		if (_facingHorizontalMult != 1)
@@ -92,7 +93,7 @@ class FlxSpriteOrigin extends FlxSprite
 			
 			_matrix.identity();
 			
-			if (frame.angle != 0)
+			if (frame.angle != FlxFrameAngle.ANGLE_0)
 			{
 				// handle rotated frames
 				frame.prepareFrameMatrix(_matrix);

@@ -6,9 +6,10 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.graphics.frames.FrameType;
+import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
+import flixel.graphics.frames.FlxFrame.FlxFrameType;
+import flixel.graphics.tile.FlxDrawStackItem;
 import flixel.system.FlxAssets;
-import flixel.system.layer.DrawStackItem;
 import flixel.math.FlxAngle;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
@@ -63,7 +64,7 @@ class FlxSkewedSprite extends FlxSprite
 	
 	override public function draw():Void 
 	{
-		if (alpha == 0 || frame.type == FrameType.EMPTY)
+		if (alpha == 0 || frame.type == FlxFrameType.EMPTY)
 		{
 			return;
 		}
@@ -74,7 +75,7 @@ class FlxSkewedSprite extends FlxSprite
 		}
 		
 	#if FLX_RENDER_TILE
-		var drawItem:DrawStackItem;
+		var drawItem:FlxDrawStackItem;
 		
 		var ox:Float = origin.x;
 		if (_facingHorizontalMult != 1)
@@ -134,7 +135,7 @@ class FlxSkewedSprite extends FlxSprite
 			
 			_matrix.identity();
 			
-			if (frame.angle != 0)
+			if (frame.angle != FlxFrameAngle.ANGLE_0)
 			{
 				// handle rotated frames
 				frame.prepareFrameMatrix(_matrix);

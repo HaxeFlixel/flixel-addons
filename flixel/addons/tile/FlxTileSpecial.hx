@@ -191,7 +191,7 @@ class FlxTileSpecial extends FlxBasic
 		_matrix.identity();
 		
 		#if FLX_RENDER_TILE
-		if (currFrame.angle != 0)
+		if (currFrame.angle != FlxFrameAngle.ANGLE_0)
 		{
 			currFrame.prepareFrameMatrix(_matrix);
 		}

@@ -7,10 +7,10 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
+import flixel.graphics.tile.FlxDrawStackItem;
 import flixel.math.FlxPoint;
 import flixel.math.FlxPoint.FlxCallbackPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
-import flixel.system.layer.DrawStackItem;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
@@ -155,11 +155,11 @@ class FlxBackdrop extends FlxSprite
 				return;
 			}
 			
-			var drawItem:DrawStackItem = camera.getDrawStackItem(_tileFrame.parent, false, 0);
+			var drawItem:FlxDrawStackItem = camera.getDrawStackItem(_tileFrame.parent, false, 0);
 			
 			_matrix.identity();
 			
-			if (_tileFrame.angle != 0)
+			if (_tileFrame.angle != FlxFrameAngle.ANGLE_0)
 			{
 				_tileFrame.prepareFrameMatrix(_matrix);
 			}

@@ -7,7 +7,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
-import flixel.graphics.frames.AtlasFrames;
+import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.ImageFrame;
 import flixel.math.FlxAngle;
 import flixel.math.FlxPoint;
@@ -211,7 +211,7 @@ class FlxSpine extends FlxSprite
 		var texture:FlixelTexture = cast region.getTexture();
 		
 		var graph:FlxGraphic = FlxG.bitmap.add(texture.bd);
-		var atlasFrames:AtlasFrames = (graph.atlasFrames == null) ? new AtlasFrames(graph) : graph.atlasFrames;
+		var atlasFrames:FlxAtlasFrames = (graph.atlasFrames == null) ? new FlxAtlasFrames(graph) : graph.atlasFrames;
 		
 		var rotated:Bool = region.rotate;
 		var name:String = region.name;

@@ -10,8 +10,7 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.graphics.frames.FlxFrame;
-import flixel.graphics.frames.FrameType;
-import flixel.system.layer.DrawStackItem;
+import flixel.graphics.tile.FlxDrawStackItem;
 import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.tile.FlxTilemapBuffer;
@@ -81,7 +80,6 @@ class FlxTilemapExt extends FlxTilemap
 		super.destroy();
 		
 		_specialTiles = FlxDestroyUtil.destroyArray(_specialTiles);
-		MATRIX = null;
 	}
 	
 	override public function update(elapsed:Float):Void 
@@ -126,7 +124,7 @@ class FlxTilemapExt extends FlxTilemap
 		var drawY:Float;
 		
 		var _tileTransformMatrix:Matrix = null;
-		var drawItem:DrawStackItem;
+		var drawItem:FlxDrawStackItem;
 		#end
 		
 		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
@@ -193,7 +191,7 @@ class FlxTilemapExt extends FlxTilemap
 					Buffer.pixels.copyPixels(special.getBitmapData(), _flashRect, _flashPoint, null, null, true);
 					Buffer.dirty = (special.dirty || Buffer.dirty);
 				}
-				else if (tile != null && tile.visible && tile.frame.type != FrameType.EMPTY)
+				else if (tile != null && tile.visible && tile.frame.type != FlxFrameType.EMPTY)
 				{
 					Buffer.pixels.copyPixels(tile.frame.getBitmap(), _flashRect, _flashPoint, null, null, true);
 				}
@@ -240,7 +238,7 @@ class FlxTilemapExt extends FlxTilemap
 					}
 					else
 					{
-						if (frame.angle != 0)
+						if (frame.angle != FlxFrameAngle.ANGLE_0)
 						{
 							frame.prepareFrameMatrix(_matrix);
 						}
@@ -254,7 +252,7 @@ class FlxTilemapExt extends FlxTilemap
 					_point.set(drawX, drawY);
 					
 					drawItem = Camera.getDrawStackItem(graphic, isColored, _blendInt);
-					drawItem.setMatrixDrawData(_point, frame.tileID, _matrix, isColored, color, alpha);
+					drawItem.setDrawData(_point, frame.tileID, _matrix, isColored, color, alpha);
 				}
 				#end
 				
