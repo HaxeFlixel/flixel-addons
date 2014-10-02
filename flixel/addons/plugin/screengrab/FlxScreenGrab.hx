@@ -161,7 +161,7 @@ class FlxScreenGrab extends FlxBasic
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
 	#elseif systools
-		var png:ByteArray = screenshot.bitmapData.encode('x');
+		var png:ByteArray = screenshot.bitmapData.encode('png');
 		var path:String = "";
 		var documentsDirectory = "";
 		var saveFile:Dynamic=null;
