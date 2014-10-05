@@ -53,10 +53,7 @@ class FlxGlitchSprite extends FlxSprite
 		target = Target;
 		strength = Strength;
 		size = Size;
-		if (Direction != null)
-			direction = Direction;
-		else
-			direction = HORIZONTAL;
+		direction = (Direction != null) ? Direction : HORIZONTAL;
 		initPixels();
 	}
 	
@@ -87,7 +84,6 @@ class FlxGlitchSprite extends FlxSprite
 			var p:Int = 0;
 			if (direction == HORIZONTAL)
 			{
-				
 				while (p < target.frameHeight) 
 				{
 					_flashRect2.setTo(0, p, target.frameWidth, size);
@@ -111,8 +107,8 @@ class FlxGlitchSprite extends FlxSprite
 				}
 			}
 			
-			resetFrameBitmapDatas();
 			pixels.unlock();
+			frame.destroyBitmaps();
 			dirty = true;
 		}
 		
@@ -125,7 +121,8 @@ class FlxGlitchSprite extends FlxSprite
 		setPosition(target.x - (direction == HORIZONTAL ? strength : 0), target.y - (direction == VERTICAL ? strength : 0));
 		makeGraphic(Std.int(target.frameWidth + (direction == HORIZONTAL ? strength * 2 : 0)), Std.int(target.frameHeight + (direction == VERTICAL ? strength * 2 : 0 )), FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo((direction == HORIZONTAL ? strength : 0), (direction == VERTICAL ? strength : 0));
-		pixels.copyPixels(target.pixels, target.pixels.rect, _flashPoint); 
+		pixels.copyPixels(target.pixels, target.pixels.rect, _flashPoint);
+		frame.destroyBitmaps();
 		dirty = true;
 	}
 	

@@ -53,11 +53,9 @@ class FlxWaveSprite extends FlxSprite
 	public function new(Target:FlxSprite, ?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3) 
 	{
 		super();
-		if (Mode == null)
-			Mode = ALL;
 		_target = Target;
 		strength = Strength;
-		mode = Mode;
+		mode = (Mode == null) ? ALL : Mode;
 		speed = Speed;
 		if (Center < 0)
 			center = Std.int(_target.height * 0.5);
@@ -75,7 +73,8 @@ class FlxWaveSprite extends FlxSprite
 	{
 		if (!visible || alpha == 0)
 			return;
-			
+		
+		pixels.lock();
 		pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
 		
 		var offset:Float = 0;
@@ -106,6 +105,7 @@ class FlxWaveSprite extends FlxSprite
 			_flashRect2.setTo(0, oY, _target.frameWidth, 1);
 			pixels.copyPixels(_target.pixels, _flashRect2, _flashPoint);
 		}
+		pixels.unlock();
 		
 		if (_targetOffset == -999)
 		{
@@ -117,7 +117,7 @@ class FlxWaveSprite extends FlxSprite
 				_time = 0;
 		}
 		
-		resetFrameBitmapDatas();
+		frame.destroyBitmaps();
 		dirty = true;
 		super.draw();
 	}
@@ -129,10 +129,11 @@ class FlxWaveSprite extends FlxSprite
 	
 	private function initPixels():Void
 	{
-		setPosition(_target.x -strength, _target.y);
+		setPosition(_target.x - strength, _target.y);
 		makeGraphic(Std.int(_target.frameWidth + (strength * 2)), _target.frameHeight, FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo(strength, 0);
 		pixels.copyPixels(_target.pixels, _target.pixels.rect, _flashPoint);
+		frame.destroyBitmaps();
 	}
 	
 	private function set_strength(value:Int):Int 

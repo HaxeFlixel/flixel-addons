@@ -6,8 +6,10 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
+import flixel.graphics.frames.FlxFrame.FlxFrameType;
+import flixel.graphics.tile.FlxDrawStackItem;
 import flixel.system.FlxAssets;
-import flixel.system.layer.DrawStackItem;
 import flixel.math.FlxAngle;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
@@ -62,14 +64,30 @@ class FlxSkewedSprite extends FlxSprite
 	
 	override public function draw():Void 
 	{
+		if (alpha == 0 || frame.type == FlxFrameType.EMPTY)
+		{
+			return;
+		}
+		
 		if (dirty)	//rarely 
 		{
 			calcFrame();
 		}
 		
-		var radians:Float;
-		var cos:Float;
-		var sin:Float;
+	#if FLX_RENDER_TILE
+		var drawItem:FlxDrawStackItem;
+		
+		var ox:Float = origin.x;
+		if (_facingHorizontalMult != 1)
+		{
+			ox = frameWidth - ox;
+		}
+		var oy:Float = origin.y;
+		if (_facingVerticalMult != 1)
+		{
+			oy = frameHeight - oy;
+		}
+	#end
 		
 		for (camera in cameras)
 		{
@@ -79,93 +97,95 @@ class FlxSkewedSprite extends FlxSprite
 			}
 
 			getScreenPosition(_point, camera).subtractPoint(offset);
-			
-		#if FLX_RENDER_TILE	
-			_point.addPoint(origin);
-		#end
 		
 #if FLX_RENDER_BLIT
 			if (isSimpleRender(camera))
 			{
-				_point.copyToFlash(_flashPoint);
+				_point.floor().copyToFlash(_flashPoint);
 				camera.buffer.copyPixels(framePixels, _flashRect, _flashPoint, null, null, true);
 			}
-			else if (!matrixExposed)
+			else 
 			{
 				_matrix.identity();
 				_matrix.translate( -origin.x, -origin.y);
-				if ((angle != 0) && (bakedRotationAngle <= 0))
-				{
-					_matrix.rotate(angle * FlxAngle.TO_RAD);
-				}
-				_matrix.scale(scale.x, scale.y);
 				
-				updateSkewMatrix();
-				
-				_matrix.translate(_point.x + origin.x, _point.y + origin.y);
-				camera.buffer.draw(framePixels, _matrix, null, blend, null, antialiasing);
-			}
-			else
-			{
-				camera.buffer.draw(framePixels, transformMatrix, null, blend, null, antialiasing);
-			}
-#else
-			var csx:Float = 1;
-			var ssy:Float = 0;
-			var ssx:Float = 0;
-			var csy:Float = 1;
-			
-			var x1:Float = (origin.x - frame.center.x);
-			var y1:Float = (origin.y - frame.center.y);
-			
-			var x2:Float = x1;
-			var y2:Float = y1;
-			
-			var sx:Float = scale.x * _facingHorizontalMult;
-			var sy:Float = scale.y * _facingVerticalMult;
-			
-			if (isSimpleRender(camera))
-			{
-				if (flipX)
+				if (matrixExposed)
 				{
-					csx = -csx;
-				}
-				if (flipY)
-				{
-					csy = -csy;
-				}
-			}
-			else
-			{
-				var matrixToUse:Matrix = _matrix;
-				if (!matrixExposed)
-				{
-					radians = -angle * FlxAngle.TO_RAD;
-					
-					_matrix.identity();
-					_matrix.rotate( -radians);
-					_matrix.scale(sx, sy);
-					
-					updateSkewMatrix();
+					_matrix.concat(transformMatrix);
 				}
 				else
 				{
-					matrixToUse = transformMatrix;
+					if ((angle != 0) && (bakedRotationAngle <= 0))
+					{
+						_matrix.rotate(angle * FlxAngle.TO_RAD);
+					}
+					_matrix.scale(scale.x, scale.y);
+					
+					updateSkewMatrix();
+					_matrix.concat(_skewMatrix);
 				}
 				
-				x2 = x1 * matrixToUse.a + y1 * matrixToUse.c + matrixToUse.tx;
-				y2 = x1 * matrixToUse.b + y1 * matrixToUse.d + matrixToUse.ty;
+				_point.addPoint(origin).floor();
 				
-				csx = matrixToUse.a;
-				ssy = matrixToUse.b;
-				ssx = matrixToUse.c;
-				csy = matrixToUse.d;
+				_matrix.translate(_point.x, _point.y);
+				camera.buffer.draw(framePixels, _matrix, null, blend, null, antialiasing);
+			}
+#else
+			drawItem = camera.getDrawStackItem(frame.parent, isColored, _blendInt, antialiasing);
+			
+			_matrix.identity();
+			
+			if (frame.angle != FlxFrameAngle.ANGLE_0)
+			{
+				// handle rotated frames
+				frame.prepareFrameMatrix(_matrix);
 			}
 			
-			_point.subtract(x2, y2);
+			var x1:Float = (ox - frame.center.x);
+			var y1:Float = (oy - frame.center.y);
+			_matrix.translate(x1, y1);
 			
-			var drawItem = camera.getDrawStackItem(cachedGraphics, isColored, _blendInt, antialiasing);
-			setDrawData(drawItem, camera, csx, ssy, ssx, csy);
+			if (!matrixExposed)
+			{
+				var sx:Float = scale.x * _facingHorizontalMult;
+				var sy:Float = scale.y * _facingVerticalMult;
+				
+				if (_angleChanged && (bakedRotationAngle <= 0))
+				{
+					var radians:Float = angle * FlxAngle.TO_RAD;
+					_sinAngle = Math.sin(radians);
+					_cosAngle = Math.cos(radians);
+					_angleChanged = false;
+				}
+				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
+				
+				_matrix.scale(sx * camera.totalScaleX, sy * camera.totalScaleY);
+				
+				if (!isSimpleRender(camera))
+				{
+					updateSkewMatrix();
+					_matrix.concat(_skewMatrix);
+				}
+			}
+			else
+			{
+				_matrix.scale(camera.totalScaleX, camera.totalScaleY);
+				_matrix.concat(transformMatrix);
+			}
+			
+			_point.addPoint(origin);
+			
+			_point.x *= camera.totalScaleX;
+			_point.y *= camera.totalScaleY;
+			
+			if (isPixelPerfectRender(camera))
+			{
+				_point.floor();
+			}
+			
+			_point.subtract(_matrix.tx, _matrix.ty);
+			
+			setDrawData(drawItem, camera, _matrix);
 #end
 			#if !FLX_NO_DEBUG
 			FlxBasic.activeCount++;
@@ -175,19 +195,17 @@ class FlxSkewedSprite extends FlxSprite
 	
 	private function updateSkewMatrix():Void
 	{
+		_skewMatrix.identity();
+		
 		if ((skew.x != 0) || (skew.y != 0))
 		{
-			_skewMatrix.identity();
-			
 			_skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
 			_skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
-			
-			_matrix.concat(_skewMatrix);
 		}
 	}
 	
 	override public function isSimpleRender(?camera:FlxCamera):Bool
 	{
-		return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0);
+		return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0) && (!matrixExposed);
 	}
 }

@@ -5,11 +5,14 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.FlxFrame;
+import flixel.graphics.tile.FlxDrawStackItem;
+import flixel.math.FlxPoint;
+import flixel.math.FlxPoint.FlxCallbackPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
-import flixel.system.layer.DrawStackItem;
-import flixel.system.layer.Region;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.loaders.TextureRegion;
 
 /**
  * Used for showing infinitely scrolling backgrounds.
@@ -23,12 +26,15 @@ class FlxBackdrop extends FlxSprite
 	private var _repeatX:Bool;
 	private var _repeatY:Bool;
 	
+	/**
+	 * Frame used for tiling
+	 */
+	private var _tileFrame:FlxFrame;
+	
 	#if FLX_RENDER_TILE
 	private var _tileID:Int;
 	private var _tileInfo:Array<Float>;
 	private var _numTiles:Int = 0;
-	#else
-	private var _data:BitmapData;
 	#end
 	
 	/**
@@ -44,81 +50,65 @@ class FlxBackdrop extends FlxSprite
 	{
 		super();
 		
-		cachedGraphics = FlxG.bitmap.add(Graphic);
+		scale = new FlxCallbackPoint(scaleCallback);
+		scale.set(1, 1);
 		
-		if (!Std.is(Graphic, TextureRegion))
-		{
-			region = new Region(0, 0, cachedGraphics.bitmap.width, cachedGraphics.bitmap.height);
-			region.width = cachedGraphics.bitmap.width;
-			region.height = cachedGraphics.bitmap.height;
-		}
-		else
-		{
-			region = cast(Graphic, TextureRegion).region.clone();
-		}
-		
-		var w:Int = region.width;
-		var h:Int = region.height;
-		
-		if (RepeatX) 
-		{
-			w += FlxG.width;
-		}
-		if (RepeatY) 
-		{
-			h += FlxG.height;
-		}
-		
-		#if FLX_RENDER_BLIT
-		_data = new BitmapData(w, h);
-		#end
-		_ppoint = new Point();
-		
-		_scrollW = region.width;
-		_scrollH = region.height;
 		_repeatX = RepeatX;
 		_repeatY = RepeatY;
 		
-		#if FLX_RENDER_TILE
-		_tileInfo = [];
-		_numTiles = 0;
-		#else
-		var regionRect:Rectangle = new Rectangle(region.startX, region.startY, region.width, region.height);
-		#end
-		
-		while (_ppoint.y < h)
-		{
-			while (_ppoint.x < w)
-			{
-				#if FLX_RENDER_BLIT
-				_data.copyPixels(cachedGraphics.bitmap, regionRect, _ppoint);
-				#else
-				_tileInfo.push(_ppoint.x);
-				_tileInfo.push(_ppoint.y);
-				_numTiles++;
-				#end
-				_ppoint.x += region.width;
-			}
-			_ppoint.x = 0;
-			_ppoint.y += region.height;
-		}
+		_ppoint = new Point();
 		
 		scrollFactor.x = ScrollX;
 		scrollFactor.y = ScrollY;
 		
-		updateFrameData();
+		loadGraphic(Graphic);
+		
+		FlxG.signals.gameResized.add(onGameResize);
 	}
 	
 	override public function destroy():Void 
 	{
-		#if FLX_RENDER_BLIT
-		_data = FlxDestroyUtil.dispose(_data);
-		#else
+		#if FLX_RENDER_TILE
 		_tileInfo = null;
 		#end
 		_ppoint = null;
+		scale = FlxDestroyUtil.destroy(scale);
+		setTileFrame(null);
+		
+		FlxG.signals.gameResized.remove(onGameResize);
 		
 		super.destroy();
+	}
+	
+	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite 
+	{
+		var tileGraphic:FlxGraphic = FlxG.bitmap.add(Graphic);
+		setTileFrame(tileGraphic.imageFrame.frame);
+		
+		var w:Int = Std.int(_tileFrame.sourceSize.x);
+		var h:Int = Std.int(_tileFrame.sourceSize.y);
+		
+		_scrollW = w;
+		_scrollH = h;
+		
+		regenGraphic();
+		
+		return this;
+	}
+	
+	public function loadFrame(Frame:FlxFrame):FlxBackdrop
+	{
+		setTileFrame(Frame);
+		
+		var w:Int = Std.int(_tileFrame.sourceSize.x);
+		var h:Int = Std.int(_tileFrame.sourceSize.y);
+		
+		_scrollW = w;
+		_scrollH = h;
+		
+		regenGraphic();
+		
+		return this;
 	}
 
 	override public function draw():Void
@@ -130,11 +120,14 @@ class FlxBackdrop extends FlxSprite
 				continue;
 			}
 			
+			var ssw:Float = _scrollW * Math.abs(scale.x);
+			var ssh:Float = _scrollH * Math.abs(scale.y);
+			
 			// Find x position
 			if (_repeatX)
 			{   
-				_ppoint.x = (x - camera.scroll.x * scrollFactor.x) % _scrollW;
-				if (_ppoint.x > 0) _ppoint.x -= _scrollW;
+				_ppoint.x = ((x - camera.scroll.x * scrollFactor.x) % ssw);
+				if (_ppoint.x > 0) _ppoint.x -= ssw;
 			}
 			else 
 			{
@@ -144,8 +137,8 @@ class FlxBackdrop extends FlxSprite
 			// Find y position
 			if (_repeatY)
 			{
-				_ppoint.y = (y - camera.scroll.y * scrollFactor.y) % _scrollH;
-				if (_ppoint.y > 0) _ppoint.y -= _scrollH;
+				_ppoint.y = ((y - camera.scroll.y * scrollFactor.y) % ssh);
+				if (_ppoint.y > 0) _ppoint.y -= ssh;
 			}
 			else 
 			{
@@ -154,14 +147,27 @@ class FlxBackdrop extends FlxSprite
 			
 			// Draw to the screen
 		#if FLX_RENDER_BLIT
-			camera.buffer.copyPixels(_data, _data.rect, _ppoint, null, null, true);
+			_flashRect2.setTo(0, 0, graphic.width, graphic.height);
+			camera.buffer.copyPixels(frame.getBitmap(), _flashRect2, _ppoint, null, null, true);
 		#else
-			if (cachedGraphics == null)
+			if (_tileFrame == null)
 			{
 				return;
 			}
 			
-			var drawItem:DrawStackItem = camera.getDrawStackItem(cachedGraphics, false, 0);
+			var drawItem:FlxDrawStackItem = camera.getDrawStackItem(_tileFrame.parent, false, 0);
+			
+			_matrix.identity();
+			
+			if (_tileFrame.angle != FlxFrameAngle.ANGLE_0)
+			{
+				_tileFrame.prepareFrameMatrix(_matrix);
+			}
+			
+			_matrix.scale(scale.x * camera.totalScaleX, scale.y * camera.totalScaleY);
+			
+			_ppoint.x += _tileFrame.center.x * scale.x;
+			_ppoint.y += _tileFrame.center.y * scale.y;
 			
 			for (j in 0..._numTiles)
 			{
@@ -169,19 +175,111 @@ class FlxBackdrop extends FlxSprite
 				var currTileY = _tileInfo[(j * 2) + 1];
 				
 				_point.set(_ppoint.x + currTileX, _ppoint.y + currTileY);
-				setDrawData(drawItem, camera, 1, 0, 0, 1, _tileID);
+				
+				_point.x *= camera.totalScaleX;
+				_point.y *= camera.totalScaleY;
+				
+				setDrawData(drawItem, camera, _matrix, _tileFrame.tileID);
 			}
 		#end
 		}
 	}
 	
-	override public function updateFrameData():Void
+	private function regenGraphic():Void
 	{
-		#if FLX_RENDER_TILE
-		if (cachedGraphics != null)
+		var sx:Float = Math.abs(scale.x);
+		var sy:Float = Math.abs(scale.y);
+		
+		var ssw:Int = Std.int(_scrollW * sx);
+		var ssh:Int = Std.int(_scrollH * sy);
+		
+		var w:Int = ssw;
+		var h:Int = ssh;
+		
+		if (_repeatX) 
 		{
-			_tileID = cachedGraphics.tilesheet.addTileRect(new Rectangle(region.startX, region.startY, _scrollW, _scrollH), new Point());
+			w += FlxG.width;
 		}
+		if (_repeatY)
+		{
+			h += FlxG.height;
+		}
+		
+		#if FLX_RENDER_BLIT
+		if (graphic == null || (graphic.width != w || graphic.height != h))
+		{
+			makeGraphic(w, h, FlxColor.TRANSPARENT, true);
+		}
+		#else
+		_tileInfo = [];
+		_numTiles = 0;
 		#end
+		
+		_ppoint.x = _ppoint.y = 0;
+		
+		#if FLX_RENDER_BLIT
+		pixels.lock();
+		_flashRect2.setTo(0, 0, graphic.width, graphic.height);
+		pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
+		_matrix.identity();
+		_matrix.scale(sx, sy);
+		#end
+		
+		while (_ppoint.y < h)
+		{
+			while (_ppoint.x < w)
+			{
+				#if FLX_RENDER_BLIT
+				pixels.draw(_tileFrame.getBitmap(), _matrix);
+				_matrix.tx += ssw;
+				#else
+				_tileInfo.push(_ppoint.x);
+				_tileInfo.push(_ppoint.y);
+				_numTiles++;
+				#end
+				_ppoint.x += ssw;
+			}
+			#if FLX_RENDER_BLIT
+			_matrix.tx = 0;
+			_matrix.ty += ssh;
+			#end
+			_ppoint.x = 0;
+			_ppoint.y += ssh;
+		}
+		
+		#if FLX_RENDER_BLIT
+		pixels.unlock();
+		resetFrameBitmaps();
+		#end
+	}
+	
+	private function onGameResize(_,_):Void
+	{
+		if (_tileFrame != null)
+			regenGraphic();
+	}
+	
+	private inline function scaleCallback(Scale:FlxPoint)
+	{ 
+		if (_tileFrame != null)
+			regenGraphic();
+	}
+	
+	private function setTileFrame(Frame:FlxFrame):FlxFrame
+	{
+		if (Frame != _tileFrame)
+		{
+			if (_tileFrame != null)
+			{
+				_tileFrame.parent.useCount--;
+			}
+			
+			if (Frame != null)
+			{
+				Frame.parent.useCount++;
+			}
+		}
+		
+		return _tileFrame = Frame;
 	}
 }
