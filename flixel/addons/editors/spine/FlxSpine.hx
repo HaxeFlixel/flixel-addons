@@ -8,7 +8,8 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
-import flixel.graphics.frames.ImageFrame;
+import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
+import flixel.graphics.frames.FlxImageFrame;
 import flixel.math.FlxAngle;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
@@ -216,7 +217,6 @@ class FlxSpine extends FlxSprite
 		var rotated:Bool = region.rotate;
 		var name:String = region.name;
 		var offset:FlxPoint = FlxPoint.get(0, 0);
-		var angle:Float = 0;
 		var frameRect:FlxRect = null;
 		
 		if (rotated)
@@ -229,7 +229,7 @@ class FlxSpine extends FlxSprite
 		}
 		
 		var sourceSize:FlxPoint = FlxPoint.get(frameRect.width, frameRect.height);
-		var imageFrame:ImageFrame = ImageFrame.fromFrame(atlasFrames.addAtlasFrame(frameRect, sourceSize, offset, name, angle));
+		var imageFrame = FlxImageFrame.fromFrame(atlasFrames.addAtlasFrame(frameRect, sourceSize, offset, name));
 		
 		var wrapper:FlxSprite = new FlxSprite(0, 0);
 		wrapper.frames = imageFrame;
