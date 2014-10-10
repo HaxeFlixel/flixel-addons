@@ -4,7 +4,7 @@ import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxBasic;
-import flixel.text.FlxBitmapTextField;
+import flixel.text.FlxBitmapText;
 
 // TODO: make it work in tile render mode
 
@@ -42,7 +42,7 @@ class FlxScrollingText extends FlxBasic
 	 * 
 	 * @return	An FlxSprite of size region.width/height, positioned at region.x/y, that auto-updates its contents while this plugin runs
 	 */
-	public static function add(bitmapText:FlxBitmapTextField, region:Rectangle, pixels:Int = 1, steps:Int = 0, text:String = null, onlyScrollOnscreen:Bool = true, loopOnWrap:Bool = true):FlxSprite
+	public static function add(bitmapText:FlxBitmapText, region:Rectangle, pixels:Int = 1, steps:Int = 0, text:String = null, onlyScrollOnscreen:Bool = true, loopOnWrap:Bool = true):FlxSprite
 	{
 		var data:ScrollingTextData = new ScrollingTextData();
 		
@@ -279,8 +279,9 @@ class FlxScrollingText extends FlxBasic
 	}
 }
 
-class ScrollingTextData {
-	public var bitmapText:FlxBitmapTextField;
+class ScrollingTextData
+{
+	public var bitmapText:FlxBitmapText;
 	public var shiftRect:Rectangle;
 	public var x:Int;
 	public var sprite:FlxSprite;
@@ -292,10 +293,7 @@ class ScrollingTextData {
 	public var scrolling:Bool;
 	public var onScreenScroller:Bool;
 	
-	public function new()
-	{
-		
-	}
+	public function new() {}
 	
 	public function destroy():Void
 	{
