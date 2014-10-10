@@ -59,7 +59,7 @@ class FlxSpriteAniRot extends FlxSprite
 			frameToLoad = frames.frames[i];
 			
 			// Create the rotation spritesheet for that frame
-			FlxSpriteUtil.loadRotatedFrame(helperSprite, frameToLoad, Rotations, Antialiasing, AutoBuffer);
+			helperSprite.loadRotatedFrame(frameToLoad, Rotations, Antialiasing, AutoBuffer);
 			helperSprite.graphic.destroyOnNoUse = false;
 			framesCache.push(helperSprite.frames);
 		}
