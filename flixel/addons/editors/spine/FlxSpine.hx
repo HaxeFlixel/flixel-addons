@@ -31,7 +31,7 @@ import spinehaxe.Slot;
 /**
  * A Sprite that can play animations exported by Spine (http://esotericsoftware.com/)
  * 
- * @author Big thanks to the work on spinehaxe by nitrobin (https://github.com/nitrobin/spinehaxe).
+ * @author Big thanks to the work on spinehaxe by nitrobin (https://github.com/nitrobin/spinehx).
  * HaxeFlixel Port by: Sasha (Beeblerox), Sam Batista (crazysam), Kuris Makku (xraven13)
  * 
  * Current version is working with https://github.com/bendmorris/spinehaxe
@@ -93,8 +93,6 @@ class FlxSpine extends FlxSprite
 		skeleton.y = 0;
 		
 		cachedSprites = new ObjectMap<RegionAttachment, FlxSprite>();
-		
-		trace(skeleton.flipX + "; " + skeleton.flipY);
 		
 		skeleton.flipX = false;
 		skeleton.flipY = true;
