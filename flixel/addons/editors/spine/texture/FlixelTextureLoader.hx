@@ -1,7 +1,7 @@
 package flixel.addons.editors.spine.texture;
 
-import spinehx.atlas.Texture;
-import spinehx.atlas.TextureLoader;
+import spinehaxe.atlas.Texture;
+import spinehaxe.atlas.TextureLoader;
 
 class FlixelTextureLoader implements TextureLoader
 {

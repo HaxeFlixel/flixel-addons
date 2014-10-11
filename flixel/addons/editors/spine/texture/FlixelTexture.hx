@@ -2,7 +2,7 @@ package flixel.addons.editors.spine.texture;
 
 import openfl.Assets;
 import flixel.FlxG;
-import spinehx.atlas.Texture;
+import spinehaxe.atlas.Texture;
 import flash.display.BitmapData;
 
 class FlixelTexture implements Texture 
@@ -10,19 +10,22 @@ class FlixelTexture implements Texture
     public var bd:BitmapData;
 	public var key:String;
 	
+	public var width(get, never):Int;
+	public var height(get, never):Int;
+	
     public function new(textureFile:String) 
 	{
-        var cached = FlxG.bitmap.add(textureFile);
-		this.bd = cached.bitmap;
-		this.key = cached.key;
+        var graphic = FlxG.bitmap.add(textureFile);
+		this.bd = graphic.bitmap;
+		this.key = graphic.key;
     }
 	
-    public function getWidth():Int 
+    public function get_width():Int 
 	{
         return bd.width;
     }
 	
-    public function getHeight():Int 
+    public function get_height():Int 
 	{
         return bd.height;
     }
