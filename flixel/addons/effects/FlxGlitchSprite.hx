@@ -123,7 +123,7 @@ class FlxGlitchSprite extends FlxSprite
 		_flashPoint.setTo((direction == HORIZONTAL ? strength : 0), (direction == VERTICAL ? strength : 0));
 		pixels.copyPixels(target.pixels, target.pixels.rect, _flashPoint);
 		frame.destroyBitmaps();
-		dirty = true;
+		graphic.destroyOnNoUse = true;
 	}
 	
 	private function set_direction(Value:FlxGlitchDirection):FlxGlitchDirection
