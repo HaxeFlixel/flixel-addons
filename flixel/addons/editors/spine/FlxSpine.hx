@@ -31,11 +31,11 @@ import spinehaxe.Slot;
 /**
  * A Sprite that can play animations exported by Spine (http://esotericsoftware.com/)
  * 
- * @author Big thanks to the work on spinehaxe by nitrobin (https://github.com/nitrobin/spinehx).
+ * @author Big thanks to the work on spinehx by nitrobin (https://github.com/nitrobin/spinehx).
  * HaxeFlixel Port by: Sasha (Beeblerox), Sam Batista (crazysam), Kuris Makku (xraven13)
  * 
- * Current version is working with https://github.com/bendmorris/spinehaxe
- * since original lib by nitrobin isn't supported anymore.
+ * The current version is using https://github.com/bendmorris/spinehaxe
+ * since the original lib by nitrobin isn't supported anymore.
  */
 class FlxSpine extends FlxSprite
 {
