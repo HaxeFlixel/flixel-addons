@@ -233,7 +233,7 @@ class FlxScene
 					var height:Int = Std.parseInt(element.att.tileHeight);
 
 					tilemap = new FlxTilemap();
-					tilemap.loadMap(data, graphics, width, height);
+					tilemap.loadMapFromCSV(data, graphics, width, height);
 
 					addInstance(tilemap, container, element);
 

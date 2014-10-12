@@ -36,10 +36,28 @@ class FlxNapeTilemap extends FlxTilemap
 		super.update(elapsed);
 	}
 	
-	override public function loadMap(MapData:FlxTilemapAsset, TileGraphic:FlxTilemapGraphicAsset, TileWidth:Int = 0, TileHeight:Int = 0, 
+	override public function loadMapFromCSV(MapData:String, TileGraphic:FlxTilemapGraphicAsset, TileWidth:Int = 0, TileHeight:Int = 0, 
 		?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
 	{
-		super.loadMap(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
+		super.loadMapFromCSV(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
+		_binaryData = new Array<Int>();
+		FlxArrayUtil.setLength(_binaryData, _data.length);
+		return this;
+	}
+	
+	override public function loadMapFromArray(MapData:Array<Int>, WidthInTiles:Int, HeightInTiles:Int, TileGraphic:FlxTilemapGraphicAsset,
+		TileWidth:Int = 0, TileHeight:Int = 0, ?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
+	{
+		super.loadMapFromArray(MapData, WidthInTiles, HeightInTiles, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
+		_binaryData = new Array<Int>();
+		FlxArrayUtil.setLength(_binaryData, _data.length);
+		return this;
+	}
+	
+	override public function loadMapFrom2DArray(MapData:Array<Array<Int>>, TileGraphic:FlxTilemapGraphicAsset, TileWidth:Int = 0, TileHeight:Int = 0, 
+		?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
+	{
+		super.loadMapFrom2DArray(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
 		_binaryData = new Array<Int>();
 		FlxArrayUtil.setLength(_binaryData, _data.length);
 		return this;
@@ -52,7 +70,7 @@ class FlxNapeTilemap extends FlxTilemap
 	 * 
 	 * @param	X		The X-Position of the tile
 	 * @param	Y		The Y-Position of the tile
-	 * @param	?mat	The material for the collider. Defaults to default nape material
+	 * @param	mat		The material for the collider. Defaults to default nape material
 	 */
 	public function addSolidTile(X:Int, Y:Int, ?mat:Material) 
 	{
@@ -101,7 +119,7 @@ class FlxNapeTilemap extends FlxTilemap
 	 * as solid (like normally with FlxTilemap), and assigns the nape material
 	 * 
 	 * @param	CollideIndex	All tiles with an index greater or equal to this will be solid
-	 * @param	?mat			The Nape physics material to use. Will use the default material if not specified
+	 * @param	mat				The Nape physics material to use. Will use the default material if not specified
 	 */
 	public function setupCollideIndex(CollideIndex:Int = 1, ?mat:Material) 
 	{
@@ -127,7 +145,7 @@ class FlxNapeTilemap extends FlxTilemap
 	 * Builds the nape collider with all indices in the array as solid, assigning the material
 	 * 
 	 * @param	tileIndices		An array of all tile indices that should be solid
-	 * @param	?mat			The nape physics material applied to the collider. Defaults to nape default material
+	 * @param	mat				The nape physics material applied to the collider. Defaults to nape default material
 	 */
 	public function setupTileIndices(tileIndices:Array<Int>, ?mat:Material) 
 	{
