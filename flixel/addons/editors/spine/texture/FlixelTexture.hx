@@ -31,7 +31,7 @@ class FlixelTexture implements Texture
 	
 	public function dispose():Void 
 	{ 
-		FlxG.bitmap.remove(key);
+		FlxG.bitmap.removeByKey(key);
 		bd = null;
 		key = null;
 	}

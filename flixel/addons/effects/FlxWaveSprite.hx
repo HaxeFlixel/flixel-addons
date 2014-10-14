@@ -4,6 +4,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import flixel.util.FlxColor;
 
 /**
@@ -129,12 +130,13 @@ class FlxWaveSprite extends FlxSprite
 	
 	private function initPixels():Void
 	{
+		var oldGraphic:FlxGraphic = graphic;
 		setPosition(_target.x - strength, _target.y);
 		makeGraphic(Std.int(_target.frameWidth + (strength * 2)), _target.frameHeight, FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo(strength, 0);
 		pixels.copyPixels(_target.pixels, _target.pixels.rect, _flashPoint);
 		frame.destroyBitmaps();
-		graphic.destroyOnNoUse = true;
+		FlxG.bitmap.removeIfNoUse(oldGraphic);
 	}
 	
 	private function set_strength(value:Int):Int 

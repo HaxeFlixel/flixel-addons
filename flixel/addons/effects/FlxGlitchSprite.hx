@@ -1,6 +1,7 @@
 package flixel.addons.effects;
 
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxRandom;
@@ -117,13 +118,14 @@ class FlxGlitchSprite extends FlxSprite
 	
 	private function initPixels():Void
 	{
+		var oldGraphic:FlxGraphic = graphic;
 		target.drawFrame();	
 		setPosition(target.x - (direction == HORIZONTAL ? strength : 0), target.y - (direction == VERTICAL ? strength : 0));
 		makeGraphic(Std.int(target.frameWidth + (direction == HORIZONTAL ? strength * 2 : 0)), Std.int(target.frameHeight + (direction == VERTICAL ? strength * 2 : 0 )), FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo((direction == HORIZONTAL ? strength : 0), (direction == VERTICAL ? strength : 0));
 		pixels.copyPixels(target.pixels, target.pixels.rect, _flashPoint);
 		frame.destroyBitmaps();
-		graphic.destroyOnNoUse = true;
+		FlxG.bitmap.removeIfNoUse(oldGraphic);
 	}
 	
 	private function set_direction(Value:FlxGlitchDirection):FlxGlitchDirection
