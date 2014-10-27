@@ -62,9 +62,9 @@ class FlxSpine extends FlxSprite
 	public var stateData:AnimationStateData;
 	
 	// TODO: adjust collider's position
-	public var collider:FlxObject;
+	public var collider(default, null):FlxSpineCollider;
 	
-	public var cachedSprites:ObjectMap<RegionAttachment, FlxSprite>;
+	private var cachedSprites:ObjectMap<RegionAttachment, FlxSprite>;
 	
 	/**
 	 * Instantiate a new Spine Sprite.
@@ -74,14 +74,12 @@ class FlxSpine extends FlxSprite
 	 * @param	Width			The maximum width of this sprite (avoid very large sprites since they are performance intensive).
 	 * @param	Height			The maximum height of this sprite (avoid very large sprites since they are performance intensive).
 	 */
-	public function new(skeletonData:SkeletonData, X:Float = 0, Y:Float = 0) 
+	public function new(skeletonData:SkeletonData, X:Float = 0, Y:Float = 0, Width:Float = 0, Height:Float = 0, OffsetX:Float = 0, OffsetY:Float = 0) 
 	{
 		super(X, Y);
 		
-		collider = new FlxObject(X, Y);
-		
-		width = 0;
-		height = 0;
+		width = Width;
+		height = Height;
 		
 		this.skeletonData = skeletonData;
 		
@@ -94,8 +92,13 @@ class FlxSpine extends FlxSprite
 		
 		cachedSprites = new ObjectMap<RegionAttachment, FlxSprite>();
 		
-		skeleton.flipX = false;
-		skeleton.flipY = true;
+		flipX = false;
+		flipY = true;
+		
+		collider = new FlxSpineCollider(this, X, Y, Width, Height, OffsetX, OffsetY);
+		
+		setPosition(x, y);
+		setSize(width, height);
 	}
 	
 	override public function destroy():Void
@@ -205,6 +208,8 @@ class FlxSpine extends FlxSprite
 			
 			i++;
 		}
+		
+		collider.draw();
 	}
 	
 	#if !FLX_NO_DEBUG
@@ -276,4 +281,221 @@ class FlxSpine extends FlxSprite
 		cachedSprites.set(regionAttachment, wrapper);
 		return wrapper;
 	}
+	
+	override function set_x(NewX:Float):Float 
+	{
+		super.set_x(NewX);
+		
+		if (skeleton != null && collider != null)
+		{
+			if (skeleton.flipX)
+			{
+				collider.x = x - collider.offsetX - width;
+			}
+			else
+			{
+				collider.x = x + collider.offsetX;
+			}
+		}
+		
+		return NewX;
+	}
+	
+	override function set_y(NewY:Float):Float 
+	{
+		super.set_y(NewY);
+		
+		if (skeleton != null && collider != null)
+		{
+			if (skeleton.flipY)
+			{
+				collider.y = y + collider.offsetY - height;
+			}
+			else
+			{
+				collider.y = y - collider.offsetY;
+			}
+		}
+		
+		return NewY;
+	}
+	
+	override function set_width(Width:Float):Float 
+	{
+		super.set_width(Width);
+		
+		if (skeleton != null && collider != null)
+		{
+			collider.width = Width;
+			
+			if (flipX)
+			{
+				collider.x = x + width - collider.offsetX;
+			}
+		}
+		
+		return Width;
+	}
+	
+	override function set_height(Height:Float):Float 
+	{
+		super.set_height(Height);
+		
+		if (skeleton != null && collider != null)
+		{
+			collider.height = Height;
+			
+			if (flipY)
+			{
+				collider.y = y + height - collider.offsetY;
+			}
+		}
+		
+		return Height;
+	}
+	
+	override private function set_flipX(value:Bool):Bool
+	{
+		skeleton.flipX = value;
+		set_x(x);
+		return flipX = value;
+	}
+	
+	override private function set_flipY(value:Bool):Bool
+	{
+		skeleton.flipY = value;
+		set_y(y);
+		return flipY = value;
+	}
+}
+
+class FlxSpineCollider extends FlxObject
+{
+	public var offsetX(default, set):Float = 0;
+	public var offsetY(default, set):Float = 0;
+	
+	public var parent:FlxSpine;
+	
+	public function new(Parent:FlxSpine, X:Float = 0, Y:Float = 0, Width:Float = 0, Height:Float = 0, OffsetX:Float = 0, OffsetY:Float = 0)
+	{
+		super(X, Y, Width, Height);
+		offsetX = OffsetX;
+		offsetY = OffsetY;
+		parent = Parent;
+	}
+	/*
+	override function set_x(NewX:Float):Float 
+	{
+		super.set_x(NewX);
+		
+		if (parent != null)
+		{
+			if (!parent.skeleton.flipX && NewX - parent.x != offsetX)
+			{
+				parent.x = NewX - offsetX;
+			}
+			else if (parent.skeleton.flipX)
+			{
+				
+			}
+		}
+		
+		return NewX;
+	}
+	
+	override function set_y(NewY:Float):Float 
+	{
+		super.set_y(NewY);
+		
+		if (parent != null)
+		{
+			if (parent.skeleton.flipY)
+			{
+				
+			}
+			else
+			{
+				
+			}
+		}
+		
+		return NewY;
+	}
+	
+	override function set_width(Width:Float):Float 
+	{
+		super.set_width(Width);
+		
+		if (parent != null && width != Width)
+		{
+			if (parent.skeleton.flipX)
+			{
+				
+			}
+			else
+			{
+				
+			}
+		}
+		
+		return Width;
+	}
+	
+	override function set_height(Height:Float):Float 
+	{
+		super.set_height(Height);
+		
+		if (parent != null && height != Height)
+		{
+			if (parent.skeleton.flipY)
+			{
+				
+			}
+			else
+			{
+				
+			}
+		}
+		
+		return Height;
+	}
+	*/
+	private function set_offsetX(value:Float):Float
+	{
+		offsetX = value;
+		/*
+		if (parent != null)
+		{
+			if (parent.skeleton.flipX)
+			{
+				
+			}
+			else
+			{
+				
+			}
+		}
+		*/
+		return value;
+	}
+	
+	private function set_offsetY(value:Float):Float
+	{
+		offsetY = value;
+		/*
+		if (parent != null)
+		{
+			if (parent.skeleton.flipY)
+			{
+				
+			}
+			else
+			{
+				
+			}
+		}
+		*/
+		return value;
+	}
+	
 }
