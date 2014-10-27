@@ -327,11 +327,6 @@ class FlxSpine extends FlxSprite
 		if (skeleton != null && collider != null)
 		{
 			collider.width = Width;
-			
-			if (flipX)
-			{
-				collider.x = x + width - collider.offsetX;
-			}
 		}
 		
 		return Width;
@@ -344,11 +339,6 @@ class FlxSpine extends FlxSprite
 		if (skeleton != null && collider != null)
 		{
 			collider.height = Height;
-			
-			if (flipY)
-			{
-				collider.y = y + height - collider.offsetY;
-			}
 		}
 		
 		return Height;
@@ -383,21 +373,25 @@ class FlxSpineCollider extends FlxObject
 		offsetY = OffsetY;
 		parent = Parent;
 	}
-	/*
+	
 	override function set_x(NewX:Float):Float 
 	{
-		super.set_x(NewX);
-		
-		if (parent != null)
+		if (parent != null && x != NewX)
 		{
-			if (!parent.skeleton.flipX && NewX - parent.x != offsetX)
+			super.set_x(NewX);
+			
+			if (parent.skeleton.flipX)
+			{
+				parent.x = NewX + offsetX + width;
+			}
+			else
 			{
 				parent.x = NewX - offsetX;
 			}
-			else if (parent.skeleton.flipX)
-			{
-				
-			}
+		}
+		else
+		{
+			super.set_x(NewX);
 		}
 		
 		return NewX;
@@ -405,18 +399,22 @@ class FlxSpineCollider extends FlxObject
 	
 	override function set_y(NewY:Float):Float 
 	{
-		super.set_y(NewY);
-		
-		if (parent != null)
+		if (parent != null && y != NewY)
 		{
+			super.set_y(NewY);
+			
 			if (parent.skeleton.flipY)
 			{
-				
+				parent.y = NewY - offsetY + height;
 			}
 			else
 			{
-				
+				parent.y = NewY + offsetY;
 			}
+		}
+		else
+		{
+			super.set_y(NewY);
 		}
 		
 		return NewY;
@@ -424,18 +422,14 @@ class FlxSpineCollider extends FlxObject
 	
 	override function set_width(Width:Float):Float 
 	{
-		super.set_width(Width);
-		
 		if (parent != null && width != Width)
 		{
-			if (parent.skeleton.flipX)
-			{
-				
-			}
-			else
-			{
-				
-			}
+			super.set_width(Width);
+			parent.x = parent.x;
+		}
+		else
+		{
+			super.set_width(Width);
 		}
 		
 		return Width;
@@ -443,58 +437,46 @@ class FlxSpineCollider extends FlxObject
 	
 	override function set_height(Height:Float):Float 
 	{
-		super.set_height(Height);
-		
 		if (parent != null && height != Height)
 		{
-			if (parent.skeleton.flipY)
-			{
-				
-			}
-			else
-			{
-				
-			}
+			super.set_height(Height);
+			parent.y = parent.y;
+		}
+		else
+		{
+			super.set_height(Height);
 		}
 		
 		return Height;
 	}
-	*/
+	
 	private function set_offsetX(value:Float):Float
 	{
-		offsetX = value;
-		/*
-		if (parent != null)
+		if (parent != null && offsetX != value)
 		{
-			if (parent.skeleton.flipX)
-			{
-				
-			}
-			else
-			{
-				
-			}
+			offsetX = value;
+			parent.x = parent.x;
 		}
-		*/
+		else
+		{
+			offsetX = value;
+		}
+		
 		return value;
 	}
 	
 	private function set_offsetY(value:Float):Float
 	{
-		offsetY = value;
-		/*
-		if (parent != null)
+		if (parent != null && offsetY != value)
 		{
-			if (parent.skeleton.flipY)
-			{
-				
-			}
-			else
-			{
-				
-			}
+			offsetY = value;
+			parent.y = parent.y;
 		}
-		*/
+		else
+		{
+			offsetY = value;
+		}
+		
 		return value;
 	}
 	
