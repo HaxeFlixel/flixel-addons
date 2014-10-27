@@ -61,7 +61,12 @@ class FlxSpine extends FlxSprite
 	public var state:AnimationState;
 	public var stateData:AnimationStateData;
 	
-	// TODO: adjust collider's position
+	/**
+	 * Helper FlxObject, which you can use for colliding with other flixel objects.
+	 * Collider have additional offsetX and offsetY properties which helps you to adjust hitbox.
+	 * Change of position of this sprite causes change of collider's position and vice versa.
+	 * But you should apply velocity and acceleration to collider rather than to this spine sprite.
+	 */
 	public var collider(default, null):FlxSpineCollider;
 	
 	private var cachedSprites:ObjectMap<RegionAttachment, FlxSprite>;
@@ -364,7 +369,7 @@ class FlxSpineCollider extends FlxObject
 	public var offsetX(default, set):Float = 0;
 	public var offsetY(default, set):Float = 0;
 	
-	public var parent:FlxSpine;
+	public var parent(default, null):FlxSpine;
 	
 	public function new(Parent:FlxSpine, X:Float = 0, Y:Float = 0, Width:Float = 0, Height:Float = 0, OffsetX:Float = 0, OffsetY:Float = 0)
 	{
@@ -372,6 +377,12 @@ class FlxSpineCollider extends FlxObject
 		offsetX = OffsetX;
 		offsetY = OffsetY;
 		parent = Parent;
+	}
+	
+	override public function destroy():Void 
+	{
+		parent = null;
+		super.destroy();
 	}
 	
 	override function set_x(NewX:Float):Float 
@@ -478,6 +489,5 @@ class FlxSpineCollider extends FlxObject
 		}
 		
 		return value;
-	}
-	
+	}	
 }
