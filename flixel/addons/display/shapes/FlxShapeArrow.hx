@@ -35,31 +35,23 @@ class FlxShapeArrow extends FlxShape
 		arrowSize = ArrowSize;
 		outlineStyle = OutlineStyle_;
 		
-		shape_id = "arrow";
-		
-		point = new FlxCallbackPoint(setPointCallback);
-		point2 = new FlxCallbackPoint(setPointCallback);
+		point = new FlxCallbackPoint(setPoint);
+		point2 = new FlxCallbackPoint(setPoint2);
 		
 		point.copyFrom(Start);
-		point.copyFrom(End);
+		point2.copyFrom(End);
 		
 		Start.putWeak();
 		End.putWeak();
 		
-		var strokeBuffer:Float = (LineStyle_.thickness);
-		
 		var trueWidth:Float = Math.abs(point.x - point2.x);	//actual geometric size
 		var trueHeight:Float = Math.abs(point.y - point2.y);
 		
-		var w:Float = trueWidth + strokeBuffer;		//create buffer space for stroke
-		var h:Float = trueHeight + strokeBuffer;
+		super(X, Y, 0, 0, LineStyle_, FlxColor.TRANSPARENT, trueWidth, trueHeight);
 		
-		if (w <= 0)
-			w = strokeBuffer;
-		if (h <= 0) 
-			h = strokeBuffer;
+		lineStyle = LineStyle_;
 		
-		super(X, Y, w, h, LineStyle_, FlxColor.TRANSPARENT, trueWidth, trueHeight);
+		shape_id = FlxShapeType.ARROW;
 	}
 	
 	override public function destroy():Void
@@ -71,34 +63,55 @@ class FlxShapeArrow extends FlxShape
 	
 	public override function drawSpecificShape(?matrix:Matrix):Void 
 	{
-		if (_matrix2 == null) 
+		if (_matrix2 == null)
+		{
 			_matrix2 = new Matrix();
+		}
 		
 		//generate the arrowhead
 		var vertices:Array<FlxPoint> = new Array<FlxPoint>();
-		vertices.push(FlxPoint.get(0, arrowSize));
-		vertices.push(FlxPoint.get(arrowSize*2, arrowSize));
-		vertices.push(FlxPoint.get(arrowSize, 0));
-		vertices.push(FlxPoint.get(0, arrowSize));		//close it up
+		vertices.push(FlxPoint.get(0, 0));
+		vertices.push(FlxPoint.get(-arrowSize, -arrowSize));
+		vertices.push(FlxPoint.get(arrowSize, -arrowSize));
+		vertices.push(FlxPoint.get(0, 0));		//close it up
 		
 		//get arrowhead rotation vector
 		var fv = FlxVector.get(point.x - point2.x, point.y - point2.y);
 		
+		var canvasWidth:Int = Std.int(Math.max(shapeWidth, arrowSize*2) + strokeBuffer);
+		var canvasHeight:Int = Std.int(Math.max(shapeHeight, arrowSize*2) + strokeBuffer);
+		
+		if (pixels.width != canvasWidth || pixels.height != pixels.height)
+		{
+			makeGraphic(canvasWidth, canvasHeight, FlxColor.TRANSPARENT, true);
+		}
+		else
+		{
+			pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
+		}
+		
 		_matrix2.identity();
-		_matrix2.translate( -arrowSize, 0);		//translate so origin is the tip of arrow
 		
 		//rotate so arrow tip is pointing towards point2
-		_matrix2.rotate(fv.radians - Math.PI/2);
+		_matrix2.rotate(fv.radians + Math.PI / 2);
 		
 		//translate so that origin is lined up with point2
-		_matrix2.translate(lineStyle.thickness/2+point2.x, lineStyle.thickness/2+point2.y);
+		_matrix2.translate(lineStyle.thickness + point2.x, lineStyle.thickness + point2.y);
 		
-		var buffer:Float = 0;
+		var dw:Float = ((arrowSize * 2) - shapeWidth)/2;
+		var dh:Float = ((arrowSize * 2) - shapeHeight)/2;
+		
+		dw = dw < 0 ? 0 : dw;
+		dh = dh < 0 ? 0 : dh;
+		
+		_matrix.translate(dw, dh);
+		_matrix2.translate(dw, dh);
 		
 		if (outlineStyle != null) 
 		{
 			//draw the outline
 			FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, outlineStyle, { matrix: matrix });
+			
 			//draw the arrowhead outline
 			FlxSpriteUtil.drawPolygon(this, vertices, outlineStyle.color, outlineStyle, { matrix: _matrix2 });
 		}
@@ -112,8 +125,22 @@ class FlxShapeArrow extends FlxShape
 		fixBoundaries(Math.abs(point.x - point2.x), Math.abs(point.y - point2.y));
 	}
 	
-	private inline function setPointCallback(p:FlxPoint):Void 
+	private inline function setPoint(p:FlxPoint):Void 
 	{
+		updatePoint();
+	}
+	
+	private inline function setPoint2(p:FlxPoint):Void
+	{
+		updatePoint();
+	}
+	
+	private function updatePoint():Void
+	{
+		shapeWidth = Math.abs(point.x - point2.x);
+		shapeHeight = Math.abs(point.y - point2.y);
+		if (shapeWidth <= 0) shapeWidth = 1;
+		if (shapeHeight <= 0) shapeHeight = 1;
 		shapeDirty = true;
 	}
 	
@@ -129,5 +156,30 @@ class FlxShapeArrow extends FlxShape
 		outlineStyle = ls;
 		shapeDirty = true;
 		return outlineStyle;
+	}
+	
+	private override function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
+	{
+		var diffX = (pixels.width - trueWidth);
+		var diffY = (pixels.height - trueHeight);
+		
+		width = trueWidth;		//reset width/height to geometric reality 
+		height = trueHeight;
+		
+		if (width <= 0)
+		{
+			width = 1;
+			diffX -= 1;
+		}
+		if (height <= 0)
+		{
+			height = 1;
+			diffY -= 1;
+		}
+		
+		offset.x = diffX/2;
+		offset.y = diffY/2;
+		
+		shapeDirty = true;		//redraw the shape next draw() command
 	}
 }

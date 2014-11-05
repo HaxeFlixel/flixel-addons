@@ -10,7 +10,7 @@ class FlxShapeLine extends FlxShape
 {
 	public var point(default, null):FlxPoint;
 	public var point2(default, null):FlxPoint;
-
+	
 	/**
 	 * Creates a FlxSprite with a line drawn on top of it. X/Y is where the SPRITE is, and points a&b are RELATIVE to this object's origin. 
 	 * Points with negative values will not draw correctly since they'll appear beyond the sprite's canvas.
@@ -23,10 +23,13 @@ class FlxShapeLine extends FlxShape
 	 */
 	public function new(X:Float, Y:Float, a:FlxPoint, b:FlxPoint, LineStyle_:LineStyle) 
 	{
-		shape_id = "line";
+		var trueWidth:Float = Math.abs(a.x - b.x);	//actual geometric size
+		var trueHeight:Float = Math.abs(a.y - b.y);
+		
+		super(X, Y, 0, 0, LineStyle_, FlxColor.TRANSPARENT, trueWidth, trueHeight);
 		
 		point = new FlxCallbackPoint(setPoint);
-		point2 = new FlxCallbackPoint(setPoint);
+		point2 = new FlxCallbackPoint(setPoint2);
 		
 		point.copyFrom(a);
 		point2.copyFrom(b);
@@ -34,20 +37,7 @@ class FlxShapeLine extends FlxShape
 		a.putWeak();
 		b.putWeak();
 		
-		var strokeBuffer:Float = (LineStyle_.thickness);
-		
-		var trueWidth:Float = Math.abs(a.x - b.x);	//actual geometric size
-		var trueHeight:Float = Math.abs(a.y - b.y);
-		
-		var w:Float = trueWidth + strokeBuffer;		//create buffer space for stroke
-		var h:Float = trueHeight + strokeBuffer;
-		
-		if (w <= 0)
-			w = strokeBuffer;
-		if (h <= 0) 
-			h = strokeBuffer;
-		
-		super(X, Y, w, h, LineStyle_, FlxColor.TRANSPARENT, trueWidth, trueHeight);
+		shape_id = FlxShapeType.LINE;
 	}
 
 	override public function drawSpecificShape(?matrix:Matrix):Void 
@@ -57,6 +47,35 @@ class FlxShapeLine extends FlxShape
 	
 	private inline function setPoint(p:FlxPoint):Void 
 	{
+		updatePoint();
+	}
+	
+	private inline function setPoint2(p:FlxPoint):Void
+	{
+		updatePoint();
+	}
+	
+	private function updatePoint():Void
+	{
+		shapeWidth = Math.abs(point.x - point2.x);
+		shapeHeight = Math.abs(point.y - point2.y);
+		if (shapeWidth <= 0) shapeWidth = 1;
+		if (shapeHeight <= 0) shapeHeight = 1;
 		shapeDirty = true;
+	}
+	
+	override public function get_strokeBuffer():Float
+	{
+		return lineStyle.thickness * 2.0;
+	}
+	
+	private override function getStrokeOffsetX():Float
+	{
+		return strokeBuffer / 2;
+	}
+	
+	private override function getStrokeOffsetY():Float
+	{
+		return strokeBuffer / 2;
 	}
 }
