@@ -210,7 +210,9 @@ class FlxSpine extends FlxSprite
 				} 
 				else if (bd != texture.bd)
 				{
+					#if !FLX_NO_DEBUG
 					throw ("Too many textures");
+					#end
 					continue;
 				}
 				
@@ -223,6 +225,8 @@ class FlxSpine extends FlxSprite
 					idx = drawItem.indices;
 					uvt = drawItem.uvt;
 				}
+				
+				// TODO: calculate point coordinates with respect to camera scroll and scale
 				
 				vs.push(this.x + vertices[RegionAttachment.X1]); vs.push(this.y + vertices[RegionAttachment.Y1]);
 				vs.push(this.x + vertices[RegionAttachment.X2]); vs.push(this.y + vertices[RegionAttachment.Y2]);
