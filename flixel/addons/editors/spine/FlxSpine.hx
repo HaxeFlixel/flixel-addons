@@ -185,6 +185,8 @@ class FlxSpine extends FlxSprite
 		var idx:Vector<Int> = null;
 		var uvt:Vector<Float> = null;
 		
+		// TODO: add visibility checks. https://github.com/mrcdk/openfl/blob/master/openfl/display/Graphics.hx#L588-L600
+		
 		while (i < n) 
 		{
 			var slot:Slot = drawOrder[i];
@@ -219,6 +221,8 @@ class FlxSpine extends FlxSprite
 				if (drawItem == null)
 				{
 					graph = FlxG.bitmap.add(texture.bd);
+					
+					// TODO: add support for multiple cameras...
 					drawItem = FlxG.camera.getNewDrawTrianglesItem(graph, antialiasing);
 					
 					vs = drawItem.vertices;
