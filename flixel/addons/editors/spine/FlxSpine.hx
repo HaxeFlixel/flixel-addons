@@ -1,5 +1,9 @@
 package flixel.addons.editors.spine;
 
+#if FLX_RENDER_TILE
+import flixel.graphics.tile.FlxDrawTrianglesItem;
+#end
+
 import flixel.addons.editors.spine.texture.FlixelTexture;
 import flixel.addons.editors.spine.texture.FlixelTextureLoader;
 import flixel.FlxCamera;
@@ -16,10 +20,13 @@ import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import haxe.ds.ObjectMap;
 import openfl.Assets;
+import openfl.display.BitmapData;
 import openfl.display.BlendMode;
+import openfl.Vector;
 import spinehaxe.animation.AnimationState;
 import spinehaxe.animation.AnimationStateData;
 import spinehaxe.atlas.TextureAtlas;
+import spinehaxe.atlas.TextureRegion;
 import spinehaxe.attachments.Attachment;
 import spinehaxe.attachments.RegionAttachment;
 import spinehaxe.Bone;
@@ -69,6 +76,8 @@ class FlxSpine extends FlxSprite
 	 */
 	public var collider(default, null):FlxSpineCollider;
 	
+	public var renderMeshes:Bool = false;
+	
 	private var cachedSprites:ObjectMap<RegionAttachment, FlxSprite>;
 	
 	/**
@@ -78,8 +87,9 @@ class FlxSpine extends FlxSprite
 	 * @param	Y				The initial Y position of the sprite.
 	 * @param	Width			The maximum width of this sprite (avoid very large sprites since they are performance intensive).
 	 * @param	Height			The maximum height of this sprite (avoid very large sprites since they are performance intensive).
+	 * @param	renderMeshes	If true, then graphic will be rendered with drawTriangles(), if false (by default), then it will be rendered with drawTiles().
 	 */
-	public function new(skeletonData:SkeletonData, X:Float = 0, Y:Float = 0, Width:Float = 0, Height:Float = 0, OffsetX:Float = 0, OffsetY:Float = 0) 
+	public function new(skeletonData:SkeletonData, X:Float = 0, Y:Float = 0, Width:Float = 0, Height:Float = 0, OffsetX:Float = 0, OffsetY:Float = 0, renderMeshes:Bool = false)
 	{
 		super(X, Y);
 		
@@ -104,6 +114,8 @@ class FlxSpine extends FlxSprite
 		
 		setPosition(x, y);
 		setSize(width, height);
+		
+		this.renderMeshes = renderMeshes;
 	}
 	
 	override public function destroy():Void
@@ -145,6 +157,98 @@ class FlxSpine extends FlxSprite
 	 * Called by game loop, updates then blits or renders current frame of animation to the screen
 	 */
 	override public function draw():Void
+	{
+		#if FLX_RENDER_TILE
+		if (renderMeshes)
+		{
+			renderWithTriangles();
+			return;
+		}
+		#end
+		
+		renderWithTiles();	
+	}
+	
+	#if FLX_RENDER_TILE
+	private function renderWithTriangles():Void
+	{
+		var vi:Int = 0;
+		var vii:Int = 0;
+		var ii:Int = 0;
+		var drawOrder:Array<Slot> = skeleton.drawOrder;
+		var i:Int = 0, n:Int = drawOrder.length;
+		var drawItem:FlxDrawTrianglesItem = null;
+		var bd:BitmapData = null;
+		var graph:FlxGraphic = null;
+		
+		var vs:Vector<Float> = null;
+		var idx:Vector<Int> = null;
+		var uvt:Vector<Float> = null;
+		
+		while (i < n) 
+		{
+			var slot:Slot = drawOrder[i];
+			
+			if (slot.attachment == null)
+			{
+				i++;
+				continue;
+			}
+			
+			var regionAttachment:RegionAttachment = cast slot.attachment;
+			if (regionAttachment != null) 
+			{
+				regionAttachment.updateVertices(slot);
+				var vertices = regionAttachment.vertices;
+				
+				var region:TextureRegion = regionAttachment.region;
+				var texture:FlixelTexture = cast region.texture;
+				
+				if (bd == null)
+				{
+					bd = texture.bd;
+				} 
+				else if (bd != texture.bd)
+				{
+					throw ("Too many textures");
+					continue;
+				}
+				
+				if (drawItem == null)
+				{
+					graph = FlxG.bitmap.add(texture.bd);
+					drawItem = FlxG.camera.getNewDrawTrianglesItem(graph, antialiasing);
+					
+					vs = drawItem.vertices;
+					idx = drawItem.indices;
+					uvt = drawItem.uvt;
+				}
+				
+				vs.push(this.x + vertices[RegionAttachment.X1]); vs.push(this.y + vertices[RegionAttachment.Y1]);
+				vs.push(this.x + vertices[RegionAttachment.X2]); vs.push(this.y + vertices[RegionAttachment.Y2]);
+				vs.push(this.x + vertices[RegionAttachment.X3]); vs.push(this.y + vertices[RegionAttachment.Y3]);
+				vs.push(this.x + vertices[RegionAttachment.X4]); vs.push(this.y + vertices[RegionAttachment.Y4]);
+				
+				idx.push(vii + 0); idx.push(vii + 1); idx.push(vii + 2);
+				idx.push(vii + 2); idx.push(vii + 3); idx.push(vii + 0);
+				uvt.push(vertices[RegionAttachment.U1]); uvt.push(vertices[RegionAttachment.V1]);
+				uvt.push(vertices[RegionAttachment.U2]); uvt.push(vertices[RegionAttachment.V2]);
+				uvt.push(vertices[RegionAttachment.U3]); uvt.push(vertices[RegionAttachment.V3]);
+				uvt.push(vertices[RegionAttachment.U4]); uvt.push(vertices[RegionAttachment.V4]);
+				
+				vi += 8;
+				vii += 4;
+				ii += 6;
+			}
+			
+			i++;
+		}
+		
+		collider.draw();
+	}
+	#end
+	
+	private function renderWithTiles():Void
 	{
 		var flipX:Int = skeleton.flipX ? -1 : 1;
 		var flipY:Int = skeleton.flipY ? 1 : -1;
