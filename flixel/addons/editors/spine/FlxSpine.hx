@@ -201,101 +201,91 @@ class FlxSpine extends FlxSprite
 		
 		for (camera in cameras)
 		{
-			if (!camera.visible || !camera.exists || !isOnScreen(camera))
+			if (!camera.visible || !camera.exists)
 			{
 				continue;
 			}
 			
-			getScreenPosition(_point, camera).subtractPoint(offset);
+			getScreenPosition(_point, camera);
 			
+			cameraBounds.set(0, 0, camera.totalScaleX * camera.width, camera.totalScaleY * camera.height);
 			
-		}
-		
-		var camera:FlxCamera = FlxG.camera;
-		
-		cameraBounds.set(0, 0, camera.totalScaleX * camera.width, camera.totalScaleY * camera.height);
-		
-		getScreenPosition(_point, camera).subtractPoint(offset);
-		
-		while (i < n) 
-		{
-			var slot:Slot = drawOrder[i];
+			i = 0;
+			drawItem = null;
 			
-			if (slot.attachment == null)
+			while (i < n) 
 			{
+				var slot:Slot = drawOrder[i];
+				
+				if (slot.attachment != null)
+				{
+					var regionAttachment:RegionAttachment = cast slot.attachment;
+					
+					if (regionAttachment != null) 
+					{
+						regionAttachment.updateVertices(slot);
+						var vertices = regionAttachment.vertices;
+						
+						var region:TextureRegion = regionAttachment.region;
+						var texture:FlixelTexture = cast region.texture;
+						
+						if (bd == null)
+						{
+							bd = texture.bd;
+						} 
+						else if (bd != texture.bd)
+						{
+							#if !FLX_NO_DEBUG
+							throw ("Too many textures");
+							#end
+							continue;
+						}
+						
+						if (drawItem == null)
+						{
+							graph = FlxG.bitmap.add(texture.bd);
+							
+							drawItem = camera.getDrawTrianglesItem(graph, antialiasing);
+							vii = drawItem.indices.length;
+							vs = drawItem.vertices;
+							idx = drawItem.indices;
+							uvt = drawItem.uvt;
+						}
+						
+						vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X1])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y1]));
+						bounds.set(tempX, tempY, 0, 0);
+						
+						vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X2])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y2]));
+						inflateBounds(tempX, tempY);
+						
+						vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X3])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y3]));
+						inflateBounds(tempX, tempY);
+						
+						vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X4])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y4]));
+						inflateBounds(tempX, tempY);
+						
+						var vis:Bool = cameraBounds.overlaps(bounds);
+						
+						if (!vis)
+						{
+							vs.splice(vs.length - 8, 8);
+						}
+						else
+						{
+							idx.push(vii + 0); idx.push(vii + 1); idx.push(vii + 2);
+							idx.push(vii + 2); idx.push(vii + 3); idx.push(vii + 0);
+							uvt.push(vertices[RegionAttachment.U1]); uvt.push(vertices[RegionAttachment.V1]);
+							uvt.push(vertices[RegionAttachment.U2]); uvt.push(vertices[RegionAttachment.V2]);
+							uvt.push(vertices[RegionAttachment.U3]); uvt.push(vertices[RegionAttachment.V3]);
+							uvt.push(vertices[RegionAttachment.U4]); uvt.push(vertices[RegionAttachment.V4]);
+							
+							vii += 4;
+						}
+					}
+				}
+				
 				i++;
-				continue;
 			}
-			
-			var regionAttachment:RegionAttachment = cast slot.attachment;
-			if (regionAttachment != null) 
-			{
-				regionAttachment.updateVertices(slot);
-				var vertices = regionAttachment.vertices;
-				
-				var region:TextureRegion = regionAttachment.region;
-				var texture:FlixelTexture = cast region.texture;
-				
-				if (bd == null)
-				{
-					bd = texture.bd;
-				} 
-				else if (bd != texture.bd)
-				{
-					#if !FLX_NO_DEBUG
-					throw ("Too many textures");
-					#end
-					continue;
-				}
-				
-				if (drawItem == null)
-				{
-					graph = FlxG.bitmap.add(texture.bd);
-					
-					// TODO: add support for multiple cameras...
-					drawItem = FlxG.camera.getDrawTrianglesItem(graph, antialiasing);
-					
-					vii = drawItem.indices.length;
-					
-					vs = drawItem.vertices;
-					idx = drawItem.indices;
-					uvt = drawItem.uvt;
-				}
-				
-				bounds.set();
-				
-				vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X1])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y1]));
-				inflateBounds(tempX, tempY);
-				
-				vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X2])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y2]));
-				inflateBounds(tempX, tempY);
-				
-				vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X3])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y3]));
-				inflateBounds(tempX, tempY);
-				
-				vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X4])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y4]));
-				inflateBounds(tempX, tempY);
-				
-				var vis:Bool = cameraBounds.overlaps(bounds);
-				
-				if (!vis)
-				{
-					vs.splice(vs.length - 8, 8);
-				}
-				else
-				{
-					idx.push(vii + 0); idx.push(vii + 1); idx.push(vii + 2);
-					idx.push(vii + 2); idx.push(vii + 3); idx.push(vii + 0);
-					uvt.push(vertices[RegionAttachment.U1]); uvt.push(vertices[RegionAttachment.V1]);
-					uvt.push(vertices[RegionAttachment.U2]); uvt.push(vertices[RegionAttachment.V2]);
-					uvt.push(vertices[RegionAttachment.U3]); uvt.push(vertices[RegionAttachment.V3]);
-					uvt.push(vertices[RegionAttachment.U4]); uvt.push(vertices[RegionAttachment.V4]);
-					
-					vii += 4;
-				}
-			}
-			
-			i++;
 		}
 		
 		collider.draw();
