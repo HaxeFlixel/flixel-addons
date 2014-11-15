@@ -199,9 +199,6 @@ class FlxSpine extends FlxSprite
 		
 		var tempX:Float, tempY:Float;
 		
-		// TODO: add visibility checks. https://github.com/mrcdk/openfl/blob/master/openfl/display/Graphics.hx#L588-L600
-		// these checks should be done per regionAttachment (for each 4 vertices)
-		
 		for (camera in cameras)
 		{
 			if (!camera.visible || !camera.exists || !isOnScreen(camera))
