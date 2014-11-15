@@ -184,13 +184,13 @@ class FlxSpine extends FlxSprite
 	}
 	
 	#if FLX_RENDER_TILE
+	// TODO: make it work on flash target
 	private function renderWithTriangles():Void
 	{
 		var vii:Int = 0;
 		var drawOrder:Array<Slot> = skeleton.drawOrder;
-		var i:Int = 0, n:Int = drawOrder.length;
-		var drawItem:FlxDrawTrianglesItem = null;
-		var bd:BitmapData = null;
+		var i:Int, n:Int = drawOrder.length;
+		var drawItem:FlxDrawTrianglesItem;
 		var graph:FlxGraphic = null;
 		
 		var vs:Vector<Float> = null;
@@ -229,20 +229,7 @@ class FlxSpine extends FlxSprite
 						var region:TextureRegion = regionAttachment.region;
 						var texture:FlixelTexture = cast region.texture;
 						
-						// TODO: beautify this place...
-						if (bd == null)
-						{
-							bd = texture.bd;
-						} 
-						else if (bd != texture.bd)
-						{
-							#if !FLX_NO_DEBUG
-							throw ("Too many textures");
-							#end
-							continue;
-						}
-						
-						if (drawItem == null)
+						if (drawItem == null || drawItem.graphics.bitmap != texture.bd)
 						{
 							graph = FlxG.bitmap.add(texture.bd);
 							drawItem = camera.getDrawTrianglesItem(graph, antialiasing);
@@ -278,7 +265,6 @@ class FlxSpine extends FlxSprite
 							uvt.push(vertices[RegionAttachment.U2]); uvt.push(vertices[RegionAttachment.V2]);
 							uvt.push(vertices[RegionAttachment.U3]); uvt.push(vertices[RegionAttachment.V3]);
 							uvt.push(vertices[RegionAttachment.U4]); uvt.push(vertices[RegionAttachment.V4]);
-							
 							vii += 4;
 						}
 					}
@@ -292,7 +278,6 @@ class FlxSpine extends FlxSprite
 	}
 	#end
 	
-	@:noCompletion 
 	private function inflateBounds(x:Float, y:Float):Void 
 	{
 		if (x < bounds.x) 
