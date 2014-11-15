@@ -76,9 +76,12 @@ class FlxSpine extends FlxSprite
 	 */
 	public var collider(default, null):FlxSpineCollider;
 	
+	private var cachedSprites:ObjectMap<RegionAttachment, FlxSprite>;
+	
 	public var renderMeshes:Bool = false;
 	
-	private var cachedSprites:ObjectMap<RegionAttachment, FlxSprite>;
+	private var bounds:FlxRect;
+	private var cameraBounds:FlxRect;
 	
 	/**
 	 * Instantiate a new Spine Sprite.
@@ -116,6 +119,9 @@ class FlxSpine extends FlxSprite
 		setSize(width, height);
 		
 		this.renderMeshes = renderMeshes;
+		
+		bounds = new FlxRect();
+		cameraBounds = new FlxRect();
 	}
 	
 	override public function destroy():Void
@@ -141,6 +147,9 @@ class FlxSpine extends FlxSprite
 		}
 		cachedSprites = null;
 		
+		bounds = null;
+		cameraBounds = null;
+		
 		super.destroy();
 	}
 	
@@ -158,6 +167,11 @@ class FlxSpine extends FlxSprite
 	 */
 	override public function draw():Void
 	{
+		if (alpha == 0)
+		{
+			return;
+		}
+		
 		#if FLX_RENDER_TILE
 		if (renderMeshes)
 		{
@@ -166,15 +180,13 @@ class FlxSpine extends FlxSprite
 		}
 		#end
 		
-		renderWithTiles();	
+		renderWithQuads();	
 	}
 	
 	#if FLX_RENDER_TILE
 	private function renderWithTriangles():Void
 	{
-		var vi:Int = 0;
 		var vii:Int = 0;
-		var ii:Int = 0;
 		var drawOrder:Array<Slot> = skeleton.drawOrder;
 		var i:Int = 0, n:Int = drawOrder.length;
 		var drawItem:FlxDrawTrianglesItem = null;
@@ -185,7 +197,28 @@ class FlxSpine extends FlxSprite
 		var idx:Vector<Int> = null;
 		var uvt:Vector<Float> = null;
 		
+		var tempX:Float, tempY:Float;
+		
 		// TODO: add visibility checks. https://github.com/mrcdk/openfl/blob/master/openfl/display/Graphics.hx#L588-L600
+		// these checks should be done per regionAttachment (for each 4 vertices)
+		
+		for (camera in cameras)
+		{
+			if (!camera.visible || !camera.exists || !isOnScreen(camera))
+			{
+				continue;
+			}
+			
+			getScreenPosition(_point, camera).subtractPoint(offset);
+			
+			
+		}
+		
+		var camera:FlxCamera = FlxG.camera;
+		
+		cameraBounds.set(0, 0, camera.totalScaleX * camera.width, camera.totalScaleY * camera.height);
+		
+		getScreenPosition(_point, camera).subtractPoint(offset);
 		
 		while (i < n) 
 		{
@@ -223,30 +256,46 @@ class FlxSpine extends FlxSprite
 					graph = FlxG.bitmap.add(texture.bd);
 					
 					// TODO: add support for multiple cameras...
-					drawItem = FlxG.camera.getNewDrawTrianglesItem(graph, antialiasing);
+					drawItem = FlxG.camera.getDrawTrianglesItem(graph, antialiasing);
+					
+					vii = drawItem.indices.length;
 					
 					vs = drawItem.vertices;
 					idx = drawItem.indices;
 					uvt = drawItem.uvt;
 				}
 				
-				// TODO: calculate point coordinates with respect to camera scroll and scale
+				bounds.set();
 				
-				vs.push(this.x + vertices[RegionAttachment.X1]); vs.push(this.y + vertices[RegionAttachment.Y1]);
-				vs.push(this.x + vertices[RegionAttachment.X2]); vs.push(this.y + vertices[RegionAttachment.Y2]);
-				vs.push(this.x + vertices[RegionAttachment.X3]); vs.push(this.y + vertices[RegionAttachment.Y3]);
-				vs.push(this.x + vertices[RegionAttachment.X4]); vs.push(this.y + vertices[RegionAttachment.Y4]);
+				vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X1])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y1]));
+				inflateBounds(tempX, tempY);
 				
-				idx.push(vii + 0); idx.push(vii + 1); idx.push(vii + 2);
-				idx.push(vii + 2); idx.push(vii + 3); idx.push(vii + 0);
-				uvt.push(vertices[RegionAttachment.U1]); uvt.push(vertices[RegionAttachment.V1]);
-				uvt.push(vertices[RegionAttachment.U2]); uvt.push(vertices[RegionAttachment.V2]);
-				uvt.push(vertices[RegionAttachment.U3]); uvt.push(vertices[RegionAttachment.V3]);
-				uvt.push(vertices[RegionAttachment.U4]); uvt.push(vertices[RegionAttachment.V4]);
+				vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X2])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y2]));
+				inflateBounds(tempX, tempY);
 				
-				vi += 8;
-				vii += 4;
-				ii += 6;
+				vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X3])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y3]));
+				inflateBounds(tempX, tempY);
+				
+				vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X4])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y4]));
+				inflateBounds(tempX, tempY);
+				
+				var vis:Bool = cameraBounds.overlaps(bounds);
+				
+				if (!vis)
+				{
+					vs.splice(vs.length - 8, 8);
+				}
+				else
+				{
+					idx.push(vii + 0); idx.push(vii + 1); idx.push(vii + 2);
+					idx.push(vii + 2); idx.push(vii + 3); idx.push(vii + 0);
+					uvt.push(vertices[RegionAttachment.U1]); uvt.push(vertices[RegionAttachment.V1]);
+					uvt.push(vertices[RegionAttachment.U2]); uvt.push(vertices[RegionAttachment.V2]);
+					uvt.push(vertices[RegionAttachment.U3]); uvt.push(vertices[RegionAttachment.V3]);
+					uvt.push(vertices[RegionAttachment.U4]); uvt.push(vertices[RegionAttachment.V4]);
+					
+					vii += 4;
+				}
 			}
 			
 			i++;
@@ -256,7 +305,33 @@ class FlxSpine extends FlxSprite
 	}
 	#end
 	
-	private function renderWithTiles():Void
+	@:noCompletion 
+	private function inflateBounds(x:Float, y:Float):Void 
+	{
+		if (x < bounds.x) 
+		{
+			bounds.width += bounds.x - x;
+			bounds.x = x;
+		}
+		
+		if (y < bounds.y) 
+		{
+			bounds.height += bounds.y - y;
+			bounds.y = y;
+		}
+		
+		if (x > bounds.x + bounds.width) 
+		{
+			bounds.width = x - bounds.x;
+		}
+		
+		if (y > bounds.y + bounds.height) 
+		{
+			bounds.height = y - bounds.y;
+		}
+	}
+	
+	private function renderWithQuads():Void
 	{
 		var flipX:Int = skeleton.flipX ? -1 : 1;
 		var flipY:Int = skeleton.flipY ? 1 : -1;
@@ -280,11 +355,11 @@ class FlxSpine extends FlxSprite
 				var wrapper:FlxSprite = get(regionAttachment);
 				wrapper.blend = slot.data.additiveBlending ? BlendMode.ADD : BlendMode.NORMAL;
 				
-				wrapper.color = FlxColor.fromRGBFloat(skeleton.r * slot.r * regionAttachment.r,
-				                                      skeleton.g * slot.g * regionAttachment.g,
-												      skeleton.b * slot.b * regionAttachment.b);
+				wrapper.color = FlxColor.fromRGBFloat(skeleton.r * slot.r * regionAttachment.r * color.redFloat,
+				                                      skeleton.g * slot.g * regionAttachment.g * color.greenFloat,
+												      skeleton.b * slot.b * regionAttachment.b * color.blueFloat);
 				
-				wrapper.alpha = skeleton.a * slot.a * regionAttachment.a;
+				wrapper.alpha = skeleton.a * slot.a * regionAttachment.a * this.alpha;
 				
 				var bone:Bone = slot.bone;
 				
