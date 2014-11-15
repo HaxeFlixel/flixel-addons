@@ -229,6 +229,7 @@ class FlxSpine extends FlxSprite
 						var region:TextureRegion = regionAttachment.region;
 						var texture:FlixelTexture = cast region.texture;
 						
+						// TODO: beautify this place...
 						if (bd == null)
 						{
 							bd = texture.bd;
@@ -244,7 +245,6 @@ class FlxSpine extends FlxSprite
 						if (drawItem == null)
 						{
 							graph = FlxG.bitmap.add(texture.bd);
-							
 							drawItem = camera.getDrawTrianglesItem(graph, antialiasing);
 							vii = drawItem.indices.length;
 							vs = drawItem.vertices;
