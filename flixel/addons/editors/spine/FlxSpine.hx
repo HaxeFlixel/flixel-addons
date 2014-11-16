@@ -19,6 +19,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import haxe.ds.ObjectMap;
+import openfl.display.Sprite;
 import openfl.Assets;
 import openfl.display.BitmapData;
 import openfl.display.BlendMode;
@@ -83,6 +84,14 @@ class FlxSpine extends FlxSprite
 	private var bounds:FlxRect;
 	private var cameraBounds:FlxRect;
 	
+	#if FLX_RENDER_BLIT
+	private var sprite:Sprite;
+	
+	private var vertices:Vector<Float>;
+	private var indices:Vector<Int>;
+	private var uvs:Vector<Float>;
+	#end
+	
 	/**
 	 * Instantiate a new Spine Sprite.
 	 * @param	skeletonData	Animation data from Spine (.json .skel .png), get it like this: FlxSpineSprite.readSkeletonData( "mySpriteData", "assets/" );
@@ -122,6 +131,13 @@ class FlxSpine extends FlxSprite
 		
 		bounds = new FlxRect();
 		cameraBounds = new FlxRect();
+		
+		#if FLX_RENDER_BLIT
+		sprite = new Sprite();
+		vertices = new Vector<Float>();
+		indices = new Vector<Int>();
+		uvs = new Vector<Float>();
+		#end
 	}
 	
 	override public function destroy():Void
@@ -150,6 +166,13 @@ class FlxSpine extends FlxSprite
 		bounds = null;
 		cameraBounds = null;
 		
+		#if FLX_RENDER_BLIT
+		sprite = null;
+		vertices = null;
+		indices = null;
+		uvs = null;
+		#end
+		
 		super.destroy();
 	}
 	
@@ -172,30 +195,33 @@ class FlxSpine extends FlxSprite
 			return;
 		}
 		
-		#if FLX_RENDER_TILE
 		if (renderMeshes)
 		{
 			renderWithTriangles();
 			return;
 		}
-		#end
 		
 		renderWithQuads();	
 	}
 	
-	#if FLX_RENDER_TILE
-	// TODO: make it work on flash target
 	private function renderWithTriangles():Void
 	{
 		var vii:Int = 0;
 		var drawOrder:Array<Slot> = skeleton.drawOrder;
 		var i:Int, n:Int = drawOrder.length;
-		var drawItem:FlxDrawTrianglesItem;
 		var graph:FlxGraphic = null;
 		
 		var vs:Vector<Float> = null;
 		var idx:Vector<Int> = null;
 		var uvt:Vector<Float> = null;
+		
+		#if FLX_RENDER_TILE
+		var drawItem:FlxDrawTrianglesItem;
+		#else
+		vs = vertices;
+		idx = indices;
+		uvt = uvs;
+		#end
 		
 		var tempX:Float, tempY:Float;
 		
@@ -208,10 +234,13 @@ class FlxSpine extends FlxSprite
 			
 			getScreenPosition(_point, camera);
 			
-			cameraBounds.set(0, 0, camera.totalScaleX * camera.width, camera.totalScaleY * camera.height);
+			cameraBounds.set(0, 0, camera.width, camera.height);
+			
+			#if FLX_RENDER_TILE
+			drawItem = null;
+			#end
 			
 			i = 0;
-			drawItem = null;
 			
 			while (i < n) 
 			{
@@ -224,31 +253,52 @@ class FlxSpine extends FlxSprite
 					if (regionAttachment != null) 
 					{
 						regionAttachment.updateVertices(slot);
-						var vertices = regionAttachment.vertices;
+						var regionVertices = regionAttachment.vertices;
 						
 						var region:TextureRegion = regionAttachment.region;
 						var texture:FlixelTexture = cast region.texture;
 						
+						#if FLX_RENDER_TILE
 						if (drawItem == null || drawItem.graphics.bitmap != texture.bd)
 						{
-							graph = FlxG.bitmap.add(texture.bd);
+							graph = FlxG.bitmap.get(texture.key);
+							if (graph == null)
+							{
+								graph = FlxG.bitmap.add(texture.bd);
+							}
 							drawItem = camera.getDrawTrianglesItem(graph, antialiasing);
 							vii = drawItem.indices.length;
 							vs = drawItem.vertices;
 							idx = drawItem.indices;
 							uvt = drawItem.uvt;
 						}
+						#else
+						graph = FlxG.bitmap.get(texture.key);
+						if (graph == null)
+						{
+							graph = FlxG.bitmap.add(texture.bd);
+						}
 						
-						vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X1])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y1]));
+						vs.splice(0, vs.length);
+						idx.splice(0, idx.length);
+						uvt.splice(0, uvt.length);
+						vii = 0;
+						#end
+						
+						tempX = _point.x + regionVertices[RegionAttachment.X1]; tempY = _point.y + regionVertices[RegionAttachment.Y1];
+						pushVertex(tempX, tempY, camera, vs);
 						bounds.set(tempX, tempY, 0, 0);
 						
-						vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X2])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y2]));
+						tempX = _point.x + regionVertices[RegionAttachment.X2]; tempY = _point.y + regionVertices[RegionAttachment.Y2];
+						pushVertex(tempX, tempY, camera, vs);
 						inflateBounds(tempX, tempY);
 						
-						vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X3])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y3]));
+						tempX = _point.x + regionVertices[RegionAttachment.X3]; tempY = _point.y + regionVertices[RegionAttachment.Y3];
+						pushVertex(tempX, tempY, camera, vs);
 						inflateBounds(tempX, tempY);
 						
-						vs.push(tempX = camera.totalScaleX * (_point.x + vertices[RegionAttachment.X4])); vs.push(tempY = camera.totalScaleY * (_point.y + vertices[RegionAttachment.Y4]));
+						tempX = _point.x + regionVertices[RegionAttachment.X4]; tempY = _point.y + regionVertices[RegionAttachment.Y4];
+						pushVertex(tempX, tempY, camera, vs);
 						inflateBounds(tempX, tempY);
 						
 						var vis:Bool = cameraBounds.overlaps(bounds);
@@ -261,11 +311,19 @@ class FlxSpine extends FlxSprite
 						{
 							idx.push(vii + 0); idx.push(vii + 1); idx.push(vii + 2);
 							idx.push(vii + 2); idx.push(vii + 3); idx.push(vii + 0);
-							uvt.push(vertices[RegionAttachment.U1]); uvt.push(vertices[RegionAttachment.V1]);
-							uvt.push(vertices[RegionAttachment.U2]); uvt.push(vertices[RegionAttachment.V2]);
-							uvt.push(vertices[RegionAttachment.U3]); uvt.push(vertices[RegionAttachment.V3]);
-							uvt.push(vertices[RegionAttachment.U4]); uvt.push(vertices[RegionAttachment.V4]);
+							uvt.push(regionVertices[RegionAttachment.U1]); uvt.push(regionVertices[RegionAttachment.V1]);
+							uvt.push(regionVertices[RegionAttachment.U2]); uvt.push(regionVertices[RegionAttachment.V2]);
+							uvt.push(regionVertices[RegionAttachment.U3]); uvt.push(regionVertices[RegionAttachment.V3]);
+							uvt.push(regionVertices[RegionAttachment.U4]); uvt.push(regionVertices[RegionAttachment.V4]);
 							vii += 4;
+							
+							#if FLX_RENDER_BLIT
+							sprite.graphics.clear();
+							sprite.graphics.beginBitmapFill(graph.bitmap, null, false, antialiasing);
+							sprite.graphics.drawTriangles(vs, idx, uvt);
+							sprite.graphics.endFill();
+							camera.buffer.draw(sprite);
+							#end
 						}
 					}
 				}
@@ -276,7 +334,17 @@ class FlxSpine extends FlxSprite
 		
 		collider.draw();
 	}
-	#end
+	
+	private inline function pushVertex(vx:Float, vy:Float, camera:FlxCamera, vs:Vector<Float>):Void
+	{
+		#if FLX_RENDER_TILE
+		vx *= camera.totalScaleX;
+		vy *= camera.totalScaleY;
+		#end
+		
+		vs.push(vx);
+		vs.push(vy);
+	}
 	
 	private function inflateBounds(x:Float, y:Float):Void 
 	{
