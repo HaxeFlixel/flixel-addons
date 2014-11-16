@@ -19,6 +19,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import haxe.ds.ObjectMap;
+import openfl.display.Graphics;
 import openfl.display.Sprite;
 import openfl.Assets;
 import openfl.display.BitmapData;
@@ -311,13 +312,23 @@ class FlxSpine extends FlxSprite
 							uvt.push(regionVertices[RegionAttachment.U4]); uvt.push(regionVertices[RegionAttachment.V4]);
 							vii += 4;
 							
-							#if FLX_RENDER_BLIT
+						#if FLX_RENDER_BLIT
 							sprite.graphics.clear();
 							sprite.graphics.beginBitmapFill(texture.bd, null, false, antialiasing);
 							sprite.graphics.drawTriangles(vs, idx, uvt);
 							sprite.graphics.endFill();
 							camera.buffer.draw(sprite);
+							
+							#if !FLX_NO_DEBUG
+							if (FlxG.debugger.drawDebug)
+							{
+								var gfx:Graphics = beginDrawDebug(camera);
+								gfx.lineStyle(1, FlxColor.BLUE, 0.5);
+								gfx.drawTriangles(vs, idx);
+								endDrawDebug(camera);
+							}
 							#end
+						#end
 						}
 					}
 				}
