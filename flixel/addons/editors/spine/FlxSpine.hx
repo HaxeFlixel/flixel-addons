@@ -273,12 +273,6 @@ class FlxSpine extends FlxSprite
 							uvt = drawItem.uvt;
 						}
 						#else
-						graph = FlxG.bitmap.get(texture.key);
-						if (graph == null)
-						{
-							graph = FlxG.bitmap.add(texture.bd);
-						}
-						
 						vs.splice(0, vs.length);
 						idx.splice(0, idx.length);
 						uvt.splice(0, uvt.length);
@@ -319,7 +313,7 @@ class FlxSpine extends FlxSprite
 							
 							#if FLX_RENDER_BLIT
 							sprite.graphics.clear();
-							sprite.graphics.beginBitmapFill(graph.bitmap, null, false, antialiasing);
+							sprite.graphics.beginBitmapFill(texture.bd, null, false, antialiasing);
 							sprite.graphics.drawTriangles(vs, idx, uvt);
 							sprite.graphics.endFill();
 							camera.buffer.draw(sprite);
