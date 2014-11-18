@@ -27,10 +27,11 @@ import openfl.display.BlendMode;
 import openfl.Vector;
 import spinehaxe.animation.AnimationState;
 import spinehaxe.animation.AnimationStateData;
-import spinehaxe.atlas.TextureAtlas;
-import spinehaxe.atlas.TextureRegion;
+import spinehaxe.atlas.Atlas;
+import spinehaxe.atlas.AtlasRegion;
 import spinehaxe.attachments.Attachment;
 import spinehaxe.attachments.RegionAttachment;
+import spinehaxe.attachments.AtlasAttachmentLoader;
 import spinehaxe.Bone;
 import spinehaxe.Skeleton;
 import spinehaxe.SkeletonData;
@@ -58,8 +59,8 @@ class FlxSpine extends FlxSprite
 	public static function readSkeletonData(DataName:String, DataPath:String, Scale:Float = 1):SkeletonData
 	{
 		if (DataPath.lastIndexOf("/") < 0) DataPath += "/"; // append / at the end of the folder path
-		var spineAtlas:TextureAtlas = TextureAtlas.create(Assets.getText(DataPath + DataName + ".atlas"), DataPath, new FlixelTextureLoader());
-		var json:SkeletonJson = SkeletonJson.create(spineAtlas);
+		var spineAtlas:Atlas = new Atlas(Assets.getText(DataPath + DataName + ".atlas"), new FlixelTextureLoader(DataPath));
+		var json:SkeletonJson = new SkeletonJson(new AtlasAttachmentLoader(spineAtlas));
 		json.scale = Scale;
 		var skeletonData:SkeletonData = json.readSkeletonData(Assets.getText(DataPath + DataName + ".json"), DataName);
 		return skeletonData;
@@ -195,19 +196,19 @@ class FlxSpine extends FlxSprite
 		{
 			return;
 		}
-		
+		/*
 		if (renderMeshes)
 		{
 			renderWithTriangles();
 		}
 		else
-		{
+		{*/
 			renderWithQuads();	
-		}
-		
+		/*}
+		*/
 		collider.draw();
 	}
-	
+	/*
 	private function renderWithTriangles():Void
 	{
 		var vii:Int = 0;
@@ -340,7 +341,7 @@ class FlxSpine extends FlxSprite
 			}
 		}
 	}
-	
+	*/
 	private inline function pushVertex(vx:Float, vy:Float, camera:FlxCamera, vs:Vector<Float>):Void
 	{
 		#if FLX_RENDER_TILE
@@ -474,18 +475,18 @@ class FlxSpine extends FlxSprite
 		if (cachedSprites.exists(regionAttachment))
 			return cachedSprites.get(regionAttachment);
 		
-		var region:AtlasRegion = cast regionAttachment.region;
-		var texture:FlixelTexture = cast region.texture;
+		var region:AtlasRegion = cast regionAttachment.rendererObject;
+		var bitmapData:BitmapData = cast(region.page.rendererObject, BitmapData);
 		
-		var regionWidth:Float = region.rotate ? region.regionHeight : region.regionWidth;
-		var regionHeight:Float = region.rotate ? region.regionWidth : region.regionHeight;
+		var regionWidth:Float = region.rotate ? region.height : region.width;
+		var regionHeight:Float = region.rotate ? region.width : region.height;
 		
-		var graph:FlxGraphic = FlxG.bitmap.add(texture.bd);
+		var graph:FlxGraphic = FlxG.bitmap.add(bitmapData);
 		var atlasFrames:FlxAtlasFrames = (graph.atlasFrames == null) ? new FlxAtlasFrames(graph) : graph.atlasFrames;
 		
 		var name:String = region.name;
 		var offset:FlxPoint = FlxPoint.get(0, 0);
-		var frameRect:FlxRect = new FlxRect(region.regionX, region.regionY, region.regionWidth, region.regionHeight);
+		var frameRect:FlxRect = new FlxRect(region.x, region.y, regionWidth, regionHeight);
 		
 		var sourceSize:FlxPoint = FlxPoint.get(frameRect.width, frameRect.height);
 		var imageFrame = FlxImageFrame.fromFrame(atlasFrames.addAtlasFrame(frameRect, sourceSize, offset, name));
@@ -495,8 +496,8 @@ class FlxSpine extends FlxSprite
 		wrapper.antialiasing = antialiasing;
 		
 		wrapper.angle = -regionAttachment.rotation;
-		wrapper.scale.x = regionAttachment.scaleX * (regionAttachment.width / regionWidth);
-		wrapper.scale.y = regionAttachment.scaleY * (regionAttachment.height / regionHeight);
+		wrapper.scale.x = regionAttachment.scaleX * (regionAttachment.width / region.width);
+		wrapper.scale.y = regionAttachment.scaleY * (regionAttachment.height / region.height);
 
 		// Position using attachment translation, shifted as if scale and rotation were at image center.
 		var radians:Float = -regionAttachment.rotation * Math.PI / 180;
@@ -508,7 +509,7 @@ class FlxSpine extends FlxSprite
 		if (region.rotate) 
 		{
 			wrapper.angle += 90;
-			shiftX += regionHeight * (regionAttachment.width / region.regionWidth);
+			shiftX += regionHeight * (regionAttachment.width / region.width);
 		}
 		
 		wrapper.origin.x = regionAttachment.x + shiftX * cos - shiftY * sin;
