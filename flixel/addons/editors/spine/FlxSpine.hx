@@ -199,10 +199,13 @@ class FlxSpine extends FlxSprite
 		if (renderMeshes)
 		{
 			renderWithTriangles();
-			return;
+		}
+		else
+		{
+			renderWithQuads();	
 		}
 		
-		renderWithQuads();	
+		collider.draw();
 	}
 	
 	private function renderWithTriangles():Void
@@ -336,8 +339,6 @@ class FlxSpine extends FlxSprite
 				i++;
 			}
 		}
-		
-		collider.draw();
 	}
 	
 	private inline function pushVertex(vx:Float, vy:Float, camera:FlxCamera, vs:Vector<Float>):Void
@@ -445,8 +446,6 @@ class FlxSpine extends FlxSprite
 			
 			i++;
 		}
-		
-		collider.draw();
 	}
 	
 	#if !FLX_NO_DEBUG
