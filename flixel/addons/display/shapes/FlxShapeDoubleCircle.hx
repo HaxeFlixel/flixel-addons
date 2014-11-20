@@ -13,6 +13,7 @@ class FlxShapeDoubleCircle extends FlxShapeDonut
 	public function new(X:Float, Y:Float, RadiusOut:Float, RadiusIn:Float, LineStyle_:LineStyle, FillColor:FlxColor) 
 	{
 		super(X, Y, RadiusOut, RadiusIn, LineStyle_, FillColor);
+		shape_id = FlxShapeType.DOUBLE_CIRCLE;
 	}
 	
 	override public function drawSpecificShape(?matrix:Matrix):Void 
