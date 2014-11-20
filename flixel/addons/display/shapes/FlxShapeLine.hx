@@ -28,8 +28,8 @@ class FlxShapeLine extends FlxShape
 		
 		super(X, Y, 0, 0, LineStyle_, FlxColor.TRANSPARENT, trueWidth, trueHeight);
 		
-		point = new FlxCallbackPoint(setPoint);
-		point2 = new FlxCallbackPoint(setPoint2);
+		point = new FlxCallbackPoint(onSetPoint);
+		point2 = new FlxCallbackPoint(onSetPoint);
 		
 		point.copyFrom(a);
 		point2.copyFrom(b);
@@ -45,12 +45,7 @@ class FlxShapeLine extends FlxShape
 		FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, lineStyle, { matrix: matrix });
 	}
 	
-	private inline function setPoint(p:FlxPoint):Void 
-	{
-		updatePoint();
-	}
-	
-	private inline function setPoint2(p:FlxPoint):Void
+	private inline function onSetPoint(p:FlxPoint):Void 
 	{
 		updatePoint();
 	}
