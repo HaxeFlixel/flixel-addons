@@ -35,8 +35,8 @@ class FlxShapeArrow extends FlxShape
 		arrowSize = ArrowSize;
 		outlineStyle = OutlineStyle_;
 		
-		point = new FlxCallbackPoint(setPoint);
-		point2 = new FlxCallbackPoint(setPoint2);
+		point = new FlxCallbackPoint(onSetPoint);
+		point2 = new FlxCallbackPoint(onSetPoint);
 		
 		point.copyFrom(Start);
 		point2.copyFrom(End);
@@ -125,12 +125,7 @@ class FlxShapeArrow extends FlxShape
 		fixBoundaries(Math.abs(point.x - point2.x), Math.abs(point.y - point2.y));
 	}
 	
-	private inline function setPoint(p:FlxPoint):Void 
-	{
-		updatePoint();
-	}
-	
-	private inline function setPoint2(p:FlxPoint):Void
+	private inline function onSetPoint(p:FlxPoint):Void 
 	{
 		updatePoint();
 	}
