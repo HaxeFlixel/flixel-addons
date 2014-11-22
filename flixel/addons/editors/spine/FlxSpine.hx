@@ -20,7 +20,6 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import haxe.ds.ObjectMap;
-import openfl.display.Bitmap;
 import openfl.display.Graphics;
 import openfl.display.Sprite;
 import openfl.Assets;
