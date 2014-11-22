@@ -10,6 +10,7 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.FlxStrip;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxImageFrame;
@@ -19,6 +20,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import haxe.ds.ObjectMap;
+import openfl.display.Bitmap;
 import openfl.display.Graphics;
 import openfl.display.Sprite;
 import openfl.Assets;
@@ -30,6 +32,7 @@ import spinehaxe.animation.AnimationStateData;
 import spinehaxe.atlas.Atlas;
 import spinehaxe.atlas.AtlasRegion;
 import spinehaxe.attachments.Attachment;
+import spinehaxe.attachments.MeshAttachment;
 import spinehaxe.attachments.RegionAttachment;
 import spinehaxe.attachments.AtlasAttachmentLoader;
 import spinehaxe.Bone;
@@ -84,13 +87,8 @@ class FlxSpine extends FlxSprite
 	private var bounds:FlxRect;
 	private var cameraBounds:FlxRect;
 	
-	#if FLX_RENDER_BLIT
-	private var sprite:Sprite;
-	
-	private var vertices:Vector<Float>;
-	private var indices:Vector<Int>;
-	private var uvs:Vector<Float>;
-	#end
+	private var _tempVertices:Vector<Float>;
+	private var _quadTriangles:Vector<Int>;
 	
 	/**
 	 * Instantiate a new Spine Sprite.
@@ -130,12 +128,15 @@ class FlxSpine extends FlxSprite
 		bounds = new FlxRect();
 		cameraBounds = new FlxRect();
 		
-		#if FLX_RENDER_BLIT
-		sprite = new Sprite();
-		vertices = new Vector<Float>();
-		indices = new Vector<Int>();
-		uvs = new Vector<Float>();
-		#end
+		_tempVertices = new Vector<Float>(8);
+		
+		_quadTriangles = new Vector<Int>();
+		_quadTriangles[0] = 0;// = Vector.fromArray([0, 1, 2, 2, 3, 0]);
+		_quadTriangles[1] = 1;
+		_quadTriangles[2] = 2;
+		_quadTriangles[3] = 2;
+		_quadTriangles[4] = 3;
+		_quadTriangles[5] = 0;
 	}
 	
 	override public function destroy():Void
@@ -152,12 +153,8 @@ class FlxSpine extends FlxSprite
 		bounds = null;
 		cameraBounds = null;
 		
-		#if FLX_RENDER_BLIT
-		sprite = null;
-		vertices = null;
-		indices = null;
-		uvs = null;
-		#end
+		_tempVertices = null;
+		_quadTriangles = null;
 		
 		super.destroy();
 	}
@@ -195,137 +192,105 @@ class FlxSpine extends FlxSprite
 	
 	private function renderWithTriangles():Void
 	{
-		/*
-		var vii:Int = 0;
 		var drawOrder:Array<Slot> = skeleton.drawOrder;
-		var i:Int, n:Int = drawOrder.length;
+		var i:Int = 0, n:Int = drawOrder.length;
 		var graph:FlxGraphic = null;
+		var wrapper:FlxStrip;
+		var worldVertices:Vector<Float> = _tempVertices;
+		var triangles:Vector<Int>;
+		var uvs:Vector<Float>;
+		var verticesLength:Int;
 		
-		var vs:Vector<Float> = null;
-		var idx:Vector<Int> = null;
-		var uvt:Vector<Float> = null;
-		
-		#if FLX_RENDER_TILE
-		var drawItem:FlxDrawTrianglesItem;
-		#else
-		vs = vertices;
-		idx = indices;
-		uvt = uvs;
-		#end
-		
-		var tempX:Float, tempY:Float;
-		
-		for (camera in cameras)
+		while (i < n) 
 		{
-			if (!camera.visible || !camera.exists)
+			var slot:Slot = drawOrder[i];
+			
+			if (slot.attachment != null)
 			{
-				continue;
-			}
-			
-			getScreenPosition(_point, camera);
-			
-			cameraBounds.set(0, 0, camera.width, camera.height);
-			
-			#if FLX_RENDER_TILE
-			drawItem = null;
-			#end
-			
-			i = 0;
-			
-			while (i < n) 
-			{
-				var slot:Slot = drawOrder[i];
+				wrapper = null;
 				
-				if (slot.attachment != null)
+				if (Std.is(slot.attachment, RegionAttachment))
 				{
-					var regionAttachment:RegionAttachment = cast slot.attachment;
+					var region:RegionAttachment = cast slot.attachment;
+					verticesLength = 8;
+					if (worldVertices.length < verticesLength) worldVertices.length = verticesLength;
+					region.computeWorldVertices(0, 0, slot.bone, worldVertices);
+					uvs = region.uvs;
+					triangles = _quadTriangles;
 					
-					if (regionAttachment != null) 
+					if (region.wrapperStrip != null)
 					{
-						regionAttachment.updateVertices(slot);
-						var regionVertices = regionAttachment.vertices;
-						
-						var region:TextureRegion = regionAttachment.region;
-						var texture:FlixelTexture = cast region.texture;
-						
-						#if FLX_RENDER_TILE
-						if (drawItem == null || drawItem.graphics.bitmap != texture.bd)
-						{
-							graph = FlxG.bitmap.get(texture.key);
-							if (graph == null)
-							{
-								graph = FlxG.bitmap.add(texture.bd);
-							}
-							drawItem = camera.getDrawTrianglesItem(graph, antialiasing);
-							vii = drawItem.indices.length;
-							vs = drawItem.vertices;
-							idx = drawItem.indices;
-							uvt = drawItem.uvt;
-						}
-						#else
-						vs.splice(0, vs.length);
-						idx.splice(0, idx.length);
-						uvt.splice(0, uvt.length);
-						vii = 0;
-						#end
-						
-						tempX = _point.x + regionVertices[RegionAttachment.X1]; tempY = _point.y + regionVertices[RegionAttachment.Y1];
-						pushVertex(tempX, tempY, camera, vs);
-						bounds.set(tempX, tempY, 0, 0);
-						
-						tempX = _point.x + regionVertices[RegionAttachment.X2]; tempY = _point.y + regionVertices[RegionAttachment.Y2];
-						pushVertex(tempX, tempY, camera, vs);
-						inflateBounds(tempX, tempY);
-						
-						tempX = _point.x + regionVertices[RegionAttachment.X3]; tempY = _point.y + regionVertices[RegionAttachment.Y3];
-						pushVertex(tempX, tempY, camera, vs);
-						inflateBounds(tempX, tempY);
-						
-						tempX = _point.x + regionVertices[RegionAttachment.X4]; tempY = _point.y + regionVertices[RegionAttachment.Y4];
-						pushVertex(tempX, tempY, camera, vs);
-						inflateBounds(tempX, tempY);
-						
-						var vis:Bool = cameraBounds.overlaps(bounds);
-						
-						if (!vis)
-						{
-							vs.splice(vs.length - 8, 8);
-						}
-						else
-						{
-							idx.push(vii + 0); idx.push(vii + 1); idx.push(vii + 2);
-							idx.push(vii + 2); idx.push(vii + 3); idx.push(vii + 0);
-							uvt.push(regionVertices[RegionAttachment.U1]); uvt.push(regionVertices[RegionAttachment.V1]);
-							uvt.push(regionVertices[RegionAttachment.U2]); uvt.push(regionVertices[RegionAttachment.V2]);
-							uvt.push(regionVertices[RegionAttachment.U3]); uvt.push(regionVertices[RegionAttachment.V3]);
-							uvt.push(regionVertices[RegionAttachment.U4]); uvt.push(regionVertices[RegionAttachment.V4]);
-							vii += 4;
-							
-						#if FLX_RENDER_BLIT
-							sprite.graphics.clear();
-							sprite.graphics.beginBitmapFill(texture.bd, null, false, antialiasing);
-							sprite.graphics.drawTriangles(vs, idx, uvt);
-							sprite.graphics.endFill();
-							camera.buffer.draw(sprite);
-							
-							#if !FLX_NO_DEBUG
-							if (FlxG.debugger.drawDebug)
-							{
-								var gfx:Graphics = beginDrawDebug(camera);
-								gfx.lineStyle(1, FlxColor.BLUE, 0.5);
-								gfx.drawTriangles(vs, idx);
-								endDrawDebug(camera);
-							}
-							#end
-						#end
-						}
+						wrapper = cast region.wrapperStrip;
 					}
-				}
+					else
+					{
+						var atlasRegion:AtlasRegion = cast region.rendererObject;
+					//	var bitmapData:BitmapData = cast(atlasRegion.rendererObject, BitmapData);
+						var bitmapData:BitmapData = cast(atlasRegion.page.rendererObject, BitmapData);
+						wrapper = new FlxStrip(0, 0, bitmapData);
+						region.wrapperStrip = wrapper;
+					}
+					
+					wrapper.x = x;
+					wrapper.y = y;
+					wrapper.cameras = cameras;
+					
+					wrapper.vertices = worldVertices;
+					wrapper.indices = triangles;
+					wrapper.uvs = uvs;
+					wrapper.draw();
+				} 
+				/*
+				else if (Std.is(slot.attachment, MeshAttachment)) 
+				{
+					var mesh:MeshAttachment = cast(slot.attachment, MeshAttachment);
+					verticesLength = mesh.vertices.length;
+					if (worldVertices.length < verticesLength) worldVertices.length = verticesLength;
+					mesh.computeWorldVertices(x, y, slot, worldVertices);
+					uvs = mesh.uvs;
+					triangles = cast mesh.triangles;
+					
+					if (mesh.wrapperStrip != null)
+					{
+						wrapper = cast mesh.wrapperStrip;
+					}
+					else
+					{
+						var atlasRegion:AtlasRegion = cast mesh.rendererObject;
+					//	var bitmapData:BitmapData = cast(atlasRegion.rendererObject, BitmapData);
+						var bitmapData:BitmapData = cast(atlasRegion.page.rendererObject, BitmapData);
+						test.bitmapData = bitmapData;
+						wrapper = new FlxStrip(0, 0, bitmapData);
+						region.wrapperStrip = wrapper;
+					}
+					
+					wrapper.x = x;
+					wrapper.y = y;
+					wrapper.cameras = cameras;
+					
+					wrapper.vertices = worldVertices;
+					wrapper.indices = triangles;
+					wrapper.uvs = uvs;
+					wrapper.draw();
+				} 
 				
-				i++;
+				else if (attachment is SkinnedMeshAttachment) 
+				{
+					var skinnedMesh:SkinnedMeshAttachment = SkinnedMeshAttachment(attachment);
+					verticesLength = skinnedMesh.uvs.length;
+					if (worldVertices.length < verticesLength) worldVertices.length = verticesLength;
+					skinnedMesh.computeWorldVertices(x, y, slot, worldVertices);
+					uvs = skinnedMesh.uvs;
+					triangles = skinnedMesh.triangles;
+					image = skinnedMesh.rendererObject as SkeletonImage;
+					if (image == null) skinnedMesh.rendererObject = image = SkeletonImage(AtlasRegion(skinnedMesh.rendererObject).rendererObject);
+				}
+				*/
+				
 			}
+			
+			i++;
 		}
-		*/
 	}
 	
 	private inline function pushVertex(vx:Float, vy:Float, camera:FlxCamera, vs:Vector<Float>):Void
@@ -385,7 +350,7 @@ class FlxSpine extends FlxSprite
 			var regionAttachment:RegionAttachment = cast slot.attachment;
 			if (regionAttachment != null) 
 			{
-				var wrapper:FlxSprite = get(regionAttachment);
+				var wrapper:FlxSprite = getSprite(regionAttachment);
 				wrapper.blend = slot.data.additiveBlending ? BlendMode.ADD : BlendMode.NORMAL;
 				
 				wrapper.color = FlxColor.fromRGBFloat(skeleton.r * slot.r * regionAttachment.r * color.redFloat,
@@ -449,18 +414,18 @@ class FlxSpine extends FlxSprite
 			if (Std.is(attachment, RegionAttachment)) 
 			{
 				var regionAttachment:RegionAttachment = cast attachment;
-				var wrapper:FlxSprite = get(regionAttachment);
+				var wrapper:FlxSprite = getSprite(regionAttachment);
 				wrapper.drawDebugOnCamera(Camera);
 			}
 		}
 	}
 	#end
 	
-	public function get(regionAttachment:RegionAttachment):FlxSprite 
+	private function getSprite(regionAttachment:RegionAttachment):FlxSprite 
 	{
-		if (regionAttachment.wrapper != null)
+		if (regionAttachment.wrapperSprite != null)
 		{
-			return cast(regionAttachment.wrapper, FlxSprite);
+			return cast(regionAttachment.wrapperSprite, FlxSprite);
 		}
 		
 		var region:AtlasRegion = cast regionAttachment.rendererObject;
@@ -502,7 +467,7 @@ class FlxSpine extends FlxSprite
 		
 		wrapper.origin.x = regionAttachment.x + shiftX * cos - shiftY * sin;
 		wrapper.origin.y = -regionAttachment.y + shiftX * sin + shiftY * cos;
-		regionAttachment.wrapper = wrapper;
+		regionAttachment.wrapperSprite = wrapper;
 		return wrapper;
 	}
 	
