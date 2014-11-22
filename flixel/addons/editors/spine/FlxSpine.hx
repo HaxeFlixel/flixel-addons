@@ -79,9 +79,7 @@ class FlxSpine extends FlxSprite
 	 */
 	public var collider(default, null):FlxSpineCollider;
 	
-	private var cachedSprites:ObjectMap<RegionAttachment, FlxSprite>;
-	
-	public var renderMeshes:Bool = false;
+	public var renderMeshes(default, null):Bool = false;
 	
 	private var bounds:FlxRect;
 	private var cameraBounds:FlxRect;
@@ -119,8 +117,6 @@ class FlxSpine extends FlxSprite
 		skeleton.x = 0;
 		skeleton.y = 0;
 		
-		cachedSprites = new ObjectMap<RegionAttachment, FlxSprite>();
-		
 		flipX = false;
 		flipY = true;
 		
@@ -153,18 +149,6 @@ class FlxSpine extends FlxSprite
 		state = null;
 		stateData = null;
 		
-		if (cachedSprites != null)
-		{
-			for (key in cachedSprites.keys())
-			{
-				var sprite:FlxSprite = cachedSprites.get(key);
-				cachedSprites.remove(key);
-				if (sprite != null)	
-					sprite.destroy();
-			}
-		}
-		cachedSprites = null;
-		
 		bounds = null;
 		cameraBounds = null;
 		
@@ -196,21 +180,22 @@ class FlxSpine extends FlxSprite
 		{
 			return;
 		}
-		/*
+		
 		if (renderMeshes)
 		{
 			renderWithTriangles();
 		}
 		else
-		{*/
+		{
 			renderWithQuads();	
-		/*}
-		*/
+		}
+		
 		collider.draw();
 	}
-	/*
+	
 	private function renderWithTriangles():Void
 	{
+		/*
 		var vii:Int = 0;
 		var drawOrder:Array<Slot> = skeleton.drawOrder;
 		var i:Int, n:Int = drawOrder.length;
@@ -340,8 +325,9 @@ class FlxSpine extends FlxSprite
 				i++;
 			}
 		}
+		*/
 	}
-	*/
+	
 	private inline function pushVertex(vx:Float, vy:Float, camera:FlxCamera, vs:Vector<Float>):Void
 	{
 		#if FLX_RENDER_TILE
@@ -472,8 +458,10 @@ class FlxSpine extends FlxSprite
 	
 	public function get(regionAttachment:RegionAttachment):FlxSprite 
 	{
-		if (cachedSprites.exists(regionAttachment))
-			return cachedSprites.get(regionAttachment);
+		if (regionAttachment.wrapper != null)
+		{
+			return cast(regionAttachment.wrapper, FlxSprite);
+		}
 		
 		var region:AtlasRegion = cast regionAttachment.rendererObject;
 		var bitmapData:BitmapData = cast(region.page.rendererObject, BitmapData);
@@ -514,8 +502,7 @@ class FlxSpine extends FlxSprite
 		
 		wrapper.origin.x = regionAttachment.x + shiftX * cos - shiftY * sin;
 		wrapper.origin.y = -regionAttachment.y + shiftX * sin + shiftY * cos;
-		
-		cachedSprites.set(regionAttachment, wrapper);
+		regionAttachment.wrapper = wrapper;
 		return wrapper;
 	}
 	
