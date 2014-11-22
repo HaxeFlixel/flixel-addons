@@ -35,6 +35,7 @@ import spinehaxe.attachments.Attachment;
 import spinehaxe.attachments.MeshAttachment;
 import spinehaxe.attachments.RegionAttachment;
 import spinehaxe.attachments.AtlasAttachmentLoader;
+import spinehaxe.attachments.SkinnedMeshAttachment;
 import spinehaxe.Bone;
 import spinehaxe.Skeleton;
 import spinehaxe.SkeletonData;
@@ -197,8 +198,8 @@ class FlxSpine extends FlxSprite
 		var graph:FlxGraphic = null;
 		var wrapper:FlxStrip;
 		var worldVertices:Vector<Float> = _tempVertices;
-		var triangles:Vector<Int>;
-		var uvs:Vector<Float>;
+		var triangles:Vector<Int> = null;
+		var uvs:Vector<Float> = null;
 		var verticesLength:Int;
 		
 		while (i < n) 
@@ -218,29 +219,19 @@ class FlxSpine extends FlxSprite
 					uvs = region.uvs;
 					triangles = _quadTriangles;
 					
-					if (region.wrapperStrip != null)
+					if (Std.is(region.rendererObject, FlxStrip))
 					{
-						wrapper = cast region.wrapperStrip;
+						wrapper = cast region.rendererObject;
 					}
 					else
 					{
 						var atlasRegion:AtlasRegion = cast region.rendererObject;
-					//	var bitmapData:BitmapData = cast(atlasRegion.rendererObject, BitmapData);
 						var bitmapData:BitmapData = cast(atlasRegion.page.rendererObject, BitmapData);
 						wrapper = new FlxStrip(0, 0, bitmapData);
-						region.wrapperStrip = wrapper;
+						region.rendererObject = wrapper;
 					}
-					
-					wrapper.x = x;
-					wrapper.y = y;
-					wrapper.cameras = cameras;
-					
-					wrapper.vertices = worldVertices;
-					wrapper.indices = triangles;
-					wrapper.uvs = uvs;
-					wrapper.draw();
 				} 
-				/*
+				
 				else if (Std.is(slot.attachment, MeshAttachment)) 
 				{
 					var mesh:MeshAttachment = cast(slot.attachment, MeshAttachment);
@@ -248,22 +239,44 @@ class FlxSpine extends FlxSprite
 					if (worldVertices.length < verticesLength) worldVertices.length = verticesLength;
 					mesh.computeWorldVertices(x, y, slot, worldVertices);
 					uvs = mesh.uvs;
-					triangles = cast mesh.triangles;
+					triangles = mesh.triangles;
 					
-					if (mesh.wrapperStrip != null)
+					if (Std.is(mesh.rendererObject, FlxStrip))
 					{
-						wrapper = cast mesh.wrapperStrip;
+						wrapper = cast mesh.rendererObject;
 					}
 					else
 					{
 						var atlasRegion:AtlasRegion = cast mesh.rendererObject;
-					//	var bitmapData:BitmapData = cast(atlasRegion.rendererObject, BitmapData);
 						var bitmapData:BitmapData = cast(atlasRegion.page.rendererObject, BitmapData);
-						test.bitmapData = bitmapData;
 						wrapper = new FlxStrip(0, 0, bitmapData);
-						region.wrapperStrip = wrapper;
+						mesh.rendererObject = wrapper;
 					}
+				}
+				else if (Std.is(slot.attachment, SkinnedMeshAttachment))
+				{
+					var skinnedMesh:SkinnedMeshAttachment = cast(slot.attachment, SkinnedMeshAttachment);
+					verticesLength = skinnedMesh.uvs.length;
+					if (worldVertices.length < verticesLength) worldVertices.length = verticesLength;
+					skinnedMesh.computeWorldVertices(x, y, slot, worldVertices);
+					uvs = skinnedMesh.uvs;
+					triangles = skinnedMesh.triangles;
 					
+					if (Std.is(skinnedMesh.rendererObject, FlxStrip))
+					{
+						wrapper = cast skinnedMesh.rendererObject;
+					}
+					else
+					{
+						var atlasRegion:AtlasRegion = cast skinnedMesh.rendererObject;
+						var bitmapData:BitmapData = cast(atlasRegion.page.rendererObject, BitmapData);
+						wrapper = new FlxStrip(0, 0, bitmapData);
+						skinnedMesh.rendererObject = wrapper;
+					}
+				}
+				
+				if (wrapper != null)
+				{
 					wrapper.x = x;
 					wrapper.y = y;
 					wrapper.cameras = cameras;
@@ -272,21 +285,7 @@ class FlxSpine extends FlxSprite
 					wrapper.indices = triangles;
 					wrapper.uvs = uvs;
 					wrapper.draw();
-				} 
-				
-				else if (attachment is SkinnedMeshAttachment) 
-				{
-					var skinnedMesh:SkinnedMeshAttachment = SkinnedMeshAttachment(attachment);
-					verticesLength = skinnedMesh.uvs.length;
-					if (worldVertices.length < verticesLength) worldVertices.length = verticesLength;
-					skinnedMesh.computeWorldVertices(x, y, slot, worldVertices);
-					uvs = skinnedMesh.uvs;
-					triangles = skinnedMesh.triangles;
-					image = skinnedMesh.rendererObject as SkeletonImage;
-					if (image == null) skinnedMesh.rendererObject = image = SkeletonImage(AtlasRegion(skinnedMesh.rendererObject).rendererObject);
 				}
-				*/
-				
 			}
 			
 			i++;
