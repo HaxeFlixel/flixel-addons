@@ -57,7 +57,7 @@ class FlxTransitionSprite extends FlxSprite
 	
 	public function start(NewStatus:TransitionStatus):Void
 	{
-		new FlxTimer(_delay, onTimer);
+		new FlxTimer().start(_delay, onTimer);
 		_newStatus = NewStatus;
 	}
 	
