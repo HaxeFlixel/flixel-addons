@@ -59,7 +59,7 @@ class Transition extends FlxSubState
 	
 	private function delayThenFinish():Void
 	{
-		new FlxTimer().start(_finalDelayTime, onFinish);	//force one last render call before exiting
+		new FlxTimer(_finalDelayTime, onFinish);	//force one last render call before exiting
 	}
 	
 	private function onFinish(f:FlxTimer):Void

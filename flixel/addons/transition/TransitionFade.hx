@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
+import flixel.util.FlxTimer;
 import openfl.Assets;
 import openfl.display.BitmapDataChannel;
 import openfl.geom.Matrix;
