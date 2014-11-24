@@ -1,8 +1,11 @@
 package flixel.addons.editors.spine.texture;
 
 import flash.display.BitmapData;
+
 import flixel.FlxG;
+
 import spinehaxe.atlas.Texture;
+import spinehaxe.Exception.IllegalArgumentException;
 
 class FlixelTexture implements Texture 
 {
@@ -14,7 +17,11 @@ class FlixelTexture implements Texture
 	
 	public function new(textureFile:String) 
 	{
-		var graphic = FlxG.bitmap.add(textureFile);
+        var graphic = FlxG.bitmap.add(textureFile);
+        var bitmapData:BitmapData = graphic.bitmap; 
+        if (bitmapData == null)
+            throw new IllegalArgumentException("BitmapData not found with name: " + textureFile);
+
 		this.bd = graphic.bitmap;
 		this.key = graphic.key;
 	}

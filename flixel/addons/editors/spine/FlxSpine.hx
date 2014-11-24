@@ -17,9 +17,12 @@ import flixel.util.FlxColor;
 import haxe.ds.ObjectMap;
 import openfl.Assets;
 import openfl.display.BlendMode;
+
+import spinehaxe.attachments.AtlasAttachmentLoader;
 import spinehaxe.animation.AnimationState;
 import spinehaxe.animation.AnimationStateData;
-import spinehaxe.atlas.TextureAtlas;
+import spinehaxe.atlas.Atlas;
+import spinehaxe.atlas.AtlasRegion;
 import spinehaxe.attachments.Attachment;
 import spinehaxe.attachments.RegionAttachment;
 import spinehaxe.Bone;
@@ -49,8 +52,8 @@ class FlxSpine extends FlxSprite
 	public static function readSkeletonData(DataName:String, DataPath:String, Scale:Float = 1):SkeletonData
 	{
 		if (DataPath.lastIndexOf("/") < 0) DataPath += "/"; // append / at the end of the folder path
-		var spineAtlas:TextureAtlas = TextureAtlas.create(Assets.getText(DataPath + DataName + ".atlas"), DataPath, new FlixelTextureLoader());
-		var json:SkeletonJson = SkeletonJson.create(spineAtlas);
+		var atlas:Atlas = new Atlas(Assets.getText(DataPath + DataName + ".atlas"), new FlixelTextureLoader("assets/"));
+		var json:SkeletonJson = new SkeletonJson(new AtlasAttachmentLoader(atlas));
 		json.scale = Scale;
 		var skeletonData:SkeletonData = json.readSkeletonData(Assets.getText(DataPath + DataName + ".json"), DataName);
 		return skeletonData;
@@ -175,40 +178,52 @@ class FlxSpine extends FlxSprite
 				wrapper.alpha = skeleton.a * slot.a * regionAttachment.a;
 				
 				var bone:Bone = slot.bone;
-				
-				var wrapperAngle:Float = wrapper.angle;
-				var wrapperScaleX:Float = wrapper.scale.x;
-				var wrapperScaleY:Float = wrapper.scale.y;
-				
-				var wrapperOriginX:Float = wrapper.origin.x;
-				var wrapperOriginY:Float = wrapper.origin.y;
-				
-				var worldRotation:Float = -bone.worldRotation;
-				var worldScaleX:Float = bone.worldScaleX;
-				var worldScaleY:Float = bone.worldScaleY;
-				
-				wrapper.origin.set(0, 0);
-				
-				_matrix.identity();
-				_matrix.translate(wrapperOriginX, wrapperOriginY);
-				_matrix.scale(worldScaleX, worldScaleY);
-				_matrix.rotate(worldRotation * Math.PI / 180);
-				
-				wrapper.angle += worldRotation;
-				wrapper.angle *= flip;
-				wrapper.scale.x *= worldScaleX * flipX;
-				wrapper.scale.y *= worldScaleY * flipY;
-				
-				wrapper.x = this.x + bone.worldX + _matrix.tx * flipX;
-				wrapper.y = this.y + bone.worldY + _matrix.ty * flipY;
-				
-				wrapper.antialiasing = antialiasing;
-				wrapper.visible = true;
-				wrapper.draw();
-				
-				wrapper.angle = wrapperAngle;
-				wrapper.scale.set(wrapperScaleX, wrapperScaleY);
-				wrapper.origin.set(wrapperOriginX, wrapperOriginY);
+
+				if (bone.flipX) flipX = -flipX;
+				if (bone.flipY) flipY = -flipY;
+
+                //wrapper.x = this.x + bone.worldX;
+                //wrapper.y = this.y + bone.worldY;
+				//wrapper.angle = -bone.worldRotation * Math.PI / 180 * flipX * flipY;
+				//wrapper.scale.set(bone.worldScaleX * flipX, bone.worldScaleY * flipY);
+
+                //wrapper.antialiasing = antialiasing;
+                //wrapper.visible = true;
+                //wrapper.draw();
+
+                var wrapperAngle:Float = wrapper.angle;
+                var wrapperScaleX:Float = wrapper.scale.x;
+                var wrapperScaleY:Float = wrapper.scale.y;
+                
+                var wrapperOriginX:Float = wrapper.origin.x;
+                var wrapperOriginY:Float = wrapper.origin.y;
+                
+                var worldRotation:Float = -bone.worldRotation;
+                var worldScaleX:Float = bone.worldScaleX;
+                var worldScaleY:Float = bone.worldScaleY;
+                
+                wrapper.origin.set(0, 0);
+                
+                _matrix.identity();
+                _matrix.translate(wrapperOriginX, wrapperOriginY);
+                _matrix.scale(worldScaleX, worldScaleY);
+                _matrix.rotate(worldRotation * Math.PI / 180);
+                
+                wrapper.angle += worldRotation;
+                wrapper.angle *= flip;
+                wrapper.scale.x *= worldScaleX * flipX;
+                wrapper.scale.y *= worldScaleY * flipY;
+                
+                wrapper.x = this.x + bone.worldX + _matrix.tx * flipX;
+                wrapper.y = this.y + bone.worldY + _matrix.ty * flipY;
+                
+                wrapper.antialiasing = antialiasing;
+                wrapper.visible = true;
+                wrapper.draw();
+                
+                wrapper.angle = wrapperAngle;
+                wrapper.scale.set(wrapperScaleX, wrapperScaleY);
+                wrapper.origin.set(wrapperOriginX, wrapperOriginY);
 			}	
 			
 			i++;
@@ -243,18 +258,18 @@ class FlxSpine extends FlxSprite
 		if (cachedSprites.exists(regionAttachment))
 			return cachedSprites.get(regionAttachment);
 		
-		var region:AtlasRegion = cast regionAttachment.region;
-		var texture:FlixelTexture = cast region.texture;
+		var region:AtlasRegion = cast regionAttachment.rendererObject;
+		var texture:FlixelTexture = cast region.page.rendererObject;
 		
-		var regionWidth:Float = region.rotate ? region.regionHeight : region.regionWidth;
-		var regionHeight:Float = region.rotate ? region.regionWidth : region.regionHeight;
+		var regionWidth:Float = region.rotate ? region.height : region.width;
+		var regionHeight:Float = region.rotate ? region.width : region.height;
 		
 		var graph:FlxGraphic = FlxG.bitmap.add(texture.bd);
 		var atlasFrames:FlxAtlasFrames = (graph.atlasFrames == null) ? new FlxAtlasFrames(graph) : graph.atlasFrames;
 		
 		var name:String = region.name;
 		var offset:FlxPoint = FlxPoint.get(0, 0);
-		var frameRect:FlxRect = new FlxRect(region.regionX, region.regionY, region.regionWidth, region.regionHeight);
+        var frameRect:FlxRect = new FlxRect(region.x, region.y, regionWidth, regionHeight);
 		
 		var sourceSize:FlxPoint = FlxPoint.get(frameRect.width, frameRect.height);
 		var imageFrame = FlxImageFrame.fromFrame(atlasFrames.addAtlasFrame(frameRect, sourceSize, offset, name));
@@ -262,10 +277,10 @@ class FlxSpine extends FlxSprite
 		var wrapper:FlxSprite = new FlxSprite();
 		wrapper.frames = imageFrame;
 		wrapper.antialiasing = antialiasing;
-		
+		// Rotate and scale using default registration point 	
 		wrapper.angle = -regionAttachment.rotation;
-		wrapper.scale.x = regionAttachment.scaleX * (regionAttachment.width / regionWidth);
-		wrapper.scale.y = regionAttachment.scaleY * (regionAttachment.height / regionHeight);
+		wrapper.scale.x = regionAttachment.scaleX * (regionAttachment.width / region.width);
+		wrapper.scale.y = regionAttachment.scaleY * (regionAttachment.height / region.height);
 
 		// Position using attachment translation, shifted as if scale and rotation were at image center.
 		var radians:Float = -regionAttachment.rotation * Math.PI / 180;
@@ -276,8 +291,8 @@ class FlxSpine extends FlxSprite
 		
 		if (region.rotate) 
 		{
-			wrapper.angle += 90;
-			shiftX += regionHeight * (regionAttachment.width / region.regionWidth);
+            wrapper.angle += 90;
+            shiftX += regionHeight * (regionAttachment.width / region.width);
 		}
 		
 		wrapper.origin.x = regionAttachment.x + shiftX * cos - shiftY * sin;
