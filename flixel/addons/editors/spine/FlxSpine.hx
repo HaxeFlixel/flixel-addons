@@ -182,15 +182,6 @@ class FlxSpine extends FlxSprite
 				if (bone.flipX) flipX = -flipX;
 				if (bone.flipY) flipY = -flipY;
 
-                //wrapper.x = this.x + bone.worldX;
-                //wrapper.y = this.y + bone.worldY;
-				//wrapper.angle = -bone.worldRotation * Math.PI / 180 * flipX * flipY;
-				//wrapper.scale.set(bone.worldScaleX * flipX, bone.worldScaleY * flipY);
-
-                //wrapper.antialiasing = antialiasing;
-                //wrapper.visible = true;
-                //wrapper.draw();
-
                 var wrapperAngle:Float = wrapper.angle;
                 var wrapperScaleX:Float = wrapper.scale.x;
                 var wrapperScaleY:Float = wrapper.scale.y;
@@ -233,24 +224,27 @@ class FlxSpine extends FlxSprite
 	}
 	
 	#if !FLX_NO_DEBUG
-	override public function drawDebugOnCamera(Camera:FlxCamera):Void
-	{
-		super.drawDebugOnCamera(Camera);
-		
-		collider.drawDebugOnCamera(Camera);
-		
-		var drawOrder:Array<Slot> = skeleton.drawOrder;
-		for (slot in drawOrder) 
-		{
-			var attachment:Attachment = slot.attachment;
-			if (Std.is(attachment, RegionAttachment)) 
-			{
-				var regionAttachment:RegionAttachment = cast attachment;
-				var wrapper:FlxSprite = get(regionAttachment);
-				wrapper.drawDebugOnCamera(Camera);
-			}
-		}
-	}
+    //BUG:drawDebugOnCamera does not work.
+    override public function drawDebugOnCamera(Camera:FlxCamera):Void
+    {
+        trace(Camera);
+        super.drawDebugOnCamera(Camera);
+        
+        collider.drawDebugOnCamera(Camera);
+        
+        var drawOrder:Array<Slot> = skeleton.drawOrder;
+        for (slot in drawOrder) 
+        {
+            var attachment:Attachment = slot.attachment;
+            if (Std.is(attachment, RegionAttachment)) 
+            {
+                var regionAttachment:RegionAttachment = cast attachment;
+                var wrapper:FlxSprite = get(regionAttachment);
+                wrapper.ignoreDrawDebug = true;
+                wrapper.drawDebugOnCamera(Camera);
+            }
+        }
+    }
 	#end
 	
 	public function get(regionAttachment:RegionAttachment):FlxSprite 
