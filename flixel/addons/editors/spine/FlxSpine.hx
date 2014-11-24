@@ -163,6 +163,7 @@ class FlxSpine extends FlxSprite
 	{
 		super.update(elapsed);
 		
+		skeleton.update(elapsed);
 		state.update(elapsed);
 		state.apply(skeleton);
 		skeleton.updateWorldTransform();
@@ -193,7 +194,7 @@ class FlxSpine extends FlxSprite
 	private function renderWithTriangles():Void
 	{
 		var drawOrder:Array<Slot> = skeleton.drawOrder;
-		var i:Int = 0, n:Int = drawOrder.length;
+		var n:Int = drawOrder.length;
 		var graph:FlxGraphic = null;
 		var wrapper:FlxStrip;
 		var worldVertices:Vector<Float> = _tempVertices;
@@ -201,10 +202,9 @@ class FlxSpine extends FlxSprite
 		var uvs:Vector<Float> = null;
 		var verticesLength:Int;
 		
-		while (i < n) 
+		for (i in 0...n) 
 		{
 			var slot:Slot = drawOrder[i];
-			
 			if (slot.attachment != null)
 			{
 				wrapper = null;
@@ -286,8 +286,6 @@ class FlxSpine extends FlxSprite
 					wrapper.draw();
 				}
 			}
-			
-			i++;
 		}
 	}
 	
@@ -421,9 +419,9 @@ class FlxSpine extends FlxSprite
 	
 	private function getSprite(regionAttachment:RegionAttachment):FlxSprite 
 	{
-		if (regionAttachment.wrapperSprite != null)
+		if (regionAttachment.rendererObject != null && Std.is(regionAttachment.rendererObject, FlxSprite))
 		{
-			return cast(regionAttachment.wrapperSprite, FlxSprite);
+			return cast(regionAttachment.rendererObject, FlxSprite);
 		}
 		
 		var region:AtlasRegion = cast regionAttachment.rendererObject;
@@ -465,7 +463,7 @@ class FlxSpine extends FlxSprite
 		
 		wrapper.origin.x = regionAttachment.x + shiftX * cos - shiftY * sin;
 		wrapper.origin.y = -regionAttachment.y + shiftX * sin + shiftY * cos;
-		regionAttachment.wrapperSprite = wrapper;
+		regionAttachment.rendererObject = wrapper;
 		return wrapper;
 	}
 	
