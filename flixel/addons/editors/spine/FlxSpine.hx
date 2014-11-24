@@ -236,7 +236,7 @@ class FlxSpine extends FlxSprite
 					var mesh:MeshAttachment = cast(slot.attachment, MeshAttachment);
 					verticesLength = mesh.vertices.length;
 					if (worldVertices.length < verticesLength) worldVertices.length = verticesLength;
-					mesh.computeWorldVertices(x, y, slot, worldVertices);
+					mesh.computeWorldVertices(0, 0, slot, worldVertices);
 					uvs = mesh.uvs;
 					triangles = mesh.triangles;
 					
@@ -257,7 +257,7 @@ class FlxSpine extends FlxSprite
 					var skinnedMesh:SkinnedMeshAttachment = cast(slot.attachment, SkinnedMeshAttachment);
 					verticesLength = skinnedMesh.uvs.length;
 					if (worldVertices.length < verticesLength) worldVertices.length = verticesLength;
-					skinnedMesh.computeWorldVertices(x, y, slot, worldVertices);
+					skinnedMesh.computeWorldVertices(0, 0, slot, worldVertices);
 					uvs = skinnedMesh.uvs;
 					triangles = skinnedMesh.triangles;
 					
@@ -279,7 +279,6 @@ class FlxSpine extends FlxSprite
 					wrapper.x = x;
 					wrapper.y = y;
 					wrapper.cameras = cameras;
-					
 					wrapper.vertices = worldVertices;
 					wrapper.indices = triangles;
 					wrapper.uvs = uvs;
@@ -343,7 +342,12 @@ class FlxSpine extends FlxSprite
 				continue;
 			}
 			
-			var regionAttachment:RegionAttachment = cast slot.attachment;
+			var regionAttachment:RegionAttachment = null;
+			if (Std.is(slot.attachment, RegionAttachment))
+			{
+				regionAttachment = cast slot.attachment;
+			}
+			
 			if (regionAttachment != null) 
 			{
 				var wrapper:FlxSprite = getSprite(regionAttachment);
