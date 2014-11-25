@@ -36,7 +36,6 @@ class FlxShapeDonut extends FlxShape
 		var cx:Float = Math.ceil(width / 2);
 		var cy:Float = Math.ceil(height / 2);
 		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillColor, lineStyle, { matrix: matrix } );
-		FlxG.bitmapLog.add(pixels, "donut 0");
 		
 		if (radius_in > 0)
 		{
