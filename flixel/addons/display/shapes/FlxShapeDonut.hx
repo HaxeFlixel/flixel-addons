@@ -39,7 +39,7 @@ class FlxShapeDonut extends FlxShape
 		
 		if (radius_in > 0)
 		{
-			#if cpp
+			#if (cpp || neko)
 				//Temporary work-around until OpenFL properly supports ERASE blend mode on CPP targets
 				var zpt = new Point();
 				var temp = new FlxSprite(0, 0, new BitmapData(cast pixels.width, cast pixels.height, false, 0xFFFFFF));
