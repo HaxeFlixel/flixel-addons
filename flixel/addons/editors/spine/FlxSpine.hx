@@ -69,10 +69,10 @@ class FlxSpine extends FlxSprite
 		return skeletonData;
 	}
 	
-	public var skeleton:Skeleton;
-	public var skeletonData:SkeletonData;
-	public var state:AnimationState;
-	public var stateData:AnimationStateData;
+	public var skeleton(default, null):Skeleton;
+	public var skeletonData(default, null):SkeletonData;
+	public var state(default, null):AnimationState;
+	public var stateData(default, null):AnimationStateData;
 	
 	/**
 	 * Helper FlxObject, which you can use for colliding with other flixel objects.
@@ -83,9 +83,6 @@ class FlxSpine extends FlxSprite
 	public var collider(default, null):FlxSpineCollider;
 	
 	public var renderMeshes(default, null):Bool = false;
-	
-	private var bounds:FlxRect;
-	private var cameraBounds:FlxRect;
 	
 	private var _tempVertices:Vector<Float>;
 	private var _quadTriangles:Vector<Int>;
@@ -125,9 +122,6 @@ class FlxSpine extends FlxSprite
 		
 		this.renderMeshes = renderMeshes;
 		
-		bounds = new FlxRect();
-		cameraBounds = new FlxRect();
-		
 		_tempVertices = new Vector<Float>(8);
 		
 		_quadTriangles = new Vector<Int>();
@@ -149,9 +143,6 @@ class FlxSpine extends FlxSprite
 		skeleton = null;
 		state = null;
 		stateData = null;
-		
-		bounds = null;
-		cameraBounds = null;
 		
 		_tempVertices = null;
 		_quadTriangles = null;
@@ -285,42 +276,6 @@ class FlxSpine extends FlxSprite
 					wrapper.draw();
 				}
 			}
-		}
-	}
-	
-	private inline function pushVertex(vx:Float, vy:Float, camera:FlxCamera, vs:Vector<Float>):Void
-	{
-		#if FLX_RENDER_TILE
-		vx *= camera.totalScaleX;
-		vy *= camera.totalScaleY;
-		#end
-		
-		vs.push(vx);
-		vs.push(vy);
-	}
-	
-	private function inflateBounds(x:Float, y:Float):Void 
-	{
-		if (x < bounds.x) 
-		{
-			bounds.width += bounds.x - x;
-			bounds.x = x;
-		}
-		
-		if (y < bounds.y) 
-		{
-			bounds.height += bounds.y - y;
-			bounds.y = y;
-		}
-		
-		if (x > bounds.x + bounds.width) 
-		{
-			bounds.width = x - bounds.x;
-		}
-		
-		if (y > bounds.y + bounds.height) 
-		{
-			bounds.height = y - bounds.y;
 		}
 	}
 	
