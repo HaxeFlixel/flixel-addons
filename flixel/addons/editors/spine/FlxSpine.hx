@@ -82,7 +82,7 @@ class FlxSpine extends FlxSprite
 	 */
 	public var collider(default, null):FlxSpineCollider;
 	
-	public var renderMeshes(default, null):Bool = false;
+	public var renderMeshes:Bool = false;
 	
 	private var _tempVertices:Vector<Float>;
 	private var _quadTriangles:Vector<Int>;
@@ -378,9 +378,9 @@ class FlxSpine extends FlxSprite
 	
 	private function getSprite(regionAttachment:RegionAttachment):FlxSprite 
 	{
-		if (regionAttachment.rendererObject != null && Std.is(regionAttachment.rendererObject, FlxSprite))
+		if (regionAttachment.wrapper != null && Std.is(regionAttachment.wrapper, FlxSprite))
 		{
-			return cast(regionAttachment.rendererObject, FlxSprite);
+			return cast(regionAttachment.wrapper, FlxSprite);
 		}
 		
 		var region:AtlasRegion = cast regionAttachment.rendererObject;
@@ -422,7 +422,7 @@ class FlxSpine extends FlxSprite
 		
 		wrapper.origin.x = regionAttachment.x + shiftX * cos - shiftY * sin;
 		wrapper.origin.y = -regionAttachment.y + shiftX * sin + shiftY * cos;
-		regionAttachment.rendererObject = wrapper;
+		regionAttachment.wrapper = wrapper;
 		return wrapper;
 	}
 	
@@ -628,5 +628,5 @@ class FlxSpineCollider extends FlxObject
 		}
 		
 		return value;
-	}	
+	}
 }
