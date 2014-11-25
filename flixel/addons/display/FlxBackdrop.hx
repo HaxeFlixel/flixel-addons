@@ -7,7 +7,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
-import flixel.graphics.tile.FlxDrawStackItem;
+import flixel.graphics.tile.FlxDrawTilesItem;
 import flixel.math.FlxPoint;
 import flixel.math.FlxPoint.FlxCallbackPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
@@ -155,7 +155,7 @@ class FlxBackdrop extends FlxSprite
 				return;
 			}
 			
-			var drawItem:FlxDrawStackItem = camera.getDrawStackItem(_tileFrame.parent, false, 0);
+			var drawItem:FlxDrawTilesItem = camera.getDrawTilesItem(_tileFrame.parent, false, 0);
 			
 			_matrix.identity();
 			
