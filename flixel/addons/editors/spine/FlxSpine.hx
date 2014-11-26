@@ -209,19 +209,18 @@ class FlxSpine extends FlxSprite
 					uvs = region.uvs;
 					triangles = _quadTriangles;
 					
-					if (Std.is(region.rendererObject, FlxStrip))
+					if (region.wrapperStrip != null)
 					{
-						wrapper = cast region.rendererObject;
+						wrapper = cast region.wrapperStrip;
 					}
 					else
 					{
 						var atlasRegion:AtlasRegion = cast region.rendererObject;
 						var bitmapData:BitmapData = cast(atlasRegion.page.rendererObject, BitmapData);
 						wrapper = new FlxStrip(0, 0, bitmapData);
-						region.rendererObject = wrapper;
+						region.wrapperStrip = wrapper;
 					}
 				} 
-				
 				else if (Std.is(slot.attachment, MeshAttachment)) 
 				{
 					var mesh:MeshAttachment = cast(slot.attachment, MeshAttachment);
@@ -378,9 +377,9 @@ class FlxSpine extends FlxSprite
 	
 	private function getSprite(regionAttachment:RegionAttachment):FlxSprite 
 	{
-		if (regionAttachment.wrapper != null && Std.is(regionAttachment.wrapper, FlxSprite))
+		if (regionAttachment.wrapperSprite != null && Std.is(regionAttachment.wrapperSprite, FlxSprite))
 		{
-			return cast(regionAttachment.wrapper, FlxSprite);
+			return cast(regionAttachment.wrapperSprite, FlxSprite);
 		}
 		
 		var region:AtlasRegion = cast regionAttachment.rendererObject;
@@ -422,7 +421,7 @@ class FlxSpine extends FlxSprite
 		
 		wrapper.origin.x = regionAttachment.x + shiftX * cos - shiftY * sin;
 		wrapper.origin.y = -regionAttachment.y + shiftX * sin + shiftY * cos;
-		regionAttachment.wrapper = wrapper;
+		regionAttachment.wrapperSprite = wrapper;
 		return wrapper;
 	}
 	
