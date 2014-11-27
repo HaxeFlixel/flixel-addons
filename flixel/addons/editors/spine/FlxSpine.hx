@@ -267,11 +267,15 @@ class FlxSpine extends FlxSprite
 					wrapper.y = y;
 					wrapper.cameras = cameras;
 					
+					#if flash
 					wrapper.vertices.length = verticesLength;
 					for (i in 0...verticesLength)
 					{
 						wrapper.vertices[i] = worldVertices[i];
 					}
+					#else
+					wrapper.vertices = worldVertices;
+					#end
 					
 					wrapper.indices = triangles;
 					wrapper.uvs = uvs;
