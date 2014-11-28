@@ -207,6 +207,11 @@ class FlxSpine extends FlxSprite
 		var triangles:Array<Int> = null;
 		var uvs:Array<Float> = null;
 		var verticesLength:Int = 0;
+		var numVertices:Int;
+		
+		var r:Float = 0, g:Float = 0, b:Float = 0, a:Float = 0;
+		var wrapperColor:Int;
+		var wrapperBlending:BlendMode;
 		
 		for (i in 0...n) 
 		{
@@ -234,6 +239,11 @@ class FlxSpine extends FlxSprite
 						wrapper = new FlxStrip(0, 0, bitmapData);
 						region.wrapperStrip = wrapper;
 					}
+					
+					r = region.r;
+					g = region.g;
+					b = region.b;
+					a = region.a;
 				} 
 				else if (Std.is(slot.attachment, MeshAttachment)) 
 				{
@@ -254,6 +264,11 @@ class FlxSpine extends FlxSprite
 						wrapper = new FlxStrip(0, 0, bitmapData);
 						mesh.rendererObject = wrapper;
 					}
+					
+					r = mesh.r;
+					g = mesh.g;
+					b = mesh.b;
+					a = mesh.a;
 				}
 				else if (Std.is(slot.attachment, SkinnedMeshAttachment))
 				{
@@ -274,6 +289,11 @@ class FlxSpine extends FlxSprite
 						wrapper = new FlxStrip(0, 0, bitmapData);
 						skinnedMesh.rendererObject = wrapper;
 					}
+					
+					r = skinnedMesh.r;
+					g = skinnedMesh.g;
+					b = skinnedMesh.b;
+					a = skinnedMesh.a;
 				}
 				
 				if (wrapper != null)
@@ -294,6 +314,25 @@ class FlxSpine extends FlxSprite
 					
 					wrapper.indices = triangles;
 					wrapper.uvs = uvs;
+					
+					numVertices = 2 * Std.int(verticesLength / 2);
+					
+					wrapperColor = FlxColor.fromRGBFloat(skeleton.r * slot.r * r * color.redFloat,
+														  skeleton.g * slot.g * g * color.greenFloat,
+														  skeleton.b * slot.b * b * color.blueFloat,
+														  skeleton.a * slot.a * a * alpha);
+														  
+					for (j in 0...numVertices)
+					{
+						wrapper.colors[j] = wrapperColor;
+					}
+					
+					if (wrapper.colors.length - numVertices > 0)
+					{
+						wrapper.colors.splice(numVertices, wrapper.colors.length - numVertices);
+					}
+					
+					wrapper.blend = slot.data.additiveBlending ? BlendMode.ADD : null;
 					wrapper.draw();
 				}
 			}
