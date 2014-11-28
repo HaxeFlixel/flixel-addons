@@ -10,7 +10,7 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.graphics.frames.FlxFrame;
-import flixel.graphics.tile.FlxDrawStackItem;
+import flixel.graphics.tile.FlxDrawTilesItem;
 import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.tile.FlxTilemapBuffer;
@@ -124,7 +124,7 @@ class FlxTilemapExt extends FlxTilemap
 		var drawY:Float;
 		
 		var _tileTransformMatrix:Matrix = null;
-		var drawItem:FlxDrawStackItem;
+		var drawItem:FlxDrawTilesItem;
 		#end
 		
 		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
