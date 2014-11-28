@@ -120,6 +120,21 @@ class FlxSpine extends FlxSprite
 		setPosition(x, y);
 		setSize(width, height);
 		
+		var drawOrder:Array<Slot> = skeleton.drawOrder;
+		for (slot in drawOrder) 
+		{
+			if (slot.attachment == null)
+			{
+				continue;
+			}
+			
+			if (Std.is(slot.attachment, MeshAttachment) || Std.is(slot.attachment, SkinnedMeshAttachment))
+			{
+				renderMeshes = true;
+				break;
+			}
+		}
+		
 		this.renderMeshes = renderMeshes;
 		
 		_tempVertices = new Array<Float>();
