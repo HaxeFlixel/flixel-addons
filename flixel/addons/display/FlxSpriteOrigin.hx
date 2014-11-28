@@ -8,7 +8,7 @@ import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.graphics.frames.FlxFrame.FlxFrameType;
-import flixel.graphics.tile.FlxDrawStackItem;
+import flixel.graphics.tile.FlxDrawTilesItem;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.math.FlxMatrix;
@@ -43,7 +43,7 @@ class FlxSpriteOrigin extends FlxSprite
 		}
 		
 	#if FLX_RENDER_TILE
-		var drawItem:FlxDrawStackItem;
+		var drawItem:FlxDrawTilesItem;
 		
 		var ox:Float = origin.x;
 		if (_facingHorizontalMult != 1)
