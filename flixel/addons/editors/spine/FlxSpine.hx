@@ -108,7 +108,7 @@ class FlxSpine extends FlxSprite
 		stateData = new AnimationStateData(skeletonData);
 		state = new AnimationState(stateData);
 		
-		skeleton = new Skeleton(skeletonData);
+		skeleton = new FlxSkeleton(skeletonData, this);
 		
 		flipX = false;
 		flipY = true;
@@ -694,6 +694,41 @@ class FlxSpineCollider extends FlxObject
 		else
 		{
 			offsetY = value;
+		}
+		
+		return value;
+	}
+}
+
+class FlxSkeleton extends Skeleton
+{
+	private var sprite:FlxSpine;
+	
+	public function new(data:SkeletonData, sprite:FlxSpine)
+	{
+		super(data);
+		this.sprite = sprite;
+	}
+	
+	override function set_x(value:Float):Float 
+	{
+		super.set_x(value);
+		
+		if (sprite.x != value)
+		{
+			sprite.x = value;
+		}
+		
+		return value;
+	}
+	
+	override function set_y(value:Float):Float 
+	{
+		super.set_y(value);
+		
+		if (sprite.y != value)
+		{
+			sprite.y = value;
 		}
 		
 		return value;
