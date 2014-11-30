@@ -109,8 +109,6 @@ class FlxSpine extends FlxSprite
 		state = new AnimationState(stateData);
 		
 		skeleton = new Skeleton(skeletonData);
-		skeleton.x = 0;
-		skeleton.y = 0;
 		
 		flipX = false;
 		flipY = true;
@@ -191,7 +189,7 @@ class FlxSpine extends FlxSprite
 		}
 		else
 		{
-			renderWithQuads();	
+			renderWithQuads();
 		}
 		
 		collider.draw();
@@ -224,7 +222,7 @@ class FlxSpine extends FlxSprite
 				{
 					var region:RegionAttachment = cast slot.attachment;
 					verticesLength = 8;
-					region.computeWorldVertices(0, 0, slot.bone, worldVertices);
+					region.computeWorldVertices(skeleton.x, skeleton.y, slot.bone, worldVertices);
 					uvs = region.uvs;
 					triangles = _quadTriangles;
 					
@@ -249,7 +247,7 @@ class FlxSpine extends FlxSprite
 				{
 					var mesh:MeshAttachment = cast(slot.attachment, MeshAttachment);
 					verticesLength = mesh.vertices.length;
-					mesh.computeWorldVertices(0, 0, slot, worldVertices);
+					mesh.computeWorldVertices(skeleton.x, skeleton.y, slot, worldVertices);
 					uvs = mesh.uvs;
 					triangles = mesh.triangles;
 					
@@ -274,7 +272,7 @@ class FlxSpine extends FlxSprite
 				{
 					var skinnedMesh:SkinnedMeshAttachment = cast(slot.attachment, SkinnedMeshAttachment);
 					verticesLength = skinnedMesh.uvs.length;
-					skinnedMesh.computeWorldVertices(0, 0, slot, worldVertices);
+					skinnedMesh.computeWorldVertices(skeleton.x, skeleton.y, slot, worldVertices);
 					uvs = skinnedMesh.uvs;
 					triangles = skinnedMesh.triangles;
 					
@@ -298,8 +296,8 @@ class FlxSpine extends FlxSprite
 				
 				if (wrapper != null)
 				{
-					wrapper.x = x;
-					wrapper.y = y;
+					wrapper.x = 0;
+					wrapper.y = 0;
 					wrapper.cameras = cameras;
 					
 					#if flash
@@ -399,8 +397,8 @@ class FlxSpine extends FlxSprite
 				wrapper.scale.x *= worldScaleX * flipX;
 				wrapper.scale.y *= worldScaleY * flipY;
 				
-				wrapper.x = this.x + bone.worldX + _matrix.tx * flipX;
-				wrapper.y = this.y + bone.worldY + _matrix.ty * flipY;
+				wrapper.x = skeleton.x + bone.worldX + _matrix.tx * flipX;
+				wrapper.y = skeleton.y + bone.worldY + _matrix.ty * flipY;
 				
 				wrapper.antialiasing = antialiasing;
 				wrapper.visible = true;
@@ -490,15 +488,20 @@ class FlxSpine extends FlxSprite
 	{
 		super.set_x(NewX);
 		
-		if (skeleton != null && collider != null)
+		if (skeleton != null)
 		{
-			if (skeleton.flipX)
+			skeleton.x = NewX;
+			
+			if (collider != null)
 			{
-				collider.x = x - collider.offsetX - width;
-			}
-			else
-			{
-				collider.x = x + collider.offsetX;
+				if (skeleton.flipX)
+				{
+					collider.x = skeleton.x - collider.offsetX - width;
+				}
+				else
+				{
+					collider.x = skeleton.x + collider.offsetX;
+				}
 			}
 		}
 		
@@ -509,16 +512,22 @@ class FlxSpine extends FlxSprite
 	{
 		super.set_y(NewY);
 		
-		if (skeleton != null && collider != null)
+		if (skeleton != null)
 		{
-			if (skeleton.flipY)
+			skeleton.y = NewY;
+			
+			if (collider != null)
 			{
-				collider.y = y + collider.offsetY - height;
+				if (skeleton.flipY)
+				{
+					collider.y = skeleton.y + collider.offsetY - height;
+				}
+				else
+				{
+					collider.y = skeleton.y - collider.offsetY;
+				}
 			}
-			else
-			{
-				collider.y = y - collider.offsetY;
-			}
+			
 		}
 		
 		return NewY;
