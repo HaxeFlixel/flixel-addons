@@ -418,6 +418,9 @@ class FlxScene
 		if (element.has.size)
 		instance.size = Std.parseInt(element.att.size);
 
+		if (element.has.fieldWidth)
+		instance.fieldWidth = Std.parseInt(element.att.fieldWidth);
+
 		if (element.has.font)
 		instance.font = assetsDirectory + element.att.font;
 
