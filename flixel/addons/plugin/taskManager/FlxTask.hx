@@ -8,7 +8,7 @@ import flixel.util.FlxDestroyUtil;
  * @author Zaphod
  * @since  11.19.2012
  */
-class AntTask implements IFlxDestroyable
+class FlxTask implements IFlxDestroyable
 {
 	/**
 	 * Method-task to be executed
@@ -25,12 +25,12 @@ class AntTask implements IFlxDestroyable
 	/**
 	 * Pointer to the next task.
 	 */
-	public var next:AntTask;
+	public var next:FlxTask;
 	
 	/**
-	 * Creates a new AntTask
+	 * Creates a new FlxTask
 	 */
-	public function new(Func:Void->Bool, IgnoreCycle:Bool = false, Instant:Bool = false, ?Next:AntTask)
+	public function new(Func:Void->Bool, IgnoreCycle:Bool = false, Instant:Bool = false, ?Next:FlxTask)
 	{
 		func = Func;
 		ignoreCycle = IgnoreCycle;

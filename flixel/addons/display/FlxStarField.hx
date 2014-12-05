@@ -156,6 +156,7 @@ private class FlxStarField extends FlxSprite
 		
 		pixels.unlock();
 		framePixels = pixels;
+		dirty = false;
 		super.draw();
 	}
 	

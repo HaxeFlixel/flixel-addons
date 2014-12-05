@@ -2,7 +2,6 @@
 import flash.display.BitmapData;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.util.FlxTimer;
 
 /**
  * 

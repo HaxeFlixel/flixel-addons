@@ -33,6 +33,9 @@ class FlxTransitionableState extends FlxState
 	public static var defaultTransIn:TransitionData=null;
 	public static var defaultTransOut:TransitionData=null;
 	
+	public static var skipNextTransIn:Bool = false;
+	public static var skipNextTransOut:Bool = false;
+	
 	//beginning & ending transitions for THIS state:
 	public var transIn:TransitionData;
 	public var transOut:TransitionData;
@@ -91,6 +94,12 @@ class FlxTransitionableState extends FlxState
 				FlxG.switchState(Next);
 			}
 		);
+		
+		if (skipNextTransOut)
+		{
+			skipNextTransOut = false;
+			finishTransOut();
+		}
 	}
 	
 	/**
@@ -100,6 +109,16 @@ class FlxTransitionableState extends FlxState
 	{
 		if (transIn != null && transIn.type != NONE)
 		{
+			if (skipNextTransIn)
+			{
+				skipNextTransIn = false;
+				if (finishTransIn != null)
+				{
+					finishTransIn();
+				}
+				return;
+			}
+			
 			var _trans = getTransition(transIn);
 			
 			_trans.setStatus(FULL);

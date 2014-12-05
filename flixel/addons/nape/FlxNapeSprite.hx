@@ -292,4 +292,17 @@ class FlxNapeSprite extends FlxSprite
 		body.space = Value ? FlxNapeSpace.space : null;
 		return physicsEnabled = Value;
 	}
+	
+	/**
+	 * Helper function to set the coordinates of this object.
+	 * Handy since it only requires one line of code.
+	 *
+	 * @param	X	The new x position
+	 * @param	Y	The new y position
+	 */
+	override public function setPosition(X:Float = 0, Y:Float = 0):Void
+	{
+		body.position.x = X;
+		body.position.y = Y;
+	}
 }

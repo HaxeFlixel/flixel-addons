@@ -15,7 +15,7 @@ import flixel.math.FlxVector;
  * This creates a Lightning bolt drawn on top of a FlxSprite object. 
  * 
  * TODO:
- * I'm not currently adding enough border room to properly account for the filter effect
+ * I might not currently be adding enough border room to properly account for the filter effect
  */
 class FlxShapeLightning extends FlxShapeLine
 {
@@ -44,45 +44,55 @@ class FlxShapeLightning extends FlxShapeLine
 	 */	
 	public function new(X:Float, Y:Float, A:FlxPoint, B:FlxPoint, Style:LightningStyle, UseDefaults:Bool = true) 
 	{
-		shape_id = "lightning";
 		lightningStyle = Style;
 		
-		var v = FlxVector.get(A.x - B.x, A.y - B.y);
+		var v = new FlxVector(A.x - B.x, A.y - B.y);
 		magnitude = v.length;
 		
-		if ((lightningStyle.halo_colors == null) && UseDefaults)
-			lightningStyle.halo_colors = [0xff88aaee, 0xff5555cc, 0xff334488];	//default colors
+		if (UseDefaults)
+		{
+			if (lightningStyle.displacement == null)
+			{
+				lightningStyle.displacement = 25.0;
+			}
+			if (lightningStyle.detail == null)
+			{
+				lightningStyle.detail = 1.0;
+			}
+			if (lightningStyle.halo_colors == null)
+			{
+				lightningStyle.halo_colors = [0xff88aaee, 0xff5555cc, 0xff334488];	//default colors
+			}
+		}
 		
 		list_segs = new Array<LineSegment>();
 		list_branch = new Array<LineSegment>();
 		
 		var w:Float = Math.abs(A.x - B.x);
-		var h:Float = Math.abs(B.y - B.y);
+		var h:Float = Math.abs(A.y - B.y);
 		
-		var testStyle:LineStyle = { thickness: 1, color: FlxColor.WHITE };
-		super(X, Y, A, B, testStyle);
+		super(X, Y, A, B, { thickness: lightningStyle.thickness, color: lightningStyle.color});
 		
 		//create the main lightning bolt
 		calculate(A, B, lightningStyle.displacement, 0);
 		
-		A.putWeak();
-		B.putWeak();
+		shape_id = FlxShapeType.LIGHTNING;
 	}
 	
-	private inline function addSegment(A:FlxPoint, B:FlxPoint):Void 
+	private inline function addSegment(Ax:Float,Ay:Float,Bx:Float,By:Float):Void 
 	{
-		list_segs.push(new LineSegment(A, B));
+		list_segs.push(new LineSegment(Ax, Ay, Bx, By));
 	}
 	
 	private function calculate(A:FlxPoint, B:FlxPoint, Displacement:Float, Iteration:Int):Void 
 	{
 		if (Displacement < lightningStyle.detail)
 		{
-			addSegment(A, B);
+			addSegment(A.x, A.y, B.x, B.y);
 		}
 		else
 		{
-			var mid:FlxPoint = FlxPoint.get();
+			var mid:FlxPoint = new FlxPoint();
 			mid.x = (A.x + B.x) / 2;
 			mid.y = (A.y + B.y) / 2;
 			var dispX:Float = FlxG.random.float( -0.5, 0.5); 
@@ -119,32 +129,40 @@ class FlxShapeLightning extends FlxShapeLine
 
 	override public function drawSpecificShape(?matrix:Matrix):Void 
 	{
-		var up:Float = 9999;
-		var left:Float = 9999;
+		var up:Float = Math.POSITIVE_INFINITY;
+		var left:Float = Math.POSITIVE_INFINITY;
 		var down:Float = 0;
 		var right:Float = 0;
 		
 		var l:LineSegment;
 		for (l in list_segs) 
 		{
-			if (l.a.x < left)	{ left	= l.a.x; }
-			if (l.b.x < left)	{ left	= l.b.x; }
-			if (l.a.y < up)		{ up	= l.a.y; }
-			if (l.b.y < up)		{ up	= l.b.y; }
-			if (l.a.x > right)	{ right	= l.a.x; }
-			if (l.b.x > right)	{ right	= l.b.x; }
-			if (l.a.y > down)	{ down	= l.a.y; }
-			if (l.b.y > down)	{ down	= l.b.y; }
+			if (l.ax < left)	{ left	= l.ax; }
+			if (l.bx < left)	{ left	= l.bx; }
+			if (l.ay < up)		{ up	= l.ay; }
+			if (l.by < up)		{ up	= l.by; }
+			if (l.ax > right)	{ right	= l.ax; }
+			if (l.bx > right)	{ right	= l.bx; }
+			if (l.ay > down)	{ down	= l.ay; }
+			if (l.by > down)	{ down	= l.by; }
 		}
 		
-		FlxG.log.add("ul = (" + left + "," + up + ")");
-		FlxG.log.add("lr = (" + down + "," + right + ")");
-		
-		var strokeBuffer:Float = lightningStyle.thickness;
-		
-		//point-to-point size, unstroked
-		var trueWidth:Float = Math.abs(point.x - point2.x);
-		var trueHeight:Float = Math.abs(point.y - point2.y);
+		if (left < 0)
+		{
+			expandLeft = left * -1;
+		}
+		if (right > shapeWidth)
+		{
+			expandRight = shapeWidth - right;
+		}
+		if (up < 0)
+		{
+			expandUp = up * -1;
+		}
+		if (down > shapeHeight)
+		{
+			expandDown = shapeHeight - down;
+		}
 		
 		//bbox size, unstroked
 		var newWidth:Float = right - left;
@@ -156,33 +174,32 @@ class FlxShapeLightning extends FlxShapeLine
 		
 		offset.x = 0;
 		offset.y = 0;
-		width = canvasWidth;
-		height = canvasHeight;
 		
 		if ((canvasWidth != pixels.width) || (canvasHeight != pixels.height))
+		{
 			makeGraphic(canvasWidth, canvasHeight, FlxColor.TRANSPARENT, true);
+		}
 		else 
+		{
 			pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
+		}
 		
 		_matrix.identity();
 		
 		var dw:Int = 0;
 		var dh:Int= 0;
 		
-		//if it's poking of the left or top, I need to adjust the drawing location
-		if (left < 0) { dw = Std.int( -left + (strokeBuffer/2)); }
-		if (up   < 0) { dh = Std.int( -up   + (strokeBuffer/2)); }
+		//if it's poking off the left or top, I need to adjust the drawing location
+		dw = Std.int(strokeBuffer / 2);
+		dh = Std.int(strokeBuffer / 2);
 		
-		for (l in list_segs) 
-			FlxSpriteUtil.drawLine(this, l.a.x+dw, l.a.y+dh, l.b.x+dw, l.b.y+dh, lineStyle);
+		if (left < 0) { dw = Std.int( -left + (strokeBuffer / 2)); }
+		if (up   < 0) { dh = Std.int( -up   + (strokeBuffer / 2)); }
 		
-		//lineStyle.thickness = 1;
-		
-		width = trueWidth;
-		height = trueHeight;
-		
-		offset.x = dw;
-		offset.y = dh;
+		for (l in list_segs)
+		{
+			FlxSpriteUtil.drawLine(this, l.ax + dw, l.ay + dh, l.bx + dw, l.by + dh, lineStyle);
+		}
 		
 		shapeDirty = true;
 		filterDirty = true;		//update filters too
@@ -190,8 +207,10 @@ class FlxShapeLightning extends FlxShapeLine
 	
 	override private inline function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
 	{
-		//doNothing, because this class requires special treatement
-		//and I don't want this to get called by accident and screw things up
+		width = shapeWidth;
+		height = shapeHeight;
+		offset.x = expandLeft + getStrokeOffsetX();
+		offset.y = expandUp + getStrokeOffsetY();
 	}
 	
 	override public function draw():Void 
@@ -204,9 +223,7 @@ class FlxShapeLightning extends FlxShapeLine
 			{
 				filterDirty = false;
 				return;
-			}	
-			
-			var sizeInc:Int = lightningStyle.halo_colors.length * 3;
+			}
 			
 			var i:Int = 0;
 			var a:Array<GlowFilter> = new Array<GlowFilter>();
@@ -238,7 +255,28 @@ class FlxShapeLightning extends FlxShapeLine
 			}
 			
 			filterDirty = false;
+			fixBoundaries(shapeWidth, shapeHeight);
 		}
+	}
+	
+	override public function get_strokeBuffer():Float
+	{
+		return lightningStyle.thickness * 2;
+	}
+	
+	private var expandLeft:Float = 0;
+	private var expandRight:Float = 0;
+	private var expandUp:Float = 0;
+	private var expandDown:Float = 0;
+	
+	private override function getStrokeOffsetX():Float
+	{
+		return strokeBuffer / 2;
+	}
+	
+	private override function getStrokeOffsetY():Float
+	{
+		return strokeBuffer / 2;
 	}
 }
 
@@ -256,19 +294,21 @@ typedef LightningStyle = {
  */
 class LineSegment 
 {
-	public var a(default, null):FlxPoint;
-	public var b(default, null):FlxPoint;
+	public var ax:Float;
+	public var ay:Float;
+	public var bx:Float;
+	public var by:Float;
 	
-	public function new(A:FlxPoint, B:FlxPoint) 
+	public function new(Ax:Float,Ay:Float,Bx:Float,By:Float) 
 	{
-		a = FlxPoint.get(A.x, A.y);
-		b = FlxPoint.get(B.x, B.y);
-		A.putWeak();
-		B.putWeak();
+		ax = Ax;
+		ay = Ay;
+		bx = Bx;
+		by = By;
 	}
-
+	
 	public inline function copy():LineSegment 
 	{
-		return new LineSegment(a, b);
+		return new LineSegment(ax, ay, bx, by);
 	}
 }

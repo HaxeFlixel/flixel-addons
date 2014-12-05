@@ -47,7 +47,7 @@ class FlxClickArea extends FlxObject
 	 * @param 	Height		Height of the area
 	 * @param	OnUp		The function to call whenever the button is clicked.
 	 */
-	public function new(X:Float = 0, Y:Float = 0, Width:Float=80, Height:Float=20, ?OnUp:Void->Void)
+	public function new(X:Float = 0, Y:Float = 0, Width:Float = 80, Height:Float = 20, ?OnUp:Void->Void)
 	{
 		super(X, Y);
 		
