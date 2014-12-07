@@ -307,6 +307,11 @@ class FlxSpine extends FlxSprite
 						wrapper.vertices[i] = worldVertices[i];
 					}
 					#else
+					if (worldVertices.length - verticesLength > 0)
+					{
+						worldVertices.splice(verticesLength, worldVertices.length - verticesLength);
+					}
+					
 					wrapper.vertices = worldVertices;
 					#end
 					
