@@ -131,7 +131,7 @@ class FlxSkewedSprite extends FlxSprite
 				camera.buffer.draw(framePixels, _matrix, null, blend, null, antialiasing);
 			}
 #else
-			drawItem = camera.getDrawStackItem(frame.parent, isColored, _blendInt, antialiasing);
+			drawItem = camera.getDrawTilesItem(frame.parent, isColored, _blendInt, antialiasing);
 			
 			_matrix.identity();
 			

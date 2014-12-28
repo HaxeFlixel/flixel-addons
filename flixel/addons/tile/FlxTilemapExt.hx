@@ -251,7 +251,7 @@ class FlxTilemapExt extends FlxTilemap
 					
 					_point.set(drawX, drawY);
 					
-					drawItem = Camera.getDrawStackItem(graphic, isColored, _blendInt);
+					drawItem = Camera.getDrawTilesItem(graphic, isColored, _blendInt);
 					drawItem.setDrawData(_point, frame.tileID, _matrix, isColored, color, alpha);
 				}
 				#end

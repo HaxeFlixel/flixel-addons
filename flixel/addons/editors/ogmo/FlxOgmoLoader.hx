@@ -68,8 +68,7 @@ class FlxOgmoLoader
 	public function loadTilemap(TileGraphic:Dynamic, TileWidth:Int = 16, TileHeight:Int = 16, TileLayer:String = "tiles"):FlxTilemap
 	{
 		var tileMap:FlxTilemap = new FlxTilemap();
-		tileMap.loadMap(_fastXml.node.resolve(TileLayer).innerData, TileGraphic, TileWidth, TileHeight);
-		
+		tileMap.loadMapFromCSV(_fastXml.node.resolve(TileLayer).innerData, TileGraphic, TileWidth, TileHeight);
 		return tileMap;
 	}
 
