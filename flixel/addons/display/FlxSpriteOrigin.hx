@@ -14,7 +14,7 @@ import flixel.math.FlxMath;
 import flixel.math.FlxMatrix;
 import flixel.math.FlxPoint;
 
-@:bitmap("assets/images/logo/default.png")
+@:keep @:bitmap("assets/images/logo/default.png")
 private class GraphicDefault extends BitmapData {}
 
 /**

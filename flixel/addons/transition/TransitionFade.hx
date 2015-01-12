@@ -1,4 +1,5 @@
 package flixel.addons.transition;
+
 import flash.display.BitmapData;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.FlxSprite;
@@ -10,7 +11,8 @@ import openfl.display.BitmapDataChannel;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 
-@:bitmap("assets/images/transitions/diagonal_gradient.png") private class GraphicDiagonalGradient extends BitmapData { }
+@:keep @:bitmap("assets/images/transitions/diagonal_gradient.png")
+private class GraphicDiagonalGradient extends BitmapData {}
 
 /**
  * 
