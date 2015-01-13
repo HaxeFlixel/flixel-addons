@@ -9,9 +9,14 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxTimer;
 import openfl.display.BitmapData;
 
-@:bitmap("assets/images/transitions/circle.png") class GraphicTransTileCircle extends BitmapData { }
-@:bitmap("assets/images/transitions/diamond.png") class GraphicTransTileDiamond extends BitmapData { }
-@:bitmap("assets/images/transitions/square.png") class GraphicTransTileSquare extends BitmapData { }
+@:keep @:bitmap("assets/images/transitions/circle.png")
+class GraphicTransTileCircle extends BitmapData {}
+
+@:keep @:bitmap("assets/images/transitions/diamond.png")
+class GraphicTransTileDiamond extends BitmapData {}
+
+@:keep @:bitmap("assets/images/transitions/square.png")
+class GraphicTransTileSquare extends BitmapData {}
 
 /**
  * 

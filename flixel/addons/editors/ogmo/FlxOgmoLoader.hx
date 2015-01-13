@@ -68,8 +68,7 @@ class FlxOgmoLoader
 	public function loadTilemap(TileGraphic:Dynamic, TileWidth:Int = 16, TileHeight:Int = 16, TileLayer:String = "tiles"):FlxTilemap
 	{
 		var tileMap:FlxTilemap = new FlxTilemap();
-		tileMap.loadMap(_fastXml.node.resolve(TileLayer).innerData, TileGraphic, TileWidth, TileHeight);
-		
+		tileMap.loadMapFromCSV(_fastXml.node.resolve(TileLayer).innerData, TileGraphic, TileWidth, TileHeight);
 		return tileMap;
 	}
 
@@ -118,5 +117,17 @@ class FlxOgmoLoader
 		{
 			RectLoadCallback(FlxRect.get(Std.parseInt(r.x.get("x")), Std.parseInt(r.x.get("y")), Std.parseInt(r.x.get("w")), Std.parseInt(r.x.get("h"))));
 		}
+	}
+	    
+	/**
+	 * Allows for loading of level properties specified in Ogmo editor.
+	 * Useful for getting properties without having to manually edit the FlxOgmoLoader
+	 * Returns a String that will need to be parsed
+	 *
+	 * @param name A string that corresponds to the property to be accessed
+	 */
+	public function getProperty(name:String):String
+	{
+	        return _fastXml.att.resolve(name);
 	}
 }

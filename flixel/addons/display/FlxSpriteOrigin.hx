@@ -8,13 +8,13 @@ import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.graphics.frames.FlxFrame.FlxFrameType;
-import flixel.graphics.tile.FlxDrawStackItem;
+import flixel.graphics.tile.FlxDrawTilesItem;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.math.FlxMatrix;
 import flixel.math.FlxPoint;
 
-@:bitmap("assets/images/logo/default.png")
+@:keep @:bitmap("assets/images/logo/default.png")
 private class GraphicDefault extends BitmapData {}
 
 /**
@@ -43,7 +43,7 @@ class FlxSpriteOrigin extends FlxSprite
 		}
 		
 	#if FLX_RENDER_TILE
-		var drawItem:FlxDrawStackItem;
+		var drawItem:FlxDrawTilesItem;
 		
 		var ox:Float = origin.x;
 		if (_facingHorizontalMult != 1)
@@ -89,7 +89,7 @@ class FlxSpriteOrigin extends FlxSprite
 				camera.buffer.draw(framePixels, _matrix, null, blend, null, (antialiasing || camera.antialiasing));
 			}
 #else
-			drawItem = camera.getDrawStackItem(frame.parent, isColored, _blendInt, antialiasing);
+			drawItem = camera.getDrawTilesItem(frame.parent, isColored, _blendInt, antialiasing);
 			
 			_matrix.identity();
 			
