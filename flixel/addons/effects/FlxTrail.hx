@@ -86,7 +86,7 @@ class FlxTrail extends FlxSpriteGroup
 	 * Creates a new FlxTrail effect for a specific FlxSprite.
 	 * 
 	 * @param	Sprite		The FlxSprite the trail is attached to.
-	 * @param  	Graphic		The image to ues for the trailsprites. Optional, uses the sprite's graphic if null.
+	 * @param  	Graphic		The image to use for the trailsprites. Optional, uses the sprite's graphic if null.
 	 * @param	Length		The amount of trailsprites to create. 
 	 * @param	Delay		How often to update the trail. 0 updates every frame.
 	 * @param	Alpha		The alpha value for the very first trailsprite.
