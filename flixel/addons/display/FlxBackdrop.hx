@@ -26,13 +26,15 @@ class FlxBackdrop extends FlxSprite
 	private var _repeatX:Bool;
 	private var _repeatY:Bool;
 	
+	private var _spaceX:Int = 0;
+	private var _spaceY:Int = 0;
+	
 	/**
 	 * Frame used for tiling
 	 */
 	private var _tileFrame:FlxFrame;
 	
 	#if FLX_RENDER_TILE
-	private var _tileID:Int;
 	private var _tileInfo:Array<Float>;
 	private var _numTiles:Int = 0;
 	#end
@@ -46,7 +48,7 @@ class FlxBackdrop extends FlxSprite
 	 * @param   RepeatX 	If the backdrop should repeat on the X axis.
 	 * @param   RepeatY 	If the backdrop should repeat on the Y axis.
 	 */
-	public function new(Graphic:FlxGraphicAsset, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true) 
+	public function new(Graphic:FlxGraphicAsset, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true, SpaceX:Int = 0, SpaceY:Int = 0) 
 	{
 		super();
 		
@@ -55,6 +57,9 @@ class FlxBackdrop extends FlxSprite
 		
 		_repeatX = RepeatX;
 		_repeatY = RepeatY;
+		
+		_spaceX = SpaceX;
+		_spaceY = SpaceY;
 		
 		_ppoint = new Point();
 		
@@ -85,8 +90,8 @@ class FlxBackdrop extends FlxSprite
 		var tileGraphic:FlxGraphic = FlxG.bitmap.add(Graphic);
 		setTileFrame(tileGraphic.imageFrame.frame);
 		
-		var w:Int = Std.int(_tileFrame.sourceSize.x);
-		var h:Int = Std.int(_tileFrame.sourceSize.y);
+		var w:Int = Std.int(_tileFrame.sourceSize.x + _spaceX);
+		var h:Int = Std.int(_tileFrame.sourceSize.y + _spaceY);
 		
 		_scrollW = w;
 		_scrollH = h;
@@ -100,8 +105,8 @@ class FlxBackdrop extends FlxSprite
 	{
 		setTileFrame(Frame);
 		
-		var w:Int = Std.int(_tileFrame.sourceSize.x);
-		var h:Int = Std.int(_tileFrame.sourceSize.y);
+		var w:Int = Std.int(_tileFrame.sourceSize.x + _spaceX);
+		var h:Int = Std.int(_tileFrame.sourceSize.y + _spaceY);
 		
 		_scrollW = w;
 		_scrollH = h;
