@@ -47,6 +47,8 @@ class FlxBackdrop extends FlxSprite
 	 * @param   ScrollY 	Scrollrate on the Y axis.
 	 * @param   RepeatX 	If the backdrop should repeat on the X axis.
 	 * @param   RepeatY 	If the backdrop should repeat on the Y axis.
+	 * @param	SpaceX		Amount of spacing between tiles on the X axis
+	 * @param	SpaceY		Amount of spacing between tiles on the Y axis
 	 */
 	public function new(Graphic:FlxGraphicAsset, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true, SpaceX:Int = 0, SpaceY:Int = 0) 
 	{
