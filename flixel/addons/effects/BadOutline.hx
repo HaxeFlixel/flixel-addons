@@ -1,4 +1,4 @@
-package;
+package flixel.addons.effects;
 
 import flixel.FlxSprite;
 import flixel.system.layer.frames.FlxFrame;
