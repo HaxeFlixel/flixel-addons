@@ -27,12 +27,16 @@ class FlxSpriteOrigin extends FlxSprite
 	 */
 	override public function draw():Void
 	{
-		if (frame == null)
+		if (_frame == null)
 		{
+			#if !FLX_NO_DEBUG
 			loadGraphic(FlxGraphic.fromClass(GraphicDefault));
+			#else
+			return;
+			#end
 		}
 		
-		if (alpha == 0 || frame.type == FlxFrameType.EMPTY)
+		if (alpha == 0 || _frame.type == FlxFrameType.EMPTY)
 		{
 			return;
 		}
@@ -41,21 +45,6 @@ class FlxSpriteOrigin extends FlxSprite
 		{
 			calcFrame();
 		}
-		
-	#if FLX_RENDER_TILE
-		var drawItem:FlxDrawTilesItem;
-		
-		var ox:Float = origin.x;
-		if (_facingHorizontalMult != 1)
-		{
-			ox = frameWidth - ox;
-		}
-		var oy:Float = origin.y;
-		if (_facingVerticalMult != 1)
-		{
-			oy = frameHeight - oy;
-		}
-	#end
 		
 		for (camera in cameras)
 		{
@@ -66,73 +55,63 @@ class FlxSpriteOrigin extends FlxSprite
 			
 			getScreenPosition(_point, camera).subtractPoint(offset);
 			
-#if FLX_RENDER_BLIT
-			if (isSimpleRender(camera))
+			var cr:Float = colorTransform.redMultiplier;
+			var cg:Float = colorTransform.greenMultiplier;
+			var cb:Float = colorTransform.blueMultiplier;
+			
+			var sx:Float = scale.x;
+			var sy:Float = scale.y;
+			var ox:Float = origin.x;
+			var oy:Float = origin.y;
+			var simple:Bool = isSimpleRender(camera);
+	#if FLX_RENDER_TILE
+			sx *= _facingHorizontalMult;
+			sy *= _facingVerticalMult;
+			
+			if (_facingHorizontalMult != 1)
 			{
-				_point.subtractPoint(origin).floor().copyToFlash(_flashPoint);
-				camera.buffer.copyPixels(framePixels, _flashRect, _flashPoint, null, null, true);
+				ox = frameWidth - ox;
+			}
+			if (_facingVerticalMult != 1)
+			{
+				oy = frameHeight - oy;
+			}
+	#end
+			if (simple)
+			{
+				if (isPixelPerfectRender(camera))
+				{
+					_point.floor();
+				}
+				
+				_point.copyToFlash(_flashPoint);
+				camera.copyPixels(_frame, framePixels, _flashRect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
 			}
 			else
 			{
-				_matrix.identity();
-				_matrix.translate(-origin.x, -origin.y);
-				_matrix.scale(scale.x, scale.y);
+				_frame.prepareFrameMatrix(_matrix);
+				_matrix.translate(-ox, -oy);
+				_matrix.scale(sx, sy);
 				
-				if ((angle != 0) && (bakedRotationAngle <= 0))
+				if (bakedRotationAngle <= 0)
 				{
-					_matrix.rotate(angle * FlxAngle.TO_RAD);
+					updateTrig();
+					
+					if (angle != 0)
+					{
+						_matrix.rotateWithTrig(_cosAngle, _sinAngle);
+					}
 				}
 				
-				_point.floor();
+				if (isPixelPerfectRender(camera))
+				{
+					_point.floor();
+				}
 				
 				_matrix.translate(_point.x, _point.y);
-				camera.buffer.draw(framePixels, _matrix, null, blend, null, (antialiasing || camera.antialiasing));
-			}
-#else
-			drawItem = camera.getDrawTilesItem(frame.parent, isColored, _blendInt, antialiasing);
-			
-			_matrix.identity();
-			
-			if (frame.angle != FlxFrameAngle.ANGLE_0)
-			{
-				// handle rotated frames
-				frame.prepareFrameMatrix(_matrix);
+				camera.drawPixels(_frame, framePixels, _matrix, cr, cg, cb, alpha, blend, antialiasing);
 			}
 			
-			var x1:Float = (ox - frame.center.x);
-			var y1:Float = (oy - frame.center.y);
-			_matrix.translate(x1, y1);
-			
-			var sx:Float = scale.x * _facingHorizontalMult;
-			var sy:Float = scale.y * _facingVerticalMult;
-			_matrix.scale(sx * camera.totalScaleX, sy * camera.totalScaleY);
-			
-			// rotate matrix if sprite's graphic isn't prerotated
-			if (!isSimpleRender(camera))
-			{
-				if (_angleChanged && (bakedRotationAngle <= 0))
-				{
-					var radians:Float = angle * FlxAngle.TO_RAD;
-					_sinAngle = Math.sin(radians);
-					_cosAngle = Math.cos(radians);
-					_angleChanged = false;
-				}
-				
-				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
-			}
-			
-			_point.x *= camera.totalScaleX;
-			_point.y *= camera.totalScaleY;
-			
-			if (isPixelPerfectRender(camera))
-			{
-				_point.floor();
-			}
-			
-			_point.subtract(_matrix.tx, _matrix.ty);
-			
-			setDrawData(drawItem, camera, _matrix);
-#end
 			#if !FLX_NO_DEBUG
 			FlxBasic.visibleCount++;
 			#end
