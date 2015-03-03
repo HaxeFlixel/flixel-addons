@@ -155,38 +155,30 @@ class FlxBackdrop extends FlxSprite
 			// Draw to the screen
 		#if FLX_RENDER_BLIT
 			_flashRect2.setTo(0, 0, graphic.width, graphic.height);
-			camera.buffer.copyPixels(frame.getBitmap(), _flashRect2, _ppoint, null, null, true);
+			camera.copyPixels(frame, framePixels, _flashRect2, _ppoint);
 		#else
 			if (_tileFrame == null)
 			{
 				return;
 			}
 			
-			var drawItem:FlxDrawTilesItem = camera.getDrawTilesItem(_tileFrame.parent, false, 0);
+			var drawItem:FlxDrawTilesItem = camera.startQuadBatch(_tileFrame.parent, false);
 			
-			_matrix.identity();
+			_tileFrame.prepareFrameMatrix(_matrix);
+			_matrix.scale(scale.x, scale.y);
 			
-			if (_tileFrame.angle != FlxFrameAngle.ANGLE_0)
-			{
-				_tileFrame.prepareFrameMatrix(_matrix);
-			}
-			
-			_matrix.scale(scale.x * camera.totalScaleX, scale.y * camera.totalScaleY);
-			
-			_ppoint.x += _tileFrame.center.x * scale.x;
-			_ppoint.y += _tileFrame.center.y * scale.y;
+			var tx:Float = _matrix.tx;
+			var ty:Float = _matrix.ty;
 			
 			for (j in 0..._numTiles)
 			{
 				var currTileX = _tileInfo[j * 2];
 				var currTileY = _tileInfo[(j * 2) + 1];
 				
-				_point.set(_ppoint.x + currTileX, _ppoint.y + currTileY);
+				_matrix.tx = tx + (_ppoint.x + currTileX);
+				_matrix.ty = ty + (_ppoint.y + currTileY);
 				
-				_point.x *= camera.totalScaleX;
-				_point.y *= camera.totalScaleY;
-				
-				setDrawData(drawItem, camera, _matrix, _tileFrame.tileID);
+				drawItem.setData(_tileFrame.frame, _matrix);
 			}
 		#end
 		}
@@ -230,6 +222,7 @@ class FlxBackdrop extends FlxSprite
 		pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
 		_matrix.identity();
 		_matrix.scale(sx, sy);
+		var frameBitmap:BitmapData = _tileFrame.paint();
 		#end
 		
 		while (_ppoint.y < h)
@@ -237,7 +230,7 @@ class FlxBackdrop extends FlxSprite
 			while (_ppoint.x < w)
 			{
 				#if FLX_RENDER_BLIT
-				pixels.draw(_tileFrame.getBitmap(), _matrix);
+				pixels.draw(frameBitmap, _matrix);
 				_matrix.tx += ssw;
 				#else
 				_tileInfo.push(_ppoint.x);
@@ -255,8 +248,10 @@ class FlxBackdrop extends FlxSprite
 		}
 		
 		#if FLX_RENDER_BLIT
+		frameBitmap.dispose();
 		pixels.unlock();
-		resetFrameBitmaps();
+		dirty = true;
+		calcFrame();
 		#end
 	}
 	
