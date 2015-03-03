@@ -109,7 +109,6 @@ class FlxGlitchSprite extends FlxSprite
 			}
 			
 			pixels.unlock();
-			frame.destroyBitmaps();
 			dirty = true;
 		}
 		
@@ -124,7 +123,7 @@ class FlxGlitchSprite extends FlxSprite
 		makeGraphic(Std.int(target.frameWidth + (direction == HORIZONTAL ? strength * 2 : 0)), Std.int(target.frameHeight + (direction == VERTICAL ? strength * 2 : 0 )), FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo((direction == HORIZONTAL ? strength : 0), (direction == VERTICAL ? strength : 0));
 		pixels.copyPixels(target.pixels, target.pixels.rect, _flashPoint);
-		frame.destroyBitmaps();
+		dirty = true;
 		FlxG.bitmap.removeIfNoUse(oldGraphic);
 	}
 	
