@@ -5,8 +5,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxBasic;
 import flixel.text.FlxBitmapText;
-
-// TODO: make it work in tile render mode
+import flixel.util.FlxColor;
 
 // TODO: port "scroll sprite" plugin as well
 
@@ -63,13 +62,12 @@ class FlxScrollingText extends FlxBasic
 			bitmapText.text = text;
 		}
 		
-		bitmapText.forceGraphicUpdate();
-		bitmapText.update(0);
+		bitmapText.drawFrame(true);
 		
-		data.shiftRect = new Rectangle(0, 0, region.width, region.height);
+		data.shiftRect = new Rectangle(0, 0, region.width, (region.height > bitmapText.frameHeight) ? bitmapText.frameHeight : region.height);
 		data.x = 0;
 		
-		data.sprite = new FlxSprite(Std.int(region.x), Std.int(region.y)).makeGraphic(Std.int(region.width), Std.int(region.height), 0x0, true);
+		data.sprite = new FlxSprite(Std.int(region.x), Std.int(region.y)).makeGraphic(Std.int(region.width), Std.int(region.height), FlxColor.TRANSPARENT, true);
 		
 		data.step = steps;
 		data.maxStep = steps;
@@ -108,8 +106,7 @@ class FlxScrollingText extends FlxBasic
 			data.bitmapText.text += text;
 		}
 		
-		data.bitmapText.forceGraphicUpdate();
-		data.bitmapText.update(0);
+		data.bitmapText.drawFrame(true);
 	}
 	
 	private static function scroll(data:ScrollingTextData):Void
@@ -128,17 +125,17 @@ class FlxScrollingText extends FlxBasic
 		
 		//	CLS
 		var pixels:BitmapData = data.sprite.pixels;
-		pixels.fillRect(pixels.rect, 0x0);
+		pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
 		
 		//	Shift the current contents of the buffer along by "speed" pixels
 		data.shiftRect.x = data.x;
-		pixels.copyPixels(data.bitmapText.pixels, data.shiftRect, zeroPoint, null, null, true);
+		pixels.copyPixels(data.bitmapText.framePixels, data.shiftRect, zeroPoint, null, null, true);
 		
 		if (data.wrap && data.shiftRect.right > data.bitmapText.frameWidth)
 		{
 			data.shiftRect.x = 0;
 			zeroPoint.x = data.bitmapText.frameWidth - data.x;
-			pixels.copyPixels(data.bitmapText.pixels, data.shiftRect, zeroPoint, null, null, true);
+			pixels.copyPixels(data.bitmapText.framePixels, data.shiftRect, zeroPoint, null, null, true);
 			zeroPoint.x = 0;
 		}
 		
