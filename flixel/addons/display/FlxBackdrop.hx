@@ -212,6 +212,9 @@ class FlxBackdrop extends FlxSprite
 		#else
 		_tileInfo = [];
 		_numTiles = 0;
+		
+		width = frameWidth = w;
+		height = frameHeight = h;
 		#end
 		
 		_ppoint.x = _ppoint.y = 0;
