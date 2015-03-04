@@ -1,5 +1,6 @@
 package flixel.addons.editors.tiled;
 
+import flixel.util.FlxColor;
 import openfl.Assets;
 import haxe.xml.Fast;
 
@@ -17,6 +18,8 @@ class TiledMap
 {
 	public var version:String; 
 	public var orientation:String;
+	
+	public var backgroundColor:FlxColor;
 	
 	public var width:Int;
 	public var height:Int; 
@@ -73,6 +76,15 @@ class TiledMap
 		if (orientation == null) 
 		{
 			orientation = "orthogonal";
+		}
+		
+		backgroundColor = FlxColor.TRANSPARENT;
+		var bgColorStr = source.att.backgroundcolor;
+		
+		if (bgColorStr != null) 
+		{
+			bgColorStr = StringTools.replace(bgColorStr.toUpperCase(), "#", "0x");
+			backgroundColor = FlxColor.fromString(bgColorStr);
 		}
 		
 		width = Std.parseInt(source.att.width);
