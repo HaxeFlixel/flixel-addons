@@ -104,7 +104,7 @@ class FlxWaveSprite extends FlxSprite
 			
 			_flashPoint.setTo(strength + offset, oY);
 			_flashRect2.setTo(0, oY, _target.frameWidth, 1);
-			pixels.copyPixels(_target.pixels, _flashRect2, _flashPoint);
+			pixels.copyPixels(_target.framePixels, _flashRect2, _flashPoint);
 		}
 		pixels.unlock();
 		
@@ -118,7 +118,6 @@ class FlxWaveSprite extends FlxSprite
 				_time = 0;
 		}
 		
-		frame.destroyBitmaps();
 		dirty = true;
 		super.draw();
 	}
@@ -131,11 +130,12 @@ class FlxWaveSprite extends FlxSprite
 	private function initPixels():Void
 	{
 		var oldGraphic:FlxGraphic = graphic;
+		_target.drawFrame(true);
 		setPosition(_target.x - strength, _target.y);
 		makeGraphic(Std.int(_target.frameWidth + (strength * 2)), _target.frameHeight, FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo(strength, 0);
-		pixels.copyPixels(_target.pixels, _target.pixels.rect, _flashPoint);
-		frame.destroyBitmaps();
+		pixels.copyPixels(_target.framePixels, _target.framePixels.rect, _flashPoint);
+		dirty = true;
 		FlxG.bitmap.removeIfNoUse(oldGraphic);
 	}
 	
