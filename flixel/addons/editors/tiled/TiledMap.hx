@@ -79,12 +79,15 @@ class TiledMap
 		}
 		
 		backgroundColor = FlxColor.TRANSPARENT;
-		var bgColorStr = source.att.backgroundcolor;
 		
-		if (bgColorStr != null) 
+		if (source.has.backgroundcolor)
 		{
-			bgColorStr = StringTools.replace(bgColorStr.toUpperCase(), "#", "0x");
-			backgroundColor = FlxColor.fromString(bgColorStr);
+			var bgColorStr = source.att.backgroundcolor;
+			if (bgColorStr != null) 
+			{
+				bgColorStr = StringTools.replace(bgColorStr.toUpperCase(), "#", "0x");
+				backgroundColor = FlxColor.fromString(bgColorStr);
+			}
 		}
 		
 		width = Std.parseInt(source.att.width);

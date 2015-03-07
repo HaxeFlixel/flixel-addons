@@ -139,7 +139,8 @@ class FlxTileSpecial extends FlxBasic
 
 		if (generateFlipped || dirty) 
 		{
-			_normalFrame = currFrame.getBitmap();
+			_normalFrame = FlxDestroyUtil.disposeIfNotEqual(_normalFrame, currFrame.sourceSize.x, currFrame.sourceSize.y);
+			_normalFrame = currFrame.paint(_normalFrame);
 			
 			if (generateFlipped)
 			{
@@ -152,7 +153,6 @@ class FlxTileSpecial extends FlxBasic
 			
 			_flippedFrame.draw(_normalFrame, getMatrix());
 			dirty = true;
-		
 		}
 		
 		return _flippedFrame;
@@ -188,16 +188,7 @@ class FlxTileSpecial extends FlxBasic
 			_tmp_rot = _currAnimParam.rotate;
 		}
 		
-		_matrix.identity();
-		
-		#if FLX_RENDER_TILE
-		if (currFrame.angle != FlxFrameAngle.ANGLE_0)
-		{
-			currFrame.prepareFrameMatrix(_matrix);
-		}
-		
-		_matrix.translate(currFrame.center.x, currFrame.center.y);
-		#end
+		currFrame.prepareFrameMatrix(_matrix);
 		
 		if (_tmp_rot != FlxTileSpecial.ROTATE_0) 
 		{
