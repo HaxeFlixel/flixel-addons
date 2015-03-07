@@ -129,8 +129,19 @@ class FlxScrollingText extends FlxBasic
 		
 		//	Shift the current contents of the buffer along by "speed" pixels
 		data.shiftRect.x = data.x;
-		pixels.copyPixels(data.bitmapText.framePixels, data.shiftRect, zeroPoint, null, null, true);
 		
+		if (data.shiftRect.right > data.bitmapText.frameWidth)
+		{
+			var rw:Float = data.shiftRect.width;
+			data.shiftRect.width = data.bitmapText.frameWidth - data.x;
+			pixels.copyPixels(data.bitmapText.framePixels, data.shiftRect, zeroPoint, null, null, true);
+			data.shiftRect.width = rw;
+		}
+		else
+		{
+			pixels.copyPixels(data.bitmapText.framePixels, data.shiftRect, zeroPoint, null, null, true);
+		}
+	
 		if (data.wrap && data.shiftRect.right > data.bitmapText.frameWidth)
 		{
 			data.shiftRect.x = 0;
