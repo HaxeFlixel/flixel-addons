@@ -162,7 +162,7 @@ class FlxBackdrop extends FlxSprite
 				return;
 			}
 			
-			var drawItem:FlxDrawTilesItem = camera.startQuadBatch(_tileFrame.parent, false);
+			var drawItem = camera.startQuadBatch(_tileFrame.parent, false);
 			
 			_tileFrame.prepareFrameMatrix(_matrix);
 			_matrix.scale(scale.x, scale.y);
@@ -178,7 +178,7 @@ class FlxBackdrop extends FlxSprite
 				_matrix.tx = tx + (_ppoint.x + currTileX);
 				_matrix.ty = ty + (_ppoint.y + currTileY);
 				
-				drawItem.setData(_tileFrame.frame, _matrix);
+				drawItem.setData(_tileFrame, _matrix);
 			}
 		#end
 		}
