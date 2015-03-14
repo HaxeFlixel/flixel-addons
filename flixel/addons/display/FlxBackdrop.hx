@@ -39,6 +39,7 @@ class FlxBackdrop extends FlxSprite
 	private var _numTiles:Int = 0;
 	#end
 	
+	// TODO: remove this hack and add docs about how to avoid tearing problem by preparing assets and some code...
 	/**
 	 * Try to eliminate 1 px gap between tiles in tile render mode by increasing tile scale, 
 	 * so the tile will look one pixel wider than it is.
