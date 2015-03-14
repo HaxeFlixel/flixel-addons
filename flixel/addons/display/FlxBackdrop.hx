@@ -177,8 +177,8 @@ class FlxBackdrop extends FlxSprite
 			
 			if (useScaleHack)
 			{
-				scaleX = scale.x + 1 / (_tileFrame.sourceSize.x * camera.totalScaleX);
-				scaleY = scale.y + 1 / (_tileFrame.sourceSize.y * camera.totalScaleY);
+				scaleX += 1 / (_tileFrame.sourceSize.x * camera.totalScaleX);
+				scaleY += 1 / (_tileFrame.sourceSize.y * camera.totalScaleY);
 			}
 			
 			_matrix.scale(scaleX, scaleY);
