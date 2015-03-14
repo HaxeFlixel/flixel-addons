@@ -40,6 +40,12 @@ class FlxBackdrop extends FlxSprite
 	#end
 	
 	/**
+	 * Try to eliminate 1 px gap between tiles in tile render mode by increasing tile scale, 
+	 * so the tile will look one pixel wider than it is.
+	 */
+	public var useScaleHack:Bool = true;
+	
+	/**
 	 * Creates an instance of the FlxBackdrop class, used to create infinitely scrolling backgrounds.
 	 * 
 	 * @param   Graphic		The image you want to use for the backdrop.
@@ -165,7 +171,17 @@ class FlxBackdrop extends FlxSprite
 			var drawItem = camera.startQuadBatch(_tileFrame.parent, false);
 			
 			_tileFrame.prepareFrameMatrix(_matrix);
-			_matrix.scale(scale.x, scale.y);
+			
+			var scaleX:Float = scale.x;
+			var scaleY:Float = scale.y;
+			
+			if (useScaleHack)
+			{
+				scaleX = scale.x + 1 / (_tileFrame.sourceSize.x * camera.totalScaleX);
+				scaleY = scale.y + 1 / (_tileFrame.sourceSize.y * camera.totalScaleY);
+			}
+			
+			_matrix.scale(scaleX, scaleY);
 			
 			var tx:Float = _matrix.tx;
 			var ty:Float = _matrix.ty;
