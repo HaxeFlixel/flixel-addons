@@ -188,7 +188,7 @@ class FlxTileSpecial extends FlxBasic
 			_tmp_rot = _currAnimParam.rotate;
 		}
 		
-		currFrame.prepareFrameMatrix(_matrix);
+		currFrame.prepareMatrix(_matrix);
 		
 		if (_tmp_rot != FlxTileSpecial.ROTATE_0) 
 		{

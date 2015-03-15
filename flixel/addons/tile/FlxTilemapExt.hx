@@ -235,7 +235,7 @@ class FlxTilemapExt extends FlxTilemap
 					}
 					else
 					{
-						frame.prepareFrameMatrix(_matrix);
+						frame.prepareMatrix(_matrix);
 						matrixToUse = _matrix;
 					}
 					

@@ -171,7 +171,7 @@ class FlxBackdrop extends FlxSprite
 			
 			var drawItem = camera.startQuadBatch(_tileFrame.parent, false);
 			
-			_tileFrame.prepareFrameMatrix(_matrix);
+			_tileFrame.prepareMatrix(_matrix);
 			
 			var scaleX:Float = scale.x;
 			var scaleY:Float = scale.y;

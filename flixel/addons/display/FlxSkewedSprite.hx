@@ -87,25 +87,7 @@ class FlxSkewedSprite extends FlxSprite
 			var cg:Float = colorTransform.greenMultiplier;
 			var cb:Float = colorTransform.blueMultiplier;
 			
-			var sx:Float = scale.x;
-			var sy:Float = scale.y;
-			var ox:Float = origin.x;
-			var oy:Float = origin.y;
 			var simple:Bool = isSimpleRender(camera);
-			
-	#if FLX_RENDER_TILE
-			sx *= _facingHorizontalMult;
-			sy *= _facingVerticalMult;
-			
-			if (_facingHorizontalMult != 1)
-			{
-				ox = frameWidth - ox;
-			}
-			if (_facingVerticalMult != 1)
-			{
-				oy = frameHeight - oy;
-			}
-	#end
 			if (simple)
 			{
 				if (isPixelPerfectRender(camera))
@@ -118,10 +100,8 @@ class FlxSkewedSprite extends FlxSprite
 			}
 			else
 			{
-				_frame.prepareFrameMatrix(_matrix);
-				_matrix.translate( -ox, -oy);
-				
-				
+				_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, flipX, flipY);
+				_matrix.translate( -origin.x, -origin.y);
 			}
 			
 			_matrix.identity();
@@ -148,7 +128,7 @@ class FlxSkewedSprite extends FlxSprite
 				_matrix.concat(_skewMatrix);
 			}
 			
-			_point.add(ox, oy);
+			_point.add(origin.x, origin.y);
 			if (isPixelPerfectRender(camera))
 			{
 				_point.floor();
