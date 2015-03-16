@@ -27,6 +27,7 @@ class FlxNapeTilemap extends FlxTilemap
 	{
 		super();
 		body = new Body(BodyType.STATIC);
+		body.space = FlxNapeSpace.space;
 	}
 	
 	override public function update(elapsed:Float):Void 
@@ -74,7 +75,6 @@ class FlxNapeTilemap extends FlxTilemap
 	 */
 	public function addSolidTile(X:Int, Y:Int, ?mat:Material) 
 	{
-		var curSpace = body.space;
 		body.space = null;
 		if (mat == null) 
 		{
@@ -91,12 +91,11 @@ class FlxNapeTilemap extends FlxTilemap
 		
 		body.shapes.add(new Polygon(vertices, mat));
 		
-		body.space = curSpace;
+		body.space = FlxNapeSpace.space;
 	}
 	
 	public function placeCustomPolygon(tileIndices:Array<Int>, vertices:Array<Vec2>, ?mat:Material)
 	{
-		var curSpace = body.space;
 		body.space = null;
 		var polygon:Polygon;
 		for (index in tileIndices)
@@ -111,7 +110,7 @@ class FlxNapeTilemap extends FlxTilemap
 			
 		}
 		
-		body.space =  curSpace;
+		body.space = FlxNapeSpace.space;
 	}
 	
 	/**
@@ -228,7 +227,7 @@ class FlxNapeTilemap extends FlxTilemap
 				endRow = -1;
 			}
 		}
-		var curSpace = body.space;
+		
 		body.space = null;
 		//Convert the rectangles to nape polygons
 		var vertices:Array<Vec2>;
@@ -241,6 +240,7 @@ class FlxNapeTilemap extends FlxTilemap
 			rect.width *= _tileWidth;
 			rect.height++;
 			rect.height *= _tileHeight;
+			
 			vertices.push(Vec2.get(rect.x, rect.y));
 			vertices.push(Vec2.get(rect.width, rect.y));
 			vertices.push(Vec2.get(rect.width, rect.height));
@@ -249,7 +249,7 @@ class FlxNapeTilemap extends FlxTilemap
 			rect.put();
 		}
 		
-		body.space = curSpace;
+		body.space = FlxNapeSpace.space;
 	}
 	
 	/**
