@@ -117,7 +117,6 @@ class FlxTilemapExt extends FlxTilemap
 		var scaledWidth:Float = _tileWidth;
 		var scaledHeight:Float = _tileHeight;
 		
-		var tileID:Int = -1;
 		var drawX:Float;
 		var drawY:Float;
 		
@@ -190,7 +189,7 @@ class FlxTilemapExt extends FlxTilemap
 				#if FLX_RENDER_BLIT
 				if (isSpecial) 
 				{
-					Buffer.pixels.copyPixels(special.getBitmapData(), _flashRect, _flashPoint, null, null, true);
+					special.paint(Buffer.pixels, _flashPoint);
 					Buffer.dirty = (special.dirty || Buffer.dirty);
 				}
 				else if (tile != null && tile.visible && tile.frame.type != FlxFrameType.EMPTY)
