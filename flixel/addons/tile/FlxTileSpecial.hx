@@ -70,6 +70,8 @@ class FlxTileSpecial extends FlxBasic
 		frames = null;
 	}
 	
+	// TODO: unify animation code with FlxAnimation...
+	// TODO: try to move animation update code to FlxTileAnimation class
 	override public function update(elapsed:Float):Void 
 	{
 		super.update(elapsed);
