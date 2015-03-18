@@ -3,6 +3,7 @@ package flixel.addons.tile;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flixel.animation.FlxAnimation;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.math.FlxAngle;
@@ -158,6 +159,15 @@ class FlxTileSpecial extends FlxBasic
 	public function addAnimation(tiles:Array<Int>, frameRate:Float = 30, ?framesData:Array<AnimParams>):Void 
 	{
 		animation = new FlxTileAnimation("tileAnim", tiles, frameRate, true, framesData);
+	}
+	
+	/**
+	 * Creates tile animation and copies data from specified sprite animation (name, frame ids, framerate and looping);
+	 * @param	anim	Animation to copy data from
+	 */
+	public function fromSpriteAnimation(anim:FlxAnimation):Void
+	{
+		animation = new FlxTileAnimation(anim.name, Reflect.field(anim, "_frames"), anim.frameRate, anim.looped);
 	}
 	
 	/**
