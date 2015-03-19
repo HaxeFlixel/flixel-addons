@@ -11,6 +11,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.graphics.frames.FlxFrame;
 import flixel.graphics.tile.FlxDrawTilesItem;
+import flixel.math.FlxMatrix;
 import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.tile.FlxTilemapBuffer;
@@ -110,21 +111,21 @@ class FlxTilemapExt extends FlxTilemap
 		#else
 		getScreenPosition(_point, Camera).copyToFlash(_helperPoint);
 		
-		_helperPoint.x *= Camera.totalScaleX;
-		_helperPoint.y *= Camera.totalScaleY;
-		
 		_helperPoint.x = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.x) : _helperPoint.x;
 		_helperPoint.y = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.y) : _helperPoint.y;
 		
-		var scaledWidth:Float = _tileWidth * Camera.totalScaleX;
-		var scaledHeight:Float = _tileHeight * Camera.totalScaleY;
+		var scaledWidth:Float = _tileWidth;
+		var scaledHeight:Float = _tileHeight;
 		
-		var tileID:Int = -1;
 		var drawX:Float;
 		var drawY:Float;
 		
-		var _tileTransformMatrix:Matrix = null;
-		var drawItem:FlxDrawTilesItem;
+		var _tileTransformMatrix:FlxMatrix = null;
+		var matrixToUse:FlxMatrix;
+		
+		var cr:Float = color.redFloat;
+		var cg:Float = color.greenFloat;
+		var cb:Float = color.blueFloat;
 		#end
 		
 		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
@@ -188,12 +189,12 @@ class FlxTilemapExt extends FlxTilemap
 				#if FLX_RENDER_BLIT
 				if (isSpecial) 
 				{
-					Buffer.pixels.copyPixels(special.getBitmapData(), _flashRect, _flashPoint, null, null, true);
+					special.paint(Buffer.pixels, _flashPoint);
 					Buffer.dirty = (special.dirty || Buffer.dirty);
 				}
 				else if (tile != null && tile.visible && tile.frame.type != FlxFrameType.EMPTY)
 				{
-					Buffer.pixels.copyPixels(tile.frame.getBitmap(), _flashRect, _flashPoint, null, null, true);
+					tile.frame.paint(Buffer.pixels, _flashPoint, true);
 				}
 				
 			#if !FLX_NO_DEBUG
@@ -223,36 +224,22 @@ class FlxTilemapExt extends FlxTilemap
 				
 				if (frame != null)
 				{
-					_matrix.identity();
-					
 					drawX = _helperPoint.x + (columnIndex % widthInTiles) * scaledWidth;
 					drawY = _helperPoint.y + Math.floor(columnIndex / widthInTiles) * scaledHeight;
 					
 					if (isSpecial)
 					{
 						_tileTransformMatrix = special.getMatrix();
-						_matrix.concat(_tileTransformMatrix);
-						
-						drawX += _matrix.tx * Camera.totalScaleX;
-						drawY += _matrix.ty * Camera.totalScaleY;
+						matrixToUse = _tileTransformMatrix;
 					}
 					else
 					{
-						if (frame.angle != FlxFrameAngle.ANGLE_0)
-						{
-							frame.prepareFrameMatrix(_matrix);
-						}
-						
-						drawX += frame.center.x * Camera.totalScaleX;
-						drawY += frame.center.y * Camera.totalScaleY;
+						frame.prepareMatrix(_matrix);
+						matrixToUse = _matrix;
 					}
 					
-					_matrix.scale(Camera.totalScaleX, Camera.totalScaleY);
-					
-					_point.set(drawX, drawY);
-					
-					drawItem = Camera.getDrawTilesItem(graphic, isColored, _blendInt);
-					drawItem.setDrawData(_point, frame.tileID, _matrix, isColored, color, alpha);
+					matrixToUse.translate(drawX, drawY);
+					Camera.drawPixels(frame, matrixToUse, cr, cg, cb, alpha, blend);
 				}
 				#end
 				

@@ -53,19 +53,20 @@ import spinehaxe.Slot;
 class FlxSpine extends FlxSprite
 {
 	/**
-	 * Get Spine animation data.
+	 * Get Spine animation data (atlas + animation).
 	 * 
-	 * @param	DataName	The name of the animation data files exported from Spine (.atlas .json .png).
-	 * @param	DataPath	The directory these files are located at
-	 * @param	Scale		Animation scale
+	 * @param	AtlasName		The name of the atlas data files exported from Spine (.atlas and .png).
+	 * @param	AnimationName	The name of the animation data file exported from Spine (.json).
+	 * @param	DataPath		The directory these files are located at
+	 * @param	Scale			Animation scale
 	 */
-	public static function readSkeletonData(DataName:String, DataPath:String, Scale:Float = 1):SkeletonData
+	public static function readSkeletonData(AtlasName:String, AnimationName:String, DataPath:String, Scale:Float = 1):SkeletonData
 	{
 		if (DataPath.lastIndexOf("/") < 0) DataPath += "/"; // append / at the end of the folder path
-		var spineAtlas:Atlas = new Atlas(Assets.getText(DataPath + DataName + ".atlas"), new FlixelTextureLoader(DataPath));
+		var spineAtlas:Atlas = new Atlas(Assets.getText(DataPath + AtlasName + ".atlas"), new FlixelTextureLoader(DataPath));
 		var json:SkeletonJson = new SkeletonJson(new AtlasAttachmentLoader(spineAtlas));
 		json.scale = Scale;
-		var skeletonData:SkeletonData = json.readSkeletonData(Assets.getText(DataPath + DataName + ".json"), DataName);
+		var skeletonData:SkeletonData = json.readSkeletonData(Assets.getText(DataPath + AnimationName + ".json"), AnimationName);
 		return skeletonData;
 	}
 	
