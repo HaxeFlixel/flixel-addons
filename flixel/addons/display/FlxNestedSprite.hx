@@ -425,7 +425,6 @@ class FlxNestedSprite extends FlxSprite
 		color.redFloat = combinedRed;
 		color.greenFloat = combinedGreen;
 		color.blueFloat = combinedBlue;
-		isColored = color.to24Bit() != 0xffffff;
 		#end
 		
 		for (child in children)
