@@ -26,7 +26,7 @@ import flash.net.FileReference;
  */
 class FlxScreenGrab extends FlxBasic
 {
-	public static var screenshot:Bitmap;
+	public static var screenshot(default, null):Bitmap;
 	
 	private static var _hotkeys:Array<FlxKey>;
 	private static var _autoSave:Bool = false;
@@ -72,7 +72,7 @@ class FlxScreenGrab extends FlxBasic
 	}
 	
 	/**
-	 * Clears a previously defined hotkey
+	 * Clears all previously defined hotkeys
 	 */
 	public static function clearHotKeys():Void
 	{
@@ -168,7 +168,7 @@ class FlxScreenGrab extends FlxBasic
 		#end
 		var path:String = "";
 		var documentsDirectory = "";
-		var saveFile:Dynamic=null;
+		var saveFile:Dynamic = null;
 		try
 		{
 			#if lime_legacy
@@ -189,20 +189,17 @@ class FlxScreenGrab extends FlxBasic
 			f.writeString(png.readUTFBytes(png.length));
 			f.close();
 		}
-	#else // sys target but no systools installed
-		FlxG.log.error("You need to include the 'systools' to use the save file dialog (or disable the SaveToFile option)");
+	#else
+		FlxG.log.error("You need to include the 'systools' haxelib to use the SaveToFile option.");
 	#end
 	}
 	
 	override public function update(elapsed:Float):Void
 	{
 		#if !FLX_NO_KEYBOARD
-		if (_hotkeys != null)
+		if (FlxG.keys.anyJustReleased(_hotkeys))
 		{
-			if (FlxG.keys.anyJustReleased(_hotkeys))
-			{
-				grab(_autoSave, _autoHideMouse);
-			}
+			grab(null, _autoSave, _autoHideMouse);
 		}
 		#end
 	}
