@@ -161,13 +161,21 @@ class FlxScreenGrab extends FlxBasic
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
 	#elseif systools
-		var png:ByteArray = screenshot.bitmapData.encode('png');
+		#if lime_legacy
+			var png:ByteArray = screenshot.bitmapData.encode('png');
+		#else
+			var png:ByteArray = screenshot.bitmapData.encode(screenshot.bitmapData.rect, 'png');
+		#end
 		var path:String = "";
 		var documentsDirectory = "";
 		var saveFile:Dynamic=null;
 		try
 		{
-			documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+			#if lime_legacy
+				documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+			#else
+				documentsDirectory = lime.system.System.documentsDirectory;
+			#end
 			path = Dialogs.saveFile("", "", "", { count:1, descriptions:["png files"], extensions:["*.png"] } );
 		}
 		catch (msg:String)
