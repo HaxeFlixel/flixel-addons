@@ -195,7 +195,7 @@ class FlxBackdrop extends FlxSprite
 				_matrix.tx = tx + (_ppoint.x + currTileX);
 				_matrix.ty = ty + (_ppoint.y + currTileY);
 				
-				drawItem.setData(_tileFrame, _matrix);
+				drawItem.addQuad(_tileFrame, _matrix);
 			}
 		#end
 		}
