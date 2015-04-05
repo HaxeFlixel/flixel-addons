@@ -10,7 +10,7 @@ import openfl.display.BitmapData;
  *
  * @author red__hara
  */
-class FlxBadOutline extends FlxSprite
+class FlxOutline extends FlxSprite
 {
 	/**
 	 * FlxSprite to draw outline around.
