@@ -419,27 +419,6 @@ class FlxSpine extends FlxSprite
 		}
 	}
 	
-	#if !FLX_NO_DEBUG
-	override public function drawDebugOnCamera(Camera:FlxCamera):Void
-	{
-		super.drawDebugOnCamera(Camera);
-		
-		collider.drawDebugOnCamera(Camera);
-		
-		var drawOrder:Array<Slot> = skeleton.drawOrder;
-		for (slot in drawOrder) 
-		{
-			var attachment:Attachment = slot.attachment;
-			if (Std.is(attachment, RegionAttachment)) 
-			{
-				var regionAttachment:RegionAttachment = cast attachment;
-				var wrapper:FlxSprite = getSprite(regionAttachment);
-				wrapper.drawDebugOnCamera(Camera);
-			}
-		}
-	}
-	#end
-	
 	private function getSprite(regionAttachment:RegionAttachment):FlxSprite 
 	{
 		if (regionAttachment.wrapperSprite != null && Std.is(regionAttachment.wrapperSprite, FlxSprite))
