@@ -204,7 +204,7 @@ class FlxSpine extends FlxSprite
 		var wrapper:FlxStrip;
 		var worldVertices:Array<Float> = _tempVertices;
 		var triangles:Array<Int> = null;
-		var uvs:Array<Float> = null;
+		var uvtData:Array<Float> = null;
 		var verticesLength:Int = 0;
 		var numVertices:Int;
 		
@@ -224,7 +224,7 @@ class FlxSpine extends FlxSprite
 					var region:RegionAttachment = cast slot.attachment;
 					verticesLength = 8;
 					region.computeWorldVertices(skeleton.x, skeleton.y, slot.bone, worldVertices);
-					uvs = region.uvs;
+					uvtData = region.uvtData;
 					triangles = _quadTriangles;
 					
 					if (region.wrapperStrip != null)
@@ -249,7 +249,7 @@ class FlxSpine extends FlxSprite
 					var mesh:MeshAttachment = cast(slot.attachment, MeshAttachment);
 					verticesLength = mesh.vertices.length;
 					mesh.computeWorldVertices(skeleton.x, skeleton.y, slot, worldVertices);
-					uvs = mesh.uvs;
+					uvtData = mesh.uvtData;
 					triangles = mesh.triangles;
 					
 					if (Std.is(mesh.rendererObject, FlxStrip))
@@ -272,9 +272,9 @@ class FlxSpine extends FlxSprite
 				else if (Std.is(slot.attachment, SkinnedMeshAttachment))
 				{
 					var skinnedMesh:SkinnedMeshAttachment = cast(slot.attachment, SkinnedMeshAttachment);
-					verticesLength = skinnedMesh.uvs.length;
+					verticesLength = skinnedMesh.uvtData.length;
 					skinnedMesh.computeWorldVertices(skeleton.x, skeleton.y, slot, worldVertices);
-					uvs = skinnedMesh.uvs;
+					uvtData = skinnedMesh.uvtData;
 					triangles = skinnedMesh.triangles;
 					
 					if (Std.is(skinnedMesh.rendererObject, FlxStrip))
@@ -317,7 +317,7 @@ class FlxSpine extends FlxSprite
 					#end
 					
 					wrapper.indices = triangles;
-					wrapper.uvs = uvs;
+					wrapper.uvtData = uvtData;
 					
 					numVertices = 2 * Std.int(verticesLength / 2);
 					
