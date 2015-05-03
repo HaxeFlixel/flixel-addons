@@ -249,7 +249,7 @@ class FlxSpine extends FlxSprite
 					var mesh:MeshAttachment = cast(slot.attachment, MeshAttachment);
 					verticesLength = mesh.vertices.length;
 					mesh.computeWorldVertices(skeleton.x, skeleton.y, slot, worldVertices);
-					uvtData = mesh.uvtData;
+					uvtData = mesh.uvs;
 					triangles = mesh.triangles;
 					
 					if (Std.is(mesh.rendererObject, FlxStrip))
@@ -272,9 +272,9 @@ class FlxSpine extends FlxSprite
 				else if (Std.is(slot.attachment, SkinnedMeshAttachment))
 				{
 					var skinnedMesh:SkinnedMeshAttachment = cast(slot.attachment, SkinnedMeshAttachment);
-					verticesLength = skinnedMesh.uvtData.length;
+					verticesLength = skinnedMesh.uvs.length;
 					skinnedMesh.computeWorldVertices(skeleton.x, skeleton.y, slot, worldVertices);
-					uvtData = skinnedMesh.uvtData;
+					uvtData = skinnedMesh.uvs;
 					triangles = skinnedMesh.triangles;
 					
 					if (Std.is(skinnedMesh.rendererObject, FlxStrip))
