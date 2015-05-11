@@ -45,7 +45,15 @@ class FlxNapeSpace extends FlxBasic
 	public static var drawDebug(default, set):Bool;
 	
 	#if !FLX_NO_DEBUG
-	private static var shapeDebug:ShapeDebug;
+	/**
+	 * A useful "canvas" or sprite-like object which can be used to draw debug information on, such as lines, circles and more.
+	 * To give an even better idea of its use, see the official Nape demo 'SpatialQueries' (http://napephys.com/samples.html#swf-SpatialQueries)
+	 * where this is used to draw lines emitted from Rays.
+	 * To use this in HaxeFlixel, place the part of your code that uses shapeDebug in your FlxState's draw()-method, but make sure this code only runs when FlxNapeSpace.drawDebug is true,
+	 * as the program will crash otherwise.
+	 */
+	public static var shapeDebug:ShapeDebug;
+	
 	private static var drawDebugButton:FlxSystemButton;
 	#end
 	
