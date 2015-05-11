@@ -12,7 +12,7 @@ import nape.shape.Polygon;
 import nape.space.Space;
 
 /**
- * FlxNapeSprite consists of an FlxSprite with a physics body.
+ * FlxNapeSprite consists of a FlxSprite with a physics body.
  * During the simulation, the sprite follows the physics body position and rotation.
  * 
  * By default, a rectangular physics body is created upon construction in createRectangularBody().
@@ -27,7 +27,7 @@ class FlxNapeSprite extends FlxSprite
 	public var body:Body;
 	
 	/**
-	 * Enables/Disables this sprites physics body in simulations.
+	 * Enables/disables this sprite's physics body in simulations.
 	 */
 	public var physicsEnabled(default, set):Bool = false;
 	
@@ -43,11 +43,11 @@ class FlxNapeSprite extends FlxSprite
 	private var _angularDrag:Float = 1;
 
 	/**
-	 * Creates an FlxNapeSprite with an optional physics body (body).
+	 * Creates a FlxNapeSprite with an optional physics body.
 	 * At each step, the physics are updated, and so is the position and rotation of the sprite 
 	 * to match the bodys position and rotation values.
-	 * By default a physics body with rectangle shape will be created around your sprite graphics.
-	 * You can override this functionality and add a premade body of your own (see addPremadeBody).
+	 * By default, a physics body with a rectangular shape will be created for the sprite's graphic.
+	 * You can override this functionality and add a premade body of your own (see addPremadeBody()).
 	 * 
 	 * @param	X						The initial X position of the sprite.
 	 * @param	Y						The initial Y position of the sprite.
@@ -122,7 +122,7 @@ class FlxNapeSprite extends FlxSprite
 	}
 	
 	/**
-	 * Makes it easier to add a physics body of your own to this sprite by setting it's position,
+	 * Makes it easier to add a physics body of your own to this sprite by setting its position,
 	 * space and material for you.
 	 * 
 	 * @param	NewBody 	The new physics body replacing the old one.
