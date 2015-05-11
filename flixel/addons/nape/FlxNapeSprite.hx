@@ -127,7 +127,7 @@ class FlxNapeSprite extends FlxSprite
 	 * 
 	 * @param	NewBody 	The new physics body replacing the old one.
 	 */
-	public function addPremadeBody(NewBody:Body):Void
+	public function addPremadeBody(newBody:Body, ?newBodySpace:Space):Void
 	{
 		var currSpace:Space = null;
 		
@@ -137,10 +137,26 @@ class FlxNapeSprite extends FlxSprite
 			destroyPhysObjects();
 		}
 		
-		NewBody.position.x = x;
-		NewBody.position.y = y;
-		NewBody.space = currSpace;
-		body = NewBody;
+		newBody.position.x = x;
+		newBody.position.y = y;
+		
+		if (newBodySpace != null) 
+		{
+			newBody.space = newBodySpace;
+		}
+		else
+		{
+			if (currSpace == null) 
+			{
+				newBody.space = FlxNapeSpace.space;
+			}
+			else
+			{
+				newBody.space = currSpace;
+			}
+		}
+		
+		body = newBody;
 		setBodyMaterial();
 	}
 	

@@ -45,7 +45,7 @@ class FlxNapeSpace extends FlxBasic
 	public static var drawDebug(default, set):Bool;
 	
 	#if !FLX_NO_DEBUG
-	private static var shapeDebug:ShapeDebug;
+	public static var shapeDebug:ShapeDebug;
 	private static var drawDebugButton:FlxSystemButton;
 	#end
 	
