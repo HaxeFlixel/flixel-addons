@@ -125,7 +125,8 @@ class FlxNapeSprite extends FlxSprite
 	 * Makes it easier to add a physics body of your own to this sprite by setting it's position,
 	 * space and material for you.
 	 * 
-	 * @param	NewBody 	The new physics body replacing the old one.
+	 * @param	newBody			The new physics body replacing the old one.
+	 * @param	newBodySpace 	The preferred Space to use for this body. If none is provided here, then FlxNapeSpace.space will be used.
 	 */
 	public function addPremadeBody(newBody:Body, ?newBodySpace:Space):Void
 	{
