@@ -224,7 +224,7 @@ class FlxSpine extends FlxSprite
 					var region:RegionAttachment = cast slot.attachment;
 					verticesLength = 8;
 					region.computeWorldVertices(skeleton.x, skeleton.y, slot.bone, worldVertices);
-					uvtData = region.uvtData;
+					uvtData = region.uvs;
 					triangles = _quadTriangles;
 					
 					if (region.wrapperStrip != null)
