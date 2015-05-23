@@ -400,7 +400,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-  	private function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
+	private function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
 	{
 		if (parent == Object && skipParentCollision)
 		{
@@ -417,7 +417,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-  	private function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
+	private function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
 	{
 		Bullet.kill();
 	}
