@@ -622,7 +622,7 @@ class FlxFSMTransitionTable<T>
 	 * @param	Condition	Condition function
 	 * @return	True when removed, false if not in table
 	 */
-	public function remove(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:T->Bool)
+	public function remove(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:Null<T->Bool>)
 	{
 		switch([from, to, condition])
 		{
@@ -672,7 +672,7 @@ class FlxFSMTransitionTable<T>
 	 * @param	Condition	Condition function
 	 * @return	True if match found
 	 */
-	public function hasTransition(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:T->Bool):Bool
+	public function hasTransition(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:Null<T->Bool>):Bool
 	{
 		switch([from, to, condition])
 		{
