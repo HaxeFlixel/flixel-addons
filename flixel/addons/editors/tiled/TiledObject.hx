@@ -41,8 +41,9 @@ class TiledObject
 	public var gid:Int;
 	/**
 	 * Custom properties that users can set on this object
+	 * If "type" is not defined, the parent layer's "defaultType" is used
 	 */
-	public var custom:TiledPropertySet;
+	public var properties:TiledPropertySet;
 	/** 
 	 * Shared properties are tileset properties added on object tile
 	 */ 
@@ -73,7 +74,8 @@ class TiledObject
 		xmlData = source;
 		layer = parent;
 		name = (source.has.name) ? source.att.name : "[object]";
-		type = (source.has.type) ? source.att.type : parent.name;
+		type = (source.has.type) ? source.att.type :
+		        (parent.properties.contains("defaultType") ? parent.properties.get("defaultType") : "");
 		x = Std.parseInt(source.att.x);
 		y = Std.parseInt(source.att.y);
 		width = (source.has.width) ? Std.parseInt(source.att.width) : 0;
@@ -107,11 +109,11 @@ class TiledObject
 		
 		// load properties
 		var node:Xml;
-		custom = new TiledPropertySet();
+		properties = new TiledPropertySet();
 		
 		for (node in source.nodes.properties)
 		{
-			custom.extend(node);
+			properties.extend(node);
 		}
 		
 		// Let's see if it's another object

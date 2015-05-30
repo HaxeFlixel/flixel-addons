@@ -31,7 +31,14 @@ class TiledMap
 	
 	public var properties:TiledPropertySet;
 	
+	/**
+	 * Use to get a tileset by name
+	 */
 	public var tilesets: Map<String, TiledTileSet>;
+	/**
+	 * Use for iterating over tilesets, and for merging tilesets (because order is important)
+	 */
+	public var tilesetArray:Array<TiledTileSet>;
 	
 	public var layers:Array<TiledLayer>;
 	
@@ -77,6 +84,7 @@ class TiledMap
 		
 		noLoadHash = new Map<String, Bool>();
 		tilesets = new Map<String, TiledTileSet>();
+		tilesetArray = new Array<TiledTileSet>();
 		layers = new Array<TiledLayer>();
 		
 		// Load properties
@@ -106,7 +114,9 @@ class TiledMap
 			
 			if (!noLoadHash.exists(name))
 			{
-				tilesets.set(name, new TiledTileSet(node));
+				var ts:TiledTileSet = new TiledTileSet(node);
+				tilesets.set(name, ts);
+				tilesetArray.push(ts);
 			}
 		}
 		
