@@ -23,7 +23,8 @@ class TiledObjectLayer extends TiledLayer
 		loadObjects(source);
 	}
 	
-	private function loadObjects(source:Fast):Void {
+	private function loadObjects(source:Fast):Void
+	{
 		for (node in source.nodes.object)
 		{
 			objects.push(new TiledObject(node, this));

@@ -3,6 +3,7 @@ package flixel.addons.editors.tiled;
 import flixel.util.FlxColor;
 import openfl.Assets;
 import haxe.xml.Fast;
+import flixel.util.typeLimit.OneOfTwo;
 
 #if cpp
 import sys.io.File;
@@ -34,7 +35,7 @@ class TiledMap
 	/**
 	 * Use to get a tileset by name
 	 */
-	public var tilesets: Map<String, TiledTileSet>;
+	public var tilesets:Map<String, TiledTileSet>;
 	/**
 	 * Use for iterating over tilesets, and for merging tilesets (because order is important)
 	 */
@@ -48,7 +49,10 @@ class TiledMap
 	private var noLoadHash:Map<String, Bool>;
 	private var layerMap:Map<String, TiledLayer>;
 	
-	public function new(data:Dynamic)
+	/**
+	 * @param data Either a string or XML object containing the Tiled map data
+	 */
+	public function new(data:FlxTiledAsset)
 	{
 		properties = new TiledPropertySet();
 		var source:Fast = null;
@@ -162,3 +166,5 @@ class TiledMap
 		return null;
 	}
 }
+
+typedef FlxTiledAsset = OneOfTwo<String, Xml>;
