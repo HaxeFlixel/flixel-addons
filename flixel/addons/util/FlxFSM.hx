@@ -129,6 +129,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		this.state = state;
 		this.type = FSMType.any;
 		this.transitions = new FlxFSMTransitionTable<T>();
+		this.pools = new StatePool<T>();
 	}
 	
 	/**
