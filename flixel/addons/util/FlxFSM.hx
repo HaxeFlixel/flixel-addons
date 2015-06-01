@@ -128,6 +128,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		this.owner = owner;
 		this.state = state;
 		this.type = FSMType.any;
+		this.transitions = new FlxFSMTransitionTable<T>();
 	}
 	
 	/**
