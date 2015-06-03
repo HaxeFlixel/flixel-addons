@@ -52,12 +52,12 @@ class FlxRayCastTilemap extends FlxTilemap
 		var outY:Float;   
 		var hitTile:Bool = false;  
 		var tResult:Float = 0;
-  
+
 		if (Start == null)
 		{
 			return false;
 		}
-  
+
 		if (Result == null)
 		{
 			Result = FlxPoint.get();
@@ -203,17 +203,17 @@ class FlxRayCastTilemap extends FlxTilemap
 		
 		return hitTile;
 	}
-   
+
 	public function inTileRange(TileX:Float, TileY:Float):Bool
 	{
 		return (TileX >= 0 && TileX < widthInTiles && TileY >= 0 && TileY < heightInTiles);
 	}
-   
+
 	public function tileAt(CoordX:Float, CoordY:Float):Int
 	{
 		return getTile(Std.int((CoordX - x) / _scaledTileWidth), Std.int((CoordY - y) / _scaledTileHeight));
 	}
-  
+
 	public function tileIndexAt(CoordX:Float, CoordY:Float):Int
 	{
 		var X:Int = Std.int((CoordX - x) / _scaledTileWidth);
@@ -221,17 +221,12 @@ class FlxRayCastTilemap extends FlxTilemap
 		
 		return Y * widthInTiles + X;
 	}
- 
-	/**
-	* @param X in tiles
-	* @param Y in tiles
-	* @return
-	*/
+
 	public function getTileIndex(X:Int, Y:Int):Int
 	{
 		return Y * widthInTiles + X;   
 	}
-   
+
 	public function coordsToTileX(CoordX:Float):Float
 	{
 		return Std.int((CoordX - x) / _scaledTileWidth);

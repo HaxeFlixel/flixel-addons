@@ -34,7 +34,7 @@ class FlxNapeSpace extends FlxBasic
 	public static var velocityIterations:Int = 10;
 	/**
 	 * The number of iterations used by nape in resolving errors in the positions of objects.
-	 * This is far more lightweight than velocity iterations, is well as being less important
+	 * This is far more lightweight than velocity iterations, as well as being less important
 	 * for the stability of results. (default 10)
 	 */
 	public static var positionIterations:Int = 10;
@@ -45,7 +45,15 @@ class FlxNapeSpace extends FlxBasic
 	public static var drawDebug(default, set):Bool;
 	
 	#if !FLX_NO_DEBUG
-	private static var shapeDebug:ShapeDebug;
+	/**
+	 * A useful "canvas" which can be used to draw debug information on.
+	 * To get a better idea of its use, see the official Nape demo 'SpatialQueries'
+	 * (http://napephys.com/samples.html#swf-SpatialQueries)
+	 * where this is used to draw lines emitted from Rays.
+	 * A sensible place to use this would be the state's draw() method.
+	 * Note that shapeDebug is null if drawDebug is false.
+	 */
+	public static var shapeDebug(default, null):ShapeDebug;
 	private static var drawDebugButton:FlxSystemButton;
 	#end
 	
@@ -75,7 +83,7 @@ class FlxNapeSpace extends FlxBasic
 	}
 	
 	/**
-	 * Creates simple walls around the game area - usefull for prototying.
+	 * Creates simple walls around the game area - useful for prototying.
 	 *
 	 * @param   minX        The smallest X value of your level (usually 0).
 	 * @param   minY        The smallest Y value of your level (usually 0).
