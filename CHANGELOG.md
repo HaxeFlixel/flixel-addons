@@ -1,3 +1,8 @@
+?.?.?
+------------------------------
+* TiledLayer and TiledObjectGroup have been replaced with TiledTileLayer and TiledObjectLayer with common base class TiledLayer
+* TiledMap now stores object layers and tile layers in a single array, layers, to maintain the order of object and tile layers
+
 1.1.0
 ------------------------------
 * Compatibility with flixel 3.3.0
