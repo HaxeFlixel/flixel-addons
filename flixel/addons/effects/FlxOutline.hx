@@ -22,6 +22,8 @@ class FlxOutline extends FlxSprite
 	 */
 	public var outlineColor(default, set):FlxColor;
 	
+	public var thickness(default, set):Int;
+	
 	/**
 	 * Used for checking frame update.
 	 */
@@ -31,18 +33,18 @@ class FlxOutline extends FlxSprite
 	 * Creates an outline around a specified sprite with the specified color.
 	 *
 	 * @param Target The FlxSprite to draw an outline around
-	 * @param Color Color of outline.
+	 * @param Color Color of the outline
+	 * @param Thickness Outline thickness in pixels
 	 */
-	public function new(Target:FlxSprite, Color:FlxColor = FlxColor.WHITE)
+	public function new(Target:FlxSprite, Color:FlxColor = FlxColor.WHITE, Thickness:Int = 1)
 	{
 		super();
 		target = Target;
-		makeGraphic(target.frameWidth + 2, target.frameHeight + 2, 0);
+		outlineColor = Color;
+		thickness = Thickness;
+		
 		x = target.x;
 		y = target.y;
-		offset.copyFrom(target.offset).add(1, 1);
-		scrollFactor.copyFrom(target.scrollFactor);
-		outlineColor = Color;
 	}
 	
 	override public function destroy():Void 
@@ -76,12 +78,12 @@ class FlxOutline extends FlxSprite
 				var pixel:FlxColor = targetPixels.getPixel32(x, y);
 				if (pixel.alphaFloat > 0)
 				{
-					surroundPixel(x + 1, y + 1);
+					surroundPixel(x + thickness, y + thickness);
 				}
 			}
 		}
 		
-		_flashPoint.setTo(1, 1);
+		_flashPoint.setTo(thickness, thickness);
 		target.frame.paint(graphic.bitmap, _flashPoint, true);
 		graphic.bitmap.unlock();
 		dirty = true;
@@ -89,9 +91,9 @@ class FlxOutline extends FlxSprite
 	
 	private function surroundPixel(targetX:Int, targetY:Int):Void
 	{
-		for (x in (targetX - 1)...(targetX + 2))
+		for (x in (targetX - thickness)...(targetX + thickness * 2))
 		{
-			for (y in (targetY - 1)...(targetY + 2))
+			for (y in (targetY - thickness)...(targetY + thickness * 2))
 			{
 				graphic.bitmap.setPixel32(x, y, outlineColor);
 			}
@@ -107,6 +109,20 @@ class FlxOutline extends FlxSprite
 			{
 				updateOutline();
 			}
+		}
+		
+		return value;
+	}
+	
+	private function set_thickness(value:Int):Int
+	{
+		if (value != thickness)
+		{
+			thickness = value;
+			makeGraphic(target.frameWidth + thickness * 2,
+				target.frameHeight + thickness * 2, 0);
+			offset.copyFrom(target.offset).add(thickness, thickness);
+			updateOutline();
 		}
 		
 		return value;
