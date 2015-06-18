@@ -51,7 +51,6 @@ class FlxRainbowSprite extends FlxSprite
 		changeSpeed = ChangeSpeed;
 		hue = Std.int(FlxMath.bound(StartHue, 0, 360));
 		init();
-		FlxG.watch.add(this, "time");
 	}
 	
 	private function init():Void
