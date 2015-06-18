@@ -65,7 +65,7 @@ class FlxRainbowSprite extends FlxSprite
 		pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
 		swatch.lock();
 		swatch.fillRect(swatch.rect, FlxColor.fromHSB(hue, 1, 1));
-		pixels.copyPixels(swatch, swatch.rect, _flashPointZero, target.pixels, _flashPointZero, true);		
+		pixels.copyPixels(swatch, swatch.rect, _flashPointZero, target.framePixels, _flashPointZero, true);		
 		pixels.unlock();
 		swatch.unlock();
 		dirty = true;
