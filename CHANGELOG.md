@@ -28,15 +28,22 @@
 * added `flixel.addons.editors.pex.FlxPexParser`
 * added `flixel.addons.transition`
 * added `flixel.addons.util.FlxScene`
+* added `flixel.addons.effects.FlxOutline`
 * `flixel.addons.nape`:
  * refactored `FlxNapeState` into a plugin called `FlxNapeSpace`, making it possible to use nape with other `FlxState` child classes like `FlxUIState`
  * `FlxNapeSpace`: added `napePhysicsEnabled`
+ * `FlxNapeSpace`: made `shapeDebug` public
  * `FlxNapeSprite`: `setPosition()` is now overriden and sets `body.position`
+ * `FlxNapeSprite#new()`: the `EnablePhysics` argument is now no longer ignored if `CreateRectangularBody` is `false`
 * `flixel.addons.plugin.taskManager`: 
  * `AntTaskManager` -> `FlxTaskManager`
  * `AntTask` -> `FlxTask`
 * `FlxBackdrop` now supports `scale`, `loadGraphic()` and `loadFrame()`
-* `flixel.addons.editors.spine` now uses [spinehaxe](https://github.com/bendmorris/spinehaxe) instead of [spinehx](https://github.com/nitrobin/spinehx)
+* `flixel.addons.editors.spine`:
+ * now uses [spinehaxe](https://github.com/bendmorris/spinehaxe) instead of [spinehx](https://github.com/nitrobin/spinehx)
+ * `FlxSpine#readSkeletonData()` now allows for different atlas and animation file names
+* `FlxOgmoLoader`: added `getProperty()`
+* `FlxScreenGrab`: fixed `defineHotkeys()` arguments overriding those in `grab()`
 
 1.1.0
 ------------------------------
