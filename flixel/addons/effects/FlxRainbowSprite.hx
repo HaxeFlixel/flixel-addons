@@ -43,7 +43,7 @@ class FlxRainbowSprite extends FlxSprite
 		super();
 		target = Target;
 		changeSpeed = ChangeSpeed;
-		hue = Std.int(FlxMath.bound(StartHue, 0, 360));
+		time = hue = Std.int(FlxMath.bound(StartHue, 0, 360));
 		init();
 	}
 	
