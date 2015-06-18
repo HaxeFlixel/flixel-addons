@@ -60,6 +60,7 @@ class FlxRainbowSprite extends FlxSprite
 	
 	private function applyColor():Void
 	{
+		target.drawFrame(true);
 		pixels.lock();
 		pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
 		swatch.lock();
@@ -72,13 +73,22 @@ class FlxRainbowSprite extends FlxSprite
 	
 	override public function draw():Void 
 	{
-		applyColor();
+		drawFrame();
 		super.draw();
 	}
 	
-	override public function update(elapsed:Float):Void 
+	override public function drawFrame(Force:Bool = false):Void 
 	{
-		super.update(elapsed);
+		if (target != null)
+		{
+			if (drawEffect())
+				Force = true;
+		}
+		super.drawFrame(Force);
+	}
+	
+	private function drawEffect():Bool
+	{
 		time += changeSpeed;
 		hue = Std.int(time);
 		if (hue > 360)
@@ -86,5 +96,9 @@ class FlxRainbowSprite extends FlxSprite
 			hue = 0;
 			time -= 360;
 		}
+		applyColor();
+		return true;
 	}
+	
+	
 }

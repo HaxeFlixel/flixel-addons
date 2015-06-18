@@ -65,16 +65,28 @@ class FlxWaveSprite extends FlxSprite
 		dirty = true;
 	}
 	
-	override public function update(elapsed:Float):Void
+	override public function draw():Void 
 	{
-		super.update(elapsed);
-		_time += elapsed * speed;
+		drawFrame();
+		super.draw();
 	}
 	
-	override public function draw():Void
+	override public function drawFrame(Force:Bool = false):Void 
 	{
-		if (!visible || alpha == 0)
-			return;
+		if (target != null)
+		{
+			if (drawEffect())
+				Force = true;
+		}
+		super.drawFrame(Force);
+	}
+	
+	private function drawEffect():Bool
+	{
+			
+		_time += FlxG.elapsed * speed;
+		
+		target.drawFrame(true);
 		
 		pixels.lock();
 		pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
@@ -107,6 +119,7 @@ class FlxWaveSprite extends FlxSprite
 			_flashRect2.setTo(0, oY, target.frameWidth, 1);
 			pixels.copyPixels(target.framePixels, _flashRect2, _flashPoint);
 		}
+		
 		pixels.unlock();
 		
 		if (_targetOffset == -999)
@@ -118,9 +131,8 @@ class FlxWaveSprite extends FlxSprite
 			if (offset == _targetOffset)
 				_time = 0;
 		}
-		
 		dirty = true;
-		super.draw();
+		return true;
 	}
 	
 	private inline function calculateOffset(p:Float):Float
