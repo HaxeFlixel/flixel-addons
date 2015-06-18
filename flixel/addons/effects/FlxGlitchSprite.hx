@@ -116,7 +116,7 @@ class FlxGlitchSprite extends FlxSprite
 		super.draw();
 	}
 	
-	public function initPixels():Void
+	private function initPixels():Void
 	{
 		var oldGraphic:FlxGraphic = graphic;
 		
