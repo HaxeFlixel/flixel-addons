@@ -66,10 +66,6 @@ class TiledMap
 		{
 			source = new Fast(data);
 		}
-		else 
-		{
-			throw "Unknown TMX map format";
-		}
 		
 		source = source.node.map;
 		version = (source.att.version != null) ? source.att.version : "unknown";
@@ -131,17 +127,17 @@ class TiledMap
 			if (noLoadHash.exists(el.att.name)) continue;
 			if (el.name.toLowerCase() == "layer")
 			{
-				layers.push(new TiledTileLayer(el, this));
-				layerMap.set(layers[layers.length - 1].name, layers[layers.length - 1]);
+				var tileLayer = new TiledTileLayer(el, this);
+				layers.push(tileLayer);
+				layerMap.set(tileLayer.name, tileLayer);
 			}
 			else if (el.name.toLowerCase() == "objectgroup")
 			{
-				layers.push(new TiledObjectLayer(el, this));
-				layerMap.set(layers[layers.length - 1].name, layers[layers.length - 1]);
+				var objectLayer = new TiledObjectLayer(el, this);
+				layers.push(objectLayer);
+				layerMap.set(objectLayer.name, objectLayer);
 			}
 		}
-		
-		
 	}
 	
 	public function getTileSet(name:String):TiledTileSet
@@ -154,7 +150,9 @@ class TiledMap
 		return layerMap.get(name);
 	}
 	
-	// works only after TiledTileSet has been initialized with an image...
+	/**
+	 * works only after TiledTileSet has been initialized with an image...
+	 */
 	public function getGidOwner(gid:Int):TiledTileSet
 	{
 		var last:TiledTileSet = null;
