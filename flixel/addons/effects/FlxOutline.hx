@@ -106,7 +106,10 @@ class FlxOutline extends FlxSprite
 		{
 			for (j in (J - 1)...(J + 2))
 			{
-				graphic.bitmap.setPixel32(i, j, outlineColor);
+				if (graphic.bitmap.getPixel(i, j) == 0)
+				{
+					graphic.bitmap.setPixel32(i, j, outlineColor);
+				}
 			}
 		}
 	}
