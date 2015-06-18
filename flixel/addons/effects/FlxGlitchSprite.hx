@@ -16,6 +16,11 @@ import flixel.math.FlxRandom;
 class FlxGlitchSprite extends FlxSprite
 {
 	/**
+	 * The target FlxSprite that the glitch effect copies from.
+	 */
+	public var target(default, null):FlxSprite;
+	
+	/**
 	 * How thick each glitch segment should be.
 	 */
 	public var size:Int = 1;
@@ -23,10 +28,6 @@ class FlxGlitchSprite extends FlxSprite
 	 * Time, in seconds, between glitch updates
 	 */
 	public var delay:Float = 0.05;
-	/**
-	 * The target FlxSprite that the glitch effect copies from.
-	 */
-	public var target:FlxSprite;
 	/**
 	 * Which direction the glitch effect should be applied.
 	 */
