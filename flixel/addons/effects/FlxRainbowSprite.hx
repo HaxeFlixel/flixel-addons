@@ -13,37 +13,31 @@ import openfl.display.BitmapData;
  */
 class FlxRainbowSprite extends FlxSprite
 {
-	/*
+	/**
 	 * The target FlxSprite that is used as the mask
 	 */
 	public var target(default, null):FlxSprite;
 	
-	/*
+	/**
 	 * How fast the hue should change each tick.
 	 */
 	public var changeSpeed:Float = 5;
 	
-	/*
+	/**
 	 * The current hue of the effect
 	 */
 	private var hue:Int = 0;
 	
-	/*
+	/**
 	 * A dummy sprite for the mask to be applied from
 	 */
 	private var swatch:BitmapData;
 	
-	/* 
+	/**
 	 * Used to adjust the hue using changeSpeed
 	 */
 	private var time:Float = 0;
 	
-	/**
-	 * Creates a new FlxRainbowSprite
-	 * @param	Target
-	 * @param	StartHue
-	 * @param	ChangeSpeed
-	 */
 	public function new(Target:FlxSprite, StartHue:Int = 0, ChangeSpeed:Float = 5) 
 	{
 		super();
@@ -86,13 +80,11 @@ class FlxRainbowSprite extends FlxSprite
 	{
 		super.update(elapsed);
 		time += changeSpeed;
-		hue=Std.int(time);
+		hue = Std.int(time);
 		if (hue > 360)
 		{
 			hue = 0;
-			time-= 360;
+			time -= 360;
 		}
 	}
-	
-	
 }

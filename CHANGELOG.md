@@ -29,6 +29,7 @@
 * added `flixel.addons.transition`
 * added `flixel.addons.util.FlxScene`
 * added `flixel.addons.effects.FlxOutline`
+* added `flixel.addons.effects.FlxRainbowSprite`
 * `flixel.addons.nape`:
  * refactored `FlxNapeState` into a plugin called `FlxNapeSpace`, making it possible to use nape with other `FlxState` child classes like `FlxUIState`
  * `FlxNapeSpace`: added `napePhysicsEnabled`
