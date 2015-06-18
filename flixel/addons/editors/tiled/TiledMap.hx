@@ -124,6 +124,7 @@ class TiledMap
 			}
 		}
 		
+		layerMap = new Map<String, TiledLayer>();
 		// Load tile and object layers
 		for (el in source.elements)
 		{
@@ -131,12 +132,16 @@ class TiledMap
 			if (el.name.toLowerCase() == "layer")
 			{
 				layers.push(new TiledTileLayer(el, this));
+				layerMap.set(layers[layers.length - 1].name, layers[layers.length - 1]);
 			}
 			else if (el.name.toLowerCase() == "objectgroup")
 			{
 				layers.push(new TiledObjectLayer(el, this));
+				layerMap.set(layers[layers.length - 1].name, layers[layers.length - 1]);
 			}
 		}
+		
+		
 	}
 	
 	public function getTileSet(name:String):TiledTileSet
