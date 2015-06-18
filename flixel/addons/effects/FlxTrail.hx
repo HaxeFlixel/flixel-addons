@@ -49,23 +49,23 @@ class FlxTrail extends FlxSpriteGroup
 	public var framesEnabled:Bool = true;
 	
 	/**
-	 *  Counts the frames passed.
+	 * Counts the frames passed.
 	 */
 	private var _counter:Int = 0;
 	/**
-	 *  How long is the trail?
+	 * How long is the trail?
 	 */
 	private var _trailLength:Int = 0;
 	/**
-	 *  Stores the trailsprite image.
+	 * Stores the trailsprite image.
 	 */
 	private var _graphic:FlxGraphicAsset;
 	/**
-	 *  The alpha value for the next trailsprite.
+	 * The alpha value for the next trailsprite.
 	 */
 	private var _transp:Float = 1;
 	/**
-	 *  How much lower the alpha value of the next trailsprite is.
+	 * How much lower the alpha value of the next trailsprite is.
 	 */
 	private var _difference:Float;
 
@@ -78,7 +78,7 @@ class FlxTrail extends FlxSpriteGroup
 	private var _recentAnimations:Array<FlxAnimation> = [];
 	
 	/**
-	 *  Stores the sprite origin (rotation axis)
+	 * Stores the sprite origin (rotation axis)
 	 */
 	private var _spriteOrigin:FlxPoint;
 	
@@ -133,7 +133,6 @@ class FlxTrail extends FlxSpriteGroup
 
 	/**
 	 * Updates positions and other values according to the delay that has been set.
-	 * 
 	 */
 	override public function update(elapsed:Float):Void
 	{
