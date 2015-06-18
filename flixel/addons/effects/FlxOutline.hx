@@ -6,19 +6,19 @@ import flixel.util.FlxColor;
 import openfl.display.BitmapData;
 
 /**
- * Class for creating filled outline around FlxSprite.
+ * Creates a filled outline around a FlxSprite.
  *
  * @author red__hara
  */
 class FlxOutline extends FlxSprite
 {
 	/**
-	 * FlxSprite to draw outline around.
+	 * FlxSprite to draw an outline around.
 	 */
 	public var target(default, null):FlxSprite;
 	
 	/**
-	 * Color of outline.
+	 * Color of the outline.
 	 */
 	public var outlineColor(default, set):FlxColor;
 	
@@ -28,9 +28,9 @@ class FlxOutline extends FlxSprite
 	private var lastFrame:FlxFrame;
 	
 	/**
-	 * Creates a BadOutline around specified sprite with specified color.
+	 * Creates an outline around a specified sprite with the specified color.
 	 *
-	 * @param Target The FlxSprite to draw outline around
+	 * @param Target The FlxSprite to draw an outline around
 	 * @param Color Color of outline.
 	 */
 	public function new(Target:FlxSprite, Color:FlxColor = FlxColor.WHITE)
@@ -52,43 +52,33 @@ class FlxOutline extends FlxSprite
 		super.destroy();
 	}
 	
-	/**
-	 * Main update method.
-	 */
 	override public function update(elapsed:Float):Void
 	{
 		if (lastFrame != target.frame)
 		{
-			updateFrame();
+			updateOutline();
 		}
 		super.update(elapsed);
 	}
 	
-	/**
-	 * Updates outline.
-	 */
-	private function updateFrame():Void
+	private function updateOutline():Void
 	{
 		lastFrame = target.frame;
-		var i:Int = 0;
-		var j:Int = 0;
 		
 		var targetPixels:BitmapData = target.getFlxFrameBitmapData();
 		graphic.bitmap.lock();
 		graphic.bitmap.fillRect(graphic.bitmap.rect, FlxColor.TRANSPARENT);
 		
-		while (i < target.frameWidth)
+		for (x in 0...target.frameWidth)
 		{
-			j = 0;
-			while (j < target.frameHeight)
+			for (y in 0...target.frameHeight)
 			{
-				if (targetPixels.getPixel32(i, j) & 0xff000000 != 0)
+				var pixel:FlxColor = targetPixels.getPixel32(x, y);
+				if (pixel.alphaFloat > 0)
 				{
-					surround(i + 1, j + 1);
+					surroundPixel(x + 1, y + 1);
 				}
-				j++;
 			}
-			i++;
 		}
 		
 		_flashPoint.setTo(1, 1);
@@ -97,16 +87,13 @@ class FlxOutline extends FlxSprite
 		dirty = true;
 	}
 	
-	/**
-	 * Surrounds selected pixel with outline color.
-	 */
-	private function surround(I:Int, J:Int):Void
+	private function surroundPixel(targetX:Int, targetY:Int):Void
 	{
-		for (i in (I - 1)...(I + 2))
+		for (x in (targetX - 1)...(targetX + 2))
 		{
-			for (j in (J - 1)...(J + 2))
+			for (y in (targetY - 1)...(targetY + 2))
 			{
-				graphic.bitmap.setPixel32(i, j, outlineColor);
+				graphic.bitmap.setPixel32(x, y, outlineColor);
 			}
 		}
 	}
@@ -118,7 +105,7 @@ class FlxOutline extends FlxSprite
 			outlineColor = value;
 			if (graphic != null)
 			{
-				updateFrame();
+				updateOutline();
 			}
 		}
 		
