@@ -266,15 +266,13 @@ class FlxNestedSprite extends FlxSprite
 					var cos:Float = Math.cos(radians);
 					var sin:Float = Math.sin(radians);
 					
-					/* Fix from yannicular */	
 					var dx = width / 2 - child.width / 2 - offset.x;
 					dx += scale.x * cos * (child.relativeX - width / 2 + child.width / 2) ;
 					dx -= scale.y * sin * (child.relativeY - height / 2 + child.height / 2) ;
 					
 					var dy = height / 2 - child.height / 2 - offset.y;
 					dy += scale.y * cos * (child.relativeY - height / 2 + child.height / 2);
-					dy += scale.x * sin * (child.relativeX - width / 2 + child.width / 2) ;
-					
+					dy += scale.x * sin * (child.relativeX - width / 2 + child.width / 2) ;					
 					
 					child.x = x +  dx;
 					child.y = y +  dy;
