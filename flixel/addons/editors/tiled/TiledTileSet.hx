@@ -86,13 +86,14 @@ class TiledTileSet
 			
 			// read properties
 			properties = new TiledPropertySet();
+			
 			for (prop in source.nodes.properties) {
 				properties.extend(prop);
 			}
 			
 			// read tiles properties
 			tileProps = new Array<TiledPropertySet>();
-			
+			tileProps[id].key.set("id", Std.string(id));
 			for (node in source.nodes.tile)
 			{
 				if (!node.has.id)
