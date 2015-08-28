@@ -16,6 +16,11 @@ import flixel.math.FlxRandom;
 class FlxGlitchSprite extends FlxSprite
 {
 	/**
+	 * The target FlxSprite that the glitch effect copies from.
+	 */
+	public var target(default, null):FlxSprite;
+	
+	/**
 	 * How thick each glitch segment should be.
 	 */
 	public var size:Int = 1;
@@ -23,10 +28,6 @@ class FlxGlitchSprite extends FlxSprite
 	 * Time, in seconds, between glitch updates
 	 */
 	public var delay:Float = 0.05;
-	/**
-	 * The target FlxSprite that the glitch effect copies from.
-	 */
-	public var target:FlxSprite;
 	/**
 	 * Which direction the glitch effect should be applied.
 	 */
@@ -118,10 +119,17 @@ class FlxGlitchSprite extends FlxSprite
 	private function initPixels():Void
 	{
 		var oldGraphic:FlxGraphic = graphic;
+		
+		var horizontalStrength = (direction == HORIZONTAL) ? strength : 0;
+		var verticalStrength = (direction == VERTICAL) ? strength : 0;
 		target.drawFrame(true);
-		setPosition(target.x - (direction == HORIZONTAL ? strength : 0), target.y - (direction == VERTICAL ? strength : 0));
-		makeGraphic(Std.int(target.frameWidth + (direction == HORIZONTAL ? strength * 2 : 0)), Std.int(target.frameHeight + (direction == VERTICAL ? strength * 2 : 0 )), FlxColor.TRANSPARENT, true);
-		_flashPoint.setTo((direction == HORIZONTAL ? strength : 0), (direction == VERTICAL ? strength : 0));
+		setPosition(target.x - horizontalStrength, target.y - verticalStrength);
+		makeGraphic(
+			Std.int(target.frameWidth + horizontalStrength * 2),
+			Std.int(target.frameHeight + verticalStrength * 2),
+			FlxColor.TRANSPARENT, true);
+		_flashPoint.setTo(horizontalStrength, verticalStrength);
+			
 		pixels.copyPixels(target.framePixels, target.framePixels.rect, _flashPoint);
 		dirty = true;
 		FlxG.bitmap.removeIfNoUse(oldGraphic);

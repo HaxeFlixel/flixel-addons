@@ -18,6 +18,11 @@ class FlxWaveSprite extends FlxSprite
 	private static inline var BASE_STRENGTH:Float = 0.06;
 	
 	/**
+	 * The target FlxSprite we're going to be using
+	 */
+	public var target(default, null):FlxSprite;
+	
+	/**
 	 * Which mode we're using for the effect
 	 */
 	public var mode:FlxWaveMode;
@@ -34,10 +39,6 @@ class FlxWaveSprite extends FlxSprite
 	 */
 	public var strength(default, set):Int;
 	
-	/**
-	 * The target FlxSprite we're going to be using
-	 */
-	private var _target:FlxSprite;
 	private var _targetOffset:Float = -999;
 	
 	private var _time:Float = 0;
@@ -54,12 +55,12 @@ class FlxWaveSprite extends FlxSprite
 	public function new(Target:FlxSprite, ?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3) 
 	{
 		super();
-		_target = Target;
+		target = Target;
 		strength = Strength;
 		mode = (Mode == null) ? ALL : Mode;
 		speed = Speed;
 		if (Center < 0)
-			center = Std.int(_target.height * 0.5);
+			center = Std.int(target.height * 0.5);
 		initPixels();
 		dirty = true;
 	}
@@ -79,10 +80,10 @@ class FlxWaveSprite extends FlxSprite
 		pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
 		
 		var offset:Float = 0;
-		for (oY in 0..._target.frameHeight)
+		for (oY in 0...target.frameHeight)
 		{
 			var p:Float=0;
-			switch(mode)
+			switch (mode)
 			{
 				case ALL:
 					offset = center * calculateOffset(oY);
@@ -103,8 +104,8 @@ class FlxWaveSprite extends FlxSprite
 			}
 			
 			_flashPoint.setTo(strength + offset, oY);
-			_flashRect2.setTo(0, oY, _target.frameWidth, 1);
-			pixels.copyPixels(_target.framePixels, _flashRect2, _flashPoint);
+			_flashRect2.setTo(0, oY, target.frameWidth, 1);
+			pixels.copyPixels(target.framePixels, _flashRect2, _flashPoint);
 		}
 		pixels.unlock();
 		
@@ -130,11 +131,11 @@ class FlxWaveSprite extends FlxSprite
 	private function initPixels():Void
 	{
 		var oldGraphic:FlxGraphic = graphic;
-		_target.drawFrame(true);
-		setPosition(_target.x - strength, _target.y);
-		makeGraphic(Std.int(_target.frameWidth + (strength * 2)), _target.frameHeight, FlxColor.TRANSPARENT, true);
+		target.drawFrame(true);
+		setPosition(target.x - strength, target.y);
+		makeGraphic(Std.int(target.frameWidth + (strength * 2)), target.frameHeight, FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo(strength, 0);
-		pixels.copyPixels(_target.framePixels, _target.framePixels.rect, _flashPoint);
+		pixels.copyPixels(target.framePixels, target.framePixels.rect, _flashPoint);
 		dirty = true;
 		FlxG.bitmap.removeIfNoUse(oldGraphic);
 	}
