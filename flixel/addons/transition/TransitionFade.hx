@@ -33,6 +33,7 @@ class TransitionFade extends Transition
 		super(data);
 		
 		back = makeSprite(data.direction.x, data.direction.y);
+		back.scrollFactor.set(0, 0);
 		add(back);
 	}
 	
