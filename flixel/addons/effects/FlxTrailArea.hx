@@ -185,11 +185,14 @@ class FlxTrailArea extends FlxSprite
 			{
 				if (member.exists) 
 				{
+					var finalX = member.x - x - member.offset.x;
+					var finalY = member.y - y - member.offset.y;
+					
 					if (simpleRender) 
 					{
 						_areaPixels.copyPixels(member.getFlxFrameBitmapData(), 
-												new Rectangle(0, 0, member.frameWidth, member.frameHeight), 
-												new Point(member.x - x, member.y - y), null, null, true);
+							new Rectangle(0, 0, member.frameWidth, member.frameHeight), 
+							new Point(finalX, finalY), null, null, true);
 					}
 					else 
 					{
@@ -198,7 +201,7 @@ class FlxTrailArea extends FlxSprite
 						_matrix.identity();
 						if (rotated || scaled) 
 						{
-							_matrix.translate( -(member.origin.x), -(member.origin.y));
+							_matrix.translate(-member.origin.x, -member.origin.y);
 							if (scaled)
 							{
 								_matrix.scale(member.scale.x, member.scale.y);
@@ -207,12 +210,11 @@ class FlxTrailArea extends FlxSprite
 							{
 								_matrix.rotate(member.angle * FlxAngle.TO_RAD);
 							}
-							_matrix.translate((member.origin.x), (member.origin.y));
+							_matrix.translate(member.origin.x, member.origin.y);
 						}
-						_matrix.translate(member.x - x, member.y - y);
+						_matrix.translate(finalX, finalY);
 						_areaPixels.draw(member.getFlxFrameBitmapData(), _matrix, member.colorTransform, blendMode, null, antialiasing);
 					}
-					
 				}
 			}
 			
