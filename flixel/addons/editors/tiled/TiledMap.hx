@@ -124,7 +124,7 @@ class TiledMap
 		// Load tile and object layers
 		for (el in source.elements)
 		{
-			if (noLoadHash.exists(el.att.name)) continue;
+			if (el.name.toLowerCase() != "properties" && noLoadHash.exists(el.att.name)) continue;
 			if (el.name.toLowerCase() == "layer")
 			{
 				var tileLayer = new TiledTileLayer(el, this);
