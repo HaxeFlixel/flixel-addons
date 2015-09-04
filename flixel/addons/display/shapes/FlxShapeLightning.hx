@@ -29,9 +29,6 @@ class FlxShapeLightning extends FlxShapeLine
 	private var list_segs:Array<LineSegment>;
 	private var list_branch:Array<LineSegment>;
 	
-	//private var flxSpriteFilter:FlxSpriteFilter;
-	private var filterDirty:Bool = false;
-	
 	/**
 	 * Creates a lightning bolt!
 	 * 
@@ -201,30 +198,20 @@ class FlxShapeLightning extends FlxShapeLine
 			FlxSpriteUtil.drawLine(this, l.ax + dw, l.ay + dh, l.bx + dw, l.by + dh, lineStyle);
 		}
 		
+		redrawFilter();
 		shapeDirty = true;
-		filterDirty = true;		//update filters too
 	}
 	
-	override private inline function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
-	{
-		width = shapeWidth;
-		height = shapeHeight;
-		offset.x = expandLeft + getStrokeOffsetX();
-		offset.y = expandUp + getStrokeOffsetY();
-	}
-	
-	override public function draw():Void 
-	{
-		super.draw();
+	private function redrawFilter():Void {
 		
-		if (filterDirty) 
+		var skip = false;
+		if (lightningStyle.halo_colors == null) 
 		{
-			if (lightningStyle.halo_colors == null) 
-			{
-				filterDirty = false;
-				return;
-			}
-			
+			return;
+		}
+		
+		if (!skip)
+		{
 			var i:Int = 0;
 			var a:Array<GlowFilter> = new Array<GlowFilter>();
 			for (halo_color in lightningStyle.halo_colors) 
@@ -232,7 +219,7 @@ class FlxShapeLightning extends FlxShapeLine
 				a.push(new GlowFilter(halo_color, (1.0 - (0.15 * i)), 3, 3));
 				i++;
 			}
-		
+			
 			for (gf in a) 
 			{
 				var pixels2:BitmapData = pixels.clone();
@@ -254,9 +241,22 @@ class FlxShapeLightning extends FlxShapeLine
 				offset.y = oy;
 			}
 			
-			filterDirty = false;
 			fixBoundaries(shapeWidth, shapeHeight);
 		}
+	}
+	
+	override public function update(elapsed:Float):Void 
+	{
+		super.update(elapsed);
+	}
+
+	override private inline function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
+	{
+		width = shapeWidth;
+		height = shapeHeight;
+		offset.x = expandLeft + getStrokeOffsetX();
+		offset.y = expandUp + getStrokeOffsetY();
+		updateMotion(0);
 	}
 	
 	override public function get_strokeBuffer():Float
@@ -282,10 +282,10 @@ class FlxShapeLightning extends FlxShapeLine
 
 typedef LightningStyle = {
 	?thickness:Float,
-	?color:Int,
+	?color:FlxColor,
 	?displacement:Float,
 	?detail:Float,
-	?halo_colors:Array<Int>
+	?halo_colors:Array<FlxColor>
 }
 
 /**
