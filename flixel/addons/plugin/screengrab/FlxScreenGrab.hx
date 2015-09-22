@@ -1,7 +1,7 @@
 package flixel.addons.plugin.screengrab;
 
-#if (sys && systools)
-import systools.Dialogs;
+#if (sys && linc_dialogs)
+import dialogs.Dialogs;
 #end
 
 #if !js
@@ -160,7 +160,7 @@ class FlxScreenGrab extends FlxBasic
 		var png:ByteArray = PNGEncoder.encode(screenshot.bitmapData);
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
-	#elseif systools
+	#elseif linc_dialogs
 		#if lime_legacy
 			var png:ByteArray = screenshot.bitmapData.encode('png');
 		#else
@@ -176,7 +176,7 @@ class FlxScreenGrab extends FlxBasic
 			#else
 				documentsDirectory = lime.system.System.documentsDirectory;
 			#end
-			path = Dialogs.saveFile("", "", "", { count:1, descriptions:["png files"], extensions:["*.png"] } );
+			path = Dialogs.save("", { ext:"png", desc:"png files" } );
 		}
 		catch (msg:String)
 		{
@@ -190,7 +190,7 @@ class FlxScreenGrab extends FlxBasic
 			f.close();
 		}
 	#else
-		FlxG.log.error("You need to include the 'systools' haxelib to use the SaveToFile option.");
+		FlxG.log.error("You need to include the 'linc_dialogs' haxelib to use the SaveToFile option.");
 	#end
 	}
 	
