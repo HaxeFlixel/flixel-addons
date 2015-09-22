@@ -33,6 +33,7 @@ class TransitionFade extends Transition
 		super(data);
 		
 		back = makeSprite(data.direction.x, data.direction.y);
+		back.scrollFactor.set(0, 0);
 		add(back);
 	}
 	
@@ -154,22 +155,26 @@ class TransitionFade extends Transition
 			//vertical wipe
 			locY = DirY > 0 ? FlxG.height : 0;
 			angle = DirY > 0 ? 90 : 270;
-			s.makeGraphic(FlxG.width, FlxG.height * 2, _data.color);
+			s.makeGraphic(1, FlxG.height * 2, _data.color);
 			pixels = s.pixels;
-			var gvert = FlxGradient.createGradientBitmapData(FlxG.width, FlxG.height, [_data.color, FlxColor.TRANSPARENT], 1, angle);
+			var gvert = FlxGradient.createGradientBitmapData(1, FlxG.height, [_data.color, FlxColor.TRANSPARENT], 1, angle);
 			pixels.copyPixels(gvert, gvert.rect, new Point(0, locY));
 			s.pixels = pixels;
+			s.scale.set(FlxG.width, 1.0);
+			s.updateHitbox();
 		}
 		else if (Math.abs(DirX) > 0 && DirY == 0)
 		{
 			//horizontal wipe
 			locX = DirX > 0 ? FlxG.width : 0;
 			angle = DirX > 0 ? 0 : 180;
-			s.makeGraphic(FlxG.width * 2, FlxG.height, _data.color);
+			s.makeGraphic(FlxG.width * 2, 1, _data.color);
 			pixels = s.pixels;
-			var ghorz = FlxGradient.createGradientBitmapData(FlxG.width, FlxG.height, [_data.color, FlxColor.TRANSPARENT], 1, angle);
+			var ghorz = FlxGradient.createGradientBitmapData(FlxG.width, 1, [_data.color, FlxColor.TRANSPARENT], 1, angle);
 			pixels.copyPixels(ghorz, ghorz.rect, new Point(locX, 0));
 			s.pixels = pixels;
+			s.scale.set(1.0, FlxG.height);
+			s.updateHitbox();
 		}
 		else if (Math.abs(DirX) > 0 && Math.abs(DirY) > 0)
 		{
@@ -184,6 +189,7 @@ class TransitionFade extends Transition
 	
 	private function getGradient():BitmapData
 	{
+		//TODO: this could perhaps be optimized a lot by creating a single-pixel wide sprite, rotating it, scaling it super big, and positioning it properly
 		var rawBmp = new GraphicDiagonalGradient(0,0);
 		var gdiag:BitmapData = cast rawBmp;
 		var gdiag_scaled:BitmapData = new BitmapData(FlxG.width * 2, FlxG.height * 2, true);

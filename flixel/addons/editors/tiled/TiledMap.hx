@@ -123,8 +123,9 @@ class TiledMap
 		layerMap = new Map<String, TiledLayer>();
 		// Load tile and object layers
 		for (el in source.elements)
-		{
-			if (noLoadHash.exists(el.att.name)) continue;
+		{	
+			if (el.has.name && noLoadHash.exists(el.att.name)) continue;
+			
 			if (el.name.toLowerCase() == "layer")
 			{
 				var tileLayer = new TiledTileLayer(el, this);

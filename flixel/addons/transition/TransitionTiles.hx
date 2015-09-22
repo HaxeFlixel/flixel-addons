@@ -64,6 +64,7 @@ class TransitionTiles extends Transition
 			{
 				var ts = new FlxTransitionSprite(tx, ty, delay, data.tileData.asset);
 				ts.color = data.color;
+				ts.scrollFactor.set(0, 0);
 				_grpSprites.add(ts);
 				tx += addX;
 				delay += xDelay;
