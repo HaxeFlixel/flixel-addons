@@ -555,7 +555,7 @@ class FlxTilemapExt extends FlxTilemap
 			_slope22Low = LowSlopes;
 			for (i in _slope22Low)
 			{
-				_tileObjects[i].allowCollisions = FlxObject.FLOOR;
+				_tileObjects[i].allowCollisions = (_slopeCeilLeft.indexOf(i) >= 0 || _slopeCeilRight.indexOf(i) >= 0 )? FlxObject.CEILING : FlxObject.FLOOR;
 			}
 		}
 	}
@@ -572,7 +572,7 @@ class FlxTilemapExt extends FlxTilemap
 			_slope67Low = LowSlopes;
 			for (i in _slope67Low)
 			{
-				_tileObjects[i].allowCollisions = FlxObject.FLOOR;
+				_tileObjects[i].allowCollisions = (_slopeCeilLeft.indexOf(i) >= 0 || _slopeFloorLeft.indexOf(i) >= 0 )? FlxObject.RIGHT : FlxObject.LEFT;
 			}
 		}
 	}
@@ -618,7 +618,7 @@ class FlxTilemapExt extends FlxTilemap
 		Object.touching = FlxObject.FLOOR;
 		
 		// Adjust the object's velocity
-		Object.velocity.y = 0;
+		Object.velocity.y = Math.min(Object.velocity.y, 0);
 		
 		// Reposition the object
 		Object.y = _slopePoint.y - Object.height;
@@ -641,7 +641,7 @@ class FlxTilemapExt extends FlxTilemap
 		Object.touching = FlxObject.CEILING;
 		
 		// Adjust the object's velocity
-		Object.velocity.y = 0;
+		Object.velocity.y = Math.max(Object.velocity.y, 0);
 		
 		// Reposition the object
 		Object.y = _slopePoint.y;
@@ -678,11 +678,13 @@ class FlxTilemapExt extends FlxTilemap
 			}
 			else
 			{
+				trace("L");
 				_slopePoint.y = Slope.y + _tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / _tileWidth)) + _snapping;
 			}
 		}
 		else if (checkHighSlope67(tileId))
 		{
+			trace("H");
 			_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) + _snapping;
 		}
 		else if (checkHighSlope22(tileId))
@@ -700,6 +702,7 @@ class FlxTilemapExt extends FlxTilemap
 		// Check if the object is inside the slope
 		if (_objPoint.x > Slope.x + _snapping && _objPoint.x < Slope.x + _tileWidth + Object.width + _snapping && _objPoint.y >= _slopePoint.y && _objPoint.y <= Slope.y + _tileHeight)
 		{
+			trace(">>>");
 			// Call the collide function for the floor slope
 			onCollideFloorSlope(Slope, Object);
 		}
@@ -764,25 +767,50 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Obj 	The object that collides with the slope
 	 */
-	private function solveCollisionSlopeCeilLeft(Slope:FlxObject, Obj:FlxObject):Void
+	private function solveCollisionSlopeCeilLeft(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
-		_objPoint.x = Math.floor(Obj.x + Obj.width + _snapping);
-		_objPoint.y = Math.ceil(Obj.y);
+		_objPoint.x = Math.floor(Object.x + Object.width + _snapping);
+		_objPoint.y = Math.ceil(Object.y);
 		
 		// Calculate position of the point on the slope that the object might overlap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
-		_slopePoint.y = (Slope.y) + (_slopePoint.x - Slope.x);
+		_slopePoint.y = Slope.y + (_slopePoint.x - Slope.x);
+		
+		var tileId:Int = cast(Slope, FlxTile).index;
+		if (checkLowSlope67(tileId))
+		{
+			if (_slopePoint.x - Slope.x <= _tileWidth / 2)
+			{
+				return;
+			}
+			else
+			{
+				_slopePoint.y = Slope.y - _tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / _tileWidth))) - _snapping;
+			}
+		}
+		else if (checkHighSlope67(tileId))
+		{
+			_slopePoint.y = Slope.y + _tileHeight * 2 * ((_slopePoint.x - Slope.x) / _tileWidth) - _snapping;
+		}
+		else if (checkHighSlope22(tileId))
+		{
+			_slopePoint.y = Slope.y + _tileHeight - (Slope.x - _slopePoint.x + _tileWidth) / 2;
+		}
+		else if (checkLowSlope22(tileId))
+		{
+			_slopePoint.y = Slope.y + (_tileHeight - Slope.x + _slopePoint.x - _tileWidth) / 2;
+		}
 		
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
 		
 		// Check if the object is inside the slope
-		if (_objPoint.x > Slope.x + _snapping && _objPoint.x < Slope.x + _tileWidth + Obj.width + _snapping && _objPoint.y <= _slopePoint.y && _objPoint.y >= Slope.y)
+		if (_objPoint.x > Slope.x + _snapping && _objPoint.x < Slope.x + _tileWidth + Object.width + _snapping && _objPoint.y <= _slopePoint.y && _objPoint.y >= Slope.y)
 		{
 			// Call the collide function for the floor slope
-			onCollideCeilSlope(Slope, Obj);
+			onCollideCeilSlope(Slope, Object);
 		}
 	}
 	
@@ -792,25 +820,50 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Obj 	The object that collides with the slope
 	 */
-	private function solveCollisionSlopeCeilRight(Slope:FlxObject, Obj:FlxObject):Void
+	private function solveCollisionSlopeCeilRight(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
-		_objPoint.x = Math.floor(Obj.x - _snapping);
-		_objPoint.y = Math.ceil(Obj.y);
+		_objPoint.x = Math.floor(Object.x - _snapping);
+		_objPoint.y = Math.ceil(Object.y);
 		
 		// Calculate position of the point on the slope that the object might overlap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
 		_slopePoint.y = (Slope.y) + (Slope.x - _slopePoint.x + _tileWidth);
 		
+		var tileId:Int = cast(Slope, FlxTile).index;
+		if (checkLowSlope67(tileId))
+		{
+			if (_slopePoint.x - Slope.x >= _tileWidth / 2)
+			{
+				return;
+			}
+			else
+			{
+				_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) - _snapping;
+			}
+		}
+		else if (checkHighSlope67(tileId))
+		{
+			_slopePoint.y = Slope.y + _tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / _tileWidth)) - _snapping;
+		}
+		else if (checkHighSlope22(tileId))
+		{
+			_slopePoint.y = Slope.y + _tileHeight - (_slopePoint.x - Slope.x) / 2;
+		}
+		else if (checkLowSlope22(tileId))
+		{
+			_slopePoint.y = Slope.y + (_tileHeight - _slopePoint.x + Slope.x) / 2;
+		}
+		
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
 		
 		// Check if the object is inside the slope
-		if (_objPoint.x > Slope.x - Obj.width - _snapping && _objPoint.x < Slope.x + _tileWidth + _snapping && _objPoint.y <= _slopePoint.y && _objPoint.y >= Slope.y)
+		if (_objPoint.x > Slope.x - Object.width - _snapping && _objPoint.x < Slope.x + _tileWidth + _snapping && _objPoint.y <= _slopePoint.y && _objPoint.y >= Slope.y)
 		{
 			// Call the collide function for the floor slope
-			onCollideCeilSlope(Slope, Obj);
+			onCollideCeilSlope(Slope, Object);
 		}
 	}
 	
