@@ -542,7 +542,12 @@ class FlxTilemapExt extends FlxTilemap
 		setSlopeProperties();
 	}
 	
-	/********************************************************************************************************************************************************/
+	/**
+	 * Sets the slope arrays, which define which tiles are treated as slopes of 22.5 degrees.
+	 * 
+	 * @param 	HighSlopes 	An array containing the numbers of the tiles to be treated as high slope tiles with a slope on the left.
+	 * @param 	LowSlopes	An array containing the numbers of the tiles to be treated as low slope tiles with a slope on the right.
+	 */
 	public function setSlopes22(?HighSlopes:Array<Int>, ?LowSlopes:Array<Int>) 
 	{
 		if (HighSlopes != null)
@@ -560,6 +565,12 @@ class FlxTilemapExt extends FlxTilemap
 		}
 	}
 	
+	/**
+	 * Sets the slope arrays, which define which tiles are treated as slopes of 67.5 degrees.
+	 * 
+	 * @param 	HighSlopes 	An array containing the numbers of the tiles to be treated as high slope tiles with a slope on the left.
+	 * @param 	LowSlopes	An array containing the numbers of the tiles to be treated as low slope tiles with a slope on the right.
+	 */
 	public function setSlopes67(?HighSlopes:Array<Int>, ?LowSlopes:Array<Int>) 
 	{
 		if (HighSlopes != null)
@@ -577,23 +588,32 @@ class FlxTilemapExt extends FlxTilemap
 		}
 	}
 	
+	
+	/**
+	 * Internal helpers function for comparing a tile to the slope arrays to see if a tile should be treated as a slope of 22.5 degrees.
+	 * 
+	 * @param 	TileIndex	The Tile Index number of the Tile you want to check.
+	 * @return	Returns true if the tile is listed in one of the slope arrays. Otherwise returns false.
+	 */
 	private function checkHighSlope22(TileIndex:Int):Bool
 	{
 		return _slope22High.indexOf(TileIndex) >= 0;
 	}
+	
 	private function checkLowSlope22(TileIndex:Int):Bool
 	{
 		return _slope22Low.indexOf(TileIndex) >= 0;
 	}
+	
 	private function checkHighSlope67(TileIndex:Int):Bool
 	{
 		return _slope67High.indexOf(TileIndex) >= 0;
 	}
+	
 	private function checkLowSlope67(TileIndex:Int):Bool
 	{
 		return _slope67Low.indexOf(TileIndex) >= 0;
 	}
-	/********************************************************************************************************************************************************/
 	
 	/**
 	 * Bounds the slope point to the slope
@@ -678,13 +698,11 @@ class FlxTilemapExt extends FlxTilemap
 			}
 			else
 			{
-				trace("L");
 				_slopePoint.y = Slope.y + _tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / _tileWidth)) + _snapping;
 			}
 		}
 		else if (checkHighSlope67(tileId))
 		{
-			trace("H");
 			_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) + _snapping;
 		}
 		else if (checkHighSlope22(tileId))
@@ -702,7 +720,6 @@ class FlxTilemapExt extends FlxTilemap
 		// Check if the object is inside the slope
 		if (_objPoint.x > Slope.x + _snapping && _objPoint.x < Slope.x + _tileWidth + Object.width + _snapping && _objPoint.y >= _slopePoint.y && _objPoint.y <= Slope.y + _tileHeight)
 		{
-			trace(">>>");
 			// Call the collide function for the floor slope
 			onCollideFloorSlope(Slope, Object);
 		}
