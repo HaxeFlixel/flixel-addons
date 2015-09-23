@@ -34,11 +34,6 @@ import flixel.graphics.frames.FlxFramesCollection;
  */
 class FlxTilemapExt extends FlxTilemap
 {
-	public static inline var SLOPE_FLOOR_LEFT:Int = 0;
-	public static inline var SLOPE_FLOOR_RIGHT:Int = 1;
-	public static inline var SLOPE_CEIL_LEFT:Int = 2;
-	public static inline var SLOPE_CEIL_RIGHT:Int = 3;
-	
 	// Slope related variables
 	private var _snapping:Int = 2;
 	private var _slopePoint:FlxPoint;
@@ -49,11 +44,10 @@ class FlxTilemapExt extends FlxTilemap
 	private var _slopeCeilLeft:Array<Int>;
 	private var _slopeCeilRight:Array<Int>;
 	
-	private var _slopeConditional:Array<Int>;
-	
-	public var throughDownClouds(default, set):Bool = false;
-	public var throughFloorSlopes(default, set):Bool = false;
-	public var throughCeilingSlopes(default, set):Bool = false;
+	private var _slope22High:Array<Int>;
+	private var _slope22Low:Array<Int>;
+	private var _slope67High:Array<Int>;
+	private var _slope67Low:Array<Int>;
 	
 	// Animated and flipped tiles related variables
 	private var _specialTiles:Array<FlxTileSpecial>;
@@ -70,6 +64,11 @@ class FlxTilemapExt extends FlxTilemap
 		_slopeCeilLeft = new Array<Int>();
 		_slopeCeilRight = new Array<Int>();
 		
+		_slope22High = new Array<Int>();
+		_slope22Low = new Array<Int>();
+		_slope67High = new Array<Int>();
+		_slope67Low = new Array<Int>();
+		
 		// Flipped/rotated tiles variables
 		_specialTiles = null;
 	}
@@ -83,7 +82,11 @@ class FlxTilemapExt extends FlxTilemap
 		_slopeFloorRight = null;
 		_slopeCeilLeft = null;
 		_slopeCeilRight = null;
-		_slopeConditional = null;
+		
+		_slope22High = null;
+		_slope22Low = null;
+		_slope67High = null;
+		_slope67Low = null;
 		
 		super.destroy();
 		
@@ -467,12 +470,6 @@ class FlxTilemapExt extends FlxTilemap
 						overlapFound = (Object.x + Object.width > tile.x) && (Object.x < tile.x + tile.width) && (Object.y + Object.height > tile.y) && (Object.y < tile.y + tile.height);
 					}
 					
-					// Solve slope collisions if no overlap was found
-					/*
-					if (overlapFound
-						|| (!overlapFound && (tile.index == SLOPE_FLOOR_LEFT || tile.index == SLOPE_FLOOR_RIGHT || tile.index == SLOPE_CEIL_LEFT || tile.index == SLOPE_CEIL_RIGHT)))
-					*/
-					
 					// New generalized slope collisions
 					if (overlapFound || (!overlapFound && checkArrays(tile.index)))
 					{
@@ -502,49 +499,15 @@ class FlxTilemapExt extends FlxTilemap
 	/**
 	 * Sets the tiles that are treated as "clouds" or blocks that are only solid from the top.
 	 * 
-	 * @param 	Clouds		An array containing the numbers of the tiles to be treated as clouds.
-	 * @param 	Conditional	Set cloud tiles to be treated as conditional.
+	 * @param 	Clouds	An array containing the numbers of the tiles to be treated as clouds.
 	 */
-	public function setClouds(?Clouds:Array<Int>, Conditional:Bool = false):Void
+	public function setClouds(?Clouds:Array<Int>):Void
 	{
 		if (Clouds != null)
 		{
 			for (i in 0...(Clouds.length))
 			{
 				setTileProperties(Clouds[i], FlxObject.CEILING);
-				if (Conditional)
-				{
-					cast(_tileObjects[Clouds[i]], FlxTile).callbackFunction = solveCollisionCloud;
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Solves collision against a cloud tile
-	 * 
-	 * @param 	Slope 	The slope to check against
-	 * @param 	Object 	The object that collides with the slope
-	 */
-	private function solveCollisionCloud(Slope:FlxObject, Object:FlxObject):Void
-	{
-		Slope.allowCollisions = (throughDownClouds) ? FlxObject.NONE : FlxObject.CEILING;
-	}
-	
-	/**
-	 * Sets the conditional arrays, which define which tiles are treated as conditional.
-	 * 
-	 * @param 	Slopes	An array containing the numbers of the slope tiles to be treated as conditional.
-	 */
-	public function setConditionals(?Slopes:Array<Int>):Void
-	{
-		if (Slopes != null)
-		{
-			_slopeConditional = Slopes;
-			
-			for (i in 0..._slopeConditional.length)
-			{
-				cast(_tileObjects[_slopeConditional[i]], FlxTile).allowCollisions = FlxObject.NONE;
 			}
 		}
 	}
@@ -562,24 +525,75 @@ class FlxTilemapExt extends FlxTilemap
 		if (LeftFloorSlopes != null)
 		{
 			_slopeFloorLeft = LeftFloorSlopes;
-			setSlopeProperties(_slopeFloorLeft, solveCollisionSlopeFloorLeft);
 		}
 		if (RightFloorSlopes != null)
 		{
 			_slopeFloorRight = RightFloorSlopes;
-			setSlopeProperties(_slopeFloorRight, solveCollisionSlopeFloorRight);
 		}
 		if (LeftCeilSlopes != null)
 		{
 			_slopeCeilLeft = LeftCeilSlopes;
-			setSlopeProperties(_slopeCeilLeft, solveCollisionSlopeCeilLeft);
 		}
 		if (RightCeilSlopes != null)
 		{
 			_slopeCeilRight = RightCeilSlopes;
-			setSlopeProperties(_slopeCeilRight, solveCollisionSlopeCeilRight);
+		}
+		
+		setSlopeProperties();
+	}
+	
+	/********************************************************************************************************************************************************/
+	public function setSlopes22(?HighSlopes:Array<Int>, ?LowSlopes:Array<Int>) 
+	{
+		if (HighSlopes != null)
+		{
+			_slope22High = HighSlopes;
+		}
+		
+		if (LowSlopes != null)
+		{
+			_slope22Low = LowSlopes;
+			for (i in _slope22Low)
+			{
+				_tileObjects[i].allowCollisions = FlxObject.FLOOR;
+			}
 		}
 	}
+	
+	public function setSlopes67(?HighSlopes:Array<Int>, ?LowSlopes:Array<Int>) 
+	{
+		if (HighSlopes != null)
+		{
+			_slope67High = HighSlopes;
+		}
+		
+		if (LowSlopes != null)
+		{
+			_slope67Low = LowSlopes;
+			for (i in _slope67Low)
+			{
+				_tileObjects[i].allowCollisions = FlxObject.FLOOR;
+			}
+		}
+	}
+	
+	private function checkHighSlope22(TileIndex:Int):Bool
+	{
+		return _slope22High.indexOf(TileIndex) >= 0;
+	}
+	private function checkLowSlope22(TileIndex:Int):Bool
+	{
+		return _slope22Low.indexOf(TileIndex) >= 0;
+	}
+	private function checkHighSlope67(TileIndex:Int):Bool
+	{
+		return _slope67High.indexOf(TileIndex) >= 0;
+	}
+	private function checkLowSlope67(TileIndex:Int):Bool
+	{
+		return _slope67Low.indexOf(TileIndex) >= 0;
+	}
+	/********************************************************************************************************************************************************/
 	
 	/**
 	 * Bounds the slope point to the slope
@@ -646,19 +660,6 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	private function solveCollisionSlopeFloorLeft(Slope:FlxObject, Object:FlxObject):Void
 	{
-		if (checkConditional(cast(Slope, FlxTile).index))
-		{
-			if (throughFloorSlopes)
-			{
-				cast(Slope, FlxTile).allowCollisions = FlxObject.NONE;
-				return;
-			}
-			
-			cast(Slope, FlxTile).allowCollisions = FlxObject.FLOOR;
-		}
-		else
-			cast(Slope, FlxTile).allowCollisions = FlxObject.RIGHT | FlxObject.FLOOR;
-		
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x + Object.width + _snapping);
 		_objPoint.y = Math.floor(Object.y + Object.height);
@@ -667,6 +668,31 @@ class FlxTilemapExt extends FlxTilemap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
 		_slopePoint.y = (Slope.y + _tileHeight) - (_slopePoint.x - Slope.x);
+		
+		var tileId:Int = cast(Slope, FlxTile).index;
+		if (checkLowSlope67(tileId))
+		{
+			if (_slopePoint.x - Slope.x <= _tileWidth / 2)
+			{
+				return;
+			}
+			else
+			{
+				_slopePoint.y = Slope.y + _tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / _tileWidth)) + _snapping;
+			}
+		}
+		else if (checkHighSlope67(tileId))
+		{
+			_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) + _snapping;
+		}
+		else if (checkHighSlope22(tileId))
+		{
+			_slopePoint.y = Slope.y + (_tileHeight - _slopePoint.x + Slope.x) / 2;
+		}
+		else if (checkLowSlope22(tileId))
+		{
+			_slopePoint.y = Slope.y + _tileHeight - (_slopePoint.x - Slope.x) / 2;
+		}
 		
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
@@ -687,19 +713,6 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	private function solveCollisionSlopeFloorRight(Slope:FlxObject, Object:FlxObject):Void
 	{
-		if (checkConditional(cast(Slope, FlxTile).index))
-		{
-			if (throughFloorSlopes)
-			{
-				cast(Slope, FlxTile).allowCollisions = FlxObject.NONE;
-				return;
-			}
-			
-			cast(Slope, FlxTile).allowCollisions = FlxObject.FLOOR;
-		}
-		else
-			cast(Slope, FlxTile).allowCollisions = FlxObject.LEFT | FlxObject.FLOOR;
-			
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x - _snapping);
 		_objPoint.y = Math.floor(Object.y + Object.height);
@@ -708,6 +721,31 @@ class FlxTilemapExt extends FlxTilemap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
 		_slopePoint.y = (Slope.y + _tileHeight) - (Slope.x - _slopePoint.x + _tileWidth);
+		
+		var tileId:Int = cast(Slope, FlxTile).index;
+		if (checkLowSlope67(tileId))
+		{
+			if (_slopePoint.x - Slope.x >= _tileWidth / 2)
+			{
+				return;
+			}
+			else
+			{
+				_slopePoint.y = Slope.y + _tileHeight * 2 * ((_slopePoint.x - Slope.x) / _tileWidth) + _snapping;
+			}
+		}
+		else if (checkHighSlope67(tileId))
+		{
+			_slopePoint.y = Slope.y - _tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / _tileWidth))) + _snapping;
+		}
+		else if (checkHighSlope22(tileId))
+		{
+			_slopePoint.y = Slope.y + (_tileHeight - Slope.x + _slopePoint.x - _tileWidth) / 2;
+		}
+		else if (checkLowSlope22(tileId))
+		{
+			_slopePoint.y = Slope.y + _tileHeight - (Slope.x - _slopePoint.x + _tileWidth) / 2;
+		}
 		
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
@@ -728,19 +766,6 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	private function solveCollisionSlopeCeilLeft(Slope:FlxObject, Obj:FlxObject):Void
 	{
-		if (checkConditional(cast(Slope, FlxTile).index))
-		{
-			if (throughCeilingSlopes)
-			{
-				cast(Slope, FlxTile).allowCollisions = FlxObject.NONE;
-				return;
-			}
-			
-			cast(Slope, FlxTile).allowCollisions = FlxObject.CEILING;
-		}
-		else
-			cast(Slope, FlxTile).allowCollisions = FlxObject.RIGHT | FlxObject.CEILING;
-			
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Obj.x + Obj.width + _snapping);
 		_objPoint.y = Math.ceil(Obj.y);
@@ -769,19 +794,6 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	private function solveCollisionSlopeCeilRight(Slope:FlxObject, Obj:FlxObject):Void
 	{
-		if (checkConditional(cast(Slope, FlxTile).index))
-		{
-			if (throughCeilingSlopes)
-			{
-				cast(Slope, FlxTile).allowCollisions = FlxObject.NONE;
-				return;
-			}
-			
-			cast(Slope, FlxTile).allowCollisions = FlxObject.CEILING;
-		}
-		else
-			cast(Slope, FlxTile).allowCollisions = FlxObject.LEFT | FlxObject.CEILING;
-			
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Obj.x - _snapping);
 		_objPoint.y = Math.ceil(Obj.y);
@@ -805,15 +817,24 @@ class FlxTilemapExt extends FlxTilemap
 	/**
 	 * Internal helper function for setting the tiles currently held in the slope arrays to use slope collision.
 	 * Note that if you remove items from a slope, this function will not unset the slope property.
-	 * 
-	 * @param 	tiles		An array containing the numbers of the tiles you want this callback to work.
-	 * @param	Callback	The function to trigger, e.g. lavaCallback(Tile:FlxObject, Object:FlxObject).
 	 */
-	private function setSlopeProperties(tiles:Array<Int>, ?Callback:FlxObject->FlxObject->Void):Void
+	private function setSlopeProperties():Void
 	{
-		for (i in 0...tiles.length)
+		for (i in _slopeFloorLeft)
 		{
-			cast(_tileObjects[tiles[i]], FlxTile).callbackFunction = Callback;
+			setTileProperties(i, FlxObject.RIGHT | FlxObject.FLOOR, solveCollisionSlopeFloorLeft);
+		}
+		for (i in _slopeFloorRight)
+		{
+			setTileProperties(i, FlxObject.LEFT | FlxObject.FLOOR, solveCollisionSlopeFloorRight);
+		}
+		for (i in _slopeCeilLeft)
+		{
+			setTileProperties(i, FlxObject.RIGHT | FlxObject.CEILING, solveCollisionSlopeCeilLeft);
+		}
+		for (i in _slopeCeilRight)
+		{
+			setTileProperties(i, FlxObject.LEFT | FlxObject.CEILING, solveCollisionSlopeCeilRight);
 		}
 	}
 	
@@ -825,58 +846,7 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	private function checkArrays(TileIndex:Int):Bool
 	{
-		for (i in 0..._slopeFloorLeft.length)
-		{
-			if (_slopeFloorLeft[i] == TileIndex)
-			{
-				return true;
-			}
-		}	
-		for (i in 0..._slopeFloorRight.length)
-		{
-			if (_slopeFloorRight[i] == TileIndex)
-			{
-				return true;
-			}
-		}	
-		for (i in 0..._slopeCeilLeft.length)
-		{
-			if (_slopeCeilLeft[i] == TileIndex)
-			{
-				return true;
-			}
-		}	
-		for (i in 0..._slopeCeilRight.length)
-		{
-			if (_slopeCeilRight[i] == TileIndex)
-			{
-				return true;
-			}
-		}	
-		
-		return false;
-	}
-	
-	/**
-	 * Internal helper function for comparing a tile to the conditional arrays to see if a tile should be treated as a conditional.
-	 * 
-	 * @param 	TileIndex	The Tile Index number of the Tile you want to check.
-	 * @return	Returns true if the tile is listed in one of the slope arrays. Otherwise returns false.
-	 */
-	private function checkConditional(TileIndex:Int):Bool
-	{
-		if (_slopeConditional != null)
-		{
-			for (i in 0..._slopeConditional.length)
-			{
-				if (_slopeConditional[i] == TileIndex)
-				{
-					return true;
-				}
-			}
-		}
-		
-		return false;
+		return _slopeFloorLeft.indexOf(TileIndex) >= 0 || _slopeFloorRight.indexOf(TileIndex) >= 0 || _slopeCeilLeft.indexOf(TileIndex) >= 0 || _slopeCeilRight.indexOf(TileIndex) >= 0;
 	}
 	
 	override private function set_frames(value:FlxFramesCollection):FlxFramesCollection
@@ -895,20 +865,5 @@ class FlxTilemapExt extends FlxTilemap
 		}
 		
 		return value;
-	}
-	
-	private function set_throughDownClouds(Value:Bool):Bool 
-	{
-		return throughDownClouds = Value;
-	}
-	
-	private function set_throughFloorSlopes(Value:Bool):Bool 
-	{
-		return throughFloorSlopes = Value;
-	}
-	
-	private function set_throughCeilingSlopes(Value:Bool):Bool 
-	{
-		return throughCeilingSlopes = Value;
 	}
 }
