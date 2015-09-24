@@ -1,24 +1,20 @@
 package flixel.addons.tile;
 
 import flash.display.BitmapData;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.geom.Rectangle;
 import flixel.addons.tile.FlxTilemapExt;
 import flixel.addons.tile.FlxTileSpecial;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.graphics.frames.FlxFrame;
-import flixel.graphics.tile.FlxDrawTilesItem;
+import flixel.graphics.frames.FlxFramesCollection;
+import flixel.math.FlxMath;
 import flixel.math.FlxMatrix;
+import flixel.math.FlxPoint;
 import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.tile.FlxTilemapBuffer;
 import flixel.util.FlxDestroyUtil;
-import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
-import flixel.graphics.frames.FlxFramesCollection;
 
 // TODO: add support for tilemap scaling
 // TODO: try to make it cleaner (i mean rendering and animated tiles)
@@ -293,14 +289,14 @@ class FlxTilemapExt extends FlxTilemap
 		for (i in 0...tiles.length) 
 		{
 			tile = tiles[i];
-			if (t != null && t.isSpecial())
+			if (tile != null && tile.isSpecial())
 			{
 				_specialTiles[i] = tile;
 				
 				tile.currTileId -= _startingIndex;
 				tile.frames = this.frames;
 				
-				if (t.hasAnimation()) 
+				if (tile.hasAnimation()) 
 				{
 					var animFrames:Array<Int> = tile.animation.frames;
 					var preparedFrames:Array<Int> = [];
