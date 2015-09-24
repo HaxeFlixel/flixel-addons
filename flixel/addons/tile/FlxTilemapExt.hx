@@ -30,6 +30,7 @@ import flixel.graphics.frames.FlxFramesCollection;
  * Also add support to flipped / rotated tiles.
  * @author Peter Christiansen
  * @author MrCdK
+ * @author adrianulima
  * @link https://github.com/TheTurnipMaster/SlopeDemo
  */
 class FlxTilemapExt extends FlxTilemap
@@ -98,11 +99,11 @@ class FlxTilemapExt extends FlxTilemap
 		super.update(elapsed);
 		if (_specialTiles != null && _specialTiles.length > 0) 
 		{
-			for (t in _specialTiles) 
+			for (tile in _specialTiles) 
 			{
-				if (t != null && t.hasAnimation()) 
+				if (tile != null && tile.hasAnimation()) 
 				{
-					t.update(elapsed);
+					tile.update(elapsed);
 				}
 			}
 		}
@@ -288,20 +289,20 @@ class FlxTilemapExt extends FlxTilemap
 		#if FLX_RENDER_BLIT
 		var animIds:Array<Int>;
 		#end
-		var t:FlxTileSpecial;
+		var tile:FlxTileSpecial;
 		for (i in 0...tiles.length) 
 		{
-			t = tiles[i];
+			tile = tiles[i];
 			if (t != null && t.isSpecial())
 			{
-				_specialTiles[i] = t;
+				_specialTiles[i] = tile;
 				
-				t.currTileId -= _startingIndex;
-				t.frames = this.frames;
+				tile.currTileId -= _startingIndex;
+				tile.frames = this.frames;
 				
 				if (t.hasAnimation()) 
 				{
-					var animFrames:Array<Int> = t.animation.frames;
+					var animFrames:Array<Int> = tile.animation.frames;
 					var preparedFrames:Array<Int> = [];
 					
 					for (j in 0...animFrames.length)
@@ -309,7 +310,7 @@ class FlxTilemapExt extends FlxTilemap
 						preparedFrames[j] = animFrames[j] - _startingIndex;
 					}
 					
-					t.animation.frames = preparedFrames;
+					tile.animation.frames = preparedFrames;
 				}
 			} 
 			else 
@@ -497,22 +498,6 @@ class FlxTilemapExt extends FlxTilemap
 	}
 	
 	/**
-	 * Sets the tiles that are treated as "clouds" or blocks that are only solid from the top.
-	 * 
-	 * @param 	Clouds	An array containing the numbers of the tiles to be treated as clouds.
-	 */
-	public function setClouds(?Clouds:Array<Int>):Void
-	{
-		if (Clouds != null)
-		{
-			for (i in 0...(Clouds.length))
-			{
-				setTileProperties(Clouds[i], FlxObject.CEILING);
-			}
-		}
-	}
-	
-	/**
 	 * Sets the slope arrays, which define which tiles are treated as slopes.
 	 * 
 	 * @param 	LeftFloorSlopes 	An array containing the numbers of the tiles to be treated as floor tiles with a slope on the left.
@@ -558,9 +543,9 @@ class FlxTilemapExt extends FlxTilemap
 		if (LowSlopes != null)
 		{
 			_slope22Low = LowSlopes;
-			for (i in _slope22Low)
+			for (tile in _slope22Low)
 			{
-				_tileObjects[i].allowCollisions = (_slopeCeilLeft.indexOf(i) >= 0 || _slopeCeilRight.indexOf(i) >= 0 )? FlxObject.CEILING : FlxObject.FLOOR;
+				_tileObjects[tile].allowCollisions = (_slopeCeilLeft.indexOf(tile) >= 0 || _slopeCeilRight.indexOf(tile) >= 0 )? FlxObject.CEILING : FlxObject.FLOOR;
 			}
 		}
 	}
@@ -581,9 +566,9 @@ class FlxTilemapExt extends FlxTilemap
 		if (LowSlopes != null)
 		{
 			_slope67Low = LowSlopes;
-			for (i in _slope67Low)
+			for (tile in _slope67Low)
 			{
-				_tileObjects[i].allowCollisions = (_slopeCeilLeft.indexOf(i) >= 0 || _slopeFloorLeft.indexOf(i) >= 0 )? FlxObject.RIGHT : FlxObject.LEFT;
+				_tileObjects[tile].allowCollisions = (_slopeCeilLeft.indexOf(tile) >= 0 || _slopeFloorLeft.indexOf(tile) >= 0 )? FlxObject.RIGHT : FlxObject.LEFT;
 			}
 		}
 	}
@@ -890,21 +875,21 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	private function setSlopeProperties():Void
 	{
-		for (i in _slopeFloorLeft)
+		for (tile in _slopeFloorLeft)
 		{
-			setTileProperties(i, FlxObject.RIGHT | FlxObject.FLOOR, solveCollisionSlopeFloorLeft);
+			setTileProperties(tile, FlxObject.RIGHT | FlxObject.FLOOR, solveCollisionSlopeFloorLeft);
 		}
-		for (i in _slopeFloorRight)
+		for (tile in _slopeFloorRight)
 		{
-			setTileProperties(i, FlxObject.LEFT | FlxObject.FLOOR, solveCollisionSlopeFloorRight);
+			setTileProperties(tile, FlxObject.LEFT | FlxObject.FLOOR, solveCollisionSlopeFloorRight);
 		}
-		for (i in _slopeCeilLeft)
+		for (tile in _slopeCeilLeft)
 		{
-			setTileProperties(i, FlxObject.RIGHT | FlxObject.CEILING, solveCollisionSlopeCeilLeft);
+			setTileProperties(tile, FlxObject.RIGHT | FlxObject.CEILING, solveCollisionSlopeCeilLeft);
 		}
-		for (i in _slopeCeilRight)
+		for (tile in _slopeCeilRight)
 		{
-			setTileProperties(i, FlxObject.LEFT | FlxObject.CEILING, solveCollisionSlopeCeilRight);
+			setTileProperties(tile, FlxObject.LEFT | FlxObject.CEILING, solveCollisionSlopeCeilRight);
 		}
 	}
 	
@@ -925,11 +910,11 @@ class FlxTilemapExt extends FlxTilemap
 		
 		if (value != null && _specialTiles != null && _specialTiles.length > 0)
 		{
-			for (t in _specialTiles) 
+			for (tile in _specialTiles) 
 			{
-				if (t != null) 
+				if (tile != null) 
 				{
-					t.frames = frames;
+					tile.frames = frames;
 				}
 			}
 		}
