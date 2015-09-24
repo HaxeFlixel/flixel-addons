@@ -782,7 +782,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * Solves collision against a left-sided ceiling slope
 	 * 
 	 * @param 	Slope 	The slope to check against
-	 * @param 	Obj 	The object that collides with the slope
+	 * @param 	Object 	The object that collides with the slope
 	 */
 	private function solveCollisionSlopeCeilLeft(Slope:FlxObject, Object:FlxObject):Void
 	{
@@ -835,7 +835,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * Solves collision against a right-sided ceiling slope
 	 * 
 	 * @param 	Slope 	The slope to check against
-	 * @param 	Obj 	The object that collides with the slope
+	 * @param 	Object 	The object that collides with the slope
 	 */
 	private function solveCollisionSlopeCeilRight(Slope:FlxObject, Object:FlxObject):Void
 	{
