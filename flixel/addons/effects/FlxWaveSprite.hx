@@ -35,11 +35,13 @@ class FlxWaveSprite extends FlxSprite
 	 */
 	public var center:Int;
 	/**
+	 * Which direction the wave effect should be applied.
+	 */
+	public var direction(default, set):FlxWaveDirection;
+	/**
 	 * How strong the wave effect should be
 	 */
 	public var strength(default, set):Int;
-	
-	private var _targetOffset:Float = -999;
 	
 	private var _time:Float = 0;
 	
@@ -51,16 +53,18 @@ class FlxWaveSprite extends FlxSprite
 	 * @param	Strength	How strong you want the effect
 	 * @param	Center		The 'center' of the effect when using BOTTOM or TOP modes. Anything above(BOTTOM)/below(TOP) this point on the image will have no distortion effect.
 	 * @param	Speed		How fast you want the effect to move. Higher values = faster.
+	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL)
 	 */
-	public function new(Target:FlxSprite, ?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3) 
+	public function new(Target:FlxSprite, ?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3, ?Direction:FlxWaveDirection) 
 	{
 		super();
 		target = Target;
 		strength = Strength;
 		mode = (Mode == null) ? ALL : Mode;
 		speed = Speed;
+		direction = (Direction != null) ? Direction : HORIZONTAL;
 		if (Center < 0)
-			center = Std.int(target.height * 0.5);
+			center = Std.int(((direction == HORIZONTAL) ? target.height : target.width) * 0.5);
 		initPixels();
 		dirty = true;
 	}
@@ -80,9 +84,10 @@ class FlxWaveSprite extends FlxSprite
 		pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
 		
 		var offset:Float = 0;
-		for (oY in 0...target.frameHeight)
+		var length = (direction == HORIZONTAL) ? target.frameHeight : target.frameWidth;
+		for (oY in 0...length)
 		{
-			var p:Float=0;
+			var p:Float = 0;
 			switch (mode)
 			{
 				case ALL:
@@ -98,26 +103,25 @@ class FlxWaveSprite extends FlxSprite
 				case TOP:
 					if (oY <= center)
 					{
-						p  = center - oY;
+						p = center - oY;
 						offset = p * calculateOffset(p);
 					}
 			}
 			
-			_flashPoint.setTo(strength + offset, oY);
-			_flashRect2.setTo(0, oY, target.frameWidth, 1);
+			if (direction == HORIZONTAL)
+			{
+				_flashPoint.setTo(strength + offset, oY);
+				_flashRect2.setTo(0, oY, target.frameWidth, 1);
+			}
+			else
+			{
+				_flashPoint.setTo(oY, strength + offset);
+				_flashRect2.setTo(oY, 0, 1, target.frameHeight);
+			}
 			pixels.copyPixels(target.framePixels, _flashRect2, _flashPoint);
 		}
-		pixels.unlock();
 		
-		if (_targetOffset == -999)
-		{
-			_targetOffset = offset;
-		}
-		else
-		{
-			if (offset == _targetOffset)
-				_time = 0;
-		}
+		pixels.unlock();
 		
 		dirty = true;
 		super.draw();
@@ -131,13 +135,30 @@ class FlxWaveSprite extends FlxSprite
 	private function initPixels():Void
 	{
 		var oldGraphic:FlxGraphic = graphic;
+		
+		var horizontalStrength = (direction == HORIZONTAL) ? strength * 2 : 0;
+		var verticalStrength = (direction == VERTICAL) ? strength * 2 : 0;
 		target.drawFrame(true);
 		setPosition(target.x - strength, target.y);
-		makeGraphic(Std.int(target.frameWidth + (strength * 2)), target.frameHeight, FlxColor.TRANSPARENT, true);
+		makeGraphic(
+			Std.int(target.frameWidth + horizontalStrength * 2),
+			Std.int(target.frameHeight + verticalStrength * 2),
+			FlxColor.TRANSPARENT, true);
 		_flashPoint.setTo(strength, 0);
+		
 		pixels.copyPixels(target.framePixels, target.framePixels.rect, _flashPoint);
 		dirty = true;
 		FlxG.bitmap.removeIfNoUse(oldGraphic);
+	}
+	
+	private function set_direction(Value:FlxWaveDirection):FlxWaveDirection
+	{
+		if (direction != Value)
+		{
+			direction = Value;
+			initPixels();
+		}
+		return direction;
 	}
 	
 	private function set_strength(value:Int):Int 
@@ -156,4 +177,10 @@ enum FlxWaveMode
 	ALL;
 	TOP;
 	BOTTOM;
+}
+
+enum FlxWaveDirection
+{
+	HORIZONTAL;
+	VERTICAL;
 }
