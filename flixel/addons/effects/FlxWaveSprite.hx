@@ -136,15 +136,15 @@ class FlxWaveSprite extends FlxSprite
 	{
 		var oldGraphic:FlxGraphic = graphic;
 		
-		var horizontalStrength = (direction == HORIZONTAL) ? strength * 2 : 0;
-		var verticalStrength = (direction == VERTICAL) ? strength * 2 : 0;
+		var horizontalStrength = (direction == HORIZONTAL) ? strength : 0;
+		var verticalStrength = (direction == VERTICAL) ? strength : 0;
 		target.drawFrame(true);
-		setPosition(target.x - strength, target.y);
+		setPosition(target.x - horizontalStrength, target.y - verticalStrength);
 		makeGraphic(
 			Std.int(target.frameWidth + horizontalStrength * 2),
 			Std.int(target.frameHeight + verticalStrength * 2),
 			FlxColor.TRANSPARENT, true);
-		_flashPoint.setTo(strength, 0);
+		_flashPoint.setTo(horizontalStrength, verticalStrength);
 		
 		pixels.copyPixels(target.framePixels, target.framePixels.rect, _flashPoint);
 		dirty = true;
