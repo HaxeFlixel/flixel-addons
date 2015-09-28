@@ -53,7 +53,7 @@ class FlxWaveSprite extends FlxSprite
 	 * @param	Strength	How strong you want the effect
 	 * @param	Center		The 'center' of the effect when using BOTTOM or TOP modes. Anything above(BOTTOM)/below(TOP) this point on the image will have no distortion effect.
 	 * @param	Speed		How fast you want the effect to move. Higher values = faster.
-	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL)
+	 * @param	Direction	Which Direction you want the effect to be applied (VERTICAL or HORIZONTAL)
 	 */
 	public function new(Target:FlxSprite, ?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3, ?Direction:FlxWaveDirection) 
 	{
@@ -62,9 +62,9 @@ class FlxWaveSprite extends FlxSprite
 		strength = Strength;
 		mode = (Mode == null) ? ALL : Mode;
 		speed = Speed;
-		direction = (Direction != null) ? Direction : HORIZONTAL;
+		direction = (Direction != null) ? Direction : VERTICAL;
 		if (Center < 0)
-			center = Std.int(((direction == HORIZONTAL) ? target.height : target.width) * 0.5);
+			center = Std.int(((direction == VERTICAL) ? target.height : target.width) * 0.5);
 		initPixels();
 		dirty = true;
 	}
@@ -84,7 +84,7 @@ class FlxWaveSprite extends FlxSprite
 		pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
 		
 		var offset:Float = 0;
-		var length = (direction == HORIZONTAL) ? target.frameHeight : target.frameWidth;
+		var length = (direction == VERTICAL) ? target.frameHeight : target.frameWidth;
 		for (oY in 0...length)
 		{
 			var p:Float = 0;
@@ -108,7 +108,7 @@ class FlxWaveSprite extends FlxSprite
 					}
 			}
 			
-			if (direction == HORIZONTAL)
+			if (direction == VERTICAL)
 			{
 				_flashPoint.setTo(strength + offset, oY);
 				_flashRect2.setTo(0, oY, target.frameWidth, 1);
@@ -136,15 +136,15 @@ class FlxWaveSprite extends FlxSprite
 	{
 		var oldGraphic:FlxGraphic = graphic;
 		
-		var horizontalStrength = (direction == HORIZONTAL) ? strength : 0;
 		var verticalStrength = (direction == VERTICAL) ? strength : 0;
+		var horizontalStrength = (direction == HORIZONTAL) ? strength : 0;
 		target.drawFrame(true);
-		setPosition(target.x - horizontalStrength, target.y - verticalStrength);
+		setPosition(target.x - verticalStrength, target.y - horizontalStrength);
 		makeGraphic(
-			Std.int(target.frameWidth + horizontalStrength * 2),
-			Std.int(target.frameHeight + verticalStrength * 2),
+			Std.int(target.frameWidth + verticalStrength * 2),
+			Std.int(target.frameHeight + horizontalStrength * 2),
 			FlxColor.TRANSPARENT, true);
-		_flashPoint.setTo(horizontalStrength, verticalStrength);
+		_flashPoint.setTo(verticalStrength, horizontalStrength);
 		
 		pixels.copyPixels(target.framePixels, target.framePixels.rect, _flashPoint);
 		dirty = true;
@@ -181,6 +181,6 @@ enum FlxWaveMode
 
 enum FlxWaveDirection
 {
-	HORIZONTAL;
 	VERTICAL;
+	HORIZONTAL;
 }
