@@ -1,10 +1,9 @@
 package flixel.addons.effects;
 
-import flash.geom.Point;
-import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
+import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 
 /**
@@ -39,6 +38,10 @@ class FlxWaveSprite extends FlxSprite
 	 */
 	public var direction(default, set):FlxWaveDirection;
 	/**
+	 * How long waves are
+	 */
+	public var wavelength:Int;
+	/**
 	 * How strong the wave effect should be
 	 */
 	public var strength(default, set):Int;
@@ -53,15 +56,17 @@ class FlxWaveSprite extends FlxSprite
 	 * @param	Strength	How strong you want the effect
 	 * @param	Center		The 'center' of the effect when using BOTTOM or TOP modes. Anything above(BOTTOM)/below(TOP) this point on the image will have no distortion effect.
 	 * @param	Speed		How fast you want the effect to move. Higher values = faster.
+	 * @param	Wavelength	How long waves are.
 	 * @param	Direction	Which Direction you want the effect to be applied (VERTICAL or HORIZONTAL)
 	 */
-	public function new(Target:FlxSprite, ?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3, ?Direction:FlxWaveDirection) 
+	public function new(Target:FlxSprite, ?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection)
 	{
 		super();
 		target = Target;
 		strength = Strength;
 		mode = (Mode == null) ? ALL : Mode;
 		speed = Speed;
+		wavelength = Wavelength;
 		direction = (Direction != null) ? Direction : VERTICAL;
 		if (Center < 0)
 			center = Std.int(((direction == VERTICAL) ? target.height : target.width) * 0.5);
@@ -85,38 +90,38 @@ class FlxWaveSprite extends FlxSprite
 		
 		var offset:Float = 0;
 		var length = (direction == VERTICAL) ? target.frameHeight : target.frameWidth;
-		for (oY in 0...length)
+		for (p in 0...length)
 		{
-			var p:Float = 0;
+			var offsetP:Float = center;
 			switch (mode)
 			{
 				case ALL:
-					offset = center * calculateOffset(oY);
+					offset = offsetP * calculateOffset(p);
 					
 				case BOTTOM:
-					if (oY >= center)
+					if (p >= center)
 					{
-						p = oY - center;
-						offset = p * calculateOffset(p);
+						offsetP = p - center;
+						offset = offsetP * calculateOffset(offsetP);
 					}
 					
 				case TOP:
-					if (oY <= center)
+					if (p <= center)
 					{
-						p = center - oY;
-						offset = p * calculateOffset(p);
+						offsetP = center - p;
+						offset = offsetP * calculateOffset(offsetP);
 					}
 			}
 			
 			if (direction == VERTICAL)
 			{
-				_flashPoint.setTo(strength + offset, oY);
-				_flashRect2.setTo(0, oY, target.frameWidth, 1);
+				_flashPoint.setTo(strength + offset, p);
+				_flashRect2.setTo(0, p, target.frameWidth, 1);
 			}
 			else
 			{
-				_flashPoint.setTo(oY, strength + offset);
-				_flashRect2.setTo(oY, 0, 1, target.frameHeight);
+				_flashPoint.setTo(p, strength + offset);
+				_flashRect2.setTo(p, 0, 1, target.frameHeight);
 			}
 			pixels.copyPixels(target.framePixels, _flashRect2, _flashPoint);
 		}
@@ -129,7 +134,7 @@ class FlxWaveSprite extends FlxSprite
 	
 	private inline function calculateOffset(p:Float):Float
 	{
-		return (strength * BASE_STRENGTH) * BASE_STRENGTH * Math.sin((0.3 * p) + _time);
+		return (strength * BASE_STRENGTH) * BASE_STRENGTH * FlxMath.fastSin((p / wavelength) + _time);
 	}
 	
 	private function initPixels():Void
