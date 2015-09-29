@@ -674,6 +674,11 @@ class FlxExtendedSprite extends FlxSprite
 			_dragOffsetX = Std.int(frameWidth / 2);
 			_dragOffsetY = Std.int(frameHeight / 2);
 		}
+		
+		if (mouseStartDragCallback != null)
+		{
+			mouseStartDragCallback(this, mouseX, mouseY);
+		}
 		#end
 	}
 	
@@ -736,6 +741,11 @@ class FlxExtendedSprite extends FlxSprite
 		{
 			x = (Math.floor(x / _snapX) * _snapX);
 			y = (Math.floor(y / _snapY) * _snapY);
+		}
+		
+		if (mouseStopDragCallback != null)
+		{
+			mouseStopDragCallback(this, mouseX, mouseY);
 		}
 	}
 	
