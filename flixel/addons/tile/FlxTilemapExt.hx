@@ -36,15 +36,15 @@ class FlxTilemapExt extends FlxTilemap
 	private var _slopePoint:FlxPoint;
 	private var _objPoint:FlxPoint;
 	
-	private var _slopeFloorLeft:Array<Int>;
-	private var _slopeFloorRight:Array<Int>;
-	private var _slopeCeilLeft:Array<Int>;
-	private var _slopeCeilRight:Array<Int>;
+	private var _slopeNorthwest:Array<Int>;
+	private var _slopeNortheast:Array<Int>;
+	private var _slopeSouthwest:Array<Int>;
+	private var _slopeSoutheast:Array<Int>;
 	
-	private var _slope22High:Array<Int>;
-	private var _slope22Low:Array<Int>;
-	private var _slope67High:Array<Int>;
-	private var _slope67Low:Array<Int>;
+	private var _slopeThickGentle:Array<Int>;
+	private var _slopeThinGentle:Array<Int>;
+	private var _slopeThickSteep:Array<Int>;
+	private var _slopeThinSteep:Array<Int>;
 	
 	// Animated and flipped tiles related variables
 	private var _specialTiles:Array<FlxTileSpecial>;
@@ -56,15 +56,15 @@ class FlxTilemapExt extends FlxTilemap
 		_slopePoint = FlxPoint.get();
 		_objPoint = FlxPoint.get();
 		
-		_slopeFloorLeft = new Array<Int>();
-		_slopeFloorRight = new Array<Int>();
-		_slopeCeilLeft = new Array<Int>();
-		_slopeCeilRight = new Array<Int>();
+		_slopeNorthwest = new Array<Int>();
+		_slopeNortheast = new Array<Int>();
+		_slopeSouthwest = new Array<Int>();
+		_slopeSoutheast = new Array<Int>();
 		
-		_slope22High = new Array<Int>();
-		_slope22Low = new Array<Int>();
-		_slope67High = new Array<Int>();
-		_slope67Low = new Array<Int>();
+		_slopeThickGentle = new Array<Int>();
+		_slopeThinGentle = new Array<Int>();
+		_slopeThickSteep = new Array<Int>();
+		_slopeThinSteep = new Array<Int>();
 		
 		// Flipped/rotated tiles variables
 		_specialTiles = null;
@@ -75,15 +75,15 @@ class FlxTilemapExt extends FlxTilemap
 		_slopePoint = FlxDestroyUtil.put(_slopePoint);
 		_objPoint = FlxDestroyUtil.put(_objPoint);
 		
-		_slopeFloorLeft = null;
-		_slopeFloorRight = null;
-		_slopeCeilLeft = null;
-		_slopeCeilRight = null;
+		_slopeNorthwest = null;
+		_slopeNortheast = null;
+		_slopeSouthwest = null;
+		_slopeSoutheast = null;
 		
-		_slope22High = null;
-		_slope22Low = null;
-		_slope67High = null;
-		_slope67Low = null;
+		_slopeThickGentle = null;
+		_slopeThinGentle = null;
+		_slopeThickSteep = null;
+		_slopeThinSteep = null;
 		
 		super.destroy();
 		
@@ -496,104 +496,108 @@ class FlxTilemapExt extends FlxTilemap
 	/**
 	 * Sets the slope arrays, which define which tiles are treated as slopes.
 	 * 
-	 * @param 	LeftFloorSlopes 	An array containing the numbers of the tiles to be treated as floor tiles with a slope on the left.
-	 * @param 	RightFloorSlopes	An array containing the numbers of the tiles to be treated as floor tiles with a slope on the right.
-	 * @param 	LeftCeilSlopes		An array containing the numbers of the tiles to be treated as ceiling tiles with a slope on the left.
-	 * @param 	RightCeilSlopes		An array containing the numbers of the tiles to be treated as ceiling tiles with a slope on the right.
+	 * @param 	Northwest 	An array containing the numbers of the tiles facing Northwest to be treated as floor tiles with a slope on the left.
+	 * @param 	Northeast	An array containing the numbers of the tiles facing Northeast to be treated as floor tiles with a slope on the right.
+	 * @param 	Southwest	An array containing the numbers of the tiles facing Southwest to be treated as ceiling tiles with a slope on the left.
+	 * @param 	Southeast	An array containing the numbers of the tiles facing Southeast to be treated as ceiling tiles with a slope on the right.
 	 */
-	public function setSlopes(?LeftFloorSlopes:Array<Int>, ?RightFloorSlopes:Array<Int>, ?LeftCeilSlopes:Array<Int>, ?RightCeilSlopes:Array<Int>):Void
+	public function setSlopes(?Northwest:Array<Int>, ?Northeast:Array<Int>, ?Southwest:Array<Int>, ?Southeast:Array<Int>):Void
 	{
-		if (LeftFloorSlopes != null)
+		if (Northwest != null)
 		{
-			_slopeFloorLeft = LeftFloorSlopes;
+			_slopeNorthwest = Northwest;
 		}
-		if (RightFloorSlopes != null)
+		if (Northeast != null)
 		{
-			_slopeFloorRight = RightFloorSlopes;
+			_slopeNortheast = Northeast;
 		}
-		if (LeftCeilSlopes != null)
+		if (Southwest != null)
 		{
-			_slopeCeilLeft = LeftCeilSlopes;
+			_slopeSouthwest = Southwest;
 		}
-		if (RightCeilSlopes != null)
+		if (Southeast != null)
 		{
-			_slopeCeilRight = RightCeilSlopes;
+			_slopeSoutheast = Southeast;
 		}
 		
 		setSlopeProperties();
 	}
 	
 	/**
-	 * Sets the slope arrays, which define which tiles are treated as slopes of 22.5 degrees.
+	 * Sets the slopes steepness. To set GENTLE and STEEP slopes ThickTiles and ThinTiles are needed and to set MODERATE slopes just need ThickTiles.
 	 * 
-	 * @param 	HighSlopes 	An array containing the numbers of the tiles to be treated as high slope tiles with a slope on the left.
-	 * @param 	LowSlopes	An array containing the numbers of the tiles to be treated as low slope tiles with a slope on the right.
+	 * @param 	ThickTiles 	An array containing the numbers of the tiles to be treated as thick slope.
+	 * @param 	ThinTiles	An array containing the numbers of the tiles to be treated as thin slope.
 	 */
-	public function setSlopes22(?HighSlopes:Array<Int>, ?LowSlopes:Array<Int>) 
+	public function setSteepness(steepness:FlxSlopeSteepness, ThickTiles:Array<Int>, ?ThinTiles:Array<Int>) 
 	{
-		if (HighSlopes != null)
+		if (ThickTiles != null)
 		{
-			_slope22High = HighSlopes;
+			if (steepness == GENTLE)
+			{
+				_slopeThickGentle = ThickTiles;
+			}
+			else if (steepness == STEEP)
+			{
+				_slopeThickSteep = ThickTiles;
+			}
+			else
+			{
+				for (tile in ThickTiles)
+				{
+					_slopeThickGentle.remove(tile);
+					_slopeThickSteep.remove(tile);
+					_slopeThinGentle.remove(tile);
+					_slopeThinSteep.remove(tile);
+				}
+			}
 		}
 		
-		if (LowSlopes != null)
+		if (ThinTiles != null)
 		{
-			_slope22Low = LowSlopes;
-			for (tile in _slope22Low)
+			if (steepness == GENTLE)
 			{
-				_tileObjects[tile].allowCollisions = (_slopeCeilLeft.indexOf(tile) >= 0 || _slopeCeilRight.indexOf(tile) >= 0 )? FlxObject.CEILING : FlxObject.FLOOR;
+				_slopeThinGentle = ThinTiles;
+				for (tile in _slopeThinGentle)
+				{
+					_tileObjects[tile].allowCollisions = (_slopeSouthwest.indexOf(tile) >= 0 || _slopeSoutheast.indexOf(tile) >= 0 )? FlxObject.CEILING : FlxObject.FLOOR;
+				}
+			}
+			else if (steepness == STEEP)
+			{
+				_slopeThinSteep = ThinTiles;
+				for (tile in _slopeThinSteep)
+				{
+					_tileObjects[tile].allowCollisions = (_slopeSouthwest.indexOf(tile) >= 0 || _slopeNorthwest.indexOf(tile) >= 0 )? FlxObject.RIGHT : FlxObject.LEFT;
+				}
 			}
 		}
 	}
 	
 	/**
-	 * Sets the slope arrays, which define which tiles are treated as slopes of 67.5 degrees.
-	 * 
-	 * @param 	HighSlopes 	An array containing the numbers of the tiles to be treated as high slope tiles with a slope on the left.
-	 * @param 	LowSlopes	An array containing the numbers of the tiles to be treated as low slope tiles with a slope on the right.
-	 */
-	public function setSlopes67(?HighSlopes:Array<Int>, ?LowSlopes:Array<Int>) 
-	{
-		if (HighSlopes != null)
-		{
-			_slope67High = HighSlopes;
-		}
-		
-		if (LowSlopes != null)
-		{
-			_slope67Low = LowSlopes;
-			for (tile in _slope67Low)
-			{
-				_tileObjects[tile].allowCollisions = (_slopeCeilLeft.indexOf(tile) >= 0 || _slopeFloorLeft.indexOf(tile) >= 0 )? FlxObject.RIGHT : FlxObject.LEFT;
-			}
-		}
-	}
-	
-	
-	/**
-	 * Internal helpers function for comparing a tile to the slope arrays to see if a tile should be treated as a slope of 22.5 degrees.
+	 * Internal helper functions for comparing a tile to the slope arrays to see if a tile should be treated as STEEP or GENTLE slope.
 	 * 
 	 * @param 	TileIndex	The Tile Index number of the Tile you want to check.
 	 * @return	Returns true if the tile is listed in one of the slope arrays. Otherwise returns false.
 	 */
-	private function checkHighSlope22(TileIndex:Int):Bool
+	private function checkThickGentle(TileIndex:Int):Bool
 	{
-		return _slope22High.indexOf(TileIndex) >= 0;
+		return _slopeThickGentle.indexOf(TileIndex) >= 0;
 	}
 	
-	private function checkLowSlope22(TileIndex:Int):Bool
+	private function checkThinGentle(TileIndex:Int):Bool
 	{
-		return _slope22Low.indexOf(TileIndex) >= 0;
+		return _slopeThinGentle.indexOf(TileIndex) >= 0;
 	}
 	
-	private function checkHighSlope67(TileIndex:Int):Bool
+	private function checkThickSteep(TileIndex:Int):Bool
 	{
-		return _slope67High.indexOf(TileIndex) >= 0;
+		return _slopeThickSteep.indexOf(TileIndex) >= 0;
 	}
 	
-	private function checkLowSlope67(TileIndex:Int):Bool
+	private function checkThinSteep(TileIndex:Int):Bool
 	{
-		return _slope67Low.indexOf(TileIndex) >= 0;
+		return _slopeThinSteep.indexOf(TileIndex) >= 0;
 	}
 	
 	/**
@@ -659,7 +663,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Object 	The object that collides with the slope
 	 */
-	private function solveCollisionSlopeFloorLeft(Slope:FlxObject, Object:FlxObject):Void
+	private function solveCollisionSlopeNorthwest(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x + Object.width + _snapping);
@@ -671,7 +675,7 @@ class FlxTilemapExt extends FlxTilemap
 		_slopePoint.y = (Slope.y + _tileHeight) - (_slopePoint.x - Slope.x);
 		
 		var tileId:Int = cast(Slope, FlxTile).index;
-		if (checkLowSlope67(tileId))
+		if (checkThinSteep(tileId))
 		{
 			if (_slopePoint.x - Slope.x <= _tileWidth / 2)
 			{
@@ -682,15 +686,15 @@ class FlxTilemapExt extends FlxTilemap
 				_slopePoint.y = Slope.y + _tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / _tileWidth)) + _snapping;
 			}
 		}
-		else if (checkHighSlope67(tileId))
+		else if (checkThickSteep(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) + _snapping;
 		}
-		else if (checkHighSlope22(tileId))
+		else if (checkThickGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + (_tileHeight - _slopePoint.x + Slope.x) / 2;
 		}
-		else if (checkLowSlope22(tileId))
+		else if (checkThinGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight - (_slopePoint.x - Slope.x) / 2;
 		}
@@ -712,7 +716,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Object 	The object that collides with the slope
 	 */
-	private function solveCollisionSlopeFloorRight(Slope:FlxObject, Object:FlxObject):Void
+	private function solveCollisionSlopeNortheast(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x - _snapping);
@@ -724,7 +728,7 @@ class FlxTilemapExt extends FlxTilemap
 		_slopePoint.y = (Slope.y + _tileHeight) - (Slope.x - _slopePoint.x + _tileWidth);
 		
 		var tileId:Int = cast(Slope, FlxTile).index;
-		if (checkLowSlope67(tileId))
+		if (checkThinSteep(tileId))
 		{
 			if (_slopePoint.x - Slope.x >= _tileWidth / 2)
 			{
@@ -735,15 +739,15 @@ class FlxTilemapExt extends FlxTilemap
 				_slopePoint.y = Slope.y + _tileHeight * 2 * ((_slopePoint.x - Slope.x) / _tileWidth) + _snapping;
 			}
 		}
-		else if (checkHighSlope67(tileId))
+		else if (checkThickSteep(tileId))
 		{
 			_slopePoint.y = Slope.y - _tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / _tileWidth))) + _snapping;
 		}
-		else if (checkHighSlope22(tileId))
+		else if (checkThickGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + (_tileHeight - Slope.x + _slopePoint.x - _tileWidth) / 2;
 		}
-		else if (checkLowSlope22(tileId))
+		else if (checkThinGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight - (Slope.x - _slopePoint.x + _tileWidth) / 2;
 		}
@@ -765,7 +769,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Object 	The object that collides with the slope
 	 */
-	private function solveCollisionSlopeCeilLeft(Slope:FlxObject, Object:FlxObject):Void
+	private function solveCollisionSlopeSouthwest(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x + Object.width + _snapping);
@@ -777,7 +781,7 @@ class FlxTilemapExt extends FlxTilemap
 		_slopePoint.y = Slope.y + (_slopePoint.x - Slope.x);
 		
 		var tileId:Int = cast(Slope, FlxTile).index;
-		if (checkLowSlope67(tileId))
+		if (checkThinSteep(tileId))
 		{
 			if (_slopePoint.x - Slope.x <= _tileWidth / 2)
 			{
@@ -788,15 +792,15 @@ class FlxTilemapExt extends FlxTilemap
 				_slopePoint.y = Slope.y - _tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / _tileWidth))) - _snapping;
 			}
 		}
-		else if (checkHighSlope67(tileId))
+		else if (checkThickSteep(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight * 2 * ((_slopePoint.x - Slope.x) / _tileWidth) - _snapping;
 		}
-		else if (checkHighSlope22(tileId))
+		else if (checkThickGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight - (Slope.x - _slopePoint.x + _tileWidth) / 2;
 		}
-		else if (checkLowSlope22(tileId))
+		else if (checkThinGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + (_tileHeight - Slope.x + _slopePoint.x - _tileWidth) / 2;
 		}
@@ -818,7 +822,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Object 	The object that collides with the slope
 	 */
-	private function solveCollisionSlopeCeilRight(Slope:FlxObject, Object:FlxObject):Void
+	private function solveCollisionSlopeSoutheast(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x - _snapping);
@@ -830,7 +834,7 @@ class FlxTilemapExt extends FlxTilemap
 		_slopePoint.y = (Slope.y) + (Slope.x - _slopePoint.x + _tileWidth);
 		
 		var tileId:Int = cast(Slope, FlxTile).index;
-		if (checkLowSlope67(tileId))
+		if (checkThinSteep(tileId))
 		{
 			if (_slopePoint.x - Slope.x >= _tileWidth / 2)
 			{
@@ -841,15 +845,15 @@ class FlxTilemapExt extends FlxTilemap
 				_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) - _snapping;
 			}
 		}
-		else if (checkHighSlope67(tileId))
+		else if (checkThickSteep(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / _tileWidth)) - _snapping;
 		}
-		else if (checkHighSlope22(tileId))
+		else if (checkThickGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight - (_slopePoint.x - Slope.x) / 2;
 		}
-		else if (checkLowSlope22(tileId))
+		else if (checkThinGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + (_tileHeight - _slopePoint.x + Slope.x) / 2;
 		}
@@ -871,21 +875,21 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	private function setSlopeProperties():Void
 	{
-		for (tile in _slopeFloorLeft)
+		for (tile in _slopeNorthwest)
 		{
-			setTileProperties(tile, FlxObject.RIGHT | FlxObject.FLOOR, solveCollisionSlopeFloorLeft);
+			setTileProperties(tile, FlxObject.RIGHT | FlxObject.FLOOR, solveCollisionSlopeNorthwest);
 		}
-		for (tile in _slopeFloorRight)
+		for (tile in _slopeNortheast)
 		{
-			setTileProperties(tile, FlxObject.LEFT | FlxObject.FLOOR, solveCollisionSlopeFloorRight);
+			setTileProperties(tile, FlxObject.LEFT | FlxObject.FLOOR, solveCollisionSlopeNortheast);
 		}
-		for (tile in _slopeCeilLeft)
+		for (tile in _slopeSouthwest)
 		{
-			setTileProperties(tile, FlxObject.RIGHT | FlxObject.CEILING, solveCollisionSlopeCeilLeft);
+			setTileProperties(tile, FlxObject.RIGHT | FlxObject.CEILING, solveCollisionSlopeSouthwest);
 		}
-		for (tile in _slopeCeilRight)
+		for (tile in _slopeSoutheast)
 		{
-			setTileProperties(tile, FlxObject.LEFT | FlxObject.CEILING, solveCollisionSlopeCeilRight);
+			setTileProperties(tile, FlxObject.LEFT | FlxObject.CEILING, solveCollisionSlopeSoutheast);
 		}
 	}
 	
@@ -897,7 +901,7 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	private function checkArrays(TileIndex:Int):Bool
 	{
-		return _slopeFloorLeft.indexOf(TileIndex) >= 0 || _slopeFloorRight.indexOf(TileIndex) >= 0 || _slopeCeilLeft.indexOf(TileIndex) >= 0 || _slopeCeilRight.indexOf(TileIndex) >= 0;
+		return _slopeNorthwest.indexOf(TileIndex) >= 0 || _slopeNortheast.indexOf(TileIndex) >= 0 || _slopeSouthwest.indexOf(TileIndex) >= 0 || _slopeSoutheast.indexOf(TileIndex) >= 0;
 	}
 	
 	override private function set_frames(value:FlxFramesCollection):FlxFramesCollection
@@ -917,4 +921,11 @@ class FlxTilemapExt extends FlxTilemap
 		
 		return value;
 	}
+}
+
+enum FlxSlopeSteepness
+{
+	GENTLE; // 22.5°
+	MODERATE; // 45°
+	STEEP; // 67.5°
 }
