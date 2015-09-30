@@ -44,6 +44,10 @@ class FlxTypeText extends FlxText
 	 */
 	public var cursorCharacter:String = "|";
 	/**
+	 * Set to true to prevent a word start typing in a line and jump to next line.
+	 */
+	public var preventWordJump:Bool = true;
+	/**
 	 * The speed at which the cursor should blink, if shown at all.
 	 */
 	public var cursorBlinkSpeed:Float = 0.5;
@@ -190,12 +194,52 @@ class FlxTypeText extends FlxText
 			completeCallback = Callback;
 		}
 		
+		if (preventWordJump)
+		{
+			insertBreakLines();
+		}
+		
 		#if !bitfive
 		if (useDefaultSound)
 		{
 			loadDefaultSound();
 		}
 		#end
+	}
+	
+	/**
+	 * Internal function that replace last space in a line for a line break. To prevent a word start typing in a line and jump to next
+	 */
+	private function insertBreakLines() 
+	{
+		var saveText = text;
+		
+		var last = _finalText.length;
+		var n0:Int = 0;
+		var n1:Int = 0;
+		
+		while (true)
+		{
+			last = _finalText.substr(0, last).lastIndexOf(" ");
+			
+			if (last <= 0)
+				break;
+			
+			text = prefix + _finalText;
+			n0 = textField.numLines;
+			
+			var nextText = _finalText.substr(0, last) + "\n" + _finalText.substr(last + 1, _finalText.length);
+			
+			text = prefix + nextText;
+			n1 = textField.numLines;
+			
+			if (n0 == n1)
+			{
+				_finalText = nextText;
+			}
+		}
+		
+		text = saveText;
 	}
 	
 	/**
@@ -408,7 +452,14 @@ class FlxTypeText extends FlxText
 		{
 			_cursorTimer += elapsed;
 			
-			if (_cursorTimer > cursorBlinkSpeed / 2)
+			// Prevent word wrapping because of cursor
+			var isBreakLine = false;
+			if (preventWordJump)
+			{
+				isBreakLine = ((prefix + _finalText).charAt(helperString.length) == "\n");
+			}
+			
+			if (_cursorTimer > cursorBlinkSpeed / 2 && !isBreakLine)
 			{
 				helperString += cursorCharacter.charAt(0);
 			}
