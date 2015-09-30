@@ -46,7 +46,7 @@ class FlxTypeText extends FlxText
 	/**
 	 * Set to true to prevent a word start typing in a line and jump to next line.
 	 */
-	public var preventWordJump:Bool = true;
+	public var preventLineJump:Bool = true;
 	/**
 	 * The speed at which the cursor should blink, if shown at all.
 	 */
@@ -194,7 +194,7 @@ class FlxTypeText extends FlxText
 			completeCallback = Callback;
 		}
 		
-		if (preventWordJump)
+		if (preventLineJump)
 		{
 			insertBreakLines();
 		}
@@ -454,7 +454,7 @@ class FlxTypeText extends FlxText
 			
 			// Prevent word wrapping because of cursor
 			var isBreakLine = false;
-			if (preventWordJump)
+			if (preventLineJump)
 			{
 				isBreakLine = ((prefix + _finalText).charAt(helperString.length) == "\n");
 			}
