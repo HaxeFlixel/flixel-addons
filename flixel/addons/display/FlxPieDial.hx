@@ -17,7 +17,9 @@ import openfl.display.BlendMode;
 class FlxPieDial extends FlxSprite
 {
 
+	/**A value between 0.0 (empty) and 1.0 (full)**/
 	public var amount(default, set):Float = 0;
+	
 	private var pieFrames:Int = 0;
 	
 	public function new(X:Float, Y:Float, Radius:Int, Color:FlxColor=FlxColor.WHITE, Frames:Int=36, ?Shape:FlxPieDialShape, Clockwise:Bool = true, InnerRadius:Int=0) 
