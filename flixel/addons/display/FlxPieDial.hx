@@ -88,10 +88,23 @@ class FlxPieDial extends FlxSprite
 		}
 		else if(Shape == Circle)
 		{
-			FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, Color);
 			if (InnerRadius > 0)
 			{
-				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, InnerRadius, FlxColor.TRANSPARENT);
+				var alpha = new BitmapData(fullFrame.pixels.width, fullFrame.pixels.height, false, FlxColor.BLACK);
+				fullFrame.pixels.fillRect(_flashRect, FlxColor.BLACK);
+				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, FlxColor.WHITE, null, {smoothing:true});
+				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, InnerRadius, FlxColor.BLACK, null, { smoothing:true } );
+				
+				alpha.copyPixels(fullFrame.pixels, fullFrame.pixels.rect, _flashPointZero, null, null, true);
+				
+				fullFrame.pixels.fillRect(fullFrame.pixels.rect, Color);
+				fullFrame.pixels.copyChannel(alpha, alpha.rect, _flashPointZero, BitmapDataChannel.RED, BitmapDataChannel.ALPHA);
+				
+				alpha.dispose();
+			}
+			else
+			{
+				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, Color);
 			}
 		}
 		
