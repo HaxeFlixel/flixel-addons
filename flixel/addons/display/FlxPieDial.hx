@@ -20,27 +20,27 @@ class FlxPieDial extends FlxSprite
 	public var amount(default, set):Float = 0;
 	private var pieFrames:Int = 0;
 	
-	public static inline var CIRCLE:String = "circle";
-	public static inline var SQUARE:String = "square";
-	
-	public function new(X:Float, Y:Float, Radius:Int, Color:FlxColor=FlxColor.WHITE, Frames:Int=36, Shape:String = CIRCLE, Clockwise:Bool = true, InnerRadius:Int=0) 
+	public function new(X:Float, Y:Float, Radius:Int, Color:FlxColor=FlxColor.WHITE, Frames:Int=36, ?Shape:FlxPieDialShape, Clockwise:Bool = true, InnerRadius:Int=0) 
 	{
-		super(0, 0);
+		if (Shape == null) Shape = Circle;
+		super(X, Y);
 		makePieDialGraphic(Radius, Color, Frames, Shape, Clockwise, InnerRadius);
 	}
 	
 	public function set_amount(f:Float):Float
 	{
+		if (f < 0.0) f = 0.0;
+		if (f > 1.0) f = 1.0;
 		amount = f;
 		var frame:Int = Std.int(f * pieFrames);
 		animation.frameIndex = frame;
 		return amount;
 	}
 	
-	private function makePieDialGraphic(Radius:Int, Color:FlxColor, Frames:Int, Shape:String, Clockwise:Bool, InnerRadius:Int)
+	private function makePieDialGraphic(Radius:Int, Color:FlxColor, Frames:Int, Shape:FlxPieDialShape, Clockwise:Bool, InnerRadius:Int)
 	{
 		pieFrames = Frames;
-		var key:String = "pie_dial_" + Color.toHexString() + "_" + Std.string(Radius) + "_" + Frames + "_" + Shape;
+		var key:String = "pie_dial_" + Color.toHexString() + "_" + Radius + "_" + Frames + "_" + Shape;
 		var W = Radius * 2;
 		var H = Radius * 2;
 		if (false == FlxG.bitmap.checkCache(key))
@@ -54,7 +54,7 @@ class FlxPieDial extends FlxSprite
 		amount = 1;
 	}
 	
-	private function makePieDialGraphicSub(Radius:Int, Color:Int, Frames:Int, Shape:String, Clockwise:Bool, InnerRadius):BitmapData
+	private function makePieDialGraphicSub(Radius:Int, Color:Int, Frames:Int, Shape:FlxPieDialShape, Clockwise:Bool, InnerRadius):BitmapData
 	{
 		var W = Radius * 2;
 		var H = Radius * 2;
@@ -75,7 +75,7 @@ class FlxPieDial extends FlxSprite
 		
 		var dR = Radius - InnerRadius;
 		
-		if (Shape == SQUARE)
+		if (Shape == Square)
 		{
 			fullFrame.pixels.fillRect(fullFrame.pixels.rect, Color);
 			if (InnerRadius > 0)
@@ -84,7 +84,7 @@ class FlxPieDial extends FlxSprite
 				fullFrame.pixels.fillRect(_flashRect, FlxColor.TRANSPARENT);
 			}
 		}
-		else if(Shape == CIRCLE)
+		else if(Shape == Circle)
 		{
 			FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, Color);
 			if (InnerRadius > 0)
@@ -102,9 +102,7 @@ class FlxPieDial extends FlxSprite
 		var halfH = H / 2;
 		
 		var sweep:Float = Clockwise ? 0 : 360;
-		
 		var bmp2 = new BitmapData(bmp.width, bmp.height, true, FlxColor.TRANSPARENT);
-		
 		var fullBmp:BitmapData = fullFrame.pixels.clone();
 		
 		var polygon:Array<FlxPoint> = [FlxPoint.get(), FlxPoint.get(), FlxPoint.get(), FlxPoint.get(), FlxPoint.get()];
@@ -117,7 +115,7 @@ class FlxPieDial extends FlxSprite
 					break;
 				}
 				
-				_flashPoint.setTo(c * H, r * W);
+				_flashPoint.setTo(c * W, r * H);
 				bmp2.copyPixels(fullBmp, fullBmp.rect, _flashPoint);
 				
 				if (i <= 0)
@@ -127,13 +125,13 @@ class FlxPieDial extends FlxSprite
 				}
 				else if (i >= 360)
 				{
-					_flashRect.setTo(c * H, r * W, W, H);
+					_flashRect.setTo(c * W, r * H, W, H);
 					bmp.fillRect(_flashRect, fore);
 				}
 				else
 				{
 					nextFrame.pixels.copyPixels(fullFrame.pixels, fullFrame.pixels.rect, _flashPointZero);
-					_flashPoint.setTo(c * H, r * W);
+					_flashPoint.setTo(c * W, r * H);
 					drawSweep(sweep, v, nextFrame, polygon, W, H, back, fore);
 					bmp.copyPixels(nextFrame.pixels, nextFrame.pixels.rect, _flashPoint);
 				}
@@ -146,7 +144,7 @@ class FlxPieDial extends FlxSprite
 				else
 				{
 					sweep -= degrees;
-					v.rotateByDegrees(-degrees);
+					v.rotateByDegrees( -degrees);
 				}
 				i++;
 			}
@@ -181,6 +179,8 @@ class FlxPieDial extends FlxSprite
 		
 		nextFrame.pixels.fillRect(nextFrame.pixels.rect, back);
 		polygon[0].set(halfW, halfH);
+		
+		var shortPolygon = [];
 		
 		if (sweep < 45)
 		{
@@ -257,4 +257,10 @@ class FlxPieDial extends FlxSprite
 		
 		FlxSpriteUtil.drawPolygon(nextFrame, polygon, fore);
 	}
+}
+
+enum FlxPieDialShape
+{
+	Circle;
+	Square;
 }
