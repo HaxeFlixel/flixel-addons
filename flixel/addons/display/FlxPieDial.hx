@@ -67,46 +67,8 @@ class FlxPieDial extends FlxSprite
 		var back = Clockwise ? FlxColor.BLACK : FlxColor.WHITE;
 		var fore = Clockwise ? FlxColor.WHITE : FlxColor.BLACK ;
 		
-		var fullFrame = new FlxSprite().makeGraphic(W, H, FlxColor.TRANSPARENT, true);
+		var fullFrame = makeFullFrame(Radius, Color, Frames, Shape, Clockwise, InnerRadius);
 		var nextFrame = new FlxSprite().makeGraphic(W, H, back, false);
-		
-		if (InnerRadius > Radius)
-		{
-			InnerRadius = 0;
-		}
-		
-		var dR = Radius - InnerRadius;
-		
-		if (Shape == Square)
-		{
-			fullFrame.pixels.fillRect(fullFrame.pixels.rect, Color);
-			if (InnerRadius > 0)
-			{
-				_flashRect.setTo(dR, dR, InnerRadius * 2, InnerRadius * 2);
-				fullFrame.pixels.fillRect(_flashRect, FlxColor.TRANSPARENT);
-			}
-		}
-		else if(Shape == Circle)
-		{
-			if (InnerRadius > 0)
-			{
-				var alpha = new BitmapData(fullFrame.pixels.width, fullFrame.pixels.height, false, FlxColor.BLACK);
-				fullFrame.pixels.fillRect(_flashRect, FlxColor.BLACK);
-				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, FlxColor.WHITE, null, {smoothing:true});
-				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, InnerRadius, FlxColor.BLACK, null, { smoothing:true } );
-				
-				alpha.copyPixels(fullFrame.pixels, fullFrame.pixels.rect, _flashPointZero, null, null, true);
-				
-				fullFrame.pixels.fillRect(fullFrame.pixels.rect, Color);
-				fullFrame.pixels.copyChannel(alpha, alpha.rect, _flashPointZero, BitmapDataChannel.RED, BitmapDataChannel.ALPHA);
-				
-				alpha.dispose();
-			}
-			else
-			{
-				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, Color);
-			}
-		}
 		
 		var bmp:BitmapData = new BitmapData(W * cols, H * rows, false, back);
 		var i:Int = 0;
@@ -185,6 +147,57 @@ class FlxPieDial extends FlxSprite
 		bmp.dispose();
 		
 		return bmp2;
+	}
+	
+	private function makeFullFrame(Radius:Int, Color:Int, Frames:Int, Shape:FlxPieDialShape, Clockwise:Bool, InnerRadius):FlxSprite
+	{
+		var W = Radius * 2;
+		var H = Radius * 2;
+		
+		var rows:Int = Math.ceil(Math.sqrt(Frames));
+		var cols:Int = Math.ceil(Frames / rows);
+		
+		var back = Clockwise ? FlxColor.BLACK : FlxColor.WHITE;
+		var fore = Clockwise ? FlxColor.WHITE : FlxColor.BLACK ;
+		
+		var fullFrame = new FlxSprite().makeGraphic(W, H, FlxColor.TRANSPARENT, true);
+		if (InnerRadius > Radius)
+		{
+			InnerRadius = 0;
+		}
+		
+		var dR = Radius - InnerRadius;
+		
+		if (Shape == Square)
+		{
+			fullFrame.pixels.fillRect(fullFrame.pixels.rect, Color);
+			if (InnerRadius > 0)
+			{
+				_flashRect.setTo(dR, dR, InnerRadius * 2, InnerRadius * 2);
+				fullFrame.pixels.fillRect(_flashRect, FlxColor.TRANSPARENT);
+			}
+		}
+		else if(Shape == Circle)
+		{
+			if (InnerRadius > 0)
+			{
+				var alpha = new BitmapData(fullFrame.pixels.width, fullFrame.pixels.height, false, FlxColor.BLACK);
+				fullFrame.pixels.fillRect(_flashRect, FlxColor.BLACK);
+				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, FlxColor.WHITE, null, {smoothing:true});
+				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, InnerRadius, FlxColor.BLACK, null, { smoothing:true } );
+				
+				alpha.copyPixels(fullFrame.pixels, fullFrame.pixels.rect, _flashPointZero, null, null, true);
+				
+				fullFrame.pixels.fillRect(fullFrame.pixels.rect, Color);
+				fullFrame.pixels.copyChannel(alpha, alpha.rect, _flashPointZero, BitmapDataChannel.RED, BitmapDataChannel.ALPHA);
+				
+				alpha.dispose();
+			}
+			else
+			{
+				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, Color);
+			}
+		}
 	}
 	
 	private function drawSweep(sweep:Float, v:FlxVector, nextFrame:FlxSprite, polygon:Array<FlxPoint>, W:Int, H:Int, back:FlxColor, fore:FlxColor)
