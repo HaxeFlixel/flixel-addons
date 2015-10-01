@@ -88,8 +88,6 @@ class FlxPieDial extends FlxSprite
 		
 		var bmp2 = new BitmapData(bmp.width, bmp.height, true, FlxColor.TRANSPARENT);
 		
-		FlxG.bitmapLog.add(bmp2, "bmp2");
-		
 		var fullBmp:BitmapData = fullFrame.pixels.clone();
 		
 		var polygon:Array<FlxPoint> = [FlxPoint.get(), FlxPoint.get(), FlxPoint.get(), FlxPoint.get(), FlxPoint.get()];
