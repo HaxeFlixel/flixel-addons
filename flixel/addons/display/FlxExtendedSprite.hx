@@ -743,10 +743,12 @@ class FlxExtendedSprite extends FlxSprite
 			y = (Math.floor(y / _snapY) * _snapY);
 		}
 		
+		#if !FLX_NO_MOUSE
 		if (mouseStopDragCallback != null)
 		{
 			mouseStopDragCallback(this, mouseX, mouseY);
 		}
+		#end
 	}
 	
 	/**
