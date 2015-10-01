@@ -1,6 +1,7 @@
 package flixel.addons.display;
 
 import flixel.FlxSprite;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVector;
 import flixel.util.FlxColor;
@@ -18,7 +19,7 @@ class FlxPieDial extends FlxSprite
 {
 
 	/**A value between 0.0 (empty) and 1.0 (full)**/
-	public var amount(default, set):Float = 0;
+	public var amount(default, set):Float;
 	
 	private var pieFrames:Int = 0;
 	
@@ -27,13 +28,12 @@ class FlxPieDial extends FlxSprite
 		if (Shape == null) Shape = Circle;
 		super(X, Y);
 		makePieDialGraphic(Radius, Color, Frames, Shape, Clockwise, InnerRadius);
+		amount = 1.0;
 	}
 	
 	public function set_amount(f:Float):Float
 	{
-		if (f < 0.0) f = 0.0;
-		if (f > 1.0) f = 1.0;
-		amount = f;
+		amount = FlxMath.bound(f, 0.0, 1.0);
 		var frame:Int = Std.int(f * pieFrames);
 		animation.frameIndex = frame;
 		return amount;
