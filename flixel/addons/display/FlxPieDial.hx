@@ -198,6 +198,7 @@ class FlxPieDial extends FlxSprite
 				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, Color);
 			}
 		}
+		return fullFrame;
 	}
 	
 	private function drawSweep(sweep:Float, v:FlxVector, nextFrame:FlxSprite, polygon:Array<FlxPoint>, W:Int, H:Int, back:FlxColor, fore:FlxColor)
