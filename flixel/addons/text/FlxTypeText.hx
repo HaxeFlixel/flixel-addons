@@ -2,6 +2,7 @@ package flixel.addons.text;
 
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
+import flixel.math.FlxMath;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.system.FlxSound;
@@ -307,15 +308,7 @@ class FlxTypeText extends FlxText
 	public function setTypingVariation(Amount:Float = 0.5, On:Bool = true):Void
 	{
 		_typingVariation = On;
-		
-		if (Amount > 0 && Amount < 1)
-		{
-			_typeVarPercent = Amount;
-		}
-		else
-		{
-			_typeVarPercent = 0.5;
-		}
+		_typeVarPercent = FlxMath.bound(Amount, 0, 1);
 	}
 	
 	/**
