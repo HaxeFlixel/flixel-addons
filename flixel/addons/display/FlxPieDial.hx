@@ -5,11 +5,10 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVector;
 import flixel.util.FlxColor;
-import flixel.util.FlxSpriteUtil;
-import haxe.EnumTools;
 import openfl.display.BitmapData;
 import openfl.display.BitmapDataChannel;
 import openfl.display.BlendMode;
+using flixel.util.FlxSpriteUtil;
 
 /**
  * A dynamic shape that fills up the way a pie chart does. Useful for timers and other things.
@@ -17,15 +16,18 @@ import openfl.display.BlendMode;
  */
 class FlxPieDial extends FlxSprite
 {
-
-	/**A value between 0.0 (empty) and 1.0 (full)**/
+	/**
+	 * A value between 0.0 (empty) and 1.0 (full)
+	 */
 	public var amount(default, set):Float;
 	
 	private var pieFrames:Int = 0;
 	
-	public function new(X:Float, Y:Float, Radius:Int, Color:FlxColor=FlxColor.WHITE, Frames:Int=36, ?Shape:FlxPieDialShape, Clockwise:Bool = true, InnerRadius:Int=0) 
+	public function new(X:Float, Y:Float, Radius:Int, Color:FlxColor = FlxColor.WHITE,
+		Frames:Int = 36, ?Shape:FlxPieDialShape, Clockwise:Bool = true, InnerRadius:Int = 0) 
 	{
-		if (Shape == null) Shape = Circle;
+		if (Shape == null)
+			Shape = Circle;
 		super(X, Y);
 		makePieDialGraphic(Radius, Color, Frames, Shape, Clockwise, InnerRadius);
 		amount = 1.0;
@@ -45,15 +47,13 @@ class FlxPieDial extends FlxSprite
 		var key:String = "pie_dial_" + Color.toHexString() + "_" + Radius + "_" + Frames + "_" + Shape;
 		var W = Radius * 2;
 		var H = Radius * 2;
-		if (false == FlxG.bitmap.checkCache(key))
+		if (!FlxG.bitmap.checkCache(key))
 		{
 			var bmp = makePieDialGraphicSub(Radius, Color, Frames, Shape, Clockwise, InnerRadius);
 			FlxG.bitmap.add(bmp, true, key);
 		}
 		
 		loadGraphic(key, true, W, H);
-		
-		amount = 1;
 	}
 	
 	private function makePieDialGraphicSub(Radius:Int, Color:Int, Frames:Int, Shape:FlxPieDialShape, Clockwise:Bool, InnerRadius):BitmapData
@@ -74,7 +74,10 @@ class FlxPieDial extends FlxSprite
 		var i:Int = 0;
 		_flashPoint.setTo(0, 0);
 		var v:FlxVector = FlxVector.get(0, -1);
-		var degrees:Float = 360 / (Frames-1);
+		var degrees:Float = 360 / (Frames - 1);
+		if (!Clockwise)
+			degrees *= -1;
+		
 		var halfW = W / 2;
 		var halfH = H / 2;
 		
@@ -113,18 +116,12 @@ class FlxPieDial extends FlxSprite
 					bmp.copyPixels(nextFrame.pixels, nextFrame.pixels.rect, _flashPoint);
 				}
 				
-				if (Clockwise)
-				{
-					sweep += degrees;
-					v.rotateByDegrees(degrees);
-				}
-				else
-				{
-					sweep -= degrees;
-					v.rotateByDegrees( -degrees);
-				}
+				sweep += degrees;
+				v.rotateByDegrees(degrees);
+
 				i++;
 			}
+			
 			if (i > Frames)
 			{
 				break;
@@ -135,7 +132,7 @@ class FlxPieDial extends FlxSprite
 		fullFrame.destroy();
 		nextFrame.destroy();
 		
-		var shapeChannel:BitmapData = new BitmapData(bmp.width, bmp.height, false);
+		var shapeChannel = new BitmapData(bmp.width, bmp.height, false);
 		shapeChannel.copyChannel(bmp2, bmp2.rect, _flashPointZero, BitmapDataChannel.ALPHA, BitmapDataChannel.RED);
 		shapeChannel.copyChannel(bmp2, bmp2.rect, _flashPointZero, BitmapDataChannel.ALPHA, BitmapDataChannel.GREEN);
 		shapeChannel.copyChannel(bmp2, bmp2.rect, _flashPointZero, BitmapDataChannel.ALPHA, BitmapDataChannel.BLUE);
@@ -158,7 +155,7 @@ class FlxPieDial extends FlxSprite
 		var cols:Int = Math.ceil(Frames / rows);
 		
 		var back = Clockwise ? FlxColor.BLACK : FlxColor.WHITE;
-		var fore = Clockwise ? FlxColor.WHITE : FlxColor.BLACK ;
+		var fore = Clockwise ? FlxColor.WHITE : FlxColor.BLACK;
 		
 		var fullFrame = new FlxSprite().makeGraphic(W, H, FlxColor.TRANSPARENT, true);
 		if (InnerRadius > Radius)
@@ -177,14 +174,14 @@ class FlxPieDial extends FlxSprite
 				fullFrame.pixels.fillRect(_flashRect, FlxColor.TRANSPARENT);
 			}
 		}
-		else if(Shape == Circle)
+		else if (Shape == Circle)
 		{
 			if (InnerRadius > 0)
 			{
 				var alpha = new BitmapData(fullFrame.pixels.width, fullFrame.pixels.height, false, FlxColor.BLACK);
 				fullFrame.pixels.fillRect(_flashRect, FlxColor.BLACK);
-				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, FlxColor.WHITE, null, {smoothing:true});
-				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, InnerRadius, FlxColor.BLACK, null, { smoothing:true } );
+				fullFrame.drawCircle(-1, -1, Radius, FlxColor.WHITE, null, { smoothing: true });
+				fullFrame.drawCircle(-1, -1, InnerRadius, FlxColor.BLACK, null, { smoothing: true });
 				
 				alpha.copyPixels(fullFrame.pixels, fullFrame.pixels.rect, _flashPointZero, null, null, true);
 				
@@ -195,7 +192,7 @@ class FlxPieDial extends FlxSprite
 			}
 			else
 			{
-				FlxSpriteUtil.drawCircle(fullFrame, -1, -1, Radius, Color);
+				fullFrame.drawCircle(-1, -1, Radius, Color);
 			}
 		}
 		return fullFrame;
@@ -284,7 +281,7 @@ class FlxPieDial extends FlxSprite
 		
 		polygon[4].set(halfW, halfH);
 		
-		FlxSpriteUtil.drawPolygon(nextFrame, polygon, fore);
+		nextFrame.drawPolygon(polygon, fore);
 	}
 }
 
