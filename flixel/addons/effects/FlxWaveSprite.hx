@@ -52,12 +52,12 @@ class FlxWaveSprite extends FlxSprite
 	 * Creates a new FlxWaveSprite, which clones a target FlxSprite and applies a wave-distortion effect to the clone.
 	 * 
 	 * @param	Target		The target FlxSprite you want to clone.
-	 * @param	Mode		Which Mode you would like to use for the effect. ALL = applies a constant distortion throughout the image, BOTTOM = makes the effect get stronger towards the bottom of the image, and TOP = the reverse of BOTTOM
+	 * @param	Mode		Which Mode you would like to use for the effect. ALL = applies a constant distortion throughout the image, END = makes the effect get stronger towards the bottom of the image, and START = the reverse of END
 	 * @param	Strength	How strong you want the effect
-	 * @param	Center		The 'center' of the effect when using BOTTOM or TOP modes. Anything above(BOTTOM)/below(TOP) this point on the image will have no distortion effect.
+	 * @param	Center		The 'center' of the effect when using END or START modes. Anything before(END)/after(START) this point on the image will have no distortion effect.
 	 * @param	Speed		How fast you want the effect to move. Higher values = faster.
 	 * @param	Wavelength	How long waves are.
-	 * @param	Direction	Which Direction you want the effect to be applied (VERTICAL or HORIZONTAL)
+	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL)
 	 */
 	public function new(Target:FlxSprite, ?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection)
 	{
@@ -67,9 +67,9 @@ class FlxWaveSprite extends FlxSprite
 		mode = (Mode == null) ? ALL : Mode;
 		speed = Speed;
 		wavelength = Wavelength;
-		direction = (Direction != null) ? Direction : VERTICAL;
+		direction = (Direction != null) ? Direction : HORIZONTAL;
 		if (Center < 0)
-			center = Std.int(((direction == VERTICAL) ? target.height : target.width) * 0.5);
+			center = Std.int(((direction == HORIZONTAL) ? target.height : target.width) * 0.5);
 		initPixels();
 		dirty = true;
 	}
@@ -89,7 +89,7 @@ class FlxWaveSprite extends FlxSprite
 		pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
 		
 		var offset:Float = 0;
-		var length = (direction == VERTICAL) ? target.frameHeight : target.frameWidth;
+		var length = (direction == HORIZONTAL) ? target.frameHeight : target.frameWidth;
 		for (p in 0...length)
 		{
 			var offsetP:Float = center;
@@ -98,14 +98,14 @@ class FlxWaveSprite extends FlxSprite
 				case ALL:
 					offset = offsetP * calculateOffset(p);
 					
-				case BOTTOM:
+				case END:
 					if (p >= center)
 					{
 						offsetP = p - center;
 						offset = offsetP * calculateOffset(offsetP);
 					}
 					
-				case TOP:
+				case START:
 					if (p <= center)
 					{
 						offsetP = center - p;
@@ -113,7 +113,7 @@ class FlxWaveSprite extends FlxSprite
 					}
 			}
 			
-			if (direction == VERTICAL)
+			if (direction == HORIZONTAL)
 			{
 				_flashPoint.setTo(strength + offset, p);
 				_flashRect2.setTo(0, p, target.frameWidth, 1);
@@ -141,15 +141,15 @@ class FlxWaveSprite extends FlxSprite
 	{
 		var oldGraphic:FlxGraphic = graphic;
 		
-		var verticalStrength = (direction == VERTICAL) ? strength : 0;
 		var horizontalStrength = (direction == HORIZONTAL) ? strength : 0;
+		var verticalStrength = (direction == VERTICAL) ? strength : 0;
 		target.drawFrame(true);
-		setPosition(target.x - verticalStrength, target.y - horizontalStrength);
+		setPosition(target.x - horizontalStrength, target.y - verticalStrength);
 		makeGraphic(
-			Std.int(target.frameWidth + verticalStrength * 2),
-			Std.int(target.frameHeight + horizontalStrength * 2),
+			Std.int(target.frameWidth + horizontalStrength * 2),
+			Std.int(target.frameHeight + verticalStrength * 2),
 			FlxColor.TRANSPARENT, true);
-		_flashPoint.setTo(verticalStrength, horizontalStrength);
+		_flashPoint.setTo(horizontalStrength, verticalStrength);
 		
 		pixels.copyPixels(target.framePixels, target.framePixels.rect, _flashPoint);
 		dirty = true;
@@ -166,7 +166,7 @@ class FlxWaveSprite extends FlxSprite
 		return direction;
 	}
 	
-	private function set_strength(value:Int):Int 
+	private function set_strength(value:Int):Int
 	{
 		if (strength != value)
 		{
@@ -180,12 +180,12 @@ class FlxWaveSprite extends FlxSprite
 enum FlxWaveMode
 {
 	ALL;
-	TOP;
-	BOTTOM;
+	START;
+	END;
 }
 
 enum FlxWaveDirection
 {
-	VERTICAL;
 	HORIZONTAL;
+	VERTICAL;
 }
