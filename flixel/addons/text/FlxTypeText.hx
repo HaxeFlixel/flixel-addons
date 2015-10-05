@@ -2,6 +2,7 @@ package flixel.addons.text;
 
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
+import flixel.math.FlxMath;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.system.FlxSound;
@@ -189,6 +190,8 @@ class FlxTypeText extends FlxText
 		{
 			completeCallback = Callback;
 		}
+
+		insertBreakLines();
 		
 		#if !bitfive
 		if (useDefaultSound)
@@ -196,6 +199,42 @@ class FlxTypeText extends FlxText
 			loadDefaultSound();
 		}
 		#end
+	}
+	
+	/**
+	 * Internal function that replace last space in a line for a line break.
+	 * To prevent a word start typing in a line and jump to next.
+	 */
+	private function insertBreakLines() 
+	{
+		var saveText = text;
+		
+		var last = _finalText.length;
+		var n0:Int = 0;
+		var n1:Int = 0;
+		
+		while (true)
+		{
+			last = _finalText.substr(0, last).lastIndexOf(" ");
+			
+			if (last <= 0)
+				break;
+			
+			text = prefix + _finalText;
+			n0 = textField.numLines;
+			
+			var nextText = _finalText.substr(0, last) + "\n" + _finalText.substr(last + 1, _finalText.length);
+			
+			text = prefix + nextText;
+			n1 = textField.numLines;
+			
+			if (n0 == n1)
+			{
+				_finalText = nextText;
+			}
+		}
+		
+		text = saveText;
 	}
 	
 	/**
@@ -269,15 +308,7 @@ class FlxTypeText extends FlxText
 	public function setTypingVariation(Amount:Float = 0.5, On:Bool = true):Void
 	{
 		_typingVariation = On;
-		
-		if (Amount > 0 && Amount < 1)
-		{
-			_typeVarPercent = Amount;
-		}
-		else
-		{
-			_typeVarPercent = 0.5;
-		}
+		_typeVarPercent = FlxMath.bound(Amount, 0, 1);
 	}
 	
 	/**
@@ -366,7 +397,7 @@ class FlxTypeText extends FlxText
 			
 			if ((_typing && _timer >= delay) || (_erasing && _timer >= eraseDelay))
 			{
-				if (_typingVariation )
+				if (_typingVariation)
 				{
 					if (_typing)
 					{
@@ -408,7 +439,10 @@ class FlxTypeText extends FlxText
 		{
 			_cursorTimer += elapsed;
 			
-			if (_cursorTimer > cursorBlinkSpeed / 2)
+			// Prevent word wrapping because of cursor
+			var isBreakLine = (prefix + _finalText).charAt(helperString.length) == "\n";
+			
+			if (_cursorTimer > cursorBlinkSpeed / 2 && !isBreakLine)
 			{
 				helperString += cursorCharacter.charAt(0);
 			}
