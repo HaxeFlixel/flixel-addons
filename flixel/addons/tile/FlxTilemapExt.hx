@@ -146,22 +146,8 @@ class FlxTilemapExt extends FlxTilemap
 		var screenColumns:Int = Buffer.columns;
 		
 		// Bound the upper left corner
-		if (screenXInTiles < 0)
-		{
-			screenXInTiles = 0;
-		}
-		if (screenXInTiles > widthInTiles - screenColumns)
-		{
-			screenXInTiles = widthInTiles - screenColumns;
-		}
-		if (screenYInTiles < 0)
-		{
-			screenYInTiles = 0;
-		}
-		if (screenYInTiles > heightInTiles - screenRows)
-		{
-			screenYInTiles = heightInTiles - screenRows;
-		}
+		screenXInTiles = Std.int(FlxMath.bound(screenXInTiles, 0, widthInTiles - screenColumns));
+		screenYInTiles =  Std.int(FlxMath.bound(screenYInTiles, 0, heightInTiles - screenRows));
 		
 		var rowIndex:Int = screenYInTiles * widthInTiles + screenXInTiles;
 		_flashPoint.y = 0;
@@ -318,7 +304,7 @@ class FlxTilemapExt extends FlxTilemap
 	
 	/**
 	 * THIS IS A COPY FROM FlxTilemap
-	 * I've only swapped lines 386 and 387 to give DrawTilemap() a chance to set the buffer dirty
+	 * I've changed draw() to give a chance to set the buffer dirty
 	 * ---
 	 * Draws the tilemap buffers to the cameras.
 	 */
@@ -409,22 +395,10 @@ class FlxTilemapExt extends FlxTilemap
 		var selectionHeight:Int = selectionY + Math.ceil(Object.height / _tileHeight) + 1;
 		
 		//Then bound these coordinates by the map edges
-		if (selectionX < 0)
-		{
-			selectionX = 0;
-		}
-		if (selectionY < 0)
-		{
-			selectionY = 0;
-		}
-		if (selectionWidth > widthInTiles)
-		{
-			selectionWidth = widthInTiles;
-		}
-		if (selectionHeight > heightInTiles)
-		{
-			selectionHeight = heightInTiles;
-		}
+		selectionX = FlxMath.maxInt(selectionX, 0);
+		selectionY = FlxMath.maxInt(selectionY, 0);
+		selectionWidth = FlxMath.minInt(selectionWidth, widthInTiles);
+		selectionHeight = FlxMath.minInt(selectionHeight, heightInTiles);
 		
 		// Then loop through this selection of tiles and call FlxObject.separate() accordingly
 		var rowStart:Int = selectionY * widthInTiles;
@@ -524,52 +498,47 @@ class FlxTilemapExt extends FlxTilemap
 	}
 	
 	/**
-	 * Sets the slopes steepness. To set GENTLE and STEEP slopes ThickTiles and ThinTiles are needed and to set MODERATE slopes just need ThickTiles.
+	 * Sets the gentle slopes. About 26.5 degrees.
 	 * 
 	 * @param 	ThickTiles 	An array containing the numbers of the tiles to be treated as thick slope.
 	 * @param 	ThinTiles	An array containing the numbers of the tiles to be treated as thin slope.
 	 */
-	public function setSteepness(steepness:FlxSlopeSteepness, ThickTiles:Array<Int>, ?ThinTiles:Array<Int>) 
+	public function setGentle(ThickTiles:Array<Int>, ThinTiles:Array<Int>) 
 	{
 		if (ThickTiles != null)
 		{
-			if (steepness == GENTLE)
-			{
-				_slopeThickGentle = ThickTiles;
-			}
-			else if (steepness == STEEP)
-			{
-				_slopeThickSteep = ThickTiles;
-			}
-			else
-			{
-				for (tile in ThickTiles)
-				{
-					_slopeThickGentle.remove(tile);
-					_slopeThickSteep.remove(tile);
-					_slopeThinGentle.remove(tile);
-					_slopeThinSteep.remove(tile);
-				}
-			}
+			_slopeThickGentle = ThickTiles;
 		}
 		
 		if (ThinTiles != null)
 		{
-			if (steepness == GENTLE)
+			_slopeThinGentle = ThinTiles;
+			for (tile in _slopeThinGentle)
 			{
-				_slopeThinGentle = ThinTiles;
-				for (tile in _slopeThinGentle)
-				{
-					_tileObjects[tile].allowCollisions = (_slopeSouthwest.indexOf(tile) >= 0 || _slopeSoutheast.indexOf(tile) >= 0 )? FlxObject.CEILING : FlxObject.FLOOR;
-				}
+				_tileObjects[tile].allowCollisions = (_slopeSouthwest.indexOf(tile) >= 0 || _slopeSoutheast.indexOf(tile) >= 0 )? FlxObject.CEILING : FlxObject.FLOOR;
 			}
-			else if (steepness == STEEP)
+		}
+	}
+	
+	/**
+	 * Sets the steep slopes. About 63.5 degrees.
+	 * 
+	 * @param 	ThickTiles 	An array containing the numbers of the tiles to be treated as thick slope.
+	 * @param 	ThinTiles	An array containing the numbers of the tiles to be treated as thin slope.
+	 */
+	public function setSteep(ThickTiles:Array<Int>, ThinTiles:Array<Int>) 
+	{
+		if (ThickTiles != null)
+		{
+			_slopeThickSteep = ThickTiles;
+		}
+		
+		if (ThinTiles != null)
+		{
+			_slopeThinSteep = ThinTiles;
+			for (tile in _slopeThinSteep)
 			{
-				_slopeThinSteep = ThinTiles;
-				for (tile in _slopeThinSteep)
-				{
-					_tileObjects[tile].allowCollisions = (_slopeSouthwest.indexOf(tile) >= 0 || _slopeNorthwest.indexOf(tile) >= 0 )? FlxObject.RIGHT : FlxObject.LEFT;
-				}
+				_tileObjects[tile].allowCollisions = (_slopeSouthwest.indexOf(tile) >= 0 || _slopeNorthwest.indexOf(tile) >= 0 )? FlxObject.RIGHT : FlxObject.LEFT;
 			}
 		}
 	}
@@ -921,11 +890,4 @@ class FlxTilemapExt extends FlxTilemap
 		
 		return value;
 	}
-}
-
-enum FlxSlopeSteepness
-{
-	GENTLE; // 22.5°
-	MODERATE; // 45°
-	STEEP; // 67.5°
 }
