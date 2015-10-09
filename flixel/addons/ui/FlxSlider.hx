@@ -139,6 +139,16 @@ class FlxSlider extends FlxSpriteGroup
 	 */
 	private var _justHovered:Bool = false;
 	
+	private var hasNameLabel:Bool = true;
+	private var hasMinLabel:Bool = true;
+	private var hasMaxLabel:Bool = true;
+	private var hasValueLabel:Bool = true;
+	
+	public static inline var ORIENT_HORIZONTAL:Int = 0;
+	public static inline var ORIENT_VERTICAL:Int = 1;
+	
+	private var orientation:Int = 0;
+	
 	/**
 	 * Creates a new FlxSlider.
 	 *
@@ -154,9 +164,11 @@ class FlxSlider extends FlxSpriteGroup
 	 * @param	Color 			Color of the slider background and all texts except for valueText showing the current value
 	 * @param	HandleColor 	Color of the slider handle and the valueText showing the current value
 	 */
-	public function new(Object:Dynamic, VarString:String, X:Float = 0, Y:Float = 0, MinValue:Float = 0, MaxValue:Float = 10, Width:Int = 100, Height:Int = 15, Thickness:Int = 3, Color:Int = 0xFF000000, HandleColor:Int = 0xFF828282)
+	public function new(Object:Dynamic, VarString:String, X:Float = 0, Y:Float = 0, MinValue:Float = 0, MaxValue:Float = 10, Width:Int = 100, Height:Int = 15, Thickness:Int = 3, Color:Int = 0xFF000000, HandleColor:Int = 0xFF828282, HasNameLabel:Bool = true, HasMinLabel:Bool = true, HasMaxLabel:Bool = true, HasValueLabel:Bool = true, Orientation:Int = ORIENT_HORIZONTAL)
 	{
 		super();
+		
+		orientation = Orientation;
 		
 		x = X; 
 		y = Y;
@@ -175,6 +187,11 @@ class FlxSlider extends FlxSpriteGroup
 		}
 		
 		decimals ++;
+		
+		hasNameLabel = HasNameLabel;
+		hasMinLabel = HasMinLabel;
+		hasMaxLabel = HasMaxLabel;
+		hasValueLabel = HasValueLabel;
 		
 		// Assign all those constructor vars
 		minValue = MinValue;
@@ -196,50 +213,127 @@ class FlxSlider extends FlxSpriteGroup
 	 */
 	private function createSlider():Void
 	{
-		offset.set(7, 18); 
-		_bounds = FlxRect.get(x + offset.x, y +offset.y, _width, _height);
+		offset.set();
 		
-		// Creating the "body" of the slider
-		body = new FlxSprite(offset.x, offset.y);
-		var colorKey:String = "slider:W=" + _width + "H=" + _height + "C=" + _color.toHexString() + "T=" + _thickness;
-		body.makeGraphic(_width, _height, 0, false, colorKey);
-		body.scrollFactor.set();
-		FlxSpriteUtil.drawLine(body, 0, _height / 2, _width, _height / 2, { color:_color, thickness:_thickness }); 
-		
-		handle = new FlxSprite(offset.x, offset.y);
-		handle.makeGraphic(_thickness, _height, _handleColor);
-		handle.scrollFactor.set();
-		
-		// Creating the texts
-		nameLabel = new FlxText(offset.x, 0, _width, varString);
-		nameLabel.alignment = "center";
-		nameLabel.color = _color;
-		nameLabel.scrollFactor.set();
-		
-		var textOffset:Float = _height + offset.y + 3;
-		
-		valueLabel = new FlxText(offset.x, textOffset, _width);
-		valueLabel.alignment = "center";
-		valueLabel.color = _handleColor;
-		valueLabel.scrollFactor.set();
-		
-		minLabel = new FlxText( -50 + offset.x, textOffset, 100, Std.string(minValue));
-		minLabel.alignment = "center";
-		minLabel.color = _color;
-		minLabel.scrollFactor.set();
-		
-		maxLabel = new FlxText(_width - 50 + offset.x, textOffset, 100, Std.string(maxValue));
-		maxLabel.alignment = "center";
-		maxLabel.color = _color;
-		maxLabel.scrollFactor.set();
-		
+		if (orientation == ORIENT_HORIZONTAL)
+		{
+			if (hasMinLabel)
+				offset.x = 7;
+			if (hasNameLabel)	
+				offset.y = 18;
+				
+			_bounds = FlxRect.get(x + offset.x, y +offset.y, _width, _height);
+			
+			// Creating the "body" of the slider
+			body = new FlxSprite(offset.x, offset.y);
+			var colorKey:String = "slider:W=" + _width + "H=" + _height + "C=" + _color.toHexString() + "T=" + _thickness;
+			body.makeGraphic(_width, _height, 0, false, colorKey);
+			body.scrollFactor.set();
+			FlxSpriteUtil.drawLine(body, 0, _height / 2, _width, _height / 2, { color:_color, thickness:_thickness }); 
+			
+			handle = new FlxSprite(offset.x, offset.y);
+			handle.makeGraphic(_thickness, _height, _handleColor);
+			handle.scrollFactor.set();
+			
+			if (hasNameLabel)
+			{
+				// Creating the texts
+				nameLabel = new FlxText(offset.x, 0, _width, varString);
+				nameLabel.alignment = "center";
+				nameLabel.color = _color;
+				nameLabel.scrollFactor.set();
+			}
+			var textOffset:Float = _height + offset.y + 3;
+			
+			if (hasValueLabel)
+			{
+				valueLabel = new FlxText(offset.x, textOffset, _width);
+				valueLabel.alignment = "center";
+				valueLabel.color = _handleColor;
+				valueLabel.scrollFactor.set();
+			}
+			
+			if (hasMinLabel)
+			{
+				minLabel = new FlxText( -50 + offset.x, textOffset, 100, Std.string(minValue));
+				minLabel.alignment = "center";
+				minLabel.color = _color;
+				minLabel.scrollFactor.set();
+			}
+			
+			if (hasMaxLabel)
+			{
+				maxLabel = new FlxText(_width - 50 + offset.x, textOffset, 100, Std.string(maxValue));
+				maxLabel.alignment = "center";
+				maxLabel.color = _color;
+				maxLabel.scrollFactor.set();
+			}
+		}
+		else
+		{
+			if (hasMinLabel)
+				offset.y = 7;
+			if (hasNameLabel)	
+				offset.x = 18;
+				
+			_bounds = FlxRect.get(x + offset.x, y +offset.y, _width, _height);
+			
+			// Creating the "body" of the slider
+			body = new FlxSprite(offset.x, offset.y);
+			var colorKey:String = "slider:W=" + _width + "H=" + _height + "C=" + _color.toHexString() + "T=" + _thickness;
+			body.makeGraphic(_width, _height, 0, false, colorKey);
+			body.scrollFactor.set();
+			FlxSpriteUtil.drawLine(body, _width / 2, 0 , _width / 2, _height, { color:_color, thickness:_thickness }); 
+			
+			handle = new FlxSprite(offset.x, offset.y);
+			handle.makeGraphic( _height, _thickness, _handleColor);
+			handle.scrollFactor.set();
+			
+			if (hasNameLabel)
+			{
+				// Creating the texts
+				nameLabel = new FlxText(0, offset.y, _width, varString);
+				nameLabel.alignment = "center";
+				nameLabel.color = _color;
+				nameLabel.scrollFactor.set();
+			}
+			var textOffset:Float = _width + offset.x + 3;
+			
+			if (hasValueLabel)
+			{
+				valueLabel = new FlxText(textOffset,offset.y, _width);
+				valueLabel.alignment = "center";
+				valueLabel.color = _handleColor;
+				valueLabel.scrollFactor.set();
+			}
+			
+			if (hasMinLabel)
+			{
+				minLabel = new FlxText( textOffset,-50 + offset.y, 100, Std.string(minValue));
+				minLabel.alignment = "center";
+				minLabel.color = _color;
+				minLabel.scrollFactor.set();
+			}
+			
+			if (hasMaxLabel)
+			{
+				maxLabel = new FlxText(textOffset, _height - 50 + offset.y, 100, Std.string(maxValue));
+				maxLabel.alignment = "center";
+				maxLabel.color = _color;
+				maxLabel.scrollFactor.set();
+			}
+		}
 		// Add all the objects
 		add(body);
 		add(handle);
-		add(nameLabel);
-		add(valueLabel);
-		add(minLabel);
-		add(maxLabel);
+		if (hasNameLabel)
+			add(nameLabel);
+		if (hasValueLabel)
+			add(valueLabel);
+		if (hasMinLabel)
+			add(minLabel);
+		if(hasMaxLabel)
+			add(maxLabel);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -263,7 +357,10 @@ class FlxSlider extends FlxSpriteGroup
 			
 			if (FlxG.mouse.pressed) 
 			{
-				handle.x = FlxG.mouse.screenX;
+				if (orientation == ORIENT_HORIZONTAL)
+					handle.x = FlxG.mouse.screenX;
+				else
+					handle.y = FlxG.mouse.screenY;
 				updateValue();
 				
 				#if !FLX_NO_SOUND_SYSTEM
@@ -302,13 +399,27 @@ class FlxSlider extends FlxSpriteGroup
 		}
 		
 		// Changes to value from outside update the handle pos
-		if (handle.x != expectedPos) 
+		if (orientation == ORIENT_HORIZONTAL)
 		{
-			handle.x = expectedPos;
+			if (handle.x != expectedPos) 
+			{
+				handle.x = expectedPos;
+			}
+		}
+		else
+		{
+			if (handle.y != expectedPos) 
+			{
+				handle.y = expectedPos;
+			}
+
 		}
 		
-		// Finally, update the valueLabel
-		valueLabel.text = Std.string(FlxMath.roundDecimal(value, decimals));
+		if (hasValueLabel)
+		{
+			// Finally, update the valueLabel
+			valueLabel.text = Std.string(FlxMath.roundDecimal(value, decimals));
+		}
 		
 		super.update(elapsed);
 	}
@@ -344,49 +455,61 @@ class FlxSlider extends FlxSpriteGroup
 	 */
 	public function setTexts(Name:String, Value:Bool = true, ?Min:String, ?Max:String, Size:Int = 8):Void
 	{
-		if (Name == null) 
+		if (hasNameLabel)
 		{
-			nameLabel.visible = false;
-		}
-		else 
-		{
-			nameLabel.text = Name;
-			nameLabel.visible = true;
-		}
-		
-		if (Min == null) 
-		{
-			minLabel.visible = false;
-		}
-		else
-		{
-			minLabel.text = Min;
-			minLabel.visible = true;
-		}
-
-		if (Max == null) 
-		{
-			maxLabel.visible = false;
-		}
-		else
-		{
-			maxLabel.text = Max;
-			maxLabel.visible = true;
-		}
-
-		if (!Value) 
-		{
-			valueLabel.visible = false;
-		}
-		else 
-		{
-			valueLabel.visible = true;
+			if (Name == null) 
+			{
+				nameLabel.visible = false;
+			}
+			else 
+			{
+				nameLabel.text = Name;
+				nameLabel.visible = true;
+			}
+			nameLabel.size = Size;
 		}
 		
-		nameLabel.size = Size;
-		valueLabel.size = Size;
-		minLabel.size = Size;
-		maxLabel.size = Size;
+		if (hasMinLabel)
+		{
+			if (Min == null) 
+			{
+				minLabel.visible = false;
+			}
+			else
+			{
+				minLabel.text = Min;
+				minLabel.visible = true;
+			}
+			minLabel.size = Size;
+		}
+
+		if (hasMaxLabel)
+		{
+			if (Max == null) 
+			{
+				maxLabel.visible = false;
+			}
+			else
+			{
+				maxLabel.text = Max;
+				maxLabel.visible = true;
+			}
+			maxLabel.size = Size;
+		}
+		
+		if (hasValueLabel)
+		{
+			if (!Value) 
+			{
+				valueLabel.visible = false;
+			}
+			else 
+			{
+				valueLabel.visible = true;
+			}
+			valueLabel.size = Size;
+		}
+		
 	}
 	
 	/**
@@ -408,16 +531,36 @@ class FlxSlider extends FlxSpriteGroup
 	
 	private function get_expectedPos():Float 
 	{ 
-		var pos:Float = x + offset.x + ((_width - handle.width) * ((value - minValue) / (maxValue - minValue)));
+		var pos:Float;
+
+		if (orientation == ORIENT_HORIZONTAL)
+		{
 		
-		// Make sure the pos stays within the bounds
-		if (pos > x + _width + offset.x)
-		{
-			pos = x + _width + offset.x;
+			pos = x + offset.x + ((_width - handle.width) * ((value - minValue) / (maxValue - minValue)));
+			
+			// Make sure the pos stays within the bounds
+			if (pos > x + _width + offset.x)
+			{
+				pos = x + _width + offset.x;
+			}
+			else if (pos < x + offset.x)
+			{
+				pos = x + offset.x; 
+			}
 		}
-		else if (pos < x + offset.x)
+		else
 		{
-			pos = x + offset.x; 
+			pos = y + offset.y + ((_height - handle.height) * ((value - minValue) / (maxValue - minValue)));
+			
+			// Make sure the pos stays within the bounds
+			if (pos > y + _height + offset.y)
+			{
+				pos = x + _height + offset.y;
+			}
+			else if (pos < y + offset.y)
+			{
+				pos = y + offset.y; 
+			}
 		}
 		
 		return pos; 
@@ -425,8 +568,15 @@ class FlxSlider extends FlxSpriteGroup
 	
 	private function get_relativePos():Float 
 	{ 
-		var pos:Float = (handle.x - x - offset.x) / (_width - handle.width); 
-		
+		var pos:Float;
+		if (orientation == ORIENT_HORIZONTAL)
+		{
+			pos = (handle.x - x - offset.x) / (_width - handle.width); 
+		}
+		else
+		{
+			pos = (handle.y - y - offset.y) / (_height - handle.height); 
+		}
 		// Relative position can't be bigger than 1
 		if (pos > 1) 
 		{
