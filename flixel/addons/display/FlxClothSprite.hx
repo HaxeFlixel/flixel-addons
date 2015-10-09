@@ -31,7 +31,7 @@ class FlxClothSprite extends FlxSprite
 	public var gravity:Float = 0.5;
 	public var wind:Float = 0;
 	
-	var friction:Float = 0.95;
+	var friction:Float = 0.9;
 	
 	public var columns(default, null):Int = 0;
 	public var rows(default, null):Int = 0;
@@ -49,6 +49,7 @@ class FlxClothSprite extends FlxSprite
 	public function new(bitmapData:BitmapData, ?Rows:Int = 0, ?Columns:Int = 0, ?X:Float = 0, ?Y:Float = 0) 
 	{
 		super(X, Y);
+		pixels = new BitmapData(bitmapData.width * 2, bitmapData.height * 2, true, 0x00000000);
 		this.bitmapData = bitmapData;
 		resetMesh(Rows, Columns);
 	}
@@ -150,7 +151,19 @@ class FlxClothSprite extends FlxSprite
 			i+=2;
 		}
 		
-		pixels = new BitmapData(Std.int(maxX - minX), Std.int(maxY - minY), true, 0x00ff0000);
+		var w:Int = Std.int(Math.max(pixels.width, maxX - minX));
+		var h:Int = Std.int(Math.max(pixels.height, maxY - minY));
+		if (pixels.width < w || pixels.height < h)
+		{
+			trace("new BitmapData");
+			pixels = new BitmapData(w, h, true, FlxColor.TRANSPARENT);
+		}
+		else
+		{
+			pixels.lock();
+			pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
+			pixels.unlock();
+		}
 	}
 	
 	function drawImage(vertices:Vector<Float>, indices:Vector<Int>, uvtData:Vector<Float>):Void
@@ -171,7 +184,7 @@ class FlxClothSprite extends FlxSprite
 		drawImage(_v, _i, _u);
 		
 		super.draw();
-		//drawDebug();
+		drawDebug();
 	}
 	
 	override public function update(elapsed:Float):Void
@@ -257,6 +270,9 @@ class FlxClothSprite extends FlxSprite
 		var gfx:Graphics = beginDrawDebug(camera);
 		gfx.lineStyle(1, color, 0.5);
 		gfx.drawRect(rect.x, rect.y, rect.width, rect.height);
+		
+		gfx.lineStyle(1, FlxColor.YELLOW, 0.5);
+		gfx.drawRect(rect.x - offset.x, rect.y - offset.y, rect.width, rect.height);
 		
 		for (p in points) 
 		{
