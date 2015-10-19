@@ -19,7 +19,8 @@ typedef TransitionTileData =
 {
 	asset:FlxGraphicAsset,
 	width:Int,
-	height:Int
+	height:Int,
+	?frameRate:Int
 }
 
 /**

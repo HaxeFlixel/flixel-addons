@@ -66,7 +66,12 @@ class TransitionTiles extends TransitionEffect
 		{
 			for (ix in 0...tilesX)
 			{
-				var ts = new FlxTransitionSprite(tx, ty, delay, data.tileData.asset);
+				var frameRate:Int = 40;
+				if (data.tileData.frameRate != null)
+				{
+					frameRate = data.tileData.frameRate;
+				}
+				var ts = new FlxTransitionSprite(tx, ty, delay, data.tileData.asset, data.tileData.width, data.tileData.height, frameRate);
 				ts.color = data.color;
 				ts.scrollFactor.set(0, 0);
 				_grpSprites.add(ts);
@@ -75,7 +80,7 @@ class TransitionTiles extends TransitionEffect
 			}
 			ty += addY;
 			tx = startX;
-			delay = 0 + (iy * yDelay);
+			delay = 0 + ((iy+1) * yDelay);
 		}
 		add(_grpSprites);
 		
@@ -119,7 +124,7 @@ class TransitionTiles extends TransitionEffect
 			var allDone:Bool = true;
 			for (sprite in _grpSprites.members)
 			{
-				if (sprite.status != _endStatus)
+				if (sprite.status != TransitionStatus.NULL && sprite.status != _endStatus)
 				{
 					allDone = false;
 					break;
