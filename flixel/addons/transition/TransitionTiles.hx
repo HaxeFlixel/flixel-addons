@@ -1,5 +1,7 @@
  package flixel.addons.transition;
+ 
 import flash.display.BitmapData;
+import flixel.addons.transition.TransitionEffect;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
@@ -7,7 +9,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
  * 
  * @author larsiusprime
  */
-class TransitionTiles extends Transition
+class TransitionTiles extends TransitionEffect
 {
 	private var _grpSprites:FlxTypedGroup<FlxTransitionSprite>;
 	private var _isCenter:Bool = false;
@@ -26,8 +28,10 @@ class TransitionTiles extends Transition
 			data.tileData = { asset:null, width:32, height:32 };
 		}
 		
-		var tilesX:Int = Math.ceil(FlxG.width / data.tileData.width);
-		var tilesY:Int = Math.ceil(FlxG.height / data.tileData.height);
+		var region = data.region;
+		
+		var tilesX:Int = Math.ceil(region.width / data.tileData.width);
+		var tilesY:Int = Math.ceil(region.height / data.tileData.height);
 		
 		var maxTiles:Int = tilesX > tilesY ? tilesX : tilesY;
 		
@@ -42,18 +46,18 @@ class TransitionTiles extends Transition
 		var tx:Int = 0;
 		var ty:Int = 0;
 		
-		var startX:Int = 0;
-		var startY:Int = 0;
+		var startX:Int = Std.int(region.x);
+		var startY:Int = Std.int(region.y);
 		
 		if (data.direction.x < 0)
 		{
 			addX *= -1;
-			startX = FlxG.width+addX;
+			startX += Std.int(region.width + addX);
 		}
 		if (data.direction.y < 0)
 		{
 			addY *= -1;
-			startY = FlxG.height+addY;
+			startY += Std.int(region.height + addY);
 		}
 		
 		tx = startX;

@@ -1,5 +1,9 @@
 package flixel.addons.transition;
 
+import flixel.addons.transition.TransitionData.TransitionType;
+import flixel.addons.transition.TransitionEffect;
+import flixel.addons.transition.TransitionFade;
+import flixel.addons.transition.TransitionTiles;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -19,54 +23,65 @@ import flixel.util.FlxTimer;
 
 class Transition extends FlxSubState
 {
-	private var _started:Bool = false;
-	private var _endStatus:TransitionStatus;
-	private var _data:TransitionData;
-	
-	private var _finalDelayTime:Float = 0.0;
-	
-	public var finishCallback:Void->Void;
+	public var finishCallback(get, set):Void->Void;
 	
 	public function new(data:TransitionData) 
 	{
-		_data = data;
 		super(FlxColor.TRANSPARENT);
+		_effect = createEffect(data);
+		add(_effect);
+	}
+	
+	override public function update(elapsed:Float):Void 
+	{
+		super.update(elapsed);
+		_effect.update(elapsed);
 	}
 	
 	public override function destroy():Void {
 		super.destroy();
-		_data = null;
+		_effect.destroy();
+		_effect = null;
 	}
 	
 	public function start(NewStatus:TransitionStatus):Void
 	{
-		_started = true;
-		
-		if (NewStatus == IN)
-		{
-			_endStatus = FULL;
-		}
-		else
-		{
-			_endStatus = EMPTY;
-		}
+		_effect.start(NewStatus);
 	}
 	
 	public function setStatus(NewStatus:TransitionStatus):Void
 	{
-		//override per subclass
+		_effect.setStatus(NewStatus);
 	}
 	
-	private function delayThenFinish():Void
-	{
-		new FlxTimer().start(_finalDelayTime, onFinish);	//force one last render call before exiting
-	}
+	private var _effect:TransitionEffect;
 	
-	private function onFinish(f:FlxTimer):Void
+	private function createEffect(Data:TransitionData):TransitionEffect
 	{
-		if (finishCallback != null)
+		switch(Data.type)
 		{
-			finishCallback();
+			case TransitionType.TILES: return new TransitionTiles(Data);
+			case TransitionType.FADE : return new TransitionFade(Data);
+			default: return null;
 		}
+	}
+	
+	private function get_finishCallback():Void->Void
+	{
+		if (_effect != null)
+		{
+			return _effect.finishCallback;
+		}
+		return null;
+	}
+	
+	private function set_finishCallback(f:Void->Void):Void->Void
+	{
+		if (_effect != null)
+		{
+			_effect.finishCallback = f;
+			return f;
+		}
+		return null;
 	}
 }

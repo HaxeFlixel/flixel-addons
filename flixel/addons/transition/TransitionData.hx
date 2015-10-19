@@ -1,6 +1,7 @@
 package flixel.addons.transition;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import flixel.tweens.FlxTween.TweenOptions;
 import flixel.util.FlxColor;
 import flixel.system.FlxAssets.FlxGraphicAsset;
@@ -33,6 +34,7 @@ class TransitionData implements IFlxDestroyable
 	public var duration:Float = 1.0;
 	public var direction:FlxPoint;
 	public var tweenOptions:TweenOptions;
+	public var region:FlxRect;
 	
 	public function destroy():Void
 	{
@@ -43,7 +45,7 @@ class TransitionData implements IFlxDestroyable
 		tweenOptions = null;
 	}
 	
-	public function new(TransType:TransitionType=FADE,Color:FlxColor=FlxColor.WHITE,Duration:Float=1.0,?Direction:FlxPoint,?TileData:TransitionTileData) 
+	public function new(TransType:TransitionType=FADE,Color:FlxColor=FlxColor.WHITE,Duration:Float=1.0,?Direction:FlxPoint,?TileData:TransitionTileData,?Region:FlxRect) 
 	{
 		type = TransType;
 		tileData = TileData;
@@ -54,5 +56,10 @@ class TransitionData implements IFlxDestroyable
 		FlxMath.bound(direction.x, -1, 1);
 		FlxMath.bound(direction.y, -1, 1);
 		tweenOptions = { onComplete: null };
+		region = Region;
+		if (Region == null)
+		{
+			region = new FlxRect(0, 0, FlxG.width, FlxG.height);
+		}
 	}
 }
