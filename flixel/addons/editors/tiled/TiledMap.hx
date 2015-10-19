@@ -138,6 +138,11 @@ class TiledMap
 				layers.push(objectLayer);
 				layerMap.set(objectLayer.name, objectLayer);
 			}
+			else if (el.name.toLowerCase() == "imagelayer") {
+				var imageLayer = new TiledImageLayer(el, this);
+				layers.push(imageLayer);
+				layerMap.set(imageLayer.name, imageLayer);
+			}
 		}
 	}
 	
