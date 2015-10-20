@@ -4,6 +4,7 @@ import flash.display.BitmapData;
 import flixel.addons.transition.TransitionEffect;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 
 /**
  * 
@@ -11,14 +12,14 @@ import flixel.group.FlxGroup.FlxTypedGroup;
  */
 class TransitionTiles extends TransitionEffect
 {
-	private var _grpSprites:FlxTypedGroup<FlxTransitionSprite>;
+	private var _grpSprites:FlxTypedSpriteGroup<FlxTransitionSprite>;
 	private var _isCenter:Bool = false;
 	
 	public function new(data:TransitionData) 
 	{
 		super(data);
 		
-		_grpSprites = new FlxTypedGroup<FlxTransitionSprite>();
+		_grpSprites = new FlxTypedSpriteGroup<FlxTransitionSprite>();
 		var delay:Float = 0;
 		var yloops:Int = 0;
 		var xloops:Int = 0;

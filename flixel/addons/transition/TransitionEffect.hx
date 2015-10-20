@@ -10,9 +10,10 @@ import flixel.util.FlxTimer;
  * @author larsiusprime
  */
 @:allow(flixel.addons.transition.Transition)
-class TransitionEffect extends FlxGroup
+class TransitionEffect extends FlxSpriteGroup
 {
 	public var finishCallback:Void->Void;
+	public var finished(default, null):Bool = false;
 	
 	private var _started:Bool = false;
 	private var _endStatus:TransitionStatus;
@@ -58,6 +59,7 @@ class TransitionEffect extends FlxGroup
 	
 	private function onFinish(f:FlxTimer):Void
 	{
+		finished = true;
 		if (finishCallback != null)
 		{
 			finishCallback();
