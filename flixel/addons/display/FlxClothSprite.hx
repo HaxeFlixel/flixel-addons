@@ -2,8 +2,11 @@ package flixel.addons.display;
 import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxSpriteUtil;
 import openfl.display.BitmapData;
 import openfl.display.Graphics;
@@ -17,14 +20,14 @@ class FlxClothSprite extends FlxSprite
 {
 	public var wind(default, null):FlxPoint = FlxPoint.get();
 	
-	public var iterations:Int = 1;
+	public var iterations:Int = 3;
 	
 	public var columns(default, null):Int;
 	public var rows(default, null):Int;
 	public var widthInTiles(default, null):Float;
 	public var heightInTiles(default, null):Float;
-	public var points(default, null):Array<Point>;
-	public var sticks(default, null):Array<Stick>;
+	public var points(default, null):Array<Point> = [];
+	public var sticks(default, null):Array<Stick> = [];
 	
 	private var _v(default, null):Array<Float>;
 	private var _i(default, null):Array<Int>;
@@ -32,33 +35,38 @@ class FlxClothSprite extends FlxSprite
 	
 	public var pinSide:Int;
 	public var bitmapData:BitmapData;
-
-	public var debugShow:Bool = true;
 	
-	public function new(bitmapData:BitmapData, ?Columns:Int = 0, ?Rows:Int = 0, pinSide:Int = FlxObject.UP, ?X:Float = 0, ?Y:Float = 0) 
+	public function new(?X:Float = 0, ?Y:Float = 0, ?Graphic:FlxGraphicAsset, ?Columns:Int = 0, ?Rows:Int = 0, pinSide:Int = FlxObject.UP) 
 	{
-		this.bitmapData = bitmapData;
-		this.pinSide = pinSide;
-		
 		super(X, Y);
 		
-		drag = FlxPoint.get(0.99,0.99);
-		pixels = new BitmapData(bitmapData.width, bitmapData.height, true, 0x00000000);
-		resetMesh(Rows, Columns);
+		this.pinSide = pinSide;
+		this.rows = Std.int(Math.max(2, Rows));
+		this.columns = Std.int(Math.max(2, Columns));
+		
+		if (Graphic != null)
+		{
+			loadGraphic(Graphic);
+		}
 	}
 	
 	public function resetMesh(?Rows:Int = 0, ?Columns:Int = 0):Void
 	{
-		this.rows = Std.int(Math.max(2, Rows));
-		this.columns = Std.int(Math.max(2, Columns));
-		this.widthInTiles = bitmapData.width / (columns - 1);
-		this.heightInTiles = bitmapData.height / (rows - 1);
-		
 		points = [];
 		sticks = [];
 		_v = [];
 		_u = [];
 		_i = [];
+		
+		if (bitmapData == null)
+		{
+			return;
+		}
+		
+		this.rows = Std.int(Math.max(2, Rows));
+		this.columns = Std.int(Math.max(2, Columns));
+		this.widthInTiles = bitmapData.width / (columns - 1);
+		this.heightInTiles = bitmapData.height / (rows - 1);
 		
 		for (r in 0...rows) 
 		{
@@ -109,12 +117,6 @@ class FlxClothSprite extends FlxSprite
 		}
 	}
 	
-	override public function destroy():Void
-	{
-		//TODO: ...
-		super.destroy();
-	}
-	
 	function calcImage():Void
 	{
 		_v = [];
@@ -154,49 +156,18 @@ class FlxClothSprite extends FlxSprite
 		}
 		else
 		{
-			pixels.lock();
 			pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
-			pixels.unlock();
 			dirty = true;
 		}
 	}
 	
 	function drawImage(vertices:Vector<Float>, indices:Vector<Int>, uvtData:Vector<Float>):Void
 	{
-		if (bitmapData != null)
-		{
-			FlxSpriteUtil.flashGfx.clear();
-			FlxSpriteUtil.flashGfx.beginBitmapFill(bitmapData, null, false, true);
-			FlxSpriteUtil.flashGfx.drawTriangles(vertices, indices, uvtData);
-			FlxSpriteUtil.flashGfx.endFill();
-			this.pixels.draw(FlxSpriteUtil.flashGfxSprite);
-		}
-	}
-	
-	override public function draw():Void 
-	{
-		calcImage();
-		drawImage(_v, _i, _u);
-		
-		super.draw();
-		
-		#if !FLX_NO_DEBUG
-		if (debugShow)
-		{
-			drawDebug();
-		}
-		#end
-	}
-	
-	override public function update(elapsed:Float):Void
-	{
-		updatePoints(elapsed);
-		for (i in 0...iterations) 
-		{
-			updateSticks(elapsed);
-		}
-		
-		super.update(elapsed);
+		FlxSpriteUtil.flashGfx.clear();
+		FlxSpriteUtil.flashGfx.beginBitmapFill(bitmapData, null, false, true);
+		FlxSpriteUtil.flashGfx.drawTriangles(vertices, indices, uvtData);
+		FlxSpriteUtil.flashGfx.endFill();
+		this.pixels.draw(FlxSpriteUtil.flashGfxSprite);
 	}
 	
 	function updatePoints(elapsed:Float) 
@@ -205,8 +176,8 @@ class FlxClothSprite extends FlxSprite
 		{
 			if (!p.pinned)
 			{
-				var vx = (p.x - p.oldx) * drag.x;// * (elapsed * 60);
-				var vy = (p.y - p.oldy) * drag.y;// * (elapsed * 60);
+				var vx = (p.x - p.oldx) * 0.99;
+				var vy = (p.y - p.oldy) * 0.99;
 				
 				p.oldx = p.x;
 				p.oldy = p.y;
@@ -228,10 +199,9 @@ class FlxClothSprite extends FlxSprite
 			var dx = s.p1.x - s.p0.x;
 			var dy = s.p1.y - s.p0.y;
 			var distance = Math.sqrt(dx * dx + dy * dy);
-			var difference = s.length - distance;
-			var percent = difference / distance / 2;
-			var offsetX = dx * percent;// * (elapsed * 60);
-			var offsetY = dy * percent;// * (elapsed * 60);
+			var difference = (s.length - distance) / distance;
+			var offsetX = dx * 0.5 * difference;
+			var offsetY = dy * 0.5 * difference;
 			
 			if (!s.p0.pinned)
 			{
@@ -244,6 +214,55 @@ class FlxClothSprite extends FlxSprite
 				s.p1.y += offsetY;
 			}
 		}
+	}
+	
+	override public function destroy():Void
+	{
+		points = null;
+		sticks = null;
+		_v = null;
+		_i = null;
+		_u = null;
+		
+		wind = FlxDestroyUtil.put(wind);
+		bitmapData = FlxDestroyUtil.dispose(bitmapData);
+		
+		super.destroy();
+	}
+	
+	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite 
+	{
+		var graph:FlxGraphic = FlxG.bitmap.add(Graphic, Unique, Key);
+		this.bitmapData = graph.bitmap;
+		if (bitmapData != null)
+		{
+			pixels = new BitmapData(bitmapData.width, bitmapData.height, true, 0x00000000);
+			resetMesh(rows, columns);
+		}
+		
+		return this;
+	}
+	
+	override public function draw():Void 
+	{
+		if (bitmapData != null)
+		{
+			calcImage();
+			drawImage(_v, _i, _u);
+		}
+		
+		super.draw();
+	}
+	
+	override public function update(elapsed:Float):Void
+	{
+		updatePoints(elapsed);
+		for (i in 0...iterations) 
+		{
+			updateSticks(elapsed);
+		}
+		
+		super.update(elapsed);
 	}
 	
 	#if !FLX_NO_DEBUG	
@@ -275,9 +294,9 @@ class FlxClothSprite extends FlxSprite
 		gfx.lineStyle(1, color, 0.5);
 		gfx.drawRect(rect.x, rect.y, rect.width, rect.height);
 		
+		//draw meshes and rect of pixels bitmapData
 		gfx.lineStyle(1, FlxColor.CYAN, 0.5);
 		gfx.drawRect(rect.x - offset.x, rect.y - offset.y, rect.width, rect.height);
-		
 		for (p in points) 
 		{
 			gfx.drawCircle(rect.x + p.x, rect.y + p.y, 2);
