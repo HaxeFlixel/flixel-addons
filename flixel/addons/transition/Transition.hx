@@ -29,6 +29,7 @@ class Transition extends FlxSubState
 	{
 		super(FlxColor.TRANSPARENT);
 		_effect = createEffect(data);
+		_effect.scrollFactor.set(0, 0);
 		add(_effect);
 	}
 	
