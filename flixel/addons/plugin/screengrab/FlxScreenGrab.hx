@@ -176,7 +176,11 @@ class FlxScreenGrab extends FlxBasic
 			#else
 				documentsDirectory = lime.system.System.documentsDirectory;
 			#end
-			path = Dialogs.saveFile("", { ext:"png", desc:"png files" } );
+			path = Dialogs.save("", { ext:"png", desc:"png files" } );
+			if (path.indexOf(".png") == -1)
+			{
+				path = path + ".png";
+			}
 		}
 		catch (msg:String)
 		{
