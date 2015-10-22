@@ -34,32 +34,36 @@ class FlxClothSprite extends FlxSprite
 	 */
 	public var friction(default, null):FlxPoint = FlxPoint.get(0.99, 0.99);
 	/**
+	 * Change the size of the mesh related to the original frame. Need to call setMesh() to update.
+	 */
+	public var meshScale(default, null):FlxPoint = FlxPoint.get(1, 1);
+	/**
 	 * Bit field of flags (use with FlxObject.UP, DOWN, LEFT, RIGHT, NONE, ANY, etc) indicating pinned side. Use bitwise operators to check the values stored here.
 	 */
 	public var pinSide:Int;
 	/**
-	 * How many iterations will do on constraints for each update.
+	 * How many iterations will do on constraints for each update. Need to call setMesh() to update.
 	 * Bigger number make constraint more strong and mesh more rigid.
 	 */
 	public var iterations:Int = 3;
 	/**
-	 * Adds an extra constraint crossing the squares to make the mesh more rigid
+	 * Adds an extra constraint crossing the squares to make the mesh more rigid. Need to call setMesh() to update.
 	 */
-	public var crossingConstraint:Bool = false;
+	public var crossingConstraints:Bool = false;
 	/**
-	 * Number of columns of the mesh.
+	 * Number of columns of the mesh. To set it you must use setMesh().
 	 */
 	public var columns(default, null):Int;
 	/**
-	 * Number of rows of the mesh.
+	 * Number of rows of the mesh. To set it you must use setMesh().
 	 */
 	public var rows(default, null):Int;
 	/**
-	 * The width of mesh squares.
+	 * The width of mesh squares. To set it you must use setMesh().
 	 */
 	public var widthInTiles(default, null):Float;
 	/**
-	 * The height of mesh squares.
+	 * The height of mesh squares. To set it you must use setMesh().
 	 */
 	public var heightInTiles(default, null):Float;
 	
@@ -67,14 +71,14 @@ class FlxClothSprite extends FlxSprite
 	public var constraints(default, null):Array<ClothConstraint> = [];
 	
 	/**
-	 * Mesh arrays. Vertices, indices and uvtData to drawTriangles()
+	 * Mesh arrays. Vertices, indices and uvtData to drawTriangles().
 	 */
 	private var _vertices(default, null):Vector<Float>;
 	private var _indices(default, null):Vector<Int>;
 	private var _uvtData(default, null):Vector<Float>;
 	
 	/**
-	 * Use to offset the drawing position of the mesh
+	 * Use to offset the drawing position of the mesh.
 	 */
 	private var _drawOffset:Point;
 	/**
@@ -93,15 +97,16 @@ class FlxClothSprite extends FlxSprite
 	 * @param	Rows			Number of rows of the created mesh.
 	 * @param	pinSide			The pinned side that points are not affected by wind or velocity. Use FlxObject.UP, DOWN, LEFT, RIGHT, NONE, ANY, etc.
 	 */
-	public function new(?X:Float = 0, ?Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset, ?Columns:Int = 0, ?Rows:Int = 0, pinSide:Int = FlxObject.UP) 
+	public function new(?X:Float = 0, ?Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset, ?Columns:Int = 0, ?Rows:Int = 0, pinSide:Int = FlxObject.UP, crossingConstraints:Bool = false) 
 	{
 		super(X, Y, SimpleGraphic);
 		
 		this.pinSide = pinSide;
 		this.rows = Std.int(Math.max(2, Rows));
 		this.columns = Std.int(Math.max(2, Columns));
-		_drawOffset = new Point();
+		this.crossingConstraints = crossingConstraints;
 		
+		_drawOffset = new Point();
 		setMesh(columns, rows);
 	}
 	
@@ -279,16 +284,25 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * Sets mesh points and constraints.
 	 * 
-	 * @param	Columns   Number of columns of the created mesh.
-	 * @param	Rows      Number of rows of the created mesh.
-	 * @param   pinned    Indices of pinned points that are not affected by wind or velocity.
+	 * @param	columns				Number of columns of the created mesh.
+	 * @param	rows				Number of rows of the created mesh.
+	 * @param   meshPixelsWidth		Optional, specify the width of the bitmapData where the mesh will be drawn.
+	 * 								It uses frameWidth by default, but when mesh state is bigger, a new BitmapData is created.
+	 * @param   meshPixelsHeight	Optional, specify the height of the bitmapData where the mesh will be drawn.
+	 * 								It uses frameHeight by default, but when mesh state is bigger, a new BitmapData is created.
+	 * @param   pinned				Indices of pinned points that are not affected by wind or velocity.
 	 */
-	public function setMesh(?Columns:Int = 0, ?Rows:Int = 0, ?pinned:Array<Int> = null):Void
+	public function setMesh(?columns:Int = 0, ?rows:Int = 0, ?meshPixelsWidth:Int = 0, ?meshPixelsHeight:Int = 0, ?pinned:Array<Int> = null):Void
 	{
-		if (frameWidth <= 0 || frameHeight <= 0)
+		meshPixelsWidth = Std.int(Math.max(meshPixelsWidth, frameWidth));
+		meshPixelsHeight = Std.int(Math.max(meshPixelsHeight, frameHeight));
+		
+		if (meshPixelsWidth <= 0 || meshPixelsHeight <= 0)
 		{
 			return;
 		}
+		
+		this._meshPixels = new BitmapData(meshPixelsWidth, meshPixelsHeight, true, FlxColor.TRANSPARENT);
 		
 		points = [];
 		constraints = [];
@@ -296,14 +310,12 @@ class FlxClothSprite extends FlxSprite
 		_uvtData = [];
 		_indices = [];
 		
-		this._meshPixels = new BitmapData(frameWidth, frameHeight, true, FlxColor.TRANSPARENT);
-		this.rows = Std.int(Math.max(2, Rows));
-		this.columns = Std.int(Math.max(2, Columns));
-		this.widthInTiles = frameWidth / (columns - 1);
-		this.heightInTiles = frameHeight / (rows - 1);
+		this.rows = Std.int(Math.max(2, rows));
+		this.columns = Std.int(Math.max(2, columns));
+		this.widthInTiles = (frameWidth / (columns - 1)) * meshScale.x;
+		this.heightInTiles = (frameHeight / (rows - 1)) * meshScale.y;
 		
 		var hyp = Math.sqrt(heightInTiles * heightInTiles + widthInTiles * widthInTiles);
-		
 		for (r in 0...rows) 
 		{
 			for (c in 0...columns) 
@@ -352,11 +364,16 @@ class FlxClothSprite extends FlxSprite
 					_indices.push(((r - 1) * columns) + c - 1);
 					_indices.push((r * columns) + c - 1);
 					
-					if (crossingConstraint)
+					if (crossingConstraints)
 					{
 						constraints.push({
 							p0: points[(r * columns) + c - 1],
 							p1: points[((r - 1) * columns) + c],
+							length: hyp
+						});
+						constraints.push({
+							p0: points[(r * columns) + c],
+							p1: points[((r - 1) * columns) + c - 1],
 							length: hyp
 						});
 					}
