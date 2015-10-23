@@ -3,9 +3,11 @@ import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.FlxFrame;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.graphics.frames.FlxFrame.FlxFrameType;
 import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
@@ -73,9 +75,15 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * Mesh arrays. Vertices, indices and uvtData to drawTriangles().
 	 */
+	#if flash
 	private var _vertices(default, null):Vector<Float>;
 	private var _indices(default, null):Vector<Int>;
 	private var _uvtData(default, null):Vector<Float>;
+	#else
+	private var _vertices(default, null):Array<Float>;
+	private var _indices(default, null):Array<Int>;
+	private var _uvtData(default, null):Array<Float>;
+	#end
 	
 	/**
 	 * Use to offset the drawing position of the mesh.
@@ -157,11 +165,9 @@ class FlxClothSprite extends FlxSprite
 			return;
 			#end
 		}
-		else
-		{
-			calcImage();
-			drawImage();
-		}
+		
+		calcImage();
+		drawImage();
 		
 		if (alpha == 0 || _frame.type == FlxFrameType.EMPTY)
 		{
@@ -219,8 +225,12 @@ class FlxClothSprite extends FlxSprite
 					_point.floor();
 				}
 				
-				_matrix.translate(_point.x, _point.y);
-				camera.drawPixels(_frame, framePixels, _matrix, cr, cg, cb, alpha, blend, antialiasing);
+				// Create a temporary frame and draw mesh's bitmapData
+				var frameMesh:FlxFrame = new FlxFrame(FlxGraphic.fromBitmapData(_meshPixels, true, null, false));
+				frameMesh.frame = new FlxRect(0, 0, _meshPixels.width, _meshPixels.height);
+				
+				_matrix.translate(_point.x + _drawOffset.x, _point.y + _drawOffset.y);
+				camera.drawPixels(frameMesh, framePixels, _matrix, cr, cg, cb, alpha, blend, antialiasing);
 			}
 			
 			#if !FLX_NO_DEBUG
@@ -496,12 +506,11 @@ class FlxClothSprite extends FlxSprite
 	 */
 	private function drawImage():Void
 	{
-		FlxSpriteUtil.flashGfx.clear();
-		#if FLX_RENDER_BLIT
-		FlxSpriteUtil.flashGfx.beginBitmapFill(framePixels, null, false, true);
-		#else
-		FlxSpriteUtil.flashGfx.beginBitmapFill(getFlxFrameBitmapData(), null, false, true);
+		#if !FLX_RENDER_BLIT
+		getFlxFrameBitmapData();
 		#end
+		FlxSpriteUtil.flashGfx.clear();
+		FlxSpriteUtil.flashGfx.beginBitmapFill(framePixels, null, false, true);
 		FlxSpriteUtil.flashGfx.drawTriangles(_vertices, _indices, _uvtData);
 		FlxSpriteUtil.flashGfx.endFill();
 		
