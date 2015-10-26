@@ -55,6 +55,7 @@ class FlxGlitchSprite extends FlxSprite
 		target = Target;
 		strength = Strength;
 		size = Size;
+		delay = Delay;
 		direction = (Direction != null) ? Direction : HORIZONTAL;
 		initPixels();
 	}

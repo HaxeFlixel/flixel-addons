@@ -358,9 +358,9 @@ class FlxSlider extends FlxSpriteGroup
 			if (FlxG.mouse.pressed) 
 			{
 				if (orientation == ORIENT_HORIZONTAL)
-					handle.x = FlxG.mouse.screenX;
+					handle.x = FlxG.mouse.screenX - (handle.width / 2);
 				else
-					handle.y = FlxG.mouse.screenY;
+					handle.y = FlxG.mouse.screenY - (handle.height / 2);
 				updateValue();
 				
 				#if !FLX_NO_SOUND_SYSTEM
