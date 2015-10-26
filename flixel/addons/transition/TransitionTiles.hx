@@ -19,7 +19,7 @@ class TransitionTiles extends TransitionEffect
 	{
 		super(data);
 		
-		_grpSprites = new FlxTypedSprite<FlxTransitionSprite>();
+		_grpSprites = new FlxTypedSpriteGroup<FlxTransitionSprite>();
 		var delay:Float = 0;
 		var yloops:Int = 0;
 		var xloops:Int = 0;
