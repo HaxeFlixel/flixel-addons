@@ -16,9 +16,7 @@ import openfl.display.BitmapData;
 import openfl.display.Graphics;
 import openfl.geom.Point;
 import openfl.Vector;
-
-@:keep @:bitmap("assets/images/logo/default.png")
-private class GraphicDefault extends BitmapData {}
+import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 
 /**
  * A FlxSprite that draw it's frame in a mesh and behave like a cloth.
@@ -28,13 +26,13 @@ private class GraphicDefault extends BitmapData {}
 class FlxClothSprite extends FlxSprite
 {
 	/**
-	 * An extra speed applied to mesh (in pixels per second). Use to simulate gravity or wind.
+	 * An extra velocity applied to mesh (in pixels per second). Use to simulate gravity or wind.
 	 */
-	public var gravity(default, null):FlxPoint = FlxPoint.get();
+	public var meshVelocity(default, null):FlxPoint = FlxPoint.get();
 	/**
 	 * Determines how quickly the mesh points come to rest.
 	 */
-	public var friction(default, null):FlxPoint = FlxPoint.get(0.99, 0.99);
+	public var meshFriction(default, null):FlxPoint = FlxPoint.get(0.99, 0.99);
 	/**
 	 * Change the size of the mesh related to the original frame. Need to call setMesh() to update.
 	 */
@@ -44,7 +42,7 @@ class FlxClothSprite extends FlxSprite
 	 */
 	public var pinSide:Int;
 	/**
-	 * How many iterations will do on constraints for each update. Need to call setMesh() to update.
+	 * How many iterations will do on constraints for each update.
 	 * Bigger number make constraint more strong and mesh more rigid.
 	 */
 	public var iterations:Int = 3;
@@ -73,17 +71,12 @@ class FlxClothSprite extends FlxSprite
 	public var constraints(default, null):Array<ClothConstraint> = [];
 	
 	/**
-	 * Mesh arrays. Vertices, indices and uvtData to drawTriangles().
+	 * Mesh arrays. Vertices, indices, uvtData and colors to drawTriangles().
 	 */
-	#if flash
-	private var _vertices(default, null):Vector<Float>;
-	private var _indices(default, null):Vector<Int>;
-	private var _uvtData(default, null):Vector<Float>;
-	#else
-	private var _vertices(default, null):Array<Float>;
-	private var _indices(default, null):Array<Int>;
-	private var _uvtData(default, null):Array<Float>;
-	#end
+	private var _vertices(default, null):DrawData<Float>;
+	private var _indices(default, null):DrawData<Int>;
+	private var _uvtData(default, null):DrawData<Float>;
+	public var colors:DrawData<Int>;
 	
 	/**
 	 * Use to offset the drawing position of the mesh.
@@ -129,10 +122,11 @@ class FlxClothSprite extends FlxSprite
 		_vertices = null;
 		_indices = null;
 		_uvtData = null;
+		colors = null;
 		_drawOffset = null;
 		
-		gravity = FlxDestroyUtil.put(gravity);
-		friction = FlxDestroyUtil.put(friction);
+		meshVelocity = FlxDestroyUtil.put(meshVelocity);
+		meshFriction = FlxDestroyUtil.put(meshFriction);
 		_meshPixels = FlxDestroyUtil.dispose(_meshPixels);
 		
 		super.destroy();
@@ -159,15 +153,9 @@ class FlxClothSprite extends FlxSprite
 	{
 		if (_frame == null || _meshPixels == null)
 		{
-			#if !FLX_NO_DEBUG
-			loadGraphic(FlxGraphic.fromClass(GraphicDefault));
-			#else
+			super.draw();
 			return;
-			#end
 		}
-		
-		calcImage();
-		drawImage();
 		
 		if (alpha == 0 || _frame.type == FlxFrameType.EMPTY)
 		{
@@ -178,6 +166,9 @@ class FlxClothSprite extends FlxSprite
 		{
 			calcFrame();
 		}
+		
+		calcImage();
+		drawImage();
 		
 		for (camera in cameras)
 		{
@@ -200,37 +191,21 @@ class FlxClothSprite extends FlxSprite
 					_point.floor();
 				}
 				
-				_point.copyToFlash(_flashPoint);
-				camera.copyPixels(_frame, _meshPixels, _meshPixels.rect, new Point(_flashPoint.x + _drawOffset.x,_flashPoint.y + _drawOffset.y), cr, cg, cb, alpha, blend, antialiasing);
+				_flashPoint = new Point(_point.x + _drawOffset.x, _point.y + _drawOffset.y);
+				camera.copyPixels(_frame, _meshPixels, _meshPixels.rect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
 			}
 			else
 			{
-				_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, flipX, flipY);
-				_matrix.translate( -origin.x, -origin.y);
-				_matrix.scale(scale.x, scale.y);
-				
-				if (bakedRotationAngle <= 0)
-				{
-					updateTrig();
-					
-					if (angle != 0)
-					{
-						_matrix.rotateWithTrig(_cosAngle, _sinAngle);
-					}
-				}
-				
-				_point.add(origin.x, origin.y);
+				_point.add(_drawOffset.x, _drawOffset.y);
 				if (isPixelPerfectRender(camera))
 				{
 					_point.floor();
 				}
 				
 				// Create a temporary frame and draw mesh's bitmapData
-				var frameMesh:FlxFrame = new FlxFrame(FlxGraphic.fromBitmapData(_meshPixels, true, null, false));
-				frameMesh.frame = new FlxRect(0, 0, _meshPixels.width, _meshPixels.height);
+				var frameGraphic:FlxGraphic = FlxGraphic.fromBitmapData(framePixels, true, null, false);
 				
-				_matrix.translate(_point.x + _drawOffset.x, _point.y + _drawOffset.y);
-				camera.drawPixels(frameMesh, framePixels, _matrix, cr, cg, cb, alpha, blend, antialiasing);
+				camera.drawTriangles(frameGraphic, _vertices, _indices, _uvtData, colors, _point, blend, antialiasing);
 			}
 			
 			#if !FLX_NO_DEBUG
@@ -302,7 +277,7 @@ class FlxClothSprite extends FlxSprite
 	 * 								It uses frameHeight by default, but when mesh state is bigger, a new BitmapData is created.
 	 * @param   pinned				Indices of pinned points that are not affected by wind or velocity.
 	 */
-	public function setMesh(?columns:Int = 0, ?rows:Int = 0, ?meshPixelsWidth:Int = 0, ?meshPixelsHeight:Int = 0, ?pinned:Array<Int> = null):Void
+	public function setMesh(columns:Int = 0, rows:Int = 0, meshPixelsWidth:Int = 0, meshPixelsHeight:Int = 0, ?pinned:Array<Int> = null):Void
 	{
 		meshPixelsWidth = Std.int(Math.max(meshPixelsWidth, frameWidth));
 		meshPixelsHeight = Std.int(Math.max(meshPixelsHeight, frameHeight));
@@ -401,7 +376,7 @@ class FlxClothSprite extends FlxSprite
 	}
 	
 	/**
-	 * Called by update, applies gravity, friction and velocity for each point
+	 * Called by update, applies meshVelocity, meshFriction and velocity for each point
 	 */
 	private function updatePoints(elapsed:Float) 
 	{
@@ -409,16 +384,16 @@ class FlxClothSprite extends FlxSprite
 		{
 			if (!p.pinned)
 			{
-				var vx = (p.x - p.oldx) * friction.x;
-				var vy = (p.y - p.oldy) * friction.y;
+				var vx = (p.x - p.oldx) * meshFriction.x;
+				var vy = (p.y - p.oldy) * meshFriction.y;
 				
 				p.oldx = p.x;
 				p.oldy = p.y;
 				p.x += vx;
 				p.y += vy;
 				
-				p.x += gravity.x * elapsed;
-				p.y += gravity.y * elapsed;
+				p.x += meshVelocity.x * elapsed;
+				p.y += meshVelocity.y * elapsed;
 				p.x -= this.velocity.x * elapsed;
 				p.y -= this.velocity.y * elapsed;
 			}
@@ -485,7 +460,12 @@ class FlxClothSprite extends FlxSprite
 		{
 			_vertices[i] = _vertices[i] - minX;
 			_vertices[i + 1] = _vertices[i + 1] - minY;
-			i+=2;
+			i += 2;
+		}
+		
+		if (_meshPixels == null)
+		{
+			return;
 		}
 		
 		// Check if the bitmapData is smaller than the current image and create new one if needed
@@ -508,13 +488,17 @@ class FlxClothSprite extends FlxSprite
 	{
 		#if !FLX_RENDER_BLIT
 		getFlxFrameBitmapData();
+		#else
+		if (_meshPixels != null)
+		{
+			FlxSpriteUtil.flashGfx.clear();
+			FlxSpriteUtil.flashGfx.beginBitmapFill(framePixels, null, false, true);
+			FlxSpriteUtil.flashGfx.drawTriangles(_vertices, _indices, _uvtData);
+			FlxSpriteUtil.flashGfx.endFill();
+			
+			this._meshPixels.draw(FlxSpriteUtil.flashGfxSprite);
+		}
 		#end
-		FlxSpriteUtil.flashGfx.clear();
-		FlxSpriteUtil.flashGfx.beginBitmapFill(framePixels, null, false, true);
-		FlxSpriteUtil.flashGfx.drawTriangles(_vertices, _indices, _uvtData);
-		FlxSpriteUtil.flashGfx.endFill();
-		
-		this._meshPixels.draw(FlxSpriteUtil.flashGfxSprite);
 	}
 }
 
