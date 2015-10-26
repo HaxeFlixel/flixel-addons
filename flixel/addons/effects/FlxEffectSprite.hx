@@ -15,10 +15,10 @@ class FlxEffectSprite extends FlxSprite
 	/**
 	 * Effects applied to frames
 	 */
-	public var effects(default, null):Array<IFlxEffect>;
+	public var effects:Array<IFlxEffect>;
 	
 	/**
-	 * Use to offset the drawing position of the mesh.
+	 * Use to offset the drawing position of the bitmap.
 	 */
 	private var _drawOffset:Point;
 	/**
@@ -136,14 +136,14 @@ class FlxEffectSprite extends FlxSprite
 	 */
 	override public function destroy():Void
 	{
-		effects = null;
-		_drawOffset = null;
-		_effectPixels = FlxDestroyUtil.dispose(_effectPixels);
-		
 		for (effect in effects) 
 		{
 			effect.destroy();
 		}
+		
+		effects = null;
+		_drawOffset = null;
+		_effectPixels = FlxDestroyUtil.dispose(_effectPixels);
 		
 		super.destroy();
 	}
