@@ -94,11 +94,11 @@ class FlxEffectWave implements IFlxEffect
 	
 	public function apply(bitmapData:BitmapData):BitmapData 
 	{
-		var horizontalStrength = (direction == HORIZONTAL) ? strength : 0;
-		var verticalStrength = (direction == VERTICAL) ? strength : 0;
+		var horizontalStrength:Int = (direction == HORIZONTAL) ? strength : 0;
+		var verticalStrength:Int = (direction == VERTICAL) ? strength : 0;
 		offsetDraw.setTo( -horizontalStrength, -verticalStrength);
 		
-		var pixels:BitmapData = new BitmapData(Std.int(bitmapData.width + horizontalStrength * 2), Std.int(bitmapData.height + verticalStrength * 2), true, FlxColor.TRANSPARENT);
+		var pixels:BitmapData = new BitmapData(bitmapData.width + horizontalStrength * 2, bitmapData.height + verticalStrength * 2, true, FlxColor.TRANSPARENT);
 		
 		var offset:Float = 0;
 		var centerP = Std.int(((direction == HORIZONTAL) ? bitmapData.height : bitmapData.width) * 0.5);

@@ -100,7 +100,7 @@ class FlxEffectGlitch implements IFlxEffect
 			var verticalStrength = (direction == VERTICAL) ? strength : 0;
 			offsetDraw.setTo( -horizontalStrength, -verticalStrength);
 			
-			_pixels = new BitmapData(Std.int(bitmapData.width + horizontalStrength * 2), Std.int(bitmapData.height + verticalStrength * 2), true, FlxColor.TRANSPARENT);
+			_pixels = new BitmapData(bitmapData.width + horizontalStrength * 2, bitmapData.height + verticalStrength * 2, true, FlxColor.TRANSPARENT);
 			
 			var p:Int = 0;
 			if (direction == HORIZONTAL)
