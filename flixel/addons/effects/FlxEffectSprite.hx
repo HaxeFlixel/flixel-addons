@@ -25,7 +25,7 @@ class FlxEffectSprite extends FlxSprite
 	/**
 	 * The actual Flash BitmapData object representing the current display state of the modified framePixels.
 	 */
-	private var _effectPixels:BitmapData;
+	public var effectPixels(default, null):BitmapData;
 	
 	/**
 	 * Creates a FlxEffectSprite at a specified position with a specified one-frame graphic. 
@@ -48,7 +48,7 @@ class FlxEffectSprite extends FlxSprite
 	 */
 	override public function draw():Void 
 	{
-		if (_frame == null || _effectPixels == null)
+		if (_frame == null || effectPixels == null)
 		{
 			super.draw();
 			return;
@@ -86,7 +86,7 @@ class FlxEffectSprite extends FlxSprite
 				}
 				
 				_flashPoint = new Point(_point.x + _drawOffset.x, _point.y + _drawOffset.y);
-				camera.copyPixels(_frame, _effectPixels, _effectPixels.rect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
+				camera.copyPixels(_frame, effectPixels, effectPixels.rect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
 			}
 			else
 			{
@@ -111,8 +111,8 @@ class FlxEffectSprite extends FlxSprite
 				}
 				
 				// Create a temporary frame and draw effect's bitmapData
-				var frameEffect:FlxFrame = new FlxFrame(FlxGraphic.fromBitmapData(_effectPixels, true, null, false));
-				frameEffect.frame = new FlxRect(0, 0, _effectPixels.width, _effectPixels.height);
+				var frameEffect:FlxFrame = new FlxFrame(FlxGraphic.fromBitmapData(effectPixels, true, null, false));
+				frameEffect.frame = new FlxRect(0, 0, effectPixels.width, effectPixels.height);
 				
 				_matrix.translate(_point.x + _drawOffset.x, _point.y + _drawOffset.y);
 				camera.drawPixels(frameEffect, framePixels, _matrix, cr, cg, cb, alpha, blend, antialiasing);
@@ -144,7 +144,7 @@ class FlxEffectSprite extends FlxSprite
 		
 		effects = null;
 		_drawOffset = null;
-		_effectPixels = FlxDestroyUtil.dispose(_effectPixels);
+		effectPixels = FlxDestroyUtil.dispose(effectPixels);
 		
 		super.destroy();
 	}
@@ -159,7 +159,7 @@ class FlxEffectSprite extends FlxSprite
 			#if !FLX_RENDER_BLIT
 			getFlxFrameBitmapData();
 			#end
-			_effectPixels = framePixels.clone();
+			effectPixels = framePixels.clone();
 			_drawOffset.setTo(0, 0);
 			
 			for (effect in effects) 
@@ -167,17 +167,12 @@ class FlxEffectSprite extends FlxSprite
 				if (effect.active)
 				{
 					effect.update(elapsed);
-					_effectPixels = effect.apply(_effectPixels);
+					effectPixels = effect.apply(effectPixels);
 					_drawOffset.setTo(_drawOffset.x + effect.offsetDraw.x, _drawOffset.y + effect.offsetDraw.y);
 				}
 			}
 		}
 		
 		super.update(elapsed);
-	}
-	
-	public function applyEffects():Void 
-	{
-		
 	}
 }
