@@ -28,6 +28,16 @@ class FlxEffectRainbow implements IFlxEffect
 	private var hue:Int = 0;
 	
 	/**
+	 * Set alpha to a number between 0 and 1 to change the opacity of the effect.
+	 */
+	private var alpha:Float = 1;
+	
+	/**
+	 * A number between 0 and 1, indicating how bright the color should be. 0 is black, 1 is full bright.
+	 */
+	private var brightness:Float = 1;
+	
+	/**
 	 * Used to adjust the hue using speed
 	 */
 	private var time:Float = 0;
@@ -37,8 +47,10 @@ class FlxEffectRainbow implements IFlxEffect
 	 */
 	private var _flashPointZero:Point;
 	
-	public function new(StartHue:Int = 0, Speed:Float = 5) 
+	public function new(Alpha:Float = 1, Brightness:Float = 1, Speed:Float = 5, StartHue:Int = 0) 
 	{
+		alpha = Alpha;
+		brightness = Brightness;
 		speed = Speed;
 		time = hue = Std.int(FlxMath.bound(StartHue, 0, 360));
 		
@@ -65,7 +77,7 @@ class FlxEffectRainbow implements IFlxEffect
 	
 	public function apply(bitmapData:BitmapData):BitmapData 
 	{
-		var swatch = new BitmapData(bitmapData.width, bitmapData.height, false, FlxColor.fromHSB(hue, 1, 1));
+		var swatch = new BitmapData(bitmapData.width, bitmapData.height, true, FlxColor.fromHSB(hue, 1, brightness, alpha));
 		
 		bitmapData.copyPixels(swatch, swatch.rect, _flashPointZero, bitmapData, null, true);
 		
