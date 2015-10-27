@@ -66,16 +66,18 @@ class FlxClothSprite extends FlxSprite
 	 * The height of mesh squares. To set it you must use setMesh().
 	 */
 	public var heightInTiles(default, null):Float;
-	
+	/**
+	 * An array containing all vertices of the mesh, they are indexed row by row.
+	 */
 	public var points(default, null):Array<ClothPoint> = [];
 	public var constraints(default, null):Array<ClothConstraint> = [];
 	
 	/**
 	 * Mesh arrays. Vertices, indices, uvtData and colors to drawTriangles().
 	 */
-	private var _vertices(default, null):DrawData<Float>;
-	private var _indices(default, null):DrawData<Int>;
-	private var _uvtData(default, null):DrawData<Float>;
+	private var _vertices:DrawData<Float>;
+	private var _indices:DrawData<Int>;
+	private var _uvtData:DrawData<Float>;
 	public var colors:DrawData<Int>;
 	
 	/**
@@ -85,7 +87,7 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * The actual Flash BitmapData object representing the current display state of the modified framePixels.
 	 */
-	private var _meshPixels:BitmapData;
+	public var meshPixels(default, null):BitmapData;
 	
 	/**
 	 * Creates a FlxClothSprite at a specified position with a specified one-frame graphic. 
@@ -127,7 +129,7 @@ class FlxClothSprite extends FlxSprite
 		
 		meshVelocity = FlxDestroyUtil.put(meshVelocity);
 		meshFriction = FlxDestroyUtil.put(meshFriction);
-		_meshPixels = FlxDestroyUtil.dispose(_meshPixels);
+		meshPixels = FlxDestroyUtil.dispose(meshPixels);
 		
 		super.destroy();
 	}
@@ -147,11 +149,11 @@ class FlxClothSprite extends FlxSprite
 	}
 	
 	/**
-	 * Called by game loop, updates then blits or renders current frame of animation to the screen
+	 * Called by game loop, updates then blits or renders current frame of animation to the screen.
 	 */
 	override public function draw():Void 
 	{
-		if (_frame == null || _meshPixels == null)
+		if (_frame == null || meshPixels == null)
 		{
 			super.draw();
 			return;
@@ -192,7 +194,7 @@ class FlxClothSprite extends FlxSprite
 				}
 				
 				_flashPoint = new Point(_point.x + _drawOffset.x, _point.y + _drawOffset.y);
-				camera.copyPixels(_frame, _meshPixels, _meshPixels.rect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
+				camera.copyPixels(_frame, meshPixels, meshPixels.rect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
 			}
 			else
 			{
@@ -250,9 +252,9 @@ class FlxClothSprite extends FlxSprite
 		gfx.lineStyle(1, color, 0.5);
 		gfx.drawRect(rect.x, rect.y, rect.width, rect.height);
 		
-		//draw meshes and rect of pixels _meshPixels
+		//draw meshes and rect of pixels meshPixels
 		gfx.lineStyle(1, FlxColor.CYAN, 0.5);
-		gfx.drawRect(rect.x + _drawOffset.x, rect.y + _drawOffset.y, _meshPixels.rect.width, _meshPixels.rect.height);
+		gfx.drawRect(rect.x + _drawOffset.x, rect.y + _drawOffset.y, meshPixels.rect.width, meshPixels.rect.height);
 		for (p in points) 
 		{
 			gfx.drawCircle(rect.x + p.x, rect.y + p.y, 2);
@@ -287,7 +289,7 @@ class FlxClothSprite extends FlxSprite
 			return;
 		}
 		
-		this._meshPixels = new BitmapData(meshPixelsWidth, meshPixelsHeight, true, FlxColor.TRANSPARENT);
+		this.meshPixels = new BitmapData(meshPixelsWidth, meshPixelsHeight, true, FlxColor.TRANSPARENT);
 		
 		points = [];
 		constraints = [];
@@ -376,7 +378,7 @@ class FlxClothSprite extends FlxSprite
 	}
 	
 	/**
-	 * Called by update, applies meshVelocity, meshFriction and velocity for each point
+	 * Called by update, applies meshVelocity, meshFriction and velocity for each point.
 	 */
 	private function updatePoints(elapsed:Float) 
 	{
@@ -401,7 +403,7 @@ class FlxClothSprite extends FlxSprite
 	}
 	
 	/**
-	 * Called by update, applies velocity for each constraints points
+	 * Called by update, applies velocity for each constraints points.
 	 */
 	private function updateConstraints(elapsed:Float) 
 	{
@@ -428,7 +430,7 @@ class FlxClothSprite extends FlxSprite
 	}
 	
 	/**
-	 * Called by draw, calculate triangles, drawOffset and bitmapData dimensions
+	 * Called by draw, calculate triangles, drawOffset and bitmapData dimensions.
 	 */
 	private function calcImage():Void
 	{
@@ -463,40 +465,40 @@ class FlxClothSprite extends FlxSprite
 			i += 2;
 		}
 		
-		if (_meshPixels == null)
+		if (meshPixels == null)
 		{
 			return;
 		}
 		
 		// Check if the bitmapData is smaller than the current image and create new one if needed
-		var w:Int = Std.int(Math.max(_meshPixels.width, maxX - minX));
-		var h:Int = Std.int(Math.max(_meshPixels.height, maxY - minY));
-		if (_meshPixels.width < w || _meshPixels.height < h)
+		var w:Int = Std.int(Math.max(meshPixels.width, maxX - minX));
+		var h:Int = Std.int(Math.max(meshPixels.height, maxY - minY));
+		if (meshPixels.width < w || meshPixels.height < h)
 		{
-			_meshPixels = new BitmapData(w, h, true, FlxColor.TRANSPARENT);
+			meshPixels = new BitmapData(w, h, true, FlxColor.TRANSPARENT);
 		}
 		else
 		{
-			_meshPixels.fillRect(_meshPixels.rect, FlxColor.TRANSPARENT);
+			meshPixels.fillRect(meshPixels.rect, FlxColor.TRANSPARENT);
 		}
 	}
 	
 	/**
-	 * Called by draw, draw calculated triangles to _meshPixels bitmapData
+	 * Called by draw, draw calculated triangles to meshPixels bitmapData.
 	 */
 	private function drawImage():Void
 	{
 		#if !FLX_RENDER_BLIT
 		getFlxFrameBitmapData();
 		#else
-		if (_meshPixels != null)
+		if (meshPixels != null)
 		{
 			FlxSpriteUtil.flashGfx.clear();
 			FlxSpriteUtil.flashGfx.beginBitmapFill(framePixels, null, false, true);
 			FlxSpriteUtil.flashGfx.drawTriangles(_vertices, _indices, _uvtData);
 			FlxSpriteUtil.flashGfx.endFill();
 			
-			this._meshPixels.draw(FlxSpriteUtil.flashGfxSprite);
+			this.meshPixels.draw(FlxSpriteUtil.flashGfxSprite);
 		}
 		#end
 	}
