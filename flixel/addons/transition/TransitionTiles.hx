@@ -1,22 +1,25 @@
  package flixel.addons.transition;
+ 
 import flash.display.BitmapData;
+import flixel.addons.transition.TransitionEffect;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 
 /**
  * 
  * @author larsiusprime
  */
-class TransitionTiles extends Transition
+class TransitionTiles extends TransitionEffect
 {
-	private var _grpSprites:FlxTypedGroup<FlxTransitionSprite>;
+	private var _grpSprites:FlxTypedSpriteGroup<FlxTransitionSprite>;
 	private var _isCenter:Bool = false;
 	
 	public function new(data:TransitionData) 
 	{
 		super(data);
 		
-		_grpSprites = new FlxTypedGroup<FlxTransitionSprite>();
+		_grpSprites = new FlxTypedSpriteGroup<FlxTransitionSprite>();
 		var delay:Float = 0;
 		var yloops:Int = 0;
 		var xloops:Int = 0;
@@ -26,8 +29,10 @@ class TransitionTiles extends Transition
 			data.tileData = { asset:null, width:32, height:32 };
 		}
 		
-		var tilesX:Int = Math.ceil(FlxG.width / data.tileData.width);
-		var tilesY:Int = Math.ceil(FlxG.height / data.tileData.height);
+		var region = data.region;
+		
+		var tilesX:Int = Math.ceil(region.width / data.tileData.width);
+		var tilesY:Int = Math.ceil(region.height / data.tileData.height);
 		
 		var maxTiles:Int = tilesX > tilesY ? tilesX : tilesY;
 		
@@ -42,18 +47,18 @@ class TransitionTiles extends Transition
 		var tx:Int = 0;
 		var ty:Int = 0;
 		
-		var startX:Int = 0;
-		var startY:Int = 0;
+		var startX:Int = Std.int(region.x);
+		var startY:Int = Std.int(region.y);
 		
 		if (data.direction.x < 0)
 		{
 			addX *= -1;
-			startX = FlxG.width+addX;
+			startX += Std.int(region.width + addX);
 		}
 		if (data.direction.y < 0)
 		{
 			addY *= -1;
-			startY = FlxG.height+addY;
+			startY += Std.int(region.height + addY);
 		}
 		
 		tx = startX;
@@ -62,7 +67,12 @@ class TransitionTiles extends Transition
 		{
 			for (ix in 0...tilesX)
 			{
-				var ts = new FlxTransitionSprite(tx, ty, delay, data.tileData.asset);
+				var frameRate:Int = 40;
+				if (data.tileData.frameRate != null)
+				{
+					frameRate = data.tileData.frameRate;
+				}
+				var ts = new FlxTransitionSprite(tx, ty, delay, data.tileData.asset, data.tileData.width, data.tileData.height, frameRate);
 				ts.color = data.color;
 				ts.scrollFactor.set(0, 0);
 				_grpSprites.add(ts);
@@ -71,7 +81,7 @@ class TransitionTiles extends Transition
 			}
 			ty += addY;
 			tx = startX;
-			delay = 0 + (iy * yDelay);
+			delay = 0 + ((iy+1) * yDelay);
 		}
 		add(_grpSprites);
 		
@@ -115,7 +125,7 @@ class TransitionTiles extends Transition
 			var allDone:Bool = true;
 			for (sprite in _grpSprites.members)
 			{
-				if (sprite.status != _endStatus)
+				if (sprite.status != TransitionStatus.NULL && sprite.status != _endStatus)
 				{
 					allDone = false;
 					break;

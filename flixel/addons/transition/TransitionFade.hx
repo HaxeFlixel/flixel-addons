@@ -1,6 +1,7 @@
 package flixel.addons.transition;
 
 import flash.display.BitmapData;
+import flixel.addons.transition.TransitionEffect;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
@@ -18,7 +19,7 @@ private class GraphicDiagonalGradient extends BitmapData {}
  * 
  * @author larsiusprime
  */
-class TransitionFade extends Transition
+class TransitionFade extends TransitionEffect
 {
 	private var back:FlxSprite;
 	private var tweenStr:String = "";
