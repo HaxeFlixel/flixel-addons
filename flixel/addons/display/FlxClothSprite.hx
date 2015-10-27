@@ -3,11 +3,9 @@ import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
-import flixel.graphics.frames.FlxFrame;
-import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.graphics.frames.FlxFrame.FlxFrameType;
+import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxPoint;
-import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
@@ -15,8 +13,6 @@ import flixel.util.FlxSpriteUtil;
 import openfl.display.BitmapData;
 import openfl.display.Graphics;
 import openfl.geom.Point;
-import openfl.Vector;
-import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 
 /**
  * A FlxSprite that draw it's frame in a mesh and behave like a cloth.
@@ -40,14 +36,14 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * Bit field of flags (use with FlxObject.UP, DOWN, LEFT, RIGHT, NONE, ANY, etc) indicating pinned side. Use bitwise operators to check the values stored here.
 	 */
-	public var pinSide:Int;
+	public var pinnedSide:Int;
 	/**
 	 * How many iterations will do on constraints for each update.
 	 * Bigger number make constraint more strong and mesh more rigid.
 	 */
 	public var iterations:Int = 3;
 	/**
-	 * Adds an extra constraint crossing the squares to make the mesh more rigid. Need to call setMesh() to update.
+	 * Adds two extra constraints crossing the squares to make the mesh more rigid. Need to call setMesh() to update.
 	 */
 	public var crossingConstraints:Bool = false;
 	/**
@@ -70,6 +66,9 @@ class FlxClothSprite extends FlxSprite
 	 * An array containing all vertices of the mesh, they are indexed row by row.
 	 */
 	public var points(default, null):Array<ClothPoint> = [];
+	/**
+	 * An array containing all vertices conections.
+	 */
 	public var constraints(default, null):Array<ClothConstraint> = [];
 	
 	/**
@@ -98,16 +97,16 @@ class FlxClothSprite extends FlxSprite
 	 * @param	SimpleGraphic	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
 	 * @param	Columns			Number of columns of the created mesh.
 	 * @param	Rows			Number of rows of the created mesh.
-	 * @param	pinSide			The pinned side that points are not affected by wind or velocity. Use FlxObject.UP, DOWN, LEFT, RIGHT, NONE, ANY, etc.
+	 * @param	PinnedSide		The pinned side that points are not affected by wind or velocity. Use FlxObject.UP, DOWN, LEFT, RIGHT, NONE, ANY, etc.
 	 */
-	public function new(?X:Float = 0, ?Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset, ?Columns:Int = 0, ?Rows:Int = 0, pinSide:Int = FlxObject.UP, crossingConstraints:Bool = false) 
+	public function new(?X:Float = 0, ?Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset, Columns:Int = 0, Rows:Int = 0, PinnedSide:Int = FlxObject.UP, CrossingConstraints:Bool = false) 
 	{
 		super(X, Y, SimpleGraphic);
 		
-		this.pinSide = pinSide;
+		this.pinnedSide = PinnedSide;
 		this.rows = Std.int(Math.max(2, Rows));
 		this.columns = Std.int(Math.max(2, Columns));
-		this.crossingConstraints = crossingConstraints;
+		this.crossingConstraints = CrossingConstraints;
 		
 		_drawOffset = new Point();
 		setMesh(columns, rows);
@@ -312,10 +311,10 @@ class FlxClothSprite extends FlxSprite
 					y: r * heightInTiles,
 					oldx: c * widthInTiles,
 					oldy: r * heightInTiles,
-					pinned: ((r == 0 && pinSide & FlxObject.UP != 0)
-							|| (r == rows - 1 && pinSide & FlxObject.DOWN != 0)
-							|| (c == 0 && pinSide & FlxObject.LEFT != 0)
-							|| (c == columns-1 && pinSide & FlxObject.RIGHT != 0))
+					pinned: ((r == 0 && pinnedSide & FlxObject.UP != 0)
+							|| (r == rows - 1 && pinnedSide & FlxObject.DOWN != 0)
+							|| (c == 0 && pinnedSide & FlxObject.LEFT != 0)
+							|| (c == columns-1 && pinnedSide & FlxObject.RIGHT != 0))
 				});
 				
 				_vertices.push(c * widthInTiles);
