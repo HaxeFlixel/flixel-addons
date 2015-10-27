@@ -28,11 +28,6 @@ class FlxEffectRainbow implements IFlxEffect
 	private var hue:Int = 0;
 	
 	/**
-	 * A dummy sprite for the mask to be applied from
-	 */
-	private var swatch:BitmapData;
-	
-	/**
 	 * Used to adjust the hue using speed
 	 */
 	private var time:Float = 0;
@@ -53,7 +48,8 @@ class FlxEffectRainbow implements IFlxEffect
 	
 	public function destroy():Void 
 	{
-		
+		offsetDraw = null;
+		_flashPointZero = null;
 	}
 	
 	public function update(elapsed:Float):Void 
@@ -71,10 +67,8 @@ class FlxEffectRainbow implements IFlxEffect
 	{
 		var swatch = new BitmapData(bitmapData.width, bitmapData.height, false, FlxColor.fromHSB(hue, 1, 1));
 		
-		var pixels = new BitmapData(bitmapData.width, bitmapData.height, true, FlxColor.TRANSPARENT);
+		bitmapData.copyPixels(swatch, swatch.rect, _flashPointZero, bitmapData, null, true);
 		
-		pixels.copyPixels(swatch, swatch.rect, _flashPointZero, bitmapData, null, true);
-		
-		return pixels;
+		return bitmapData;
 	}
 }
