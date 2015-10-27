@@ -1,6 +1,4 @@
 package flixel.addons.effects;
-import flixel.graphics.FlxGraphic;
-import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
@@ -52,10 +50,10 @@ class FlxEffectGlitch implements IFlxEffect
 	 * Creates a new FlxGlitchSprite, which applies a Glitch-distortion effect.
 	 * This effect is non-destructive to the target's pixels, and can be used on animated FlxSprites.
 	 * 
-	 * @param	Strength	How strong you want the effect
-	 * @param	Size		How 'thick' you want each piece of the glitch
-	 * @param	Delay		How long (in seconds) between each glitch update
-	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL)
+	 * @param	Strength	How strong you want the effect.
+	 * @param	Size		How 'thick' you want each piece of the glitch.
+	 * @param	Delay		How long (in seconds) between each glitch update.
+	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL).
 	 */
 	public function new(Strength:Int = 4, Size:Int = 1, Delay:Float = 0.05, ?Direction:FlxGlitchDirection)
 	{

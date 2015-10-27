@@ -1,5 +1,4 @@
 package flixel.addons.effects;
-import flixel.graphics.FlxGraphic;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import openfl.display.BitmapData;
@@ -14,10 +13,10 @@ import openfl.geom.Rectangle;
  */
 class FlxEffectWave implements IFlxEffect
 {
-	private static inline var BASE_STRENGTH:Float = 0.06;
-	
 	public var active:Bool = true;
 	public var offsetDraw:Point;
+	
+	private static inline var BASE_STRENGTH:Float = 0.06;
 	
 	/**
 	 * Which mode we're using for the effect
@@ -58,12 +57,12 @@ class FlxEffectWave implements IFlxEffect
 	/**
 	 * Creates a new FlxEffectWave, which applies a wave-distortion effect.
 	 * 
-	 * @param	Mode		Which Mode you would like to use for the effect. ALL = applies a constant distortion throughout the image, END = makes the effect get stronger towards the bottom of the image, and START = the reverse of END
-	 * @param	Strength	How strong you want the effect
+	 * @param	Mode		Which Mode you would like to use for the effect. ALL = applies a constant distortion throughout the image, END = makes the effect get stronger towards the bottom of the image, and START = the reverse of END.
+	 * @param	Strength	How strong you want the effect.
 	 * @param	Center		The 'center' of the effect when using END or START modes. Anything before(END)/after(START) this point on the image will have no distortion effect.
 	 * @param	Speed		How fast you want the effect to move. Higher values = faster.
 	 * @param	Wavelength	How long waves are.
-	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL)
+	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL).
 	 */
 	public function new(?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection) 
 	{

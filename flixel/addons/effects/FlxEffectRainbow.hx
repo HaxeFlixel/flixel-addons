@@ -1,10 +1,8 @@
 package flixel.addons.effects;
-import flixel.graphics.FlxGraphic;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import openfl.display.BitmapData;
 import openfl.geom.Point;
-import openfl.geom.Rectangle;
 
 /**
  * This is a modified version of FlxRainbowSprite by Tim Hely
@@ -47,6 +45,14 @@ class FlxEffectRainbow implements IFlxEffect
 	 */
 	private var _flashPointZero:Point;
 	
+	/**
+	 * Creates a new FlxEffectRainbow, which applies a color-cycling effect, using the target's bitmap as a mask.
+	 * 
+	 * @param	Alpha		A number between 0 and 1 to change the opacity of the effect.
+	 * @param	Brightness	A number between 0 and 1, indicating how bright the color should be.
+	 * @param	Speed		How fast the hue should change each tick.
+	 * @param	StartHue	The initial hue of the effect.
+	 */
 	public function new(Alpha:Float = 1, Brightness:Float = 1, Speed:Float = 5, StartHue:Int = 0) 
 	{
 		alpha = Alpha;

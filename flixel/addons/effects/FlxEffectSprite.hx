@@ -5,13 +5,14 @@ import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
 import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxGraphicAsset;
-import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
 import openfl.geom.Point;
 
 class FlxEffectSprite extends FlxSprite
 {
+	public var updateEffects:Bool = true;
+	
 	/**
 	 * Effects applied to frames
 	 */
@@ -153,22 +154,30 @@ class FlxEffectSprite extends FlxSprite
 	 */
 	override public function update(elapsed:Float):Void
 	{
-		#if !FLX_RENDER_BLIT
-		getFlxFrameBitmapData();
-		#end
-		_effectPixels = framePixels.clone();
-		_drawOffset.setTo(0, 0);
-		
-		for (effect in effects) 
+		if (updateEffects)
 		{
-			if (effect.active)
+			#if !FLX_RENDER_BLIT
+			getFlxFrameBitmapData();
+			#end
+			_effectPixels = framePixels.clone();
+			_drawOffset.setTo(0, 0);
+			
+			for (effect in effects) 
 			{
-				effect.update(elapsed);
-				_effectPixels = effect.apply(_effectPixels);
-				_drawOffset.setTo(_drawOffset.x + effect.offsetDraw.x, _drawOffset.y + effect.offsetDraw.y);
+				if (effect.active)
+				{
+					effect.update(elapsed);
+					_effectPixels = effect.apply(_effectPixels);
+					_drawOffset.setTo(_drawOffset.x + effect.offsetDraw.x, _drawOffset.y + effect.offsetDraw.y);
+				}
 			}
 		}
 		
 		super.update(elapsed);
+	}
+	
+	public function applyEffects():Void 
+	{
+		
 	}
 }
