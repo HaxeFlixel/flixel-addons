@@ -1,6 +1,7 @@
 package flixel.addons.effects;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
 import openfl.geom.Point;
 
@@ -19,31 +20,31 @@ class FlxEffectRainbow implements IFlxEffect
 	 * How fast the hue should change each tick.
 	 */
 	public var speed:Float = 5;
+	/**
+	 * Set alpha to a number between 0 and 1 to change the opacity of the effect.
+	 */
+	public var alpha:Float = 1;
+	/**
+	 * A number between 0 and 1, indicating how bright the color should be. 0 is black, 1 is full bright.
+	 */
+	public var brightness:Float = 1;
 	
 	/**
 	 * The current hue of the effect
 	 */
-	private var hue:Int = 0;
-	
-	/**
-	 * Set alpha to a number between 0 and 1 to change the opacity of the effect.
-	 */
-	private var alpha:Float = 1;
-	
-	/**
-	 * A number between 0 and 1, indicating how bright the color should be. 0 is black, 1 is full bright.
-	 */
-	private var brightness:Float = 1;
-	
+	private var _hue:Int = 0;
 	/**
 	 * Used to adjust the hue using speed
 	 */
-	private var time:Float = 0;
-	
+	private var _time:Float = 0;
 	/**
 	 * Internal, reused frequently during drawing and animating. Always contains (0,0).
 	 */
 	private var _flashPointZero:Point;
+	/**
+	 * The actual Flash BitmapData object representing the current effect state.
+	 */
+	private var _pixels:BitmapData;
 	
 	/**
 	 * Creates a new FlxEffectRainbow, which applies a color-cycling effect, using the target's bitmap as a mask.
@@ -58,7 +59,7 @@ class FlxEffectRainbow implements IFlxEffect
 		alpha = Alpha;
 		brightness = Brightness;
 		speed = Speed;
-		time = hue = Std.int(FlxMath.bound(StartHue, 0, 360));
+		_time = _hue = Std.int(FlxMath.bound(StartHue, 0, 360));
 		
 		offsetDraw = new Point();
 		_flashPointZero = new Point();
@@ -68,24 +69,33 @@ class FlxEffectRainbow implements IFlxEffect
 	{
 		offsetDraw = null;
 		_flashPointZero = null;
+		
+		_pixels = FlxDestroyUtil.dispose(_pixels);
 	}
 	
 	public function update(elapsed:Float):Void 
 	{
-		time += speed;
-		hue = Std.int(time);
-		if (hue > 360)
+		_time += speed;
+		_hue = Std.int(_time);
+		if (_hue > 360)
 		{
-			hue = 0;
-			time -= 360;
+			_hue = 0;
+			_time -= 360;
 		}
 	}
 	
 	public function apply(bitmapData:BitmapData):BitmapData 
 	{
-		var swatch = new BitmapData(bitmapData.width, bitmapData.height, true, FlxColor.fromHSB(hue, 1, brightness, alpha));
+		if (_pixels == null || _pixels.width < bitmapData.width || _pixels.height < bitmapData.height)
+		{
+			_pixels = new BitmapData(bitmapData.width, bitmapData.height, true, FlxColor.fromHSB(_hue, 1, brightness, alpha));
+		}
+		else
+		{
+			_pixels.fillRect(_pixels.rect, FlxColor.fromHSB(_hue, 1, brightness, alpha));
+		}
 		
-		bitmapData.copyPixels(swatch, swatch.rect, _flashPointZero, bitmapData, null, true);
+		bitmapData.copyPixels(_pixels, _pixels.rect, _flashPointZero, bitmapData, null, true);
 		
 		return bitmapData;
 	}

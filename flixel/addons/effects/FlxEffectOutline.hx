@@ -34,6 +34,9 @@ class FlxEffectOutline implements IFlxEffect
 	 */
 	public var threshold:Int;
 	
+	/**
+	 * The actual Flash BitmapData object representing the current effect state.
+	 */
 	private var _pixels:BitmapData;
 	
 	/**
@@ -59,16 +62,22 @@ class FlxEffectOutline implements IFlxEffect
 		_pixels = FlxDestroyUtil.dispose(_pixels);
 	}
 	
-	public function update(elapsed:Float):Void 
-	{
-	}
+	public function update(elapsed:Float):Void {}
 	
 	public function apply(bitmapData:BitmapData):BitmapData 
 	{
 		if (dirty)
 		{
 			var brush = (thickness * 2) + 1;
-			_pixels = new BitmapData(bitmapData.width + brush, bitmapData.height + brush, true, FlxColor.TRANSPARENT);
+			
+			if (_pixels == null || _pixels.width < bitmapData.width + brush || _pixels.height < bitmapData.height + brush)
+			{
+				_pixels = new BitmapData(bitmapData.width + brush, bitmapData.height + brush, true, FlxColor.TRANSPARENT);
+			}
+			else
+			{
+				_pixels.fillRect(_pixels.rect, FlxColor.TRANSPARENT);
+			}
 			
 			for (y in 0...bitmapData.height)
 			{

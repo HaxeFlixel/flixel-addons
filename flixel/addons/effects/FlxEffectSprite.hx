@@ -162,6 +162,7 @@ class FlxEffectSprite extends FlxSprite
 			effectPixels = framePixels.clone();
 			_drawOffset.setTo(0, 0);
 			
+			effectPixels.lock();
 			for (effect in effects) 
 			{
 				if (effect.active)
@@ -171,6 +172,7 @@ class FlxEffectSprite extends FlxSprite
 					_drawOffset.setTo(_drawOffset.x + effect.offsetDraw.x, _drawOffset.y + effect.offsetDraw.y);
 				}
 			}
+			effectPixels.unlock();
 		}
 		
 		super.update(elapsed);

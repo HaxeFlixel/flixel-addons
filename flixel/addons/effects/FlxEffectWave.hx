@@ -1,6 +1,7 @@
 package flixel.addons.effects;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -33,7 +34,7 @@ class FlxEffectWave implements IFlxEffect
 	/**
 	 * Which direction the wave effect should be applied.
 	 */
-	public var direction(default, set):FlxWaveDirection;
+	public var direction:FlxWaveDirection;
 	/**
 	 * How long waves are
 	 */
@@ -41,10 +42,12 @@ class FlxEffectWave implements IFlxEffect
 	/**
 	 * How strong the wave effect should be
 	 */
-	public var strength(default, set):Int;
+	public var strength:Int;
 	
+	/**
+	 * Current time of the effect.
+	 */
 	private var _time:Float = 0;
-	
 	/**
 	 * Internal, reused frequently during drawing and animating.
 	 */
@@ -53,6 +56,10 @@ class FlxEffectWave implements IFlxEffect
 	 * Internal, reused frequently during drawing and animating.
 	 */
 	private var _flashRect:Rectangle;
+	/**
+	 * The actual Flash BitmapData object representing the current effect state.
+	 */
+	private var _pixels:BitmapData;
 	
 	/**
 	 * Creates a new FlxEffectWave, which applies a wave-distortion effect.
@@ -84,6 +91,8 @@ class FlxEffectWave implements IFlxEffect
 		offsetDraw = null;
 		_flashPoint = null;
 		_flashRect = null;
+		
+		_pixels = FlxDestroyUtil.dispose(_pixels);
 	}
 	
 	public function update(elapsed:Float):Void 
@@ -97,7 +106,14 @@ class FlxEffectWave implements IFlxEffect
 		var verticalStrength:Int = (direction == VERTICAL) ? strength : 0;
 		offsetDraw.setTo( -horizontalStrength, -verticalStrength);
 		
-		var pixels:BitmapData = new BitmapData(bitmapData.width + horizontalStrength * 2, bitmapData.height + verticalStrength * 2, true, FlxColor.TRANSPARENT);
+		if (_pixels == null || _pixels.width < bitmapData.width + horizontalStrength * 2 || _pixels.height < bitmapData.height + verticalStrength * 2)
+		{
+			_pixels = new BitmapData(bitmapData.width + horizontalStrength * 2, bitmapData.height + verticalStrength * 2, true, FlxColor.TRANSPARENT);
+		}
+		else
+		{
+			_pixels.fillRect(_pixels.rect, FlxColor.TRANSPARENT);
+		}
 		
 		var offset:Float = 0;
 		var centerP = Std.int(((direction == HORIZONTAL) ? bitmapData.height : bitmapData.width) * 0.5);
@@ -135,33 +151,15 @@ class FlxEffectWave implements IFlxEffect
 				_flashPoint.setTo(p, strength + offset);
 				_flashRect.setTo(p, 0, 1, bitmapData.height);
 			}
-			pixels.copyPixels(bitmapData, _flashRect, _flashPoint);
+			_pixels.copyPixels(bitmapData, _flashRect, _flashPoint);
 		}
 		
-		return pixels;
+		return _pixels;
 	}
 	
 	private inline function calculateOffset(p:Float):Float
 	{
 		return (strength * BASE_STRENGTH) * BASE_STRENGTH * FlxMath.fastSin((p / wavelength) + _time);
-	}
-	
-	private function set_direction(Value:FlxWaveDirection):FlxWaveDirection
-	{
-		if (direction != Value)
-		{
-			direction = Value;
-		}
-		return direction;
-	}
-	
-	private function set_strength(value:Int):Int
-	{
-		if (strength != value)
-		{
-			strength = value;
-		}
-		return strength;
 	}
 }
 

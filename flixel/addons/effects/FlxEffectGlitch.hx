@@ -27,16 +27,16 @@ class FlxEffectGlitch implements IFlxEffect
 	/**
 	 * Which direction the glitch effect should be applied.
 	 */
-	public var direction(default, set):FlxGlitchDirection;
+	public var direction:FlxGlitchDirection;
 	/**
 	 * How strong the glitch effect should be (how much it should move from the center)
 	 */
-	public var strength(default, set):Int = 2;
+	public var strength:Int = 2;
 	
+	/**
+	 * Current time of the effect.
+	 */
 	private var _time:Float = 0;
-	
-	private var _pixels:BitmapData;
-	
 	/**
 	 * Internal, reused frequently during drawing and animating.
 	 */
@@ -45,6 +45,10 @@ class FlxEffectGlitch implements IFlxEffect
 	 * Internal, reused frequently during drawing and animating.
 	 */
 	private var _flashRect:Rectangle;
+	/**
+	 * The actual Flash BitmapData object representing the current effect state.
+	 */
+	private var _pixels:BitmapData;
 	
 	/**
 	 * Creates a new FlxGlitchSprite, which applies a Glitch-distortion effect.
@@ -98,7 +102,14 @@ class FlxEffectGlitch implements IFlxEffect
 			var verticalStrength = (direction == VERTICAL) ? strength : 0;
 			offsetDraw.setTo( -horizontalStrength, -verticalStrength);
 			
-			_pixels = new BitmapData(bitmapData.width + horizontalStrength * 2, bitmapData.height + verticalStrength * 2, true, FlxColor.TRANSPARENT);
+			if (_pixels == null || _pixels.width < bitmapData.width + horizontalStrength * 2 || _pixels.height < bitmapData.height + verticalStrength * 2)
+			{
+				_pixels = new BitmapData(bitmapData.width + horizontalStrength * 2, bitmapData.height + verticalStrength * 2, true, FlxColor.TRANSPARENT);
+			}
+			else
+			{
+				_pixels.fillRect(_pixels.rect, FlxColor.TRANSPARENT);
+			}
 			
 			var p:Int = 0;
 			if (direction == HORIZONTAL)
@@ -131,24 +142,6 @@ class FlxEffectGlitch implements IFlxEffect
 			return _pixels;
 			
 		return bitmapData;
-	}
-	
-	private function set_direction(Value:FlxGlitchDirection):FlxGlitchDirection
-	{
-		if (direction != Value)
-		{
-			direction = Value;
-		}
-		return direction;
-	}
-	
-	private function set_strength(Value:Int):Int
-	{
-		if (strength != Value)
-		{
-			strength = Value;
-		}
-		return strength;
 	}
 }
 
