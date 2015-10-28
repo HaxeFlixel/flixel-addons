@@ -33,42 +33,21 @@ class FlxTilemapExt extends FlxTilemap
 {
 	// Slope related variables
 	private var _snapping:Int = 2;
-	private var _slopePoint:FlxPoint;
-	private var _objPoint:FlxPoint;
+	private var _slopePoint:FlxPoint = FlxPoint.get();
+	private var _objPoint:FlxPoint = FlxPoint.get();
 	
-	private var _slopeNorthwest:Array<Int>;
-	private var _slopeNortheast:Array<Int>;
-	private var _slopeSouthwest:Array<Int>;
-	private var _slopeSoutheast:Array<Int>;
+	private var _slopeNorthwest:Array<Int> = [];
+	private var _slopeNortheast:Array<Int> = [];
+	private var _slopeSouthwest:Array<Int> = [];
+	private var _slopeSoutheast:Array<Int> = [];
 	
-	private var _slopeThickGentle:Array<Int>;
-	private var _slopeThinGentle:Array<Int>;
-	private var _slopeThickSteep:Array<Int>;
-	private var _slopeThinSteep:Array<Int>;
+	private var _slopeThickGentle:Array<Int> = [];
+	private var _slopeThinGentle:Array<Int> = [];
+	private var _slopeThickSteep:Array<Int> = [];
+	private var _slopeThinSteep:Array<Int> = [];
 	
 	// Animated and flipped tiles related variables
 	private var _specialTiles:Array<FlxTileSpecial>;
-	
-	public function new()
-	{
-		super();
-		
-		_slopePoint = FlxPoint.get();
-		_objPoint = FlxPoint.get();
-		
-		_slopeNorthwest = new Array<Int>();
-		_slopeNortheast = new Array<Int>();
-		_slopeSouthwest = new Array<Int>();
-		_slopeSoutheast = new Array<Int>();
-		
-		_slopeThickGentle = new Array<Int>();
-		_slopeThinGentle = new Array<Int>();
-		_slopeThickSteep = new Array<Int>();
-		_slopeThinSteep = new Array<Int>();
-		
-		// Flipped/rotated tiles variables
-		_specialTiles = null;
-	}
 	
 	override public function destroy():Void 
 	{
@@ -93,6 +72,7 @@ class FlxTilemapExt extends FlxTilemap
 	override public function update(elapsed:Float):Void 
 	{
 		super.update(elapsed);
+		
 		if (_specialTiles != null && _specialTiles.length > 0) 
 		{
 			for (tile in _specialTiles) 
