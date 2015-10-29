@@ -28,14 +28,14 @@ class FlxSaveDialog
 
 	/**
 	 * Prompts the user with an "open file" dialog window and returns the designated filename as a string
-	 * @param	title	Title to display on the dialog window
-	 * @param	extensions
-	 * @param	descriptions
-	 * @param	callback	(only required for flash), on all other targets if this is supplied it will fire immediately
+	 * @param	Title	Title to display on the dialog window
+	 * @param	Extensions
+	 * @param	Descriptions
+	 * @param	Callback	(only required for flash), on all other targets if this is supplied it will fire immediately
 	 * @return	the filename the user wishes to open (on flash target this always returns "", use the callback in this case)
 	 */
 	
-	public static function openFile(title:String, extensions:Array<String>, descriptions:Array<String>, callback:String->Void=null):String
+	public static function openFile(Title:String, Extensions:Array<String>, Descriptions:Array<String>, Callback:String->Void=null):String
 	{
 		var path = "";
 		
@@ -48,15 +48,15 @@ class FlxSaveDialog
 					callback(file.name);
 				}
 			}, false, 0, true);
-			file.browse(makeFileFilters(extensions, descriptions));
+			file.browse(makeFileFilters(Extensions, Descriptions));
 			
 		#elseif FLX_LINC_DIALOGS
 			
-			path = dialogs.Dialogs.open(title, makeFileFilters(extensions, descriptions), true);
+			path = dialogs.Dialogs.open(Title, makeFileFilters(Extensions, Descriptions), true);
 			
 		#elseif FLX_SYSTOOLS_DIALOGS
 			
-			var paths = systools.Dialogs.openFile(title, "", { count:1, descriptions:descriptions, extensions:extensions } );
+			var paths = systools.Dialogs.openFile(Title, "", { count:1, descriptions:Descriptions, extensions:Extensions } );
 			if (paths != null && paths.length > 0)
 			{
 				path = paths[0];
@@ -93,7 +93,7 @@ class FlxSaveDialog
 	 * @return	the filename the user wishes to save to
 	 */
 	
-	public static function savePath(Filename:String = "", title:String = "", Description:String = "", Extension:String = ""):String
+	public static function savePath(Filename:String = "", Title:String = "", Description:String = "", Extension:String = ""):String
 	{
 		var path = "";
 		
@@ -103,12 +103,12 @@ class FlxSaveDialog
 			
 		#elseif FLX_LINC_DIALOGS
 			
-			path = dialogs.Dialogs.save(title, { ext:Extension, desc:Description }, true);
+			path = dialogs.Dialogs.save(Title, { ext:Extension, desc:Description }, true);
 			
 		#elseif FLX_SYSTOOLS_DIALOGS
 			
 			var saveFile:Dynamic = null;
-			path = systools.Dialogs.saveFile(title, "", "", { count:1, descriptions:[Description], extensions:[Extension] } );
+			path = systools.Dialogs.saveFile(Title, "", "", { count:1, descriptions:[Description], extensions:[Extension] } );
 			
 		#elseif neko
 			
@@ -129,7 +129,7 @@ class FlxSaveDialog
 	
 	/**
 	 * Prompts the user with a "save file" dialog window and saves the data to disk
-	 * @param	Filename
+	 * @param	Filename	Default filename
 	 * @param	Title		Title to display on the dialog window
 	 * @param	Data		The data you want to save
 	 * @param	Description	File type description
@@ -154,8 +154,8 @@ class FlxSaveDialog
 	
 	/**
 	 * Prompts the user with a "save file" dialog window and saves the string to disk
-	 * @param	Filename
-	 * @param	Data
+	 * @param	Filename	Default filename
+	 * @param	Data		The data you want to save
 	 * @param	Title		Title to display on the dialog window
 	 * @param	Description	File type description
 	 * @param	Extension	File type extension
@@ -183,8 +183,8 @@ class FlxSaveDialog
 	
 	/**
 	 * Prompts the user with a "save file" dialog window and saves the bytes to disk
-	 * @param	Filename
-	 * @param	Bytes		
+	 * @param	Filename	Default filename
+	 * @param	Bytes		The Data you want to save
 	 * @param	Title		Title to display on the dialog window
 	 * @param	Description	File type description
 	 * @param	Extension	File type extension
