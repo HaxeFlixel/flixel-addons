@@ -1,4 +1,5 @@
 package flixel.addons.plugin.screengrab;
+import flixel.addons.ui.FlxSaveDialog;
 
 #if (sys && systools)
 import systools.Dialogs;
@@ -155,44 +156,21 @@ class FlxScreenGrab extends FlxBasic
 		{
 			Filename = Filename + ".png";
 		}
-		
-	#if !sys
-		var png:ByteArray = PNGEncoder.encode(screenshot.bitmapData);
-		var file:FileReference = new FileReference();
-		file.save(png, Filename);
+	
+		var png:ByteArray = null;
+	#if flash
+		png = PNGEncoder.encode(screenshot.bitmapData);
 	#elseif systools
 		#if lime_legacy
-			var png:ByteArray = screenshot.bitmapData.encode('png');
+			png = screenshot.bitmapData.encode('png');
 		#else
-			var png:ByteArray = screenshot.bitmapData.encode(screenshot.bitmapData.rect, 'png');
+			png = screenshot.bitmapData.encode(screenshot.bitmapData.rect, 'png');
 		#end
-		var path:String = "";
-		var documentsDirectory = "";
-		var saveFile:Dynamic = null;
-		try
-		{
-			#if lime_legacy
-				documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
-			#else
-				documentsDirectory = lime.system.System.documentsDirectory;
-			#end
-			path = Dialogs.saveFile("", "", "", { count:1, descriptions:["png files"], extensions:["*.png"] } );
-		}
-		catch (msg:String)
-		{
-			path = Filename;			//if there was an error write out to default directory (game install directory)
-		}
-		
-		if (path != "" && path != null)	//if path is empty, the user cancelled the save operation and we can safely do nothing
-		{
-			var f = sys.io.File.write(path, true);
-			f.writeString(png.readUTFBytes(png.length));
-			f.close();
-		}
-	#else
-		FlxG.log.error("You need to include the 'systools' haxelib to use the SaveToFile option.");
 	#end
+		
+		FlxSaveDialog.saveFile(Filename, png, "png files", "*.png");
 	}
+	
 	
 	override public function update(elapsed:Float):Void
 	{
