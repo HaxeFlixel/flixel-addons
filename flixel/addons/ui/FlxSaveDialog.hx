@@ -223,7 +223,7 @@ class FlxSaveDialog
 		
 		if (path != "" && path != null) //if path is empty, the user cancelled the save operation and we can safely do nothing
 		{
-			var f = sys.file.io.File.write(path, true);
+			var f = sys.io.File.write(path, true);
 			f.writeBytes(Bytes, 0, Bytes.length);
 			f.close();
 		}
@@ -260,7 +260,7 @@ class FlxSaveDialog
 			var ffs = [];
 			var el = extensions == null ? 0 : extensions.length;
 			var dl = descriptions == null ? 0 : descriptions.length;
-			var max = Math.max(el, dl);
+			var max = Std.int(Math.max(el, dl));
 			for (i in 0...max)
 			{
 				var ff = { ext:"", desc:"" };
