@@ -36,10 +36,6 @@ class FlxEffectTrail implements IFlxEffect
 	 */
 	private var _recentPositions:Array<FlxPoint> = [];
 	/**
-	 * Contains the last position passed in setPos()
-	 */
-	private var _lastPosition:FlxPoint;
-	/**
 	 * Current number of frames passed.
 	 */
 	private var _currentFrames:Int = 0;
@@ -69,7 +65,6 @@ class FlxEffectTrail implements IFlxEffect
 		offsetDraw = null;
 		
 		_recentPositions = FlxDestroyUtil.putArray(_recentPositions);
-		_lastPosition = FlxDestroyUtil.put(_lastPosition);
 		
 		_pixels = FlxDestroyUtil.dispose(_pixels);
 	}
@@ -90,10 +85,10 @@ class FlxEffectTrail implements IFlxEffect
 			
 			for (i in 0..._recentPositions.length) 
 			{
-				minX = Math.min(_recentPositions[i].x - _lastPosition.x, Math.min(minX, 0));
-				minY = Math.min(_recentPositions[i].y - _lastPosition.y, Math.min(minY, 0));
-				maxX = Math.max(_recentPositions[i].x - _lastPosition.x, Math.max(maxX, 0));
-				maxY = Math.max(_recentPositions[i].y - _lastPosition.y, Math.max(maxY, 0));
+				minX = Math.min(_recentPositions[i].x - _recentPositions[_recentPositions.length - 1].x, Math.min(minX, 0));
+				minY = Math.min(_recentPositions[i].y - _recentPositions[_recentPositions.length - 1].y, Math.min(minY, 0));
+				maxX = Math.max(_recentPositions[i].x - _recentPositions[_recentPositions.length - 1].x, Math.max(maxX, 0));
+				maxY = Math.max(_recentPositions[i].y - _recentPositions[_recentPositions.length - 1].y, Math.max(maxY, 0));
 			}
 			
 			offsetDraw.x = minX;
@@ -130,8 +125,8 @@ class FlxEffectTrail implements IFlxEffect
 			for (i in 0..._recentPositions.length) 
 			{
 				cTransform.alphaMultiplier = alphaDiff * i;
-				matrix.tx = _recentPositions[i].x - _lastPosition.x - offsetDraw.x;
-				matrix.ty = _recentPositions[i].y - _lastPosition.y - offsetDraw.y;
+				matrix.tx = _recentPositions[i].x - _recentPositions[_recentPositions.length - 1].x - offsetDraw.x;
+				matrix.ty = _recentPositions[i].y - _recentPositions[_recentPositions.length - 1].y - offsetDraw.y;
 				
 				if (matrix.tx != 0 || matrix.ty != 0)
 				{
@@ -152,32 +147,27 @@ class FlxEffectTrail implements IFlxEffect
 	}
 	
 	/**
-	 * This updates the last position of the target to draw next trail image. Must be called every frame.
+	 * This saves the last position of the target to draw trail images. Must be called every frame.
 	 * 
 	 * @param	x	The last X position of the trail target.
 	 * @param	y	The last Y position of the trail target.
 	 */
-	public function setPos(x:Float, y:Float) 
+	public function setPos(x:Float, y:Float)
 	{
 		if (_currentFrames >= frames)
 		{
-			if (_lastPosition != null)
+			var p:FlxPoint = null;
+			if (_recentPositions.length >= length)
 			{
-				var p:FlxPoint = null;
-				if (_recentPositions.length >= length)
-				{
-					p = _recentPositions.shift();
-				}
-				else
-				{
-					p = FlxPoint.get();
-				}
-				
-				p.set(x, y);
-				_recentPositions.push(p);
+				p = _recentPositions.shift();
+			}
+			else
+			{
+				p = FlxPoint.get();
 			}
 			
-			_lastPosition = FlxPoint.get(x, y);
+			p.set(x, y);
+			_recentPositions.push(p);
 			
 			_currentFrames = 0;
 		}
