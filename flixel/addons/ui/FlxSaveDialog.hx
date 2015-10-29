@@ -11,7 +11,7 @@ import flash.net.FileReference;
 import sys.io.File;
 #end
 
-#if FLX_SYSTOOLS
+#if FLX_SYSTOOLS_DIALOGS
 import systools.Dialogs;
 #end
 
@@ -54,7 +54,7 @@ class FlxSaveDialog
 			
 			path = dialogs.Dialogs.open(title, makeFileFilters(extensions, descriptions), true);
 			
-		#elseif FLX_SYSTOOLS
+		#elseif FLX_SYSTOOLS_DIALOGS
 			
 			var paths = systools.Dialogs.openFile(title, "", { count:1, descriptions:descriptions, extensions:extensions } );
 			if (paths != null && paths.length > 0)
@@ -105,7 +105,7 @@ class FlxSaveDialog
 			
 			path = dialogs.Dialogs.save(title, { ext:Extension, desc:Description }, true);
 			
-		#elseif FLX_SYSTOOLS
+		#elseif FLX_SYSTOOLS_DIALOGS
 			
 			var saveFile:Dynamic = null;
 			path = systools.Dialogs.saveFile(title, "", "", { count:1, descriptions:[Description], extensions:[Extension] } );
@@ -202,7 +202,7 @@ class FlxSaveDialog
 			
 			path = dialogs.Dialogs.save(Title, { ext:Extension, desc:Description }, true);
 			
-		#elseif FLX_SYSTOOLS
+		#elseif FLX_SYSTOOLS_DIALOGS
 			
 			var saveFile:Dynamic = null;
 			path = systools.Dialogs.saveFile(Title, "", "", { count:1, descriptions:[Description], extensions:[Extension]});
