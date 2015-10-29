@@ -221,12 +221,14 @@ class FlxSaveDialog
 			
 		#end
 		
-		if (path != "" && path != null) //if path is empty, the user cancelled the save operation and we can safely do nothing
-		{
-			var f = sys.io.File.write(path, true);
-			f.writeBytes(Bytes, 0, Bytes.length);
-			f.close();
-		}
+		#if !flash
+			if (path != "" && path != null) //if path is empty, the user cancelled the save operation and we can safely do nothing
+			{
+				var f = sys.io.File.write(path, true);
+				f.writeBytes(Bytes, 0, Bytes.length);
+				f.close();
+			}
+		#end
 	}
 	
 	#if flash
