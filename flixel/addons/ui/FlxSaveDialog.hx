@@ -11,11 +11,11 @@ import flash.net.FileReference;
 import sys.io.File;
 #end
 
-#if (sys && systools)
+#if FLX_SYSTOOLS
 import systools.Dialogs;
 #end
 
-#if (sys && linc_dialogs)
+#if FLX_LINC_DIALOGS
 import dialogs.Dialogs;
 #end
 
@@ -38,46 +38,48 @@ class FlxSaveDialog
 	public static function openFile(title:String, extensions:Array<String>, descriptions:Array<String>, callback:String->Void=null):String
 	{
 		var path = "";
-	#if flash
-		var file:FileReference = new FileReference();
-		file.addEventListener(Event.SELECT, function(e:Event) { 
-			if (callback != null)
-			{
-				callback(file.name);
-			}
-		}, false, 0, true);
-		file.browse(makeFileFilters(extensions, descriptions));
-	#elseif sys
 		
-		#if linc_dialogs && !neko
+		#if flash
+			
+			var file:FileReference = new FileReference();
+			file.addEventListener(Event.SELECT, function(e:Event) { 
+				if (callback != null)
+				{
+					callback(file.name);
+				}
+			}, false, 0, true);
+			file.browse(makeFileFilters(extensions, descriptions));
+			
+		#elseif FLX_LINC_DIALOGS
 			
 			path = dialogs.Dialogs.open(title, makeFileFilters(extensions, descriptions), true);
 			
+		#elseif FLX_SYSTOOLS
+			
+			var paths = systools.Dialogs.openFile(title, "", { count:1, descriptions:descriptions, extensions:extensions } );
+			if (paths != null && paths.length > 0)
+			{
+				path = paths[0];
+			}
+			
+		#elseif neko
+			
+			FlxG.log.error("On neko, you need to include the 'systools' haxelib to use the openFile option.");
+			
+		#elseif sys
+			
+			FlxG.log.error("You need to include either the 'linc_dialogs' or 'systools' haxelib to use the openFile option.");
+			
 		#else
-			#if systools
-				
-				var paths = systools.Dialogs.openFile(title, "", { count:1, descriptions:descriptions, extensions:extensions } );
-				if (paths != null && paths.length > 0)
-				{
-					path = paths[0];
-				}
-				
-			#else
-				#if neko
-					FlxG.log.error("On neko, you need to include the 'systools' haxelib to use the openFile option.");
-				#else
-					FlxG.log.error("You need to include either the 'linc_dialogs' or 'systools' haxelib to use the openFile option.");
-				#end
-			#end
+			
+			FlxG.log.error("The current platform target does not support the openFile option.");
+			
 		#end
 		
 		if (callback != null)
 		{
 			callback(path);
 		}
-	#else
-		FlxG.log.error("The current platform target does not support the openFile option.");
-	#end
 		
 		return path;
 	}
@@ -96,30 +98,30 @@ class FlxSaveDialog
 		var path = "";
 		
 		#if flash
-		FlxG.log.error("Flash does not support savePath(), use save() instead");
-		#elseif sys
-		
-			#if linc_dialogs && !neko
+			
+			FlxG.log.error("Flash does not support savePath(), use save() instead");
+			
+		#elseif FLX_LINC_DIALOGS
 			
 			path = dialogs.Dialogs.save(title, { ext:Extension, desc:Description }, true);
 			
-			#else
-				#if systools
+		#elseif FLX_SYSTOOLS
 			
-				var saveFile:Dynamic = null;
-				path = systools.Dialogs.saveFile(title, "", "", { count:1, descriptions:[Description], extensions:[Extension]});
-				
-				#else
-					#if neko
-					FlxG.log.error("On neko, you need to include the 'systools' haxelib to use the savePath option.");
-					#else
-					FlxG.log.error("You need to include either the 'linc_dialogs' or 'systools' haxelib to use the savePath option.");
-					#end
-				#end
-			#end
+			var saveFile:Dynamic = null;
+			path = systools.Dialogs.saveFile(title, "", "", { count:1, descriptions:[Description], extensions:[Extension] } );
+			
+		#elseif neko
+			
+			FlxG.log.error("On neko, you need to include the 'systools' haxelib to use the savePath option.");
+			
+		#elseif sys
+			
+			FlxG.log.error("You need to include either the 'linc_dialogs' or 'systools' haxelib to use the savePath option.");
 			
 		#else
-		FlxG.log.error("The current platform target does not support the savePath option.");
+			
+			FlxG.log.error("The current platform target does not support the savePath option.");
+			
 		#end
 		
 		return path;
@@ -160,16 +162,23 @@ class FlxSaveDialog
 	 */
 	public static function saveString(Filename:String = "", Data:String, Title:String = "", Description:String="", Extension:String=""):Void
 	{
-	#if flash
-		var file:FileReference = new FileReference();
-		file.save(Data, Filename);
-	#elseif sys
-		var bytes:ByteArray = new ByteArray(Data.length);
-		bytes.writeUTFBytes(Data);
-		saveBytes(Filename, bytes, Description, Extension);
-	#else
-		FlxG.log.error("The current platform target does not support the SaveString option.");
-	#end
+		
+		#if flash
+			
+			var file:FileReference = new FileReference();
+			file.save(Data, Filename);
+			
+		#elseif sys
+			
+			var bytes:ByteArray = new ByteArray(Data.length);
+			bytes.writeUTFBytes(Data);
+			saveBytes(Filename, bytes, Description, Extension);
+			
+		#else
+			
+			FlxG.log.error("The current platform target does not support the saveString option.");
+			
+		#end
 	}
 	
 	/**
@@ -182,33 +191,34 @@ class FlxSaveDialog
 	 */
 	public static function saveBytes(Filename:String = "", Bytes:ByteArray, Title:String = "", Description:String="", Extension:String=""):Void
 	{
-		var title:String = "";
-		var msg:String = "";
-		var initialDir:String = "";
-	#if flash
-		var file:FileReference = new FileReference();
-		file.save(Bytes, Filename);
-	#elseif sys
-		
 		var path = "";
 		
-		#if linc_dialogs && !neko
+		#if flash
+		
+			var file:FileReference = new FileReference();
+			file.save(Bytes, Filename);
+			
+		#elseif FLX_LINC_DIALOGS
 			
 			path = dialogs.Dialogs.save(Title, { ext:Extension, desc:Description }, true);
 			
+		#elseif FLX_SYSTOOLS
+			
+			var saveFile:Dynamic = null;
+			path = systools.Dialogs.saveFile(Title, "", "", { count:1, descriptions:[Description], extensions:[Extension]});
+			
+		#elseif neko
+			
+			FlxG.log.error("On neko, you need to include the 'systools' haxelib to use the SaveBytes option.");
+			
+		#elseif sys
+			
+			FlxG.log.error("You need to include either the 'linc_dialogs' or 'systools' haxelib to use the SaveBytes option.");
+			
 		#else
-			#if systools
-				var saveFile:Dynamic = null;
-				
-				path = systools.Dialogs.saveFile(Title, "", "", { count:1, descriptions:[Description], extensions:[Extension]});
-				
-			#else
-				#if neko
-					FlxG.log.error("On neko, you need to include the 'systools' haxelib to use the SaveBytes option.");
-				#else
-					FlxG.log.error("You need to include either the 'linc_dialogs' or 'systools' haxelib to use the SaveBytes option.");
-				#end
-			#end
+			
+			FlxG.log.error("The current platform target does not support the SaveBytes option.");
+			
 		#end
 		
 		if (path != "" && path != null) //if path is empty, the user cancelled the save operation and we can safely do nothing
@@ -217,13 +227,11 @@ class FlxSaveDialog
 			f.writeBytes(Bytes, 0, Bytes.length);
 			f.close();
 		}
-	#else
-		FlxG.log.error("The current platform target does not support the SaveBytes option.");
-	#end
 	}
 	
 	#if flash
-	private static function makeFileFilters(extensions:Array<String>, descriptions:Array<String>):Array<flash.net.FileFilter>
+	
+		private static function makeFileFilters(extensions:Array<String>, descriptions:Array<String>):Array<flash.net.FileFilter>
 		{
 			var ffs = [];
 			var el = extensions == null ? 0 : extensions.length;
@@ -244,9 +252,8 @@ class FlxSaveDialog
 			}
 			return ffs;
 		}
-	#end
-	
-	#if linc_dialogs
+		
+	#elseif FLX_LINC_DIALOGS
 		
 		private function makeFileFilters(extensions:Array<String>, descriptions:Array<String>):Array<dialogs.Dialogs.FileFilter>
 		{
@@ -269,20 +276,6 @@ class FlxSaveDialog
 			}
 			return ffs;
 		}
-	
-		private function convertFileFilter(f:openfl.net.FileFilter):dialogs.Dialogs.FileFilter
-		{
-			return { ext:f.extension, desc:f.description };
-		}
 		
-		private function convertFileFilters(arr:Array<openfl.net.FileFilter>):Array<dialogs.Dialogs.FileFilter>
-		{
-			var linc = [];
-			for (f in arr)
-			{
-				linc.push(convertFileFilter(f));
-			}
-			return linc;
-		}
 	#end
 }
