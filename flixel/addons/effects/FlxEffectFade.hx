@@ -28,7 +28,7 @@ class FlxEffectFade implements IFlxEffect
 	 */
 	private var _alpha:Float = 0;
 	/**
-	 * How long it takes for the fade to finish.
+	 * How long in seconds it takes for the fade to finish.
 	 */
 	private var _duration:Float = 0;
 	/**
@@ -44,7 +44,7 @@ class FlxEffectFade implements IFlxEffect
 	 * The bitmapData is gradually filled with this color.
 	 * 
 	 * @param	Color		The color you want to use.
-	 * @param	Duration	How long it takes for the fade to finish.
+	 * @param	Duration	How long in seconds it takes for the fade to finish.
 	 * @param   FadeMode	IN fades from a color, OUT fades to it.
 	 * @param	OnComplete	Optional completion callback function.
 	 */

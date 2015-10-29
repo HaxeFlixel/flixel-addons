@@ -5,8 +5,10 @@ import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
 import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
+import openfl.display.Graphics;
 import openfl.geom.Point;
 
 class FlxEffectSprite extends FlxSprite
@@ -177,4 +179,40 @@ class FlxEffectSprite extends FlxSprite
 		
 		super.update(elapsed);
 	}
+	
+	#if !FLX_NO_DEBUG	
+	override public function drawDebugOnCamera(camera:FlxCamera):Void 
+	{
+		if (!camera.visible || !camera.exists || !isOnScreen(camera))
+		{
+			return;
+		}
+		
+		var rect = getBoundingBox(camera);
+		
+		// Find the color to use
+		var color:Null<Int> = debugBoundingBoxColor;
+		if (color == null)
+		{
+			if (allowCollisions != FlxObject.NONE)
+			{
+				color = immovable ? FlxColor.GREEN : FlxColor.RED;
+			}
+			else
+			{
+				color = FlxColor.BLUE;
+			}
+		}
+		
+		//fill static graphics object with square shape
+		var gfx:Graphics = beginDrawDebug(camera);
+		gfx.lineStyle(1, color, 0.5);
+		gfx.drawRect(rect.x, rect.y, rect.width, rect.height);
+		
+		//draw rect of effectPixels
+		gfx.lineStyle(1, FlxColor.CYAN, 0.5);
+		gfx.drawRect(rect.x + _drawOffset.x, rect.y + _drawOffset.y, effectPixels.rect.width, effectPixels.rect.height);
+		endDrawDebug(camera);
+	}
+	#end
 }
