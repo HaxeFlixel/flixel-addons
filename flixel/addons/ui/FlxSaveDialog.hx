@@ -255,7 +255,7 @@ class FlxSaveDialog
 		
 	#elseif FLX_LINC_DIALOGS
 		
-		private function makeFileFilters(extensions:Array<String>, descriptions:Array<String>):Array<dialogs.Dialogs.FileFilter>
+		private static function makeFileFilters(extensions:Array<String>, descriptions:Array<String>):Array<dialogs.Dialogs.FileFilter>
 		{
 			var ffs = [];
 			var el = extensions == null ? 0 : extensions.length;
