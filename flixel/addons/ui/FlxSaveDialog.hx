@@ -43,9 +43,9 @@ class FlxSaveDialog
 			
 			var file:FileReference = new FileReference();
 			file.addEventListener(Event.SELECT, function(e:Event) { 
-				if (callback != null)
+				if (Callback != null)
 				{
-					callback(file.name);
+					Callback(file.name);
 				}
 			}, false, 0, true);
 			file.browse(makeFileFilters(Extensions, Descriptions));
@@ -76,9 +76,9 @@ class FlxSaveDialog
 			
 		#end
 		
-		if (callback != null)
+		if (Callback != null)
 		{
-			callback(path);
+			Callback(path);
 		}
 		
 		return path;
@@ -93,7 +93,7 @@ class FlxSaveDialog
 	 * @return	the filename the user wishes to save to
 	 */
 	
-	public static function savePath(Filename:String = "", Title:String = "", Description:String = "", Extension:String = ""):String
+	public static function savePath(Filename:String, Title:String = "", Description:String = "", Extension:String = ""):String
 	{
 		var path = "";
 		
@@ -160,7 +160,7 @@ class FlxSaveDialog
 	 * @param	Description	File type description
 	 * @param	Extension	File type extension
 	 */
-	public static function saveString(Filename:String = "", Data:String, Title:String = "", Description:String="", Extension:String=""):Void
+	public static function saveString(Filename:String, Data:String, Title:String = "", Description:String="", Extension:String=""):Void
 	{
 		
 		#if flash
@@ -189,7 +189,7 @@ class FlxSaveDialog
 	 * @param	Description	File type description
 	 * @param	Extension	File type extension
 	 */
-	public static function saveBytes(Filename:String = "", Bytes:ByteArray, Title:String = "", Description:String="", Extension:String=""):Void
+	public static function saveBytes(Filename:String, Bytes:ByteArray, Title:String = "", Description:String="", Extension:String=""):Void
 	{
 		var path = "";
 		
@@ -223,7 +223,7 @@ class FlxSaveDialog
 		
 		if (path != "" && path != null) //if path is empty, the user cancelled the save operation and we can safely do nothing
 		{
-			var f = File.write(path, true);
+			var f = sys.file.io.File.write(path, true);
 			f.writeBytes(Bytes, 0, Bytes.length);
 			f.close();
 		}
