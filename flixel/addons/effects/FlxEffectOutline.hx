@@ -1,4 +1,5 @@
 package flixel.addons.effects;
+
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
@@ -14,7 +15,7 @@ import openfl.geom.Rectangle;
 class FlxEffectOutline implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offsetDraw:Point;
+	public var offset:Point;
 	
 	/**
 	 * Set this flag to true to force the effect to update during the apply() call.
@@ -51,14 +52,10 @@ class FlxEffectOutline implements IFlxEffect
 		color = Color;
 		thickness = Thickness;
 		threshold = Threshold;
-		
-		offsetDraw = new Point();
 	}
 	
 	public function destroy():Void 
 	{
-		offsetDraw = null;
-		
 		_pixels = FlxDestroyUtil.dispose(_pixels);
 	}
 	

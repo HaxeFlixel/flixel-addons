@@ -1,4 +1,5 @@
 package flixel.addons.effects;
+
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
@@ -14,7 +15,7 @@ import openfl.geom.Point;
 class FlxEffectRainbow implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offsetDraw:Point;
+	public var offset:Point;
 	
 	/**
 	 * How fast the hue should change each tick.
@@ -61,13 +62,11 @@ class FlxEffectRainbow implements IFlxEffect
 		speed = Speed;
 		_time = _hue = Std.int(FlxMath.bound(StartHue, 0, 360));
 		
-		offsetDraw = new Point();
 		_flashPointZero = new Point();
 	}
 	
 	public function destroy():Void 
 	{
-		offsetDraw = null;
 		_flashPointZero = null;
 		
 		_pixels = FlxDestroyUtil.dispose(_pixels);

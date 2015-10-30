@@ -1,4 +1,5 @@
 package flixel.addons.effects;
+
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
@@ -15,7 +16,7 @@ import openfl.geom.Rectangle;
 class FlxEffectWave implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offsetDraw:Point;
+	public var offset:Point;
 	
 	private static inline var BASE_STRENGTH:Float = 0.06;
 	
@@ -81,14 +82,14 @@ class FlxEffectWave implements IFlxEffect
 		if (Center < 0)
 			center = 0.5;
 		
-		offsetDraw = new Point();
+		offset = new Point();
 		_flashPoint = new Point();
 		_flashRect = new Rectangle();
 	}
 	
 	public function destroy():Void 
 	{
-		offsetDraw = null;
+		offset = null;
 		_flashPoint = null;
 		_flashRect = null;
 		
@@ -104,7 +105,7 @@ class FlxEffectWave implements IFlxEffect
 	{
 		var horizontalStrength:Int = (direction == HORIZONTAL) ? strength : 0;
 		var verticalStrength:Int = (direction == VERTICAL) ? strength : 0;
-		offsetDraw.setTo( -horizontalStrength, -verticalStrength);
+		offset.setTo( -horizontalStrength, -verticalStrength);
 		
 		if (_pixels == null || _pixels.width < bitmapData.width + horizontalStrength * 2 || _pixels.height < bitmapData.height + verticalStrength * 2)
 		{

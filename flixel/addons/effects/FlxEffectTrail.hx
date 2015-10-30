@@ -1,4 +1,5 @@
 package flixel.addons.effects;
+
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
@@ -17,7 +18,7 @@ using flixel.util.FlxArrayUtil;
 class FlxEffectTrail implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offsetDraw:Point;
+	public var offset:Point;
 	
 	/**
 	 * The amount of trail images to create. 
@@ -58,12 +59,12 @@ class FlxEffectTrail implements IFlxEffect
 		frames = Frames;
 		alpha = Alpha;
 		
-		offsetDraw = new Point();
+		offset = new Point();
 	}
 	
 	public function destroy():Void 
 	{
-		offsetDraw = null;
+		offset = null;
 		
 		_recentPositions = FlxDestroyUtil.putArray(_recentPositions);
 		
@@ -92,8 +93,8 @@ class FlxEffectTrail implements IFlxEffect
 				maxY = Math.max(_recentPositions[i].y -_recentPositions.last().y, Math.max(maxY, 0));
 			}
 			
-			offsetDraw.x = minX;
-			offsetDraw.y = minY;
+			offset.x = minX;
+			offset.y = minY;
 			
 			if (minX == 0 && minY == 0 && maxX == 0 && maxY == 0)
 			{
@@ -126,8 +127,8 @@ class FlxEffectTrail implements IFlxEffect
 			for (i in 0..._recentPositions.length) 
 			{
 				cTransform.alphaMultiplier = alphaDiff * i;
-				matrix.tx = _recentPositions[i].x -_recentPositions.last().x - offsetDraw.x;
-				matrix.ty = _recentPositions[i].y -_recentPositions.last().y - offsetDraw.y;
+				matrix.tx = _recentPositions[i].x -_recentPositions.last().x - offset.x;
+				matrix.ty = _recentPositions[i].y -_recentPositions.last().y - offset.y;
 				
 				if (matrix.tx != 0 || matrix.ty != 0)
 				{
@@ -135,8 +136,8 @@ class FlxEffectTrail implements IFlxEffect
 				}
 			}
 			
-			matrix.tx = -offsetDraw.x;
-			matrix.ty = -offsetDraw.y;
+			matrix.tx = -offset.x;
+			matrix.ty = -offset.y;
 			
 			_pixels.draw(bitmapData, matrix);
 			_pixels.unlock();

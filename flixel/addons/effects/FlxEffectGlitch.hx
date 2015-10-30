@@ -1,4 +1,5 @@
 package flixel.addons.effects;
+
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
@@ -14,7 +15,7 @@ import openfl.geom.Rectangle;
 class FlxEffectGlitch implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offsetDraw:Point;
+	public var offset:Point;
 	
 	/**
 	 * How thick each glitch segment should be.
@@ -66,14 +67,14 @@ class FlxEffectGlitch implements IFlxEffect
 		delay = Delay;
 		direction = (Direction != null) ? Direction : HORIZONTAL;
 		
-		offsetDraw = new Point();
+		offset = new Point();
 		_flashPoint = new Point();
 		_flashRect = new Rectangle();
 	}
 	
 	public function destroy():Void 
 	{
-		offsetDraw = null;
+		offset = null;
 		_flashPoint = null;
 		_flashRect = null;
 		
@@ -100,7 +101,7 @@ class FlxEffectGlitch implements IFlxEffect
 			
 			var horizontalStrength = (direction == HORIZONTAL) ? strength : 0;
 			var verticalStrength = (direction == VERTICAL) ? strength : 0;
-			offsetDraw.setTo( -horizontalStrength, -verticalStrength);
+			offset.setTo( -horizontalStrength, -verticalStrength);
 			
 			if (_pixels == null || _pixels.width < bitmapData.width + horizontalStrength * 2 || _pixels.height < bitmapData.height + verticalStrength * 2)
 			{

@@ -19,15 +19,15 @@ class FlxEffectSprite extends FlxSprite
 	 * Effects applied to frames
 	 */
 	public var effects:Array<IFlxEffect>;
-	
-	/**
-	 * Use to offset the drawing position of the bitmap.
-	 */
-	private var _drawOffset:Point;
 	/**
 	 * The actual Flash BitmapData object representing the current display state of the modified framePixels.
 	 */
 	public var effectPixels(default, null):BitmapData;
+	
+	/**
+	 * Use to offset the drawing position of the bitmap.
+	 */
+	private var _effectOffset:Point;
 	
 	/**
 	 * Creates a FlxEffectSprite at a specified position with a specified one-frame graphic. 
@@ -41,7 +41,7 @@ class FlxEffectSprite extends FlxSprite
 	{
 		super(X, Y, SimpleGraphic);
 		
-		_drawOffset = new Point();
+		_effectOffset = new Point();
 		this.effects = [];
 	}
 	
@@ -87,7 +87,7 @@ class FlxEffectSprite extends FlxSprite
 					_point.floor();
 				}
 				
-				_flashPoint = new Point(_point.x + _drawOffset.x, _point.y + _drawOffset.y);
+				_flashPoint = new Point(_point.x + _effectOffset.x, _point.y + _effectOffset.y);
 				camera.copyPixels(_frame, effectPixels, effectPixels.rect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
 			}
 			else
@@ -116,7 +116,7 @@ class FlxEffectSprite extends FlxSprite
 				var frameEffect:FlxFrame = new FlxFrame(FlxGraphic.fromBitmapData(effectPixels, true, null, false));
 				frameEffect.frame = new FlxRect(0, 0, effectPixels.width, effectPixels.height);
 				
-				_matrix.translate(_point.x + _drawOffset.x, _point.y + _drawOffset.y);
+				_matrix.translate(_point.x + _effectOffset.x, _point.y + _effectOffset.y);
 				camera.drawPixels(frameEffect, framePixels, _matrix, cr, cg, cb, alpha, blend, antialiasing);
 			}
 			
@@ -145,7 +145,7 @@ class FlxEffectSprite extends FlxSprite
 		}
 		
 		effects = null;
-		_drawOffset = null;
+		_effectOffset = null;
 		effectPixels = FlxDestroyUtil.dispose(effectPixels);
 		
 		super.destroy();
@@ -162,7 +162,7 @@ class FlxEffectSprite extends FlxSprite
 			getFlxFrameBitmapData();
 			#end
 			effectPixels = framePixels.clone();
-			_drawOffset.setTo(0, 0);
+			_effectOffset.setTo(0, 0);
 			
 			effectPixels.lock();
 			for (effect in effects) 
@@ -171,7 +171,10 @@ class FlxEffectSprite extends FlxSprite
 				{
 					effect.update(elapsed);
 					effectPixels = effect.apply(effectPixels);
-					_drawOffset.setTo(_drawOffset.x + effect.offsetDraw.x, _drawOffset.y + effect.offsetDraw.y);
+					if (effect.offset != null)
+					{
+						_effectOffset.setTo(_effectOffset.x + effect.offset.x, _effectOffset.y + effect.offset.y);
+					}
 				}
 			}
 			effectPixels.unlock();
@@ -180,8 +183,8 @@ class FlxEffectSprite extends FlxSprite
 		super.update(elapsed);
 	}
 	
-	#if !FLX_NO_DEBUG	
-	override public function drawDebugOnCamera(camera:FlxCamera):Void 
+	#if !FLX_NO_DEBUG
+	override public function drawDebugOnCamera(camera:FlxCamera):Void
 	{
 		if (!camera.visible || !camera.exists || !isOnScreen(camera))
 		{
@@ -211,7 +214,7 @@ class FlxEffectSprite extends FlxSprite
 		
 		//draw rect of effectPixels
 		gfx.lineStyle(1, FlxColor.CYAN, 0.5);
-		gfx.drawRect(rect.x + _drawOffset.x, rect.y + _drawOffset.y, effectPixels.rect.width, effectPixels.rect.height);
+		gfx.drawRect(rect.x + _effectOffset.x, rect.y + _effectOffset.y, effectPixels.rect.width, effectPixels.rect.height);
 		endDrawDebug(camera);
 	}
 	#end

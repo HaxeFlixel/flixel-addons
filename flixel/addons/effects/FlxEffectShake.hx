@@ -1,4 +1,5 @@
 package flixel.addons.effects;
+
 import flixel.util.FlxAxes;
 import openfl.display.BitmapData;
 import openfl.geom.Point;
@@ -11,7 +12,7 @@ import openfl.geom.Point;
 class FlxEffectShake implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offsetDraw:Point;
+	public var offset:Point;
 	
 	/**
 	 * Value in pixels representing the maximum distance that the bitmapData can move while shaking.
@@ -47,12 +48,12 @@ class FlxEffectShake implements IFlxEffect
 	{
 		reset(Intensity, Duration, OnComplete, Axes);
 		
-		offsetDraw = new Point();
+		offset = new Point();
 	}
 	
 	public function destroy():Void 
 	{
-		offsetDraw = null;
+		offset = null;
 		onComplete = null;
 	}
 	
@@ -63,7 +64,7 @@ class FlxEffectShake implements IFlxEffect
 			_time -= elapsed;
 			if (_time <= 0)
 			{
-				offsetDraw.setTo(0, 0);
+				offset.setTo(0, 0);
 				if (onComplete != null)
 				{
 					onComplete();
@@ -73,11 +74,11 @@ class FlxEffectShake implements IFlxEffect
 			{
 				if (axes != FlxAxes.Y)
 				{
-					offsetDraw.x = FlxG.random.float( -intensity, intensity);
+					offset.x = FlxG.random.float( -intensity, intensity);
 				}
 				if (axes != FlxAxes.X)
 				{
-					offsetDraw.y = FlxG.random.float( -intensity, intensity);
+					offset.y = FlxG.random.float( -intensity, intensity);
 				}
 			}
 		}

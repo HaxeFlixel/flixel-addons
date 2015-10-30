@@ -1,4 +1,5 @@
 package flixel.addons.effects;
+
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
@@ -12,7 +13,7 @@ import openfl.geom.Point;
 class FlxEffectFade implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offsetDraw:Point;
+	public var offset:Point;
 	
 	/**
 	 * Color of the fade.
@@ -51,13 +52,10 @@ class FlxEffectFade implements IFlxEffect
 	public function new(Color:FlxColor = FlxColor.BLACK, Duration:Float = 1, ?FadeMode:FlxFadeMode, ?OnComplete:Void->Void) 
 	{
 		reset(Color, Duration, FadeMode, OnComplete);
-		
-		offsetDraw = new Point();
 	}
 	
 	public function destroy():Void 
 	{
-		offsetDraw = null;
 		onComplete = null;
 		
 		_pixels = FlxDestroyUtil.dispose(_pixels);
