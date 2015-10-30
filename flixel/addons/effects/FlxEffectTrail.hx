@@ -7,6 +7,7 @@ import openfl.display.BitmapData;
 import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
+using flixel.util.FlxArrayUtil;
 
 /**
  * This creates a trail copying the bitmapData many times.
@@ -85,10 +86,10 @@ class FlxEffectTrail implements IFlxEffect
 			
 			for (i in 0..._recentPositions.length) 
 			{
-				minX = Math.min(_recentPositions[i].x - _recentPositions[_recentPositions.length - 1].x, Math.min(minX, 0));
-				minY = Math.min(_recentPositions[i].y - _recentPositions[_recentPositions.length - 1].y, Math.min(minY, 0));
-				maxX = Math.max(_recentPositions[i].x - _recentPositions[_recentPositions.length - 1].x, Math.max(maxX, 0));
-				maxY = Math.max(_recentPositions[i].y - _recentPositions[_recentPositions.length - 1].y, Math.max(maxY, 0));
+				minX = Math.min(_recentPositions[i].x -_recentPositions.last().x, Math.min(minX, 0));
+				minY = Math.min(_recentPositions[i].y -_recentPositions.last().y, Math.min(minY, 0));
+				maxX = Math.max(_recentPositions[i].x -_recentPositions.last().x, Math.max(maxX, 0));
+				maxY = Math.max(_recentPositions[i].y -_recentPositions.last().y, Math.max(maxY, 0));
 			}
 			
 			offsetDraw.x = minX;
@@ -125,8 +126,8 @@ class FlxEffectTrail implements IFlxEffect
 			for (i in 0..._recentPositions.length) 
 			{
 				cTransform.alphaMultiplier = alphaDiff * i;
-				matrix.tx = _recentPositions[i].x - _recentPositions[_recentPositions.length - 1].x - offsetDraw.x;
-				matrix.ty = _recentPositions[i].y - _recentPositions[_recentPositions.length - 1].y - offsetDraw.y;
+				matrix.tx = _recentPositions[i].x -_recentPositions.last().x - offsetDraw.x;
+				matrix.ty = _recentPositions[i].y -_recentPositions.last().y - offsetDraw.y;
 				
 				if (matrix.tx != 0 || matrix.ty != 0)
 				{
