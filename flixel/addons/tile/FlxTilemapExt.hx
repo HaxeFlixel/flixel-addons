@@ -395,47 +395,86 @@ class FlxTilemapExt extends FlxTilemap
 			
 			while (column < selectionWidth)
 			{
-				overlapFound = false;
-				tile = _tileObjects[_data[rowStart + column]];
-				
-				if (tile.allowCollisions != 0)
+				var index:Int = rowStart + column;
+				if ((index < 0) || (index > _data.length - 1))
 				{
-					tile.x = X + column * _tileWidth;
-					tile.y = Y + row * _tileHeight;
-					tile.last.x = tile.x - deltaX;
-					tile.last.y = tile.y - deltaY;
-					
-					if (Callback != null)
+					column++;
+					continue;
+				}
+				
+				var dataIndex:Int = _data[index];
+				if (dataIndex < 0)
+				{
+					column++;
+					continue;
+				}
+				
+				tile = _tileObjects[dataIndex];
+				tile.width = _scaledTileWidth;
+				tile.height = _scaledTileHeight;
+				tile.x = X + column * tile.width;
+				tile.y = Y + row * tile.height;
+				tile.last.x = tile.x - deltaX;
+				tile.last.y = tile.y - deltaY;
+				
+				overlapFound = 	((Object.x + Object.width) > tile.x)  && (Object.x < (tile.x + tile.width)) && 
+								((Object.y + Object.height) > tile.y) && (Object.y < (tile.y + tile.height));
+				
+				if (overlapFound)
+				{
+					var tileFilter:FlxTileFilter = null;
+					var tmpCollisions:Int = FlxObject.ANY;
+					var classType:String = "";
+					if (tile.filters != null)
 					{
-						if (FlipCallbackParams)
+						classType = Type.getClassName(Type.getClass(Object));
+						if (tile.filters.exists(classType))
 						{
-							overlapFound = Callback(Object, tile);
-						}
-						else
-						{
-							overlapFound = Callback(tile, Object);
+							tileFilter = tile.filters.get(classType);
+							tmpCollisions = tile.allowCollisions;
+							tile.allowCollisions = tileFilter.collisions;
+							if (tileFilter.processCallback != null)
+							{
+								overlapFound = tileFilter.processCallback(tile, Object);
+							}
 						}
 					}
-					else
+
+					if (tile.allowCollisions != FlxObject.NONE && overlapFound)
 					{
-						overlapFound = (Object.x + Object.width > tile.x) && (Object.x < tile.x + tile.width) && (Object.y + Object.height > tile.y) && (Object.y < tile.y + tile.height);
+						if (Callback != null)
+						{
+							if (FlipCallbackParams)
+							{
+								overlapFound = Callback(Object, tile);
+							}
+							else
+							{
+								overlapFound = Callback(tile, Object);
+							}
+						}
 					}
 					
-					// New generalized slope collisions
-					if (overlapFound || (!overlapFound && checkArrays(tile.index)))
+					if (overlapFound)
 					{
-						if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.is(Object, tile.filter)))
+						if (tileFilter != null && tileFilter.overlapCallback != null)
 						{
 							tile.mapIndex = rowStart + column;
-							tile.callbackFunction(tile, Object);
+							tileFilter.overlapCallback(tile, Object);
 						}
-						results = true;
+						
+						if (tile.allowCollisions != FlxObject.NONE)
+						{
+							results = true;
+						}
+						
+						if (tileFilter != null)
+						{
+							tile.allowCollisions = tmpCollisions;
+							tileFilter = null;
+							classType = null;
+						}
 					}
-				}
-				else if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.is(Object, tile.filter)))
-				{
-					tile.mapIndex = rowStart + column;
-					tile.callbackFunction(tile, Object);
 				}
 				column++;
 			}
@@ -824,6 +863,7 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	private function setSlopeProperties():Void
 	{
+		/*
 		for (tile in _slopeNorthwest)
 		{
 			setTileProperties(tile, FlxObject.RIGHT | FlxObject.FLOOR, solveCollisionSlopeNorthwest);
@@ -840,6 +880,7 @@ class FlxTilemapExt extends FlxTilemap
 		{
 			setTileProperties(tile, FlxObject.LEFT | FlxObject.CEILING, solveCollisionSlopeSoutheast);
 		}
+		*/
 	}
 	
 	/**
