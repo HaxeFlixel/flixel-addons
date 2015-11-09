@@ -161,6 +161,8 @@ class FlxEffectSprite extends FlxSprite
 			#if !FLX_RENDER_BLIT
 			getFlxFrameBitmapData();
 			#end
+			
+			effectPixels = FlxDestroyUtil.dispose(effectPixels);
 			effectPixels = framePixels.clone();
 			_effectOffset.setTo(0, 0);
 			
