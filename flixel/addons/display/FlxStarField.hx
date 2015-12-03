@@ -9,8 +9,8 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxGradient;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRandom;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRandom;
 
 class FlxStarField2D extends FlxStarField
 {
@@ -30,12 +30,12 @@ class FlxStarField2D extends FlxStarField
 		super.destroy();
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		for (star in _stars)
 		{
-			star.x += (starVelocityOffset.x * star.speed) * FlxG.elapsed;
-			star.y += (starVelocityOffset.y * star.speed) * FlxG.elapsed;
+			star.x += (starVelocityOffset.x * star.speed) * elapsed;
+			star.y += (starVelocityOffset.y * star.speed) * elapsed;
 			
 			// wrap the star
 			if (star.x > width)
@@ -57,7 +57,7 @@ class FlxStarField2D extends FlxStarField
 			}
 		}
 		
-		super.update();
+		super.update(elapsed);
 	}
 }
 
@@ -79,27 +79,27 @@ class FlxStarField3D extends FlxStarField
 		super.destroy();
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		for (star in _stars)
 		{
 			star.d *= 1.1;
-			star.x = center.x + ((Math.cos(star.r) * star.d) * star.speed) * FlxG.elapsed;
-			star.y = center.y + ((Math.sin(star.r) * star.d) * star.speed) * FlxG.elapsed;
+			star.x = center.x + ((Math.cos(star.r) * star.d) * star.speed) * elapsed;
+			star.y = center.y + ((Math.sin(star.r) * star.d) * star.speed) * elapsed;
 			
 			if ((star.x < 0) || (star.x > width) || (star.y < 0) || (star.y > height))
 			{
 				star.d = 1;
-				star.r = FlxRandom.float() * Math.PI * 2;
+				star.r = FlxG.random.float() * Math.PI * 2;
 				star.x = 0;
 				star.y = 0;
-				star.speed = FlxRandom.floatRanged(_minSpeed, _maxSpeed);
+				star.speed = FlxG.random.float(_minSpeed, _maxSpeed);
 				
 				_stars[star.index] = star;
 			}
 		}
 		
-		super.update();
+		super.update(elapsed);
 	}
 }
 
@@ -124,10 +124,10 @@ private class FlxStarField extends FlxSprite
 		{
 			var star = new FlxStar();
 			star.index = i;
-			star.x = FlxRandom.intRanged(0, Width);
-			star.y = FlxRandom.intRanged(0, Height);
+			star.x = FlxG.random.int(0, Width);
+			star.y = FlxG.random.int(0, Height);
 			star.d = 1;
-			star.r = FlxRandom.float() * Math.PI * 2;
+			star.r = FlxG.random.float() * Math.PI * 2;
 			_stars.push(star);
 		}
 	}
@@ -156,6 +156,7 @@ private class FlxStarField extends FlxSprite
 		
 		pixels.unlock();
 		framePixels = pixels;
+		dirty = false;
 		super.draw();
 	}
 	
@@ -178,7 +179,7 @@ private class FlxStarField extends FlxSprite
 		
 		for (star in _stars)
 		{
-			star.speed = FlxRandom.floatRanged(Min, Max);
+			star.speed = FlxG.random.float(Min, Max);
 		}
 	}
 }

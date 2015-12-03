@@ -6,10 +6,13 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.system.layer.DrawStackItem;
-import flixel.util.FlxAngle;
+import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
+import flixel.graphics.frames.FlxFrame.FlxFrameType;
+import flixel.graphics.tile.FlxDrawTilesItem;
+import flixel.system.FlxAssets;
+import flixel.math.FlxAngle;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 /**
  * ...
@@ -36,7 +39,7 @@ class FlxSkewedSprite extends FlxSprite
 	 */
 	private var _skewMatrix:Matrix;
 	
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic)
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset)
 	{
 		super(X, Y, SimpleGraphic);
 		
@@ -61,20 +64,15 @@ class FlxSkewedSprite extends FlxSprite
 	
 	override public function draw():Void 
 	{
+		if (alpha == 0 || frame.type == FlxFrameType.EMPTY)
+		{
+			return;
+		}
+		
 		if (dirty)	//rarely 
 		{
 			calcFrame();
 		}
-		
-		#if FLX_RENDER_TILE
-		var drawItem:DrawStackItem;
-		var currDrawData:Array<Float>;
-		var currIndex:Int;
-		#end
-		
-		var radians:Float;
-		var cos:Float;
-		var sin:Float;
 		
 		for (camera in cameras)
 		{
@@ -83,144 +81,85 @@ class FlxSkewedSprite extends FlxSprite
 				continue;
 			}
 			
-		#if FLX_RENDER_TILE
-			drawItem = camera.getDrawStackItem(cachedGraphics, isColored, _blendInt, antialiasing);
-			currDrawData = drawItem.drawData;
-			currIndex = drawItem.position;
+			getScreenPosition(_point, camera).subtractPoint(offset);
 			
-			_point.x = x - (camera.scroll.x * scrollFactor.x) - (offset.x);
-			_point.y = y - (camera.scroll.y * scrollFactor.y) - (offset.y);
+			var cr:Float = colorTransform.redMultiplier;
+			var cg:Float = colorTransform.greenMultiplier;
+			var cb:Float = colorTransform.blueMultiplier;
 			
-			_point.x = (_point.x) + origin.x;
-			_point.y = (_point.y) + origin.y;
-		#else
-			_point.x = x - (camera.scroll.x * scrollFactor.x) - (offset.x);
-			_point.y = y - (camera.scroll.y * scrollFactor.y) - (offset.y);
-		#end
-		
-#if FLX_RENDER_BLIT
-			if (isSimpleRender())
+			var simple:Bool = isSimpleRender(camera);
+			if (simple)
 			{
-				_point.copyToFlash(_flashPoint);
-				camera.buffer.copyPixels(framePixels, _flashRect, _flashPoint, null, null, true);
-			}
-			else if (!matrixExposed)
-			{
-				_matrix.identity();
-				_matrix.translate( -origin.x, -origin.y);
-				if ((angle != 0) && (bakedRotationAngle <= 0))
+				if (isPixelPerfectRender(camera))
 				{
-					_matrix.rotate(angle * FlxAngle.TO_RAD);
+					_point.floor();
 				}
+				
+				_point.copyToFlash(_flashPoint);
+				camera.copyPixels(_frame, framePixels, _flashRect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
+			}
+			else
+			{
+				_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, flipX, flipY);
+				_matrix.translate( -origin.x, -origin.y);
+			}
+			
+			_matrix.identity();
+			_matrix.translate( -origin.x, -origin.y);
+			
+			if (matrixExposed)
+			{
+				_matrix.concat(transformMatrix);
+			}
+			else
+			{
 				_matrix.scale(scale.x, scale.y);
+				if (bakedRotationAngle <= 0)
+				{
+					updateTrig();
+					
+					if (angle != 0)
+					{
+						_matrix.rotateWithTrig(_cosAngle, _sinAngle);
+					}
+				}
 				
 				updateSkewMatrix();
-				
-				_matrix.translate(_point.x + origin.x, _point.y + origin.y);
-				camera.buffer.draw(framePixels, _matrix, null, blend, null, antialiasing);
+				_matrix.concat(_skewMatrix);
 			}
-			else
+			
+			_point.add(origin.x, origin.y);
+			if (isPixelPerfectRender(camera))
 			{
-				camera.buffer.draw(framePixels, transformMatrix, null, blend, null, antialiasing);
-			}
-#else
-			var csx:Float = 1;
-			var ssy:Float = 0;
-			var ssx:Float = 0;
-			var csy:Float = 1;
-			
-			var x1:Float = (origin.x - frame.center.x);
-			var y1:Float = (origin.y - frame.center.y);
-			
-			var x2:Float = x1;
-			var y2:Float = y1;
-			
-			var sx:Float = scale.x * _facingHorizontalMult;
-			var sy:Float = scale.y * _facingVerticalMult;
-			
-			if (isSimpleRender())
-			{
-				if (flipX)
-				{
-					csx = -csx;
-				}
-				if (flipY)
-				{
-					csy = -csy;
-				}
-			}
-			else
-			{
-				var matrixToUse:Matrix = _matrix;
-				if (!matrixExposed)
-				{
-					radians = -angle * FlxAngle.TO_RAD;
-					
-					_matrix.identity();
-					_matrix.rotate( -radians);
-					_matrix.scale(sx, sy);
-					
-					updateSkewMatrix();
-				}
-				else
-				{
-					matrixToUse = transformMatrix;
-				}
-				
-				x2 = x1 * matrixToUse.a + y1 * matrixToUse.c + matrixToUse.tx;
-				y2 = x1 * matrixToUse.b + y1 * matrixToUse.d + matrixToUse.ty;
-				
-				csx = matrixToUse.a;
-				ssy = matrixToUse.b;
-				ssx = matrixToUse.c;
-				csy = matrixToUse.d;
+				_point.floor();
 			}
 			
-			currDrawData[currIndex++] = _point.x - x2;
-			currDrawData[currIndex++] = _point.y - y2;
+			_matrix.translate(_point.x, _point.y);
+			camera.drawPixels(_frame, framePixels, _matrix, cr, cg, cb, alpha, blend, antialiasing);
 			
-			currDrawData[currIndex++] = frame.tileID;
-			
-			currDrawData[currIndex++] = csx;
-			currDrawData[currIndex++] = ssy;
-			currDrawData[currIndex++] = ssx;
-			currDrawData[currIndex++] = csy;
-			
-			if (isColored)
-			{
-				currDrawData[currIndex++] = _red;
-				currDrawData[currIndex++] = _green;
-				currDrawData[currIndex++] = _blue;
-			}
-			currDrawData[currIndex++] = alpha;
-			
-			drawItem.position = currIndex;
-#end
 			#if !FLX_NO_DEBUG
-			FlxBasic._VISIBLECOUNT++;
+			FlxBasic.activeCount++;
 			#end
 		}
 	}
 	
 	private function updateSkewMatrix():Void
 	{
+		_skewMatrix.identity();
+		
 		if ((skew.x != 0) || (skew.y != 0))
 		{
-			_skewMatrix.identity();
-			
 			_skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
 			_skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
-			
-			_matrix.concat(_skewMatrix);
 		}
 	}
 	
-	public override function isSimpleRender():Bool
+	override public function isSimpleRender(?camera:FlxCamera):Bool
 	{
 		#if FLX_RENDER_BLIT
-		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (skew.x == 0) && (skew.y == 0));
+		return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0) && (!matrixExposed);
 		#else
-		return (((angle == 0) || (bakedRotationAngle > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null) && (skew.x == 0) && (skew.y == 0) && pixelPerfectRender);
+		return false;
 		#end
 	}
 }

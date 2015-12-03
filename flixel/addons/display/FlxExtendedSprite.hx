@@ -3,10 +3,11 @@ package flixel.addons.display;
 import flixel.addons.plugin.FlxMouseControl;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.system.FlxAssets;
 import flixel.util.FlxCollision;
-import flixel.util.FlxMath;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRect;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 
 /**
  * An enhanced FlxSprite that is capable of receiving mouse clicks, being dragged and thrown, mouse springs, gravity and other useful things
@@ -164,7 +165,6 @@ class FlxExtendedSprite extends FlxSprite
 	private var _clickPixelPerfectAlpha:Int;
 	private var _clickCounter:Int = 0;
 	
-	private var _rect:FlxRect; 
 	private var _throwXFactor:Int;
 	private var _throwYFactor:Int;
 	
@@ -184,10 +184,8 @@ class FlxExtendedSprite extends FlxSprite
 	 * @param	Y				The initial Y position of the sprite.
 	 * @param	SimpleGraphic	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic)
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset)
 	{
-		_rect = FlxRect.get();
-		
 		super(X, Y, SimpleGraphic);
 	}
 	
@@ -399,7 +397,7 @@ class FlxExtendedSprite extends FlxSprite
 	/**
 	 * Core update loop
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		#if !FLX_NO_MOUSE
 		if (draggable == true && isDragged == true)
@@ -421,13 +419,13 @@ class FlxExtendedSprite extends FlxSprite
 		{
 			if (springOnPressed == false)
 			{
-				mouseSpring.update();
+				mouseSpring.update(elapsed);
 			}
 			else
 			{
 				if (isPressed == true)
 				{
-					mouseSpring.update();
+					mouseSpring.update(elapsed);
 				}
 				else
 				{
@@ -437,7 +435,7 @@ class FlxExtendedSprite extends FlxSprite
 		}
 		#end
 		
-		super.update();
+		super.update(elapsed);
 	}
 	
 	/**
@@ -676,6 +674,11 @@ class FlxExtendedSprite extends FlxSprite
 			_dragOffsetX = Std.int(frameWidth / 2);
 			_dragOffsetY = Std.int(frameHeight / 2);
 		}
+		
+		if (mouseStartDragCallback != null)
+		{
+			mouseStartDragCallback(this, mouseX, mouseY);
+		}
 		#end
 	}
 	
@@ -739,6 +742,13 @@ class FlxExtendedSprite extends FlxSprite
 			x = (Math.floor(x / _snapX) * _snapX);
 			y = (Math.floor(y / _snapY) * _snapY);
 		}
+		
+		#if !FLX_NO_MOUSE
+		if (mouseStopDragCallback != null)
+		{
+			mouseStopDragCallback(this, mouseX, mouseY);
+		}
+		#end
 	}
 	
 	/**

@@ -7,7 +7,7 @@ import flash.Lib;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.ui.FlxButton;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 /**
  * Trimmed-down button, invisible click area, only responds to onUP
@@ -47,7 +47,7 @@ class FlxClickArea extends FlxObject
 	 * @param 	Height		Height of the area
 	 * @param	OnUp		The function to call whenever the button is clicked.
 	 */
-	public function new(X:Float = 0, Y:Float = 0, Width:Float=80, Height:Float=20, ?OnUp:Void->Void)
+	public function new(X:Float = 0, Y:Float = 0, Width:Float = 80, Height:Float = 20, ?OnUp:Void->Void)
 	{
 		super(X, Y);
 		
@@ -88,7 +88,7 @@ class FlxClickArea extends FlxObject
 	/**
 	 * Called by the game loop automatically, handles mouseover and click detection.
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		if (!_initialized)
 		{
@@ -103,7 +103,7 @@ class FlxClickArea extends FlxObject
 				_initialized = true;
 			}
 		}
-		super.update();
+		super.update(elapsed);
 		
 		updateButton(); //Basic button logic
 	}

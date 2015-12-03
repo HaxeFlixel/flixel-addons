@@ -2,8 +2,6 @@ package flixel.addons.plugin.taskManager;
 
 import flixel.FlxBasic;
 import flixel.FlxG;
-import flixel.interfaces.IFlxDestroyable;
-import flixel.plugin.FlxPlugin;
 import flixel.util.FlxDestroyUtil;
 
 /**
@@ -16,7 +14,10 @@ import flixel.util.FlxDestroyUtil;
  * @author Zaphod
  * @since  11.19.2012
  */
-class AntTaskManager extends FlxBasic
+
+// TODO: update docs
+ 
+class FlxTaskManager extends FlxBasic
 {
 	/**
 	 * This function will be called when all tasks in the task manager are completed
@@ -25,12 +26,12 @@ class AntTaskManager extends FlxBasic
 	/**
 	 * Number of tasks in the list
 	 */
-	public var length:Int = 0;
+	public var length(default, null):Int = 0;
 	
 	/**
 	 * The list of active tasks
 	 */
-	private var _taskList:AntTask;
+	private var _taskList:FlxTask;
 	/**
 	 * Determines whether tasks are performed in a loop
 	 */
@@ -63,7 +64,7 @@ class AntTaskManager extends FlxBasic
 	 */
 	public function addTask(Function:Void->Bool, IgnoreCycle:Bool = false):Void
 	{
-		push(new AntTask(Function, IgnoreCycle, false));
+		push(new FlxTask(Function, IgnoreCycle, false));
 	}
 	
 	/**
@@ -74,7 +75,7 @@ class AntTaskManager extends FlxBasic
 	 */
 	public function addInstantTask(Function:Void->Bool, IgnoreCycle:Bool = false):Void
 	{
-		push(new AntTask(Function, IgnoreCycle, true));
+		push(new FlxTask(Function, IgnoreCycle, true));
 	}
 	
 	/**
@@ -86,7 +87,7 @@ class AntTaskManager extends FlxBasic
 	 */
 	public function addUrgentTask(Function:Void->Bool, IgnoreCycle:Bool = false):Void
 	{
-		unshift(new AntTask(Function, IgnoreCycle, false));
+		unshift(new FlxTask(Function, IgnoreCycle, false));
 	}
 	
 	/**
@@ -97,7 +98,7 @@ class AntTaskManager extends FlxBasic
 	 */
 	public function addUrgentInstantTask(Function:Void->Bool, IgnoreCycle:Bool = false):Void
 	{
-		unshift(new AntTask(Function, IgnoreCycle, true));
+		unshift(new FlxTask(Function, IgnoreCycle, true));
 	}
 	
 	/**
@@ -118,6 +119,7 @@ class AntTaskManager extends FlxBasic
 	{
 		_taskList = FlxDestroyUtil.destroy(_taskList);
 		_delay = 0;
+		length = 0;
 	}
 	
 	/**
@@ -140,7 +142,7 @@ class AntTaskManager extends FlxBasic
 	/**
 	 * Current task processing
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		if (_taskList != null)
 		{
@@ -168,7 +170,7 @@ class AntTaskManager extends FlxBasic
 	 */
 	private function taskPause(Delay:Float):Bool
 	{
-		_delay += FlxG.elapsed;
+		_delay += Delay;
 		
 		if (_delay > Delay)
 		{
@@ -182,10 +184,10 @@ class AntTaskManager extends FlxBasic
 	/**
 	 * Adds the specified object to the end of the list
 	 * 
-	 * @param	Task	The AntTask to be added.
-	 * @return	Returns a pointer to the added AntTask.
+	 * @param	Task	The FlxTask to be added.
+	 * @return	Returns a pointer to the added FlxTask.
 	 */
-	private function push(Task:AntTask):AntTask
+	private function push(Task:FlxTask):FlxTask
 	{
 		if (Task == null)
 		{
@@ -200,7 +202,7 @@ class AntTaskManager extends FlxBasic
 			return Task;
 		}
 		
-		var cur:AntTask = _taskList;
+		var cur:FlxTask = _taskList;
 		
 		while (cur.next != null)
 		{
@@ -214,10 +216,10 @@ class AntTaskManager extends FlxBasic
 	/**
 	 * Adds task to the top of task list
 	 * 
-	 * @param	Task	The AntTask to be added.
-	 * @return	Returns a pointer to the added AntTask
+	 * @param	Task	The FlxTask to be added.
+	 * @return	Returns a pointer to the added FlxTask
 	 */
-	private function unshift(Task:AntTask):AntTask
+	private function unshift(Task:FlxTask):FlxTask
 	{
 		length++;
 		
@@ -226,7 +228,7 @@ class AntTaskManager extends FlxBasic
 			return Task;
 		}
 		
-		var item:AntTask = _taskList;
+		var item:FlxTask = _taskList;
 		_taskList = Task;
 		_taskList.next = item;
 		
@@ -238,14 +240,14 @@ class AntTaskManager extends FlxBasic
 	 * 
 	 * @return	The task that has been removed
 	 */
-	private function shift():AntTask
+	private function shift():FlxTask
 	{
 		if (_taskList == null)
 		{
 			return null;
 		}
 		
-		var item:AntTask = _taskList;
+		var item:FlxTask = _taskList;
 		_taskList = item.next;
 		item.next = null;
 		length--;

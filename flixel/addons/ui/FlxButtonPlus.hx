@@ -8,13 +8,13 @@ import flixel.addons.display.FlxExtendedSprite;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxGradient;
-import flixel.util.FlxMath;
-import flixel.util.loaders.CachedGraphics;
+import flixel.math.FlxMath;
 
 //TODO: Port to use touch as well
 
@@ -131,10 +131,10 @@ class FlxButtonPlus extends FlxSpriteGroup
 		if (Label != null)
 		{
 			textNormal = new FlxText(0, 3, Width, Label);
-			textNormal.setFormat(null, 8, 0xffffff, "center", 0x000000);
+			textNormal.setFormat(null, 8, 0xffffff, "center");
 			
 			textHighlight = new FlxText(0, 3, Width, Label);
-			textHighlight.setFormat(null, 8, 0xffffff, "center", 0x000000);
+			textHighlight.setFormat(null, 8, 0xffffff, "center");
 			textHighlight.visible = false;
 			
 			add(textNormal);
@@ -168,7 +168,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 	/**
 	 * Called by the game loop automatically, handles mouseover and click detection.
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		if (!_initialized)
 		{
@@ -179,7 +179,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 			}
 		}
 		
-		super.update();
+		super.update(elapsed);
 		
 		//Basic button logic
 		updateButton(); 
@@ -195,7 +195,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		for (camera in buttonNormal.cameras)
 		{
-			if (FlxMath.mouseInFlxRect(false, buttonNormal.rect))
+			if (FlxMath.mouseInFlxRect(true, buttonNormal.rect))
 			{
 				offAll = false;
 				
@@ -318,7 +318,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		if (FlxG.bitmap.checkCache(normalKey) == false)
 		{
-			var normalGraphics:CachedGraphics = FlxG.bitmap.create(Std.int(w), Std.int(h), FlxColor.TRANSPARENT, false, normalKey);
+			var normalGraphics:FlxGraphic = FlxG.bitmap.create(Std.int(w), Std.int(h), FlxColor.TRANSPARENT, false, normalKey);
 			normalGraphics.bitmap.fillRect(new Rectangle(0, 0, w, h), borderColor);
 			FlxGradient.overlayGradientOnBitmapData(normalGraphics.bitmap, Std.int(w - 2), Std.int(h - 2), offColor, 1, 1);
 		}
@@ -358,7 +358,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		if (FlxG.bitmap.checkCache(highlightKey) == false)
 		{
-			var highlightGraphics:CachedGraphics = FlxG.bitmap.create(Std.int(w), Std.int(h), FlxColor.TRANSPARENT, false, highlightKey);
+			var highlightGraphics:FlxGraphic = FlxG.bitmap.create(Std.int(w), Std.int(h), FlxColor.TRANSPARENT, false, highlightKey);
 			highlightGraphics.bitmap.fillRect(new Rectangle(0, 0, w, h), borderColor);
 			FlxGradient.overlayGradientOnBitmapData(highlightGraphics.bitmap, Std.int(w - 2), Std.int(h - 2), onColor, 1, 1);
 		}

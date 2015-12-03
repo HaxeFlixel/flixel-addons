@@ -5,11 +5,12 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.util.FlxAngle;
+import flixel.system.FlxAssets;
+import flixel.math.FlxAngle;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxPoint;
-import flixel.util.FlxVelocity;
+import flixel.math.FlxPoint;
+import flixel.math.FlxVelocity;
 
 /**
  * Some sort of DisplayObjectContainer but very limited.
@@ -73,7 +74,7 @@ class FlxNestedSprite extends FlxSprite
 	private var _parentGreen:Float = 1;
 	private var _parentBlue:Float = 1;
 	
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic) 
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
 		super(X, Y, SimpleGraphic);
 		children = [];
@@ -114,7 +115,7 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public function add(Child:FlxNestedSprite):FlxNestedSprite
 	{
-		if (FlxArrayUtil.indexOf(children, Child) < 0)
+		if (children.indexOf(Child) < 0)
 		{
 			children.push(Child);
 			Child.velocity.x = Child.velocity.y = 0;
@@ -145,7 +146,7 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public function remove(Child:FlxNestedSprite):FlxNestedSprite
 	{
-		var index:Int = FlxArrayUtil.indexOf(children, Child);
+		var index:Int = children.indexOf(Child);
 		
 		if (index >= 0)
 		{
@@ -181,10 +182,10 @@ class FlxNestedSprite extends FlxSprite
 		}
 	}
 	
-	public function preUpdate():Void 
+	public function preUpdate(elapsed:Float):Void 
 	{
 		#if !FLX_NO_DEBUG
-		FlxBasic._ACTIVECOUNT++;
+		FlxBasic.activeCount++;
 		#end
 		
 		last.x = x;
@@ -194,59 +195,56 @@ class FlxNestedSprite extends FlxSprite
 		{
 			if (child.active && child.exists)
 			{
-				child.preUpdate();
+				child.preUpdate(elapsed);
 			}
 		}
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
-		preUpdate();
+		preUpdate(elapsed);
 		
 		for (child in children)
 		{
 			if (child.active && child.exists)
 			{
-				child.update();
+				child.update(elapsed);
 			}
 		}
 		
-		postUpdate();
+		postUpdate(elapsed);
 	}
 	
-	public function postUpdate():Void 
+	public function postUpdate(elapsed:Float):Void 
 	{
 		if (moves)
 		{
-			updateMotion();
+			updateMotion(elapsed);
 		}
 		
 		wasTouching = touching;
 		touching = FlxObject.NONE;
-		animation.update();
-		
+		animation.update(elapsed);
 		
 		var delta:Float;
 		var velocityDelta:Float;
-		var dt:Float = FlxG.elapsed;
 		
-		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeAngularVelocity, relativeAngularAcceleration, angularDrag, maxAngular) - relativeAngularVelocity);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeAngularVelocity, relativeAngularAcceleration, angularDrag, maxAngular, elapsed) - relativeAngularVelocity);
 		relativeAngularVelocity += velocityDelta; 
-		relativeAngle += relativeAngularVelocity * dt;
+		relativeAngle += relativeAngularVelocity * elapsed;
 		relativeAngularVelocity += velocityDelta;
 		
-		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocity.x, relativeAcceleration.x, drag.x, maxVelocity.x) - relativeVelocity.x);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocity.x, relativeAcceleration.x, drag.x, maxVelocity.x, elapsed) - relativeVelocity.x);
 		relativeVelocity.x += velocityDelta;
-		delta = relativeVelocity.x * dt;
+		delta = relativeVelocity.x * elapsed;
 		relativeVelocity.x += velocityDelta;
 		relativeX += delta;
 		
-		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocity.y, relativeAcceleration.y, drag.y, maxVelocity.y) - relativeVelocity.y);
+		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocity.y, relativeAcceleration.y, drag.y, maxVelocity.y, elapsed) - relativeVelocity.y);
 		relativeVelocity.y += velocityDelta;
-		delta = relativeVelocity.y * dt;
+		delta = relativeVelocity.y * elapsed;
 		relativeVelocity.y += velocityDelta;
 		relativeY += delta;
-		
 		
 		for (child in children)
 		{
@@ -255,9 +253,9 @@ class FlxNestedSprite extends FlxSprite
 				child.velocity.x = child.velocity.y = 0;
 				child.acceleration.x = child.acceleration.y = 0;
 				child.angularVelocity = child.angularAcceleration = 0;
-				child.postUpdate();
+				child.postUpdate(elapsed);
 				
-				if (isSimpleRender())
+				if (isSimpleRender(camera))
 				{
 					child.x = x + child.relativeX - offset.x;
 					child.y = y + child.relativeY - offset.y;
@@ -268,14 +266,16 @@ class FlxNestedSprite extends FlxSprite
 					var cos:Float = Math.cos(radians);
 					var sin:Float = Math.sin(radians);
 					
-					var dx:Float = child.relativeX - offset.x;
-					var dy:Float = child.relativeY - offset.y;
+					var dx = width / 2 - child.width / 2 - offset.x;
+					dx += scale.x * cos * (child.relativeX - width / 2 + child.width / 2) ;
+					dx -= scale.y * sin * (child.relativeY - height / 2 + child.height / 2) ;
 					
-					var relX:Float = (dx * cos * scale.x - dy * sin * scale.y);
-					var relY:Float = (dx * sin * scale.x + dy * cos * scale.y);
+					var dy = height / 2 - child.height / 2 - offset.y;
+					dy += scale.y * cos * (child.relativeY - height / 2 + child.height / 2);
+					dy += scale.x * sin * (child.relativeX - width / 2 + child.width / 2) ;					
 					
-					child.x = x + relX;
-					child.y = y + relY;
+					child.x = x +  dx;
+					child.y = y +  dy;
 				}
 				
 				child.angle = angle + child.relativeAngle;
@@ -424,9 +424,9 @@ class FlxNestedSprite extends FlxSprite
 		dirty = true;
 		
 		#if FLX_RENDER_TILE
-		_red = combinedRed;
-		_green = combinedGreen;
-		_blue = combinedBlue;
+		color.redFloat = combinedRed;
+		color.greenFloat = combinedGreen;
+		color.blueFloat = combinedBlue;
 		#end
 		
 		for (child in children)

@@ -1,5 +1,9 @@
 package flixel.addons.plugin.screengrab;
 
+#if (sys && systools)
+import systools.Dialogs;
+#end
+
 #if !js
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -8,7 +12,7 @@ import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 import flixel.addons.util.PNGEncoder;
 import flixel.FlxG;
-import flixel.plugin.FlxPlugin;
+import flixel.input.keyboard.FlxKey;
 
 #if flash
 import flash.net.FileReference;
@@ -20,11 +24,11 @@ import flash.net.FileReference;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
-class FlxScreenGrab extends FlxPlugin
+class FlxScreenGrab extends FlxBasic
 {
-	public static var screenshot:Bitmap;
+	public static var screenshot(default, null):Bitmap;
 	
-	private static var _hotkeys:Array<String>;
+	private static var _hotkeys:Array<FlxKey>;
 	private static var _autoSave:Bool = false;
 	private static var _autoHideMouse:Bool = false;
 	private static var _region:Rectangle;
@@ -56,11 +60,11 @@ class FlxScreenGrab extends FlxPlugin
 	 * Specify which key will capture a screen shot. Use the String value of the key in the same way FlxG.keys does (so "F1" for example)
 	 * Optionally save the image to a file immediately. This uses the file systems "Save as" dialog window and pauses your game during the process.
 	 * 
-	 * @param	Key			The key(s) you press to capture the screen (i.e. ["F1", "SPACE"])
+	 * @param	Key			The key(s) you press to capture the screen (i.e. [F1, SPACE])
 	 * @param	SaveToFile	If true it will immediately encodes the grab to a PNG and open a "Save As" dialog window when the hotkey is pressed
 	 * @param	HideMouse	If true the mouse will be hidden before capture and displayed afterwards when the hotkey is pressed
 	 */
-	public static function defineHotKeys(Keys:Array<String>, SaveToFile:Bool = false, HideMouse:Bool = false):Void
+	public static function defineHotKeys(Keys:Array<FlxKey>, SaveToFile:Bool = false, HideMouse:Bool = false):Void
 	{
 		_hotkeys = Keys;
 		_autoSave = SaveToFile;
@@ -68,7 +72,7 @@ class FlxScreenGrab extends FlxPlugin
 	}
 	
 	/**
-	 * Clears a previously defined hotkey
+	 * Clears all previously defined hotkeys
 	 */
 	public static function clearHotKeys():Void
 	{
@@ -107,7 +111,7 @@ class FlxScreenGrab extends FlxPlugin
 		var m:Matrix = new Matrix(1, 0, 0, 1, -bounds.x, -bounds.y);
 		
 		#if !FLX_NO_MOUSE
-		if (_autoHideMouse || HideMouse)
+		if (HideMouse)
 		{
 			FlxG.mouse.visible = false;
 		}
@@ -116,7 +120,7 @@ class FlxScreenGrab extends FlxPlugin
 		theBitmap.bitmapData.draw(FlxG.stage, m);
 		
 		#if !FLX_NO_MOUSE
-		if (_autoHideMouse || HideMouse)
+		if (HideMouse)
 		{
 			FlxG.mouse.visible = true;
 		}
@@ -124,7 +128,7 @@ class FlxScreenGrab extends FlxPlugin
 		
 		screenshot = theBitmap;
 		
-		if (SaveToFile || _autoSave)
+		if (SaveToFile)
 		{
 			save();
 		}
@@ -152,27 +156,50 @@ class FlxScreenGrab extends FlxPlugin
 			Filename = Filename + ".png";
 		}
 		
-		#if flash
+	#if !sys
 		var png:ByteArray = PNGEncoder.encode(screenshot.bitmapData);
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
+	#elseif systools
+		#if lime_legacy
+			var png:ByteArray = screenshot.bitmapData.encode('png');
 		#else
-		var png:ByteArray = screenshot.bitmapData.encode('x');
-		var f = sys.io.File.write(Filename, true);
-		f.writeString(png.readUTFBytes(png.length));
-		f.close();
+			var png:ByteArray = screenshot.bitmapData.encode(screenshot.bitmapData.rect, 'png');
 		#end
+		var path:String = "";
+		var documentsDirectory = "";
+		var saveFile:Dynamic = null;
+		try
+		{
+			#if lime_legacy
+				documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+			#else
+				documentsDirectory = lime.system.System.documentsDirectory;
+			#end
+			path = Dialogs.saveFile("", "", "", { count:1, descriptions:["png files"], extensions:["*.png"] } );
+		}
+		catch (msg:String)
+		{
+			path = Filename;			//if there was an error write out to default directory (game install directory)
+		}
+		
+		if (path != "" && path != null)	//if path is empty, the user cancelled the save operation and we can safely do nothing
+		{
+			var f = sys.io.File.write(path, true);
+			f.writeString(png.readUTFBytes(png.length));
+			f.close();
+		}
+	#else
+		FlxG.log.error("You need to include the 'systools' haxelib to use the SaveToFile option.");
+	#end
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		#if !FLX_NO_KEYBOARD
-		if (_hotkeys != null)
+		if (FlxG.keys.anyJustReleased(_hotkeys))
 		{
-			if (FlxG.keys.anyJustReleased(_hotkeys))
-			{
-				grab();
-			}
+			grab(null, _autoSave, _autoHideMouse);
 		}
 		#end
 	}

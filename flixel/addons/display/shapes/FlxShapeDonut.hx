@@ -4,57 +4,64 @@ import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.display.Shape;
 import flash.geom.Matrix;
+import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
+import openfl.geom.Rectangle;
+import openfl.display.BitmapDataChannel;
+import openfl.geom.Point;
 
 class FlxShapeDonut extends FlxShape 
 {
 	public var radius_out(default, set):Float;
 	public var radius_in(default, set):Float;
-
+	
 	/**
 	 * Creates a FlxSprite with a donut drawn on top of it. 
 	 * X/Y is where the SPRITE is, the donut's upper-left
 	 */
-	public function new(X:Float, Y:Float, RadiusOut:Float, RadiusIn:Float, LineStyle_:LineStyle, FillStyle_:FillStyle) 
+	public function new(X:Float, Y:Float, RadiusOut:Float, RadiusIn:Float, LineStyle_:LineStyle, FillColor:FlxColor) 
 	{
-		shape_id = "donut";
-		
-		var strokeBuffer:Float = (LineStyle_.thickness);
+		super(X, Y, 0, 0, LineStyle_, FillColor, RadiusOut * 2, RadiusOut * 2);
 		
 		radius_out = RadiusOut;
 		radius_in = RadiusIn;
 		
-		var trueWidth:Float = radius_out * 2;
-		var trueHeight:Float = trueWidth;
-		
-		var w:Float = trueWidth + strokeBuffer;		//create buffer space for stroke
-		var h:Float = trueHeight + strokeBuffer;
-		
-		if (w <= 0)
-			w = strokeBuffer;
-		if (h <= 0) 
-			h = strokeBuffer;
-		
-		super(X, Y, w, h, LineStyle_, FillStyle_, trueWidth, trueHeight);
+		shape_id = FlxShapeType.DONUT;
 	}
 	
 	override public function drawSpecificShape(?matrix:Matrix):Void 
 	{
 		var cx:Float = Math.ceil(width / 2);
 		var cy:Float = Math.ceil(height / 2);
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillStyle.color, lineStyle, { matrix: matrix } );
+		FlxSpriteUtil.drawCircle(this, cx, cy, radius_out, fillColor, lineStyle, { matrix: matrix } );
 		
-		if (radius_in > 0) 
-			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.RED, null, { matrix: matrix, blendMode: BlendMode.ERASE, smoothing: true });
-		
-		FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.TRANSPARENT, lineStyle, { matrix: matrix });
+		if (radius_in > 0)
+		{
+			#if (cpp || neko)
+				//Temporary work-around until OpenFL properly supports ERASE blend mode on CPP targets
+				var zpt = new Point();
+				var temp = new FlxSprite(0, 0, new BitmapData(cast pixels.width, cast pixels.height, false, 0xFFFFFF));
+				temp.pixels.copyChannel(this.pixels, this.pixels.rect, zpt, BitmapDataChannel.ALPHA, BitmapDataChannel.BLUE);
+				FlxSpriteUtil.drawCircle(temp, cx, cy, radius_in, FlxColor.BLACK, null, { matrix: matrix, smoothing: true } );
+				this.pixels.copyChannel(temp.pixels, temp.pixels.rect, zpt, BitmapDataChannel.BLUE, BitmapDataChannel.ALPHA);
+				temp.destroy();
+			#else
+				FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.RED, null, { matrix: matrix, blendMode:BlendMode.ERASE, smoothing: true } );
+			#end
+			
+			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.TRANSPARENT, lineStyle, { matrix: matrix } );
+		}
 	}
+	
+	private static var helperSprite:FlxSprite;
 	
 	private inline function set_radius_out(r:Float):Float
 	{
 		radius_out = r;
+		shapeWidth = radius_out * 2;
+		shapeHeight = radius_out * 2;
 		shapeDirty = true;
 		return radius_out;
 	}
@@ -64,5 +71,20 @@ class FlxShapeDonut extends FlxShape
 		radius_in = r;
 		shapeDirty = true;
 		return radius_in;
+	}
+	
+	private override function getStrokeOffsetX():Float
+	{
+		return strokeBuffer / 2;
+	}
+	
+	private override function getStrokeOffsetY():Float
+	{
+		return strokeBuffer / 2;
+	}
+	
+	private override function get_strokeBuffer():Float
+	{
+		return lineStyle.thickness * 1.0;
 	}
 }

@@ -2,7 +2,7 @@ package flixel.addons.display.shapes;
 
 import flash.geom.Matrix;
 import flixel.util.FlxColor;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
 
@@ -12,10 +12,10 @@ import flixel.util.FlxSpriteUtil.LineStyle;
 class FlxShapeCross extends FlxShape 
 {
 	public var horizontalLength(default, set):Float;
-	public var horizontalSize(default, set):Float;
+	public var horizontalThickness(default, set):Float;
 	
 	public var verticalLength(default, set):Float;
-	public var verticalSize(default, set):Float;
+	public var verticalThickness(default, set):Float;
 	
 	/**
 	 * Sets where the two arms intersect vertically. 
@@ -30,28 +30,18 @@ class FlxShapeCross extends FlxShape
 	
 	private var vertices:Array<FlxPoint>;
 	
-	public function new(X:Float, Y:Float, HLength:Float, HSize:Float, VLength:Float, VSize:Float, IntersectionH:Float, IntersectionV:Float, LineStyle_:LineStyle, FillStyle_:FillStyle) 
+	public function new(X:Float, Y:Float, HLength:Float, HThickness:Float, VLength:Float, VThickness:Float, IntersectionH:Float, IntersectionV:Float, LineStyle_:LineStyle, FillColor:FlxColor) 
 	{
-		shape_id = "cross";
+		super(X, Y, 0, 0, LineStyle_, FillColor, HLength, VLength);
 		
 		horizontalLength = HLength;
-		horizontalSize = HSize;
+		horizontalThickness = HThickness;
 		verticalLength = VLength;
-		verticalSize = VSize;
+		verticalThickness = VThickness;
 		intersectionH = IntersectionH;
 		intersectionV = IntersectionV;
 		
-		var strokeBuffer:Float = (LineStyle_.thickness);
-		
-		var w:Float = horizontalLength + strokeBuffer;				//create buffer space for stroke
-		var h:Float = verticalLength   + strokeBuffer;
-		
-		if (w <= 0)
-			w = strokeBuffer;
-		if (h <= 0) 
-			h = strokeBuffer;
-		
-		super(X, Y, w, h, LineStyle_, FillStyle_, horizontalLength, verticalLength);
+		shape_id = FlxShapeType.CROSS;
 	}
 	
 	public override function destroy():Void 
@@ -81,16 +71,16 @@ class FlxShapeCross extends FlxShape
 		//For sanity/readability's sake, I worked out the math using two rectangles
 		
 		//fr == vertical rectangle
-		_flashRect.x = (horizontalLength - verticalSize) * intersectionH;	//line up the vertical rectangle with center
+		_flashRect.x = (horizontalLength - verticalThickness) * intersectionH;	//line up the vertical rectangle with center
 		_flashRect.y = 0;
-		_flashRect.width = verticalSize;
+		_flashRect.width = verticalThickness;
 		_flashRect.height = verticalLength;
 		
 		//fr2 == horizontal rectangle
 		_flashRect2.x = 0;
-		_flashRect2.y = (verticalLength - horizontalSize) * intersectionV;
+		_flashRect2.y = (verticalLength - horizontalThickness) * intersectionV;
 		_flashRect2.width = horizontalLength;
-		_flashRect2.height = horizontalSize;
+		_flashRect2.height = horizontalThickness;
 		
 		//Copy vertices from the two rectangles
 		vertices[0].y = _flashRect.top;		vertices[0].x = _flashRect.left;	//top-left of vertical beam
@@ -132,7 +122,7 @@ class FlxShapeCross extends FlxShape
 		_matrix.identity();
 		_matrix.translate(lineStyle.thickness / 2, lineStyle.thickness / 2);
 		
-		FlxSpriteUtil.drawPolygon(this, vertices, fillStyle.color, lineStyle, fillStyle, { matrix: _matrix });
+		FlxSpriteUtil.drawPolygon(this, vertices, fillColor, lineStyle, { matrix: _matrix });
 		
 		fixBoundaries(horizontalLength, verticalLength);
 	}
@@ -140,29 +130,33 @@ class FlxShapeCross extends FlxShape
 	private inline function set_horizontalLength(f:Float):Float 
 	{
 		horizontalLength = f;
+		shapeWidth = Math.max(horizontalLength, verticalThickness);
 		shapeDirty = true;
 		return horizontalLength;
 	}
 	
-	private inline function set_horizontalSize(f:Float):Float 
+	private inline function set_horizontalThickness(f:Float):Float 
 	{
-		horizontalSize = f;
+		horizontalThickness = f;
+		shapeHeight = Math.max(verticalLength, horizontalThickness);
 		shapeDirty = true;
-		return horizontalSize;
+		return horizontalThickness;
 	}
 	
 	private inline function set_verticalLength(f:Float):Float 
 	{
 		verticalLength = f;
+		shapeHeight = Math.max(verticalLength, horizontalThickness);
 		shapeDirty = true;
 		return verticalLength;
 	}
 	
-	private inline function set_verticalSize(f:Float):Float 
+	private inline function set_verticalThickness(f:Float):Float 
 	{
-		verticalSize = f;
+		verticalThickness = f;
+		shapeWidth = Math.max(horizontalLength, verticalThickness);
 		shapeDirty = true;
-		return verticalSize;
+		return verticalThickness;
 	}
 	
 	private function set_intersectionV(f:Float):Float 

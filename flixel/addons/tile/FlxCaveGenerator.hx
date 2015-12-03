@@ -1,5 +1,5 @@
 package flixel.addons.tile;
-import flixel.util.FlxRandom;
+import flixel.math.FlxRandom;
 
 /**
  * This class uses the cellular automata algorithm
@@ -50,7 +50,7 @@ class FlxCaveGenerator
 		{
 			for (x in 0...Columns) 
 			{
-				matrix[y][x] = (FlxRandom.float() < WallRatio ? 1 : 0);
+				matrix[y][x] = (FlxG.random.float() < WallRatio ? 1 : 0);
 			}
 		}
 		

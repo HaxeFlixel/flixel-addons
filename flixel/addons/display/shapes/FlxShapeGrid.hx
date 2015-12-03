@@ -1,6 +1,7 @@
 package flixel.addons.display.shapes;
 
 import flash.geom.Matrix;
+import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 
 class FlxShapeGrid extends FlxShapeBox
@@ -14,7 +15,7 @@ class FlxShapeGrid extends FlxShapeBox
 	 * Creates a FlxSprite with a grid drawn on top of it. 
 	 * X/Y is where the SPRITE is, the grid upper-left
 	 */
-	public function new(X:Float, Y:Float, CellWidth:Float, CellHeight:Float, CellsWide:Int, CellsTall:Int, LineStyle_:LineStyle, FillStyle_:FillStyle) 
+	public function new(X:Float, Y:Float, CellWidth:Float, CellHeight:Float, CellsWide:Int, CellsTall:Int, LineStyle_:LineStyle, FillColor:FlxColor) 
 	{
 		var w:Float = CellWidth * CellsWide;
 		var h:Float = CellHeight * CellsTall;
@@ -24,7 +25,9 @@ class FlxShapeGrid extends FlxShapeBox
 		cellWidth = CellWidth;
 		cellHeight = CellHeight;
 		
-		super(X, Y, w, h, LineStyle_, FillStyle_);
+		super(X, Y, w, h, LineStyle_, FillColor);
+		
+		shape_id = FlxShapeType.GRID;
 	}
 	
 	override public function drawSpecificShape(?matrix:Matrix):Void 
@@ -33,7 +36,7 @@ class FlxShapeGrid extends FlxShapeBox
 		var oy:Float = (lineStyle.thickness / 2);
 		
 		//draw the fill
-		FlxSpriteUtil.drawRect(this, ox, oy, shapeWidth, shapeHeight, fillStyle.color, null);
+		FlxSpriteUtil.drawRect(this, ox, oy, shapeWidth, shapeHeight, fillColor);
 		
 		//draw vertical lines
 		for (iw in 0...cellsWide+1)

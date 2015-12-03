@@ -2,8 +2,8 @@ package flixel.addons.nape;
 
 import flixel.FlxSprite;
 import flixel.input.touch.FlxTouch;
-import flixel.util.FlxAngle;
-import flixel.util.FlxPoint;
+import flixel.math.FlxAngle;
+import flixel.math.FlxPoint;
 import nape.geom.Vec2;
 
 /**

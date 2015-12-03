@@ -1,7 +1,8 @@
 package flixel.addons.nape;
 
 import flixel.FlxSprite;
-import flixel.util.FlxAngle;
+import flixel.system.FlxAssets;
+import flixel.math.FlxAngle;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -11,7 +12,7 @@ import nape.shape.Polygon;
 import nape.space.Space;
 
 /**
- * FlxNapeSprite consists of an FlxSprite with a physics body.
+ * FlxNapeSprite consists of a FlxSprite with a physics body.
  * During the simulation, the sprite follows the physics body position and rotation.
  * 
  * By default, a rectangular physics body is created upon construction in createRectangularBody().
@@ -21,12 +22,13 @@ import nape.space.Space;
 class FlxNapeSprite extends FlxSprite
 {
 	/**
-	 * body is the physics body associated with this sprite. 
+	 * The physics body associated with this sprite. 
 	 */
 	public var body:Body;
 	
 	/**
-	 * Enables/Disables this sprites physics body in simulations.
+	 * Enables/disables this sprite's physics body in simulations
+	 * by adding/removing it from the space.
 	 */
 	public var physicsEnabled(default, set):Bool = false;
 	
@@ -42,27 +44,27 @@ class FlxNapeSprite extends FlxSprite
 	private var _angularDrag:Float = 1;
 
 	/**
-	 * Creates an FlxNapeSprite with an optional physics body (body).
+	 * Creates a FlxNapeSprite with an optional physics body.
 	 * At each step, the physics are updated, and so is the position and rotation of the sprite 
 	 * to match the bodys position and rotation values.
-	 * By default a physics body with rectangle shape will be created around your sprite graphics.
-	 * You can override this functionality and add a premade body of your own (see addPremadeBody).
+	 * By default, a physics body with a rectangular shape will be created for the sprite's graphic.
+	 * You can override this functionality and add a premade body of your own (see addPremadeBody()).
 	 * 
-	 * @param	X						The initial X position of the sprite.
-	 * @param	Y						The initial Y position of the sprite.
+	 * @param	X						The initial x position of the sprite.
+	 * @param	Y						The initial y position of the sprite.
 	 * @param	SimpleGraphic 			The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
 	 * @param	CreateRectangularBody	Whether to create a rectangular body for this sprite (use false if you want to add a custom body).
-	 * @param	EnablePhysics			Whether to enable physics simulation on the rectangular body (only relevant if CreateRectangularBody == true).
+	 * @param	EnablePhysics			Whether to enable physics simulation for the body (by adding it to the space)
 	 */
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:Dynamic, CreateRectangularBody:Bool = true, EnablePhysics:Bool = true) 
+	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset, CreateRectangularBody:Bool = true, EnablePhysics:Bool = true) 
 	{
 		super(X, Y, SimpleGraphic);
 		
 		if (CreateRectangularBody)
 		{
 			createRectangularBody();
-			physicsEnabled = EnablePhysics;
 		}
+		physicsEnabled = EnablePhysics;
 	}
 
 	/**
@@ -82,11 +84,11 @@ class FlxNapeSprite extends FlxSprite
 	/**
 	 * Override core physics velocity etc
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 		
-		if ((body != null) && moves)
+		if (body != null && moves)
 		{
 			updatePhysObjects();
 		}
@@ -116,30 +118,26 @@ class FlxNapeSprite extends FlxSprite
 		
 		if (body != null)
 		{
-			body.space = FlxNapeState.space;
+			body.space = FlxNapeSpace.space;
 		}
 	}
 	
 	/**
-	 * Makes it easier to add a physics body of your own to this sprite by setting it's position,
+	 * Makes it easier to add a physics body of your own to this sprite by setting its position,
 	 * space and material for you.
 	 * 
 	 * @param	NewBody 	The new physics body replacing the old one.
 	 */
 	public function addPremadeBody(NewBody:Body):Void
 	{
-		var currSpace:Space = null;
-		
 		if (body != null) 
 		{
-			currSpace = body.space;
 			destroyPhysObjects();
 		}
 		
 		NewBody.position.x = x;
 		NewBody.position.y = y;
-		NewBody.space = currSpace;
-		body = NewBody;
+		setBody(NewBody);
 		setBodyMaterial();
 	}
 	
@@ -151,18 +149,14 @@ class FlxNapeSprite extends FlxSprite
 	 */
 	public function createCircularBody(Radius:Float = 16, ?_Type:BodyType):Void
 	{
-		var currSpace:Space = null;
-		
 		if (body != null) 
 		{
-			currSpace = body.space;
 			destroyPhysObjects();
 		}
-			
+		
 		centerOffsets(false);
-		body = new Body(_Type != null ? _Type : BodyType.DYNAMIC, Vec2.weak(x, y));
+		setBody(new Body(_Type != null ? _Type : BodyType.DYNAMIC, Vec2.weak(x, y)));
 		body.shapes.add(new Circle(Radius));
-		body.space = currSpace;
 		
 		setBodyMaterial();
 	}
@@ -170,36 +164,31 @@ class FlxNapeSprite extends FlxSprite
 	/**
 	 * Default method to create the physics body used by this sprite in shape of a rectangle.
 	 * Override this method to create your own physics body!
-	 * The width and height used are based on the size of sprite graphics if 0 is passed.
 	 * Call this method after calling makeGraphics() or loadGraphic() to update the body size.
 	 * 
-	 * @param	Width	The width of the rectangle. 0 = frameWidth
-	 * @param	Height	The height of the rectangle. 0 = frameHeight
+	 * @param	Width	The width of the rectangle. Uses frameWidth if <= 0.
+	 * @param	Height	The height of the rectangle. Uses frameHeight if <= 0.
 	 * @param	_Type	The BodyType of the physics body. Optional, DYNAMIC by default.
 	 */
 	public function createRectangularBody(Width:Float = 0, Height:Float = 0, ?_Type:BodyType):Void
 	{
-		var currSpace:Space = null;
-		
 		if (body != null) 
 		{
-			currSpace = body.space;
 			destroyPhysObjects();
 		}
 		
-		if (Width == 0)
+		if (Width <= 0)
 		{
 			Width = frameWidth;
 		}
-		if (Height == 0)
+		if (Height <= 0)
 		{
 			Height = frameHeight;
 		}
 		
 		centerOffsets(false);
-		body = new Body(_Type != null ? _Type : BodyType.DYNAMIC, Vec2.weak(x, y));
+		setBody(new Body(_Type != null ? _Type : BodyType.DYNAMIC, Vec2.weak(x, y)));
 		body.shapes.add(new Polygon(Polygon.box(Width, Height)));
-		body.space = currSpace;
 		
 		setBodyMaterial();
 	}
@@ -216,9 +205,7 @@ class FlxNapeSprite extends FlxSprite
 	public function setBodyMaterial(Elasticity:Float = 1, DynamicFriction:Float = 0.2, StaticFriction:Float = 0.4, Density:Float = 1, RotationFriction:Float = 0.001):Void
 	{
 		if (body == null) 
-		{
 			return;
-		}
 		
 		body.setShapeMaterials(new Material(Elasticity, DynamicFriction, StaticFriction, Density, RotationFriction));
 	}
@@ -230,7 +217,8 @@ class FlxNapeSprite extends FlxSprite
 	{
 		if (body != null) 
 		{
-			FlxNapeState.space.bodies.remove(body);
+			if (FlxNapeSpace.space != null)
+				FlxNapeSpace.space.bodies.remove(body);
 			body = null;
 		}
 	}
@@ -255,12 +243,18 @@ class FlxNapeSprite extends FlxSprite
 	 */	
 	override public function drawDebug():Void
 	{
-		if (FlxNapeState.debug == null)
+		if (!FlxNapeSpace.drawDebug)
 		{
 			super.drawDebug();
 		}
 	}
 	#end
+	
+	private function setBody(body:Body):Void
+	{
+		this.body = body;
+		set_physicsEnabled(physicsEnabled);
+	}
 	
 	/**
 	 * Updates physics FlxSprite graphics to follow this sprite physics object, called at the end of update().
@@ -287,7 +281,21 @@ class FlxNapeSprite extends FlxSprite
 	
 	private inline function set_physicsEnabled(Value:Bool):Bool
 	{
-		body.space = Value ? FlxNapeState.space : null;
+		if (body != null)
+			body.space = Value ? FlxNapeSpace.space : null;
 		return physicsEnabled = Value;
+	}
+	
+	/**
+	 * Helper function to set the coordinates of this object.
+	 * Handy since it only requires one line of code.
+	 *
+	 * @param	X	The new x position
+	 * @param	Y	The new y position
+	 */
+	override public function setPosition(X:Float = 0, Y:Float = 0):Void
+	{
+		body.position.x = X;
+		body.position.y = Y;
 	}
 }

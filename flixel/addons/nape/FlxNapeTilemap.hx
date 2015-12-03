@@ -1,11 +1,13 @@
 package flixel.addons.nape;
 
-import flixel.addons.nape.FlxNapeState;
+import flixel.addons.nape.FlxNapeSpace;
 import flixel.FlxG;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxArrayUtil;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRect;
+import flixel.tile.FlxBaseTilemap;
+import flixel.system.FlxAssets;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -25,18 +27,38 @@ class FlxNapeTilemap extends FlxTilemap
 	{
 		super();
 		body = new Body(BodyType.STATIC);
+		body.space = FlxNapeSpace.space;
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
 		x = body.position.x;
 		y = body.position.y;
-		super.update();
+		super.update(elapsed);
 	}
 	
-	override public function loadMap(MapData:Dynamic, TileGraphic:Dynamic, TileWidth:Int = 0, TileHeight:Int = 0, AutoTile:Int = 0, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
+	override public function loadMapFromCSV(MapData:String, TileGraphic:FlxTilemapGraphicAsset, TileWidth:Int = 0, TileHeight:Int = 0, 
+		?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
 	{
-		super.loadMap(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
+		super.loadMapFromCSV(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
+		_binaryData = new Array<Int>();
+		FlxArrayUtil.setLength(_binaryData, _data.length);
+		return this;
+	}
+	
+	override public function loadMapFromArray(MapData:Array<Int>, WidthInTiles:Int, HeightInTiles:Int, TileGraphic:FlxTilemapGraphicAsset,
+		TileWidth:Int = 0, TileHeight:Int = 0, ?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
+	{
+		super.loadMapFromArray(MapData, WidthInTiles, HeightInTiles, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
+		_binaryData = new Array<Int>();
+		FlxArrayUtil.setLength(_binaryData, _data.length);
+		return this;
+	}
+	
+	override public function loadMapFrom2DArray(MapData:Array<Array<Int>>, TileGraphic:FlxTilemapGraphicAsset, TileWidth:Int = 0, TileHeight:Int = 0, 
+		?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
+	{
+		super.loadMapFrom2DArray(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
 		_binaryData = new Array<Int>();
 		FlxArrayUtil.setLength(_binaryData, _data.length);
 		return this;
@@ -49,7 +71,7 @@ class FlxNapeTilemap extends FlxTilemap
 	 * 
 	 * @param	X		The X-Position of the tile
 	 * @param	Y		The Y-Position of the tile
-	 * @param	?mat	The material for the collider. Defaults to default nape material
+	 * @param	mat		The material for the collider. Defaults to default nape material
 	 */
 	public function addSolidTile(X:Int, Y:Int, ?mat:Material) 
 	{
@@ -68,15 +90,19 @@ class FlxNapeTilemap extends FlxTilemap
 		vertices.push(Vec2.get(X, Y + _tileHeight));
 		
 		body.shapes.add(new Polygon(vertices, mat));
-		body.space = FlxNapeState.space;
+		
+		body.space = FlxNapeSpace.space;
 	}
 	
-	public function placeCustomPolygon(tileIndices:Array<Int>, vertices:Array<Vec2>, ?mat:Material) {
+	public function placeCustomPolygon(tileIndices:Array<Int>, vertices:Array<Vec2>, ?mat:Material)
+	{
 		body.space = null;
 		var polygon:Polygon;
-		for (index in tileIndices) {
+		for (index in tileIndices)
+		{
 			var coords:Array<FlxPoint> = getTileCoords(index, false);
-			for (point in coords) {
+			for (point in coords)
+			{
 				polygon = new Polygon(vertices, mat);
 				polygon.translate(Vec2.get(point.x, point.y));
 				body.shapes.add(polygon);
@@ -84,14 +110,15 @@ class FlxNapeTilemap extends FlxTilemap
 			
 		}
 		
-		body.space = FlxNapeState.space;
+		body.space = FlxNapeSpace.space;
 	}
 	
 	/**
-	 * Builds the nape collider with all tiles indices greater or equal to CollideIndex as solid (like normally with FlxTilemap), and assigns the nape material
+	 * Builds the nape collider with all tiles indices greater or equal to CollideIndex 
+	 * as solid (like normally with FlxTilemap), and assigns the nape material
 	 * 
 	 * @param	CollideIndex	All tiles with an index greater or equal to this will be solid
-	 * @param	?mat			The Nape physics material to use. Will use the default material if not specified
+	 * @param	mat				The Nape physics material to use. Will use the default material if not specified
 	 */
 	public function setupCollideIndex(CollideIndex:Int = 1, ?mat:Material) 
 	{
@@ -117,7 +144,7 @@ class FlxNapeTilemap extends FlxTilemap
 	 * Builds the nape collider with all indices in the array as solid, assigning the material
 	 * 
 	 * @param	tileIndices		An array of all tile indices that should be solid
-	 * @param	?mat			The nape physics material applied to the collider. Defaults to nape default material
+	 * @param	mat				The nape physics material applied to the collider. Defaults to nape default material
 	 */
 	public function setupTileIndices(tileIndices:Array<Int>, ?mat:Material) 
 	{
@@ -141,7 +168,7 @@ class FlxNapeTilemap extends FlxTilemap
 	#if !FLX_NO_DEBUG
 	override public function drawDebug():Void 
 	{
-		if (FlxNapeState.debug == null)
+		if (!FlxNapeSpace.drawDebug)
 		{
 			super.drawDebug();
 		}
@@ -200,6 +227,8 @@ class FlxNapeTilemap extends FlxTilemap
 				endRow = -1;
 			}
 		}
+		
+		body.space = null;
 		//Convert the rectangles to nape polygons
 		var vertices:Array<Vec2>;
 		for (rect in rects) 
@@ -211,6 +240,7 @@ class FlxNapeTilemap extends FlxTilemap
 			rect.width *= _tileWidth;
 			rect.height++;
 			rect.height *= _tileHeight;
+			
 			vertices.push(Vec2.get(rect.x, rect.y));
 			vertices.push(Vec2.get(rect.width, rect.y));
 			vertices.push(Vec2.get(rect.width, rect.height));
@@ -219,10 +249,7 @@ class FlxNapeTilemap extends FlxTilemap
 			rect.put();
 		}
 		
-		if (body.space == null) 
-		{
-			body.space = FlxNapeState.space;
-		}
+		body.space = FlxNapeSpace.space;
 	}
 	
 	/**
