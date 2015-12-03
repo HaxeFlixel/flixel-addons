@@ -15,14 +15,14 @@ class FlxOgmoLoader
 	// Helper variables to read level data
 	private var _xml:Xml;
 	private var _fastXml:Fast;
-	
+
 	/**
 	 * Creates a new instance of OgmoLevelLoader and prepares the XML level data to be loaded.
 	 * This object can either be contained or ovewritten. 
 	 * 
 	 * IMPORTANT: -> Tile layers must have the Export Mode set to "CSV".
-	 * 			  -> First tile in spritesheet must be blank or debug. It will never get drawn so don't place them in Ogmo! 
-	 * 			  	 (This is needed to support many other editors that use index 0 as empty.)
+	 *            -> First tile in spritesheet must be blank or debug. It will never get drawn so don't place them in Ogmo! 
+	 *               (This is needed to support many other editors that use index 0 as empty.)
 	 * 
 	 * @param	LevelData	A String or Class representing the location of xml level data.
 	 */
@@ -56,7 +56,7 @@ class FlxOgmoLoader
 	* Collision with entities should be handled with the reference returned from this function. Here's a tip:
 	* 
 		// IMPORTANT: Always collide the map with objects, not the other way around. 
-		//			  This prevents odd collision errors (collision separation code off by 1 px).
+		//            This prevents odd collision errors (collision separation code off by 1 px).
 		FlxG.collide(map, obj, notifyCallback);
 	* 
 	* @param	TileGraphic		A String or Class representing the location of the image asset for the tilemap.
@@ -68,16 +68,15 @@ class FlxOgmoLoader
 	public function loadTilemap(TileGraphic:Dynamic, TileWidth:Int = 16, TileHeight:Int = 16, TileLayer:String = "tiles"):FlxTilemap
 	{
 		var tileMap:FlxTilemap = new FlxTilemap();
-		tileMap.loadMap(_fastXml.node.resolve(TileLayer).innerData, TileGraphic, TileWidth, TileHeight);
-		
+		tileMap.loadMapFromCSV(_fastXml.node.resolve(TileLayer).innerData, TileGraphic, TileWidth, TileHeight);
 		return tileMap;
 	}
 
 	/**
-	* Parse every entity in the specified layer and call a function that will spawn game objects based on their name. 
-	* Optional data can be read from the xml object, here's an example that reads the position of an object:
-	* 
-		public function loadEntity( type:String, data:Xml ):Void
+	 * Parse every entity in the specified layer and call a function that will spawn game objects based on their name. 
+	 * Optional data can be read from the xml object, here's an example that reads the position of an object:
+	 * 
+		public function loadEntity(type:String, data:Xml):Void
 		{
 			switch (type.toLowerCase())
 			{
@@ -88,10 +87,10 @@ class FlxOgmoLoader
 				throw "Unrecognized actor type '" + type + "' detected in level file.";
 			}
 		}
-	* 
-	* @param	EntityLoadCallback		A function that takes in the following parameters (name:String, data:Xml):Void (returns Void) that spawns entities based on their name.
-	* @param	EntityLayer				The name of the layer the entities are stored in Ogmo editor. Usually "entities" or "actors"
-	*/ 
+	 * 
+	 * @param	EntityLoadCallback		A function that takes in the following parameters (name:String, data:Xml):Void (returns Void) that spawns entities based on their name.
+	 * @param	EntityLayer				The name of the layer the entities are stored in Ogmo editor. Usually "entities" or "actors"
+	 */ 
 	public function loadEntities(EntityLoadCallback:String->Xml->Void, EntityLayer:String = "entities"):Void
 	{
 		var actors = _fastXml.node.resolve(EntityLayer);
@@ -118,5 +117,17 @@ class FlxOgmoLoader
 		{
 			RectLoadCallback(FlxRect.get(Std.parseInt(r.x.get("x")), Std.parseInt(r.x.get("y")), Std.parseInt(r.x.get("w")), Std.parseInt(r.x.get("h"))));
 		}
+	}
+	    
+	/**
+	 * Allows for loading of level properties specified in Ogmo editor.
+	 * Useful for getting properties without having to manually edit the FlxOgmoLoader
+	 * Returns a String that will need to be parsed
+	 *
+	 * @param name A string that corresponds to the property to be accessed
+	 */
+	public inline function getProperty(name:String):String
+	{
+		return _fastXml.att.resolve(name);
 	}
 }

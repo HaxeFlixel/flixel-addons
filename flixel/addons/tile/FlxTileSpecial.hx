@@ -3,6 +3,7 @@ package flixel.addons.tile;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flixel.animation.FlxAnimation;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.math.FlxAngle;
@@ -31,11 +32,6 @@ class FlxTileSpecial extends FlxBasic
 	private var _tmp_flipH:Bool;
 	private var _tmp_flipV:Bool;
 	private var _tmp_rot:Int;
-	
-	#if FLX_RENDER_BLIT
-	private var _normalFrame:BitmapData;
-	private var _flippedFrame:BitmapData;
-	#end
 	
 	private var _matrix:FlxMatrix;
 	
@@ -66,11 +62,6 @@ class FlxTileSpecial extends FlxBasic
 	{
 		super.destroy();
 		
-		#if FLX_RENDER_BLIT
-		_normalFrame = FlxDestroyUtil.dispose(_normalFrame);
-		_flippedFrame = FlxDestroyUtil.dispose(_flippedFrame);
-		#end
-		
 		animation = FlxDestroyUtil.destroy(animation);
 		_currAnimParam = null;
 		_matrix = null;
@@ -79,6 +70,8 @@ class FlxTileSpecial extends FlxBasic
 		frames = null;
 	}
 	
+	// TODO: unify animation code with FlxAnimation...
+	// TODO: try to move animation update code to FlxTileAnimation class
 	override public function update(elapsed:Float):Void 
 	{
 		super.update(elapsed);
@@ -133,29 +126,30 @@ class FlxTileSpecial extends FlxBasic
 	}
 	
 	#if FLX_RENDER_BLIT
-	public function getBitmapData():BitmapData 
+	public function paint(bmd:BitmapData, at:Point):Void 
 	{
-		var generateFlipped:Bool = (_flippedFrame == null);
-
-		if (generateFlipped || dirty) 
-		{
-			_normalFrame = currFrame.getBitmap();
-			
-			if (generateFlipped)
-			{
-				_flippedFrame = new BitmapData(Std.int(currFrame.sourceSize.x), Std.int(currFrame.sourceSize.y), true, FlxColor.TRANSPARENT);
-			}
-			else
-			{
-				_flippedFrame.fillRect(_flippedFrame.rect, FlxColor.TRANSPARENT);
-			}
-			
-			_flippedFrame.draw(_normalFrame, getMatrix());
-			dirty = true;
+		_tmp_flipH = flipX;
+		_tmp_flipV = flipY;
+		_tmp_rot = rotate;
 		
+		if (_currAnimParam != null)
+		{
+			_tmp_flipH = _currAnimParam.flipX;
+			_tmp_flipV = _currAnimParam.flipY;
+			_tmp_rot = _currAnimParam.rotate;
 		}
 		
-		return _flippedFrame;
+		var rotation:FlxFrameAngle = FlxFrameAngle.ANGLE_0;
+		if (_tmp_rot == FlxTileSpecial.ROTATE_90)
+		{
+			rotation = FlxFrameAngle.ANGLE_90;
+		}
+		else if (_tmp_rot == FlxTileSpecial.ROTATE_270)
+		{
+			rotation = FlxFrameAngle.ANGLE_270;
+		}
+		
+		currFrame.paintRotatedAndFlipped(bmd, at, rotation, _tmp_flipH, _tmp_flipV, true);
 	}
 	#end
 	
@@ -167,6 +161,15 @@ class FlxTileSpecial extends FlxBasic
 	public function addAnimation(tiles:Array<Int>, frameRate:Float = 30, ?framesData:Array<AnimParams>):Void 
 	{
 		animation = new FlxTileAnimation("tileAnim", tiles, frameRate, true, framesData);
+	}
+	
+	/**
+	 * Creates tile animation and copies data from specified sprite animation (name, frame ids, framerate and looping);
+	 * @param	anim	Animation to copy data from
+	 */
+	public function fromSpriteAnimation(anim:FlxAnimation):Void
+	{
+		animation = new FlxTileAnimation(anim.name, Reflect.field(anim, "_frames"), anim.frameRate, anim.looped);
 	}
 	
 	/**
@@ -188,41 +191,17 @@ class FlxTileSpecial extends FlxBasic
 			_tmp_rot = _currAnimParam.rotate;
 		}
 		
-		_matrix.identity();
-		
-		#if FLX_RENDER_TILE
-		if (currFrame.angle != FlxFrameAngle.ANGLE_0)
+		var rotation:FlxFrameAngle = FlxFrameAngle.ANGLE_0;
+		if (_tmp_rot == FlxTileSpecial.ROTATE_90)
 		{
-			currFrame.prepareFrameMatrix(_matrix);
+			rotation = FlxFrameAngle.ANGLE_90;
+		}
+		else if (_tmp_rot == FlxTileSpecial.ROTATE_270)
+		{
+			rotation = FlxFrameAngle.ANGLE_270;
 		}
 		
-		_matrix.translate(currFrame.center.x, currFrame.center.y);
-		#end
-		
-		if (_tmp_rot != FlxTileSpecial.ROTATE_0) 
-		{
-			switch(_tmp_rot) 
-			{
-				case FlxTileSpecial.ROTATE_90:
-					_matrix.rotate(90 * FlxAngle.TO_RAD);
-					_matrix.translate(currFrame.sourceSize.x, 0);
-
-				case FlxTileSpecial.ROTATE_270:
-					_matrix.rotate(270 * FlxAngle.TO_RAD);
-					_matrix.translate(0, currFrame.sourceSize.y);
-			}
-		}
-		
-		if (_tmp_flipH) 
-		{
-			_matrix.scale( -1, 1);
-			_matrix.translate(currFrame.sourceSize.x, 0);
-		}
-		if (_tmp_flipV) 
-		{
-			_matrix.scale(1, -1);
-			_matrix.translate(0, currFrame.sourceSize.y);
-		}
+		currFrame.prepareMatrix(_matrix, rotation, _tmp_flipH, _tmp_flipV);
 		
 		return _matrix;
 	}

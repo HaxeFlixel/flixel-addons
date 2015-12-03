@@ -239,7 +239,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 				internalFireFromAngle(currentBullet, parent.angle + FlxG.random.float(angle.min, angle.max));
 				
 			case FIRE_FROM_PARENT_FACING(angle):
-				internalFireFromAngle(currentBullet, FlxAngle.angleFromFacing(parent) + FlxG.random.float(angle.min, angle.max));
+				internalFireFromAngle(currentBullet, FlxAngle.angleFromFacing(parent.facing) + FlxG.random.float(angle.min, angle.max));
 				
 			#if !FLX_NO_TOUCH
 			case FIRE_AT_TOUCH(touch):
@@ -400,7 +400,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-  	private function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
+	private function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
 	{
 		if (parent == Object && skipParentCollision)
 		{
@@ -417,7 +417,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-  	private function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
+	private function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
 	{
 		Bullet.kill();
 	}

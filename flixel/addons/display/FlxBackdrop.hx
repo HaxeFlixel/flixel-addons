@@ -7,7 +7,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
-import flixel.graphics.tile.FlxDrawStackItem;
+import flixel.graphics.tile.FlxDrawTilesItem;
 import flixel.math.FlxPoint;
 import flixel.math.FlxPoint.FlxCallbackPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
@@ -26,16 +26,25 @@ class FlxBackdrop extends FlxSprite
 	private var _repeatX:Bool;
 	private var _repeatY:Bool;
 	
+	private var _spaceX:Int = 0;
+	private var _spaceY:Int = 0;
+	
 	/**
 	 * Frame used for tiling
 	 */
 	private var _tileFrame:FlxFrame;
 	
 	#if FLX_RENDER_TILE
-	private var _tileID:Int;
 	private var _tileInfo:Array<Float>;
 	private var _numTiles:Int = 0;
 	#end
+	
+	// TODO: remove this hack and add docs about how to avoid tearing problem by preparing assets and some code...
+	/**
+	 * Try to eliminate 1 px gap between tiles in tile render mode by increasing tile scale, 
+	 * so the tile will look one pixel wider than it is.
+	 */
+	public var useScaleHack:Bool = true;
 	
 	/**
 	 * Creates an instance of the FlxBackdrop class, used to create infinitely scrolling backgrounds.
@@ -45,8 +54,10 @@ class FlxBackdrop extends FlxSprite
 	 * @param   ScrollY 	Scrollrate on the Y axis.
 	 * @param   RepeatX 	If the backdrop should repeat on the X axis.
 	 * @param   RepeatY 	If the backdrop should repeat on the Y axis.
+	 * @param	SpaceX		Amount of spacing between tiles on the X axis
+	 * @param	SpaceY		Amount of spacing between tiles on the Y axis
 	 */
-	public function new(Graphic:FlxGraphicAsset, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true) 
+	public function new(Graphic:FlxGraphicAsset, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true, SpaceX:Int = 0, SpaceY:Int = 0) 
 	{
 		super();
 		
@@ -55,6 +66,9 @@ class FlxBackdrop extends FlxSprite
 		
 		_repeatX = RepeatX;
 		_repeatY = RepeatY;
+		
+		_spaceX = SpaceX;
+		_spaceY = SpaceY;
 		
 		_ppoint = new Point();
 		
@@ -85,8 +99,8 @@ class FlxBackdrop extends FlxSprite
 		var tileGraphic:FlxGraphic = FlxG.bitmap.add(Graphic);
 		setTileFrame(tileGraphic.imageFrame.frame);
 		
-		var w:Int = Std.int(_tileFrame.sourceSize.x);
-		var h:Int = Std.int(_tileFrame.sourceSize.y);
+		var w:Int = Std.int(_tileFrame.sourceSize.x + _spaceX);
+		var h:Int = Std.int(_tileFrame.sourceSize.y + _spaceY);
 		
 		_scrollW = w;
 		_scrollH = h;
@@ -100,8 +114,8 @@ class FlxBackdrop extends FlxSprite
 	{
 		setTileFrame(Frame);
 		
-		var w:Int = Std.int(_tileFrame.sourceSize.x);
-		var h:Int = Std.int(_tileFrame.sourceSize.y);
+		var w:Int = Std.int(_tileFrame.sourceSize.x + _spaceX);
+		var h:Int = Std.int(_tileFrame.sourceSize.y + _spaceY);
 		
 		_scrollW = w;
 		_scrollH = h;
@@ -148,38 +162,40 @@ class FlxBackdrop extends FlxSprite
 			// Draw to the screen
 		#if FLX_RENDER_BLIT
 			_flashRect2.setTo(0, 0, graphic.width, graphic.height);
-			camera.buffer.copyPixels(frame.getBitmap(), _flashRect2, _ppoint, null, null, true);
+			camera.copyPixels(frame, framePixels, _flashRect2, _ppoint);
 		#else
 			if (_tileFrame == null)
 			{
 				return;
 			}
 			
-			var drawItem:FlxDrawStackItem = camera.getDrawStackItem(_tileFrame.parent, false, 0);
+			var drawItem = camera.startQuadBatch(_tileFrame.parent, false);
 			
-			_matrix.identity();
+			_tileFrame.prepareMatrix(_matrix);
 			
-			if (_tileFrame.angle != FlxFrameAngle.ANGLE_0)
+			var scaleX:Float = scale.x;
+			var scaleY:Float = scale.y;
+			
+			if (useScaleHack)
 			{
-				_tileFrame.prepareFrameMatrix(_matrix);
+				scaleX += 1 / (_tileFrame.sourceSize.x * camera.totalScaleX);
+				scaleY += 1 / (_tileFrame.sourceSize.y * camera.totalScaleY);
 			}
 			
-			_matrix.scale(scale.x * camera.totalScaleX, scale.y * camera.totalScaleY);
+			_matrix.scale(scaleX, scaleY);
 			
-			_ppoint.x += _tileFrame.center.x * scale.x;
-			_ppoint.y += _tileFrame.center.y * scale.y;
+			var tx:Float = _matrix.tx;
+			var ty:Float = _matrix.ty;
 			
 			for (j in 0..._numTiles)
 			{
 				var currTileX = _tileInfo[j * 2];
 				var currTileY = _tileInfo[(j * 2) + 1];
 				
-				_point.set(_ppoint.x + currTileX, _ppoint.y + currTileY);
+				_matrix.tx = tx + (_ppoint.x + currTileX);
+				_matrix.ty = ty + (_ppoint.y + currTileY);
 				
-				_point.x *= camera.totalScaleX;
-				_point.y *= camera.totalScaleY;
-				
-				setDrawData(drawItem, camera, _matrix, _tileFrame.tileID);
+				drawItem.addQuad(_tileFrame, _matrix);
 			}
 		#end
 		}
@@ -213,6 +229,9 @@ class FlxBackdrop extends FlxSprite
 		#else
 		_tileInfo = [];
 		_numTiles = 0;
+		
+		width = frameWidth = w;
+		height = frameHeight = h;
 		#end
 		
 		_ppoint.x = _ppoint.y = 0;
@@ -223,6 +242,7 @@ class FlxBackdrop extends FlxSprite
 		pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
 		_matrix.identity();
 		_matrix.scale(sx, sy);
+		var frameBitmap:BitmapData = _tileFrame.paint();
 		#end
 		
 		while (_ppoint.y < h)
@@ -230,7 +250,7 @@ class FlxBackdrop extends FlxSprite
 			while (_ppoint.x < w)
 			{
 				#if FLX_RENDER_BLIT
-				pixels.draw(_tileFrame.getBitmap(), _matrix);
+				pixels.draw(frameBitmap, _matrix);
 				_matrix.tx += ssw;
 				#else
 				_tileInfo.push(_ppoint.x);
@@ -248,8 +268,10 @@ class FlxBackdrop extends FlxSprite
 		}
 		
 		#if FLX_RENDER_BLIT
+		frameBitmap.dispose();
 		pixels.unlock();
-		resetFrameBitmaps();
+		dirty = true;
+		calcFrame();
 		#end
 	}
 	

@@ -26,7 +26,7 @@ import flash.net.FileReference;
  */
 class FlxScreenGrab extends FlxBasic
 {
-	public static var screenshot:Bitmap;
+	public static var screenshot(default, null):Bitmap;
 	
 	private static var _hotkeys:Array<FlxKey>;
 	private static var _autoSave:Bool = false;
@@ -72,7 +72,7 @@ class FlxScreenGrab extends FlxBasic
 	}
 	
 	/**
-	 * Clears a previously defined hotkey
+	 * Clears all previously defined hotkeys
 	 */
 	public static function clearHotKeys():Void
 	{
@@ -111,7 +111,7 @@ class FlxScreenGrab extends FlxBasic
 		var m:Matrix = new Matrix(1, 0, 0, 1, -bounds.x, -bounds.y);
 		
 		#if !FLX_NO_MOUSE
-		if (_autoHideMouse || HideMouse)
+		if (HideMouse)
 		{
 			FlxG.mouse.visible = false;
 		}
@@ -120,7 +120,7 @@ class FlxScreenGrab extends FlxBasic
 		theBitmap.bitmapData.draw(FlxG.stage, m);
 		
 		#if !FLX_NO_MOUSE
-		if (_autoHideMouse || HideMouse)
+		if (HideMouse)
 		{
 			FlxG.mouse.visible = true;
 		}
@@ -128,7 +128,7 @@ class FlxScreenGrab extends FlxBasic
 		
 		screenshot = theBitmap;
 		
-		if (SaveToFile || _autoSave)
+		if (SaveToFile)
 		{
 			save();
 		}
@@ -161,13 +161,21 @@ class FlxScreenGrab extends FlxBasic
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
 	#elseif systools
-		var png:ByteArray = screenshot.bitmapData.encode('png');
+		#if lime_legacy
+			var png:ByteArray = screenshot.bitmapData.encode('png');
+		#else
+			var png:ByteArray = screenshot.bitmapData.encode(screenshot.bitmapData.rect, 'png');
+		#end
 		var path:String = "";
 		var documentsDirectory = "";
-		var saveFile:Dynamic=null;
+		var saveFile:Dynamic = null;
 		try
 		{
-			documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+			#if lime_legacy
+				documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+			#else
+				documentsDirectory = lime.system.System.documentsDirectory;
+			#end
 			path = Dialogs.saveFile("", "", "", { count:1, descriptions:["png files"], extensions:["*.png"] } );
 		}
 		catch (msg:String)
@@ -181,20 +189,17 @@ class FlxScreenGrab extends FlxBasic
 			f.writeString(png.readUTFBytes(png.length));
 			f.close();
 		}
-	#else // sys target but no systools installed
-		FlxG.log.error("You need to include the 'systools' to use the save file dialog (or disable the SaveToFile option)");
+	#else
+		FlxG.log.error("You need to include the 'systools' haxelib to use the SaveToFile option.");
 	#end
 	}
 	
 	override public function update(elapsed:Float):Void
 	{
 		#if !FLX_NO_KEYBOARD
-		if (_hotkeys != null)
+		if (FlxG.keys.anyJustReleased(_hotkeys))
 		{
-			if (FlxG.keys.anyJustReleased(_hotkeys))
-			{
-				grab();
-			}
+			grab(null, _autoSave, _autoHideMouse);
 		}
 		#end
 	}

@@ -22,7 +22,8 @@ class FlxTrail extends FlxSpriteGroup
 	/**
 	 * Stores the FlxSprite the trail is attached to.
 	 */
-	public var sprite:FlxSprite;
+	public var target(default, null):FlxSprite;
+	
 	/**
 	 * How often to update the trail.
 	 */
@@ -49,23 +50,23 @@ class FlxTrail extends FlxSpriteGroup
 	public var framesEnabled:Bool = true;
 	
 	/**
-	 *  Counts the frames passed.
+	 * Counts the frames passed.
 	 */
 	private var _counter:Int = 0;
 	/**
-	 *  How long is the trail?
+	 * How long is the trail?
 	 */
 	private var _trailLength:Int = 0;
 	/**
-	 *  Stores the trailsprite image.
+	 * Stores the trailsprite image.
 	 */
 	private var _graphic:FlxGraphicAsset;
 	/**
-	 *  The alpha value for the next trailsprite.
+	 * The alpha value for the next trailsprite.
 	 */
 	private var _transp:Float = 1;
 	/**
-	 *  How much lower the alpha value of the next trailsprite is.
+	 * How much lower the alpha value of the next trailsprite is.
 	 */
 	private var _difference:Float;
 
@@ -78,29 +79,29 @@ class FlxTrail extends FlxSpriteGroup
 	private var _recentAnimations:Array<FlxAnimation> = [];
 	
 	/**
-	 *  Stores the sprite origin (rotation axis)
+	 * Stores the sprite origin (rotation axis)
 	 */
 	private var _spriteOrigin:FlxPoint;
 	
 	/**
 	 * Creates a new FlxTrail effect for a specific FlxSprite.
 	 * 
-	 * @param	Sprite		The FlxSprite the trail is attached to.
-	 * @param  	Graphic		The image to ues for the trailsprites. Optional, uses the sprite's graphic if null.
+	 * @param	Target		The FlxSprite the trail is attached to.
+	 * @param  	Graphic		The image to use for the trailsprites. Optional, uses the sprite's graphic if null.
 	 * @param	Length		The amount of trailsprites to create. 
 	 * @param	Delay		How often to update the trail. 0 updates every frame.
 	 * @param	Alpha		The alpha value for the very first trailsprite.
 	 * @param	Diff		How much lower the alpha of the next trailsprite is.
 	 */
-	public function new(Sprite:FlxSprite, ?Graphic:FlxGraphicAsset, Length:Int = 10, Delay:Int = 3, 
+	public function new(Target:FlxSprite, ?Graphic:FlxGraphicAsset, Length:Int = 10, Delay:Int = 3, 
 		Alpha:Float = 0.4, Diff:Float = 0.05):Void
 	{
 		super();
 
-		_spriteOrigin = FlxPoint.get().copyFrom(Sprite.origin);
+		_spriteOrigin = FlxPoint.get().copyFrom(Target.origin);
 
 		// Sync the vars 
-		sprite = Sprite;
+		target = Target;
 		delay = Delay;
 		_graphic = Graphic;
 		_transp = Alpha;
@@ -125,7 +126,7 @@ class FlxTrail extends FlxSpriteGroup
 		_recentAnimations = null;
 		_spriteOrigin = null;
 		
-		sprite = null;
+		target = null;
 		_graphic = null;
 		
 		super.destroy();
@@ -133,7 +134,6 @@ class FlxTrail extends FlxSpriteGroup
 
 	/**
 	 * Updates positions and other values according to the delay that has been set.
-	 * 
 	 */
 	override public function update(elapsed:Float):Void
 	{
@@ -156,13 +156,13 @@ class FlxTrail extends FlxSpriteGroup
 				spritePosition = FlxPoint.get();
 			}
 			
-			spritePosition.set(sprite.x - sprite.offset.x, sprite.y - sprite.offset.y);
+			spritePosition.set(target.x - target.offset.x, target.y - target.offset.y);
 			_recentPositions.unshift(spritePosition);
 			
 			// Also do the same thing for the Sprites angle if rotationsEnabled 
 			if (rotationsEnabled) 
 			{
-				cacheValue(_recentAngles, sprite.angle);
+				cacheValue(_recentAngles, target.angle);
 			}
 			
 			// Again the same thing for Sprites scales if scalesEnabled
@@ -178,17 +178,17 @@ class FlxTrail extends FlxSpriteGroup
 					spriteScale = FlxPoint.get();
 				}
 				
-				spriteScale.set(sprite.scale.x, sprite.scale.y);
+				spriteScale.set(target.scale.x, target.scale.y);
 				_recentScales.unshift(spriteScale);
 			}
 			
 			// Again the same thing for Sprites frames if framesEnabled
 			if (framesEnabled && _graphic == null) 
 			{
-				cacheValue(_recentFrames, sprite.animation.frameIndex);
-				cacheValue(_recentFlipX, sprite.flipX);
-				cacheValue(_recentFlipY, sprite.flipY);
-				cacheValue(_recentAnimations, sprite.animation.curAnim);
+				cacheValue(_recentFrames, target.animation.frameIndex);
+				cacheValue(_recentFlipX, target.flipX);
+				cacheValue(_recentFlipY, target.flipY);
+				cacheValue(_recentAnimations, target.animation.curAnim);
 			}
 
 			// Now we need to update the all the Trailsprites' values
@@ -280,7 +280,7 @@ class FlxTrail extends FlxSpriteGroup
 			
 			if (_graphic == null) 
 			{
-				trailSprite.loadGraphicFromSprite(sprite);
+				trailSprite.loadGraphicFromSprite(target);
 			}
 			else 
 			{

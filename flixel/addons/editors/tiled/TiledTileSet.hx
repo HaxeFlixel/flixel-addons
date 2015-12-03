@@ -102,7 +102,7 @@ class TiledTileSet
 				
 				var id:Int = Std.parseInt(node.att.id);
 				tileProps[id] = new TiledPropertySet();
-				
+				tileProps[id].keys.set("id", Std.string(id));
 				for (prop in node.nodes.properties)
 				{
 					tileProps[id].extend(prop);

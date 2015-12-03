@@ -9,9 +9,14 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxTimer;
 import openfl.display.BitmapData;
 
-@:bitmap("assets/images/transitions/circle.png") class GraphicTransTileCircle extends BitmapData { }
-@:bitmap("assets/images/transitions/diamond.png") class GraphicTransTileDiamond extends BitmapData { }
-@:bitmap("assets/images/transitions/square.png") class GraphicTransTileSquare extends BitmapData { }
+@:keep @:bitmap("assets/images/transitions/circle.png")
+class GraphicTransTileCircle extends BitmapData {}
+
+@:keep @:bitmap("assets/images/transitions/diamond.png")
+class GraphicTransTileDiamond extends BitmapData {}
+
+@:keep @:bitmap("assets/images/transitions/square.png")
+class GraphicTransTileSquare extends BitmapData {}
 
 /**
  * 
@@ -20,6 +25,9 @@ import openfl.display.BitmapData;
 class FlxTransitionSprite extends FlxSprite
 {
 	private var _delay:Float;
+	private var _count:Float;
+	private var _starting:Bool = true;
+	private var _finished:Bool = false;
 	public var status:TransitionStatus = IN;
 	private var _newStatus:TransitionStatus = NULL;
 	
@@ -57,7 +65,9 @@ class FlxTransitionSprite extends FlxSprite
 	
 	public function start(NewStatus:TransitionStatus):Void
 	{
-		new FlxTimer(_delay, onTimer);
+		_starting = true;
+		_finished = false;
+		_count = 0;
 		_newStatus = NewStatus;
 	}
 	
@@ -77,14 +87,15 @@ class FlxTransitionSprite extends FlxSprite
 		}
 		
 		animation.play(anim);
+		animation.finishCallback = onFinishAnim;
 		status = Status;
 	}
 	
-	override public function update(elapsed:Float):Void 
+	private function onFinishAnim(str:String):Void
 	{
-		super.update(elapsed);
-		if (animation.finished)
+		if (!_finished)
 		{
+			_finished = true;
 			switch (status) 
 			{
 				case IN:	setStatus(FULL);
@@ -94,8 +105,23 @@ class FlxTransitionSprite extends FlxSprite
 		}
 	}
 	
-	private function onTimer(f:FlxTimer = null):Void
+	override public function update(elapsed:Float):Void 
 	{
+		super.update(elapsed);
+		if (_starting)
+		{
+			_count += elapsed;
+			if (_count >= _delay)
+			{
+				onTime();
+			}
+		}
+	}
+	
+	private function onTime():Void
+	{
+		_starting = false;
+		_count = 0;
 		setStatus(_newStatus);
 		_newStatus = NULL;
 	}

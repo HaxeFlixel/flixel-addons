@@ -26,6 +26,8 @@ class FlxShapeGrid extends FlxShapeBox
 		cellHeight = CellHeight;
 		
 		super(X, Y, w, h, LineStyle_, FillColor);
+		
+		shape_id = FlxShapeType.GRID;
 	}
 	
 	override public function drawSpecificShape(?matrix:Matrix):Void 
