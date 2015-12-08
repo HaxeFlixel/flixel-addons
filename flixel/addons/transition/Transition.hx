@@ -41,6 +41,7 @@ class Transition extends FlxSubState
 	
 	public override function destroy():Void {
 		super.destroy();
+		finishCallback = null;
 		_effect.destroy();
 		_effect = null;
 	}
