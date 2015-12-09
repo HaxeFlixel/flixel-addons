@@ -1,7 +1,7 @@
 package flixel.addons.ui;
 import flixel.util.FlxColor;
 
-#if !FLX_NO_MOUSE
+
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -339,7 +339,11 @@ class FlxSlider extends FlxSpriteGroup
 	override public function update(elapsed:Float):Void
 	{
 		// Clicking and sound logic
+		#if !FLX_NO_MOUSE
 		if (FlxMath.mouseInFlxRect(false, _bounds)) 
+		#else
+		if (false)
+		#end
 		{
 			if (hoverAlpha != 1)
 			{
@@ -354,8 +358,8 @@ class FlxSlider extends FlxSpriteGroup
 			#end
 			
 			_justHovered = true;
-			
-			if (FlxG.mouse.pressed) 
+			#if !FLX_NO_MOUSE
+			if (FlxG.mouse.pressed)
 			{
 				if (orientation == ORIENT_HORIZONTAL)
 					handle.x = FlxG.mouse.screenX - (handle.width / 2);
@@ -375,6 +379,7 @@ class FlxSlider extends FlxSpriteGroup
 			{
 				_justClicked = false;
 			}
+			#end
 		}
 		else 
 		{
@@ -385,12 +390,13 @@ class FlxSlider extends FlxSpriteGroup
 			
 			_justHovered = false;
 		}
-		
+		#if !FLX_NO_MOUSE
 		// Update the target value whenever the slider is being used
 		if ((FlxG.mouse.pressed) && (FlxMath.mouseInFlxRect(false, _bounds)))
 		{
 			updateValue();
 		}
+		#end
 		
 		// Update the value variable
 		if ((varString != null) && (Reflect.getProperty(_object, varString) != null))
@@ -602,4 +608,3 @@ class FlxSlider extends FlxSpriteGroup
 		return Value;
 	}
 }
-#end
