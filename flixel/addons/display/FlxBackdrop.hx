@@ -34,10 +34,8 @@ class FlxBackdrop extends FlxSprite
 	 */
 	private var _tileFrame:FlxFrame;
 	
-	#if FLX_RENDER_TILE
 	private var _tileInfo:Array<Float>;
 	private var _numTiles:Int = 0;
-	#end
 	
 	// TODO: remove this hack and add docs about how to avoid tearing problem by preparing assets and some code...
 	/**
@@ -82,9 +80,7 @@ class FlxBackdrop extends FlxSprite
 	
 	override public function destroy():Void 
 	{
-		#if FLX_RENDER_TILE
 		_tileInfo = null;
-		#end
 		_ppoint = null;
 		scale = FlxDestroyUtil.destroy(scale);
 		setTileFrame(null);
@@ -160,44 +156,47 @@ class FlxBackdrop extends FlxSprite
 			}
 			
 			// Draw to the screen
-		#if FLX_RENDER_BLIT
-			_flashRect2.setTo(0, 0, graphic.width, graphic.height);
-			camera.copyPixels(frame, framePixels, _flashRect2, _ppoint);
-		#else
-			if (_tileFrame == null)
+			if (FlxG.renderBlit)
 			{
-				return;
+				_flashRect2.setTo(0, 0, graphic.width, graphic.height);
+				camera.copyPixels(frame, framePixels, _flashRect2, _ppoint);
 			}
-			
-			var drawItem = camera.startQuadBatch(_tileFrame.parent, false);
-			
-			_tileFrame.prepareMatrix(_matrix);
-			
-			var scaleX:Float = scale.x;
-			var scaleY:Float = scale.y;
-			
-			if (useScaleHack)
+			else
 			{
-				scaleX += 1 / (_tileFrame.sourceSize.x * camera.totalScaleX);
-				scaleY += 1 / (_tileFrame.sourceSize.y * camera.totalScaleY);
-			}
-			
-			_matrix.scale(scaleX, scaleY);
-			
-			var tx:Float = _matrix.tx;
-			var ty:Float = _matrix.ty;
-			
-			for (j in 0..._numTiles)
-			{
-				var currTileX = _tileInfo[j * 2];
-				var currTileY = _tileInfo[(j * 2) + 1];
+				if (_tileFrame == null)
+				{
+					return;
+				}
 				
-				_matrix.tx = tx + (_ppoint.x + currTileX);
-				_matrix.ty = ty + (_ppoint.y + currTileY);
+				var drawItem = camera.startQuadBatch(_tileFrame.parent, false);
 				
-				drawItem.addQuad(_tileFrame, _matrix);
+				_tileFrame.prepareMatrix(_matrix);
+				
+				var scaleX:Float = scale.x;
+				var scaleY:Float = scale.y;
+				
+				if (useScaleHack)
+				{
+					scaleX += 1 / (_tileFrame.sourceSize.x * camera.totalScaleX);
+					scaleY += 1 / (_tileFrame.sourceSize.y * camera.totalScaleY);
+				}
+				
+				_matrix.scale(scaleX, scaleY);
+				
+				var tx:Float = _matrix.tx;
+				var ty:Float = _matrix.ty;
+				
+				for (j in 0..._numTiles)
+				{
+					var currTileX = _tileInfo[j * 2];
+					var currTileY = _tileInfo[(j * 2) + 1];
+					
+					_matrix.tx = tx + (_ppoint.x + currTileX);
+					_matrix.ty = ty + (_ppoint.y + currTileY);
+					
+					drawItem.addQuad(_tileFrame, _matrix);
+				}
 			}
-		#end
 		}
 	}
 	
@@ -221,58 +220,67 @@ class FlxBackdrop extends FlxSprite
 			h += FlxG.height;
 		}
 		
-		#if FLX_RENDER_BLIT
-		if (graphic == null || (graphic.width != w || graphic.height != h))
+		if (FlxG.renderBlit)
 		{
-			makeGraphic(w, h, FlxColor.TRANSPARENT, true);
+			if (graphic == null || (graphic.width != w || graphic.height != h))
+			{
+				makeGraphic(w, h, FlxColor.TRANSPARENT, true);
+			}
 		}
-		#else
-		_tileInfo = [];
-		_numTiles = 0;
-		
-		width = frameWidth = w;
-		height = frameHeight = h;
-		#end
+		else
+		{
+			_tileInfo = [];
+			_numTiles = 0;
+			
+			width = frameWidth = w;
+			height = frameHeight = h;
+		}
 		
 		_ppoint.x = _ppoint.y = 0;
 		
-		#if FLX_RENDER_BLIT
-		pixels.lock();
-		_flashRect2.setTo(0, 0, graphic.width, graphic.height);
-		pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
-		_matrix.identity();
-		_matrix.scale(sx, sy);
-		var frameBitmap:BitmapData = _tileFrame.paint();
-		#end
+		if (FlxG.renderBlit)
+		{
+			pixels.lock();
+			_flashRect2.setTo(0, 0, graphic.width, graphic.height);
+			pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
+			_matrix.identity();
+			_matrix.scale(sx, sy);
+			var frameBitmap:BitmapData = _tileFrame.paint();
+		}
 		
 		while (_ppoint.y < h)
 		{
 			while (_ppoint.x < w)
 			{
-				#if FLX_RENDER_BLIT
-				pixels.draw(frameBitmap, _matrix);
-				_matrix.tx += ssw;
-				#else
-				_tileInfo.push(_ppoint.x);
-				_tileInfo.push(_ppoint.y);
-				_numTiles++;
-				#end
+				if (FlxG.renderBlit)
+				{
+					pixels.draw(frameBitmap, _matrix);
+					_matrix.tx += ssw;
+				}
+				else
+				{
+					_tileInfo.push(_ppoint.x);
+					_tileInfo.push(_ppoint.y);
+					_numTiles++;
+				}
 				_ppoint.x += ssw;
 			}
-			#if FLX_RENDER_BLIT
-			_matrix.tx = 0;
-			_matrix.ty += ssh;
-			#end
+			if (FlxG.renderBlit)
+			{
+				_matrix.tx = 0;
+				_matrix.ty += ssh;
+			}
 			_ppoint.x = 0;
 			_ppoint.y += ssh;
 		}
 		
-		#if FLX_RENDER_BLIT
-		frameBitmap.dispose();
-		pixels.unlock();
-		dirty = true;
-		calcFrame();
-		#end
+		if (FlxG.renderBlit)
+		{
+			frameBitmap.dispose();
+			pixels.unlock();
+			dirty = true;
+			calcFrame();
+		}
 	}
 	
 	private function onGameResize(_,_):Void

@@ -156,10 +156,13 @@ class FlxSkewedSprite extends FlxSprite
 	
 	override public function isSimpleRender(?camera:FlxCamera):Bool
 	{
-		#if FLX_RENDER_BLIT
-		return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0) && (!matrixExposed);
-		#else
-		return false;
-		#end
+		if (FlxG.renderBlit)
+		{
+			return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0) && (!matrixExposed);
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

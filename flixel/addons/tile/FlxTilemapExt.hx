@@ -93,27 +93,30 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	override private function drawTilemap(Buffer:FlxTilemapBuffer, Camera:FlxCamera):Void 
 	{
-		#if FLX_RENDER_BLIT
-		Buffer.fill();
-		#else
-		getScreenPosition(_point, Camera).copyToFlash(_helperPoint);
-		
-		_helperPoint.x = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.x) : _helperPoint.x;
-		_helperPoint.y = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.y) : _helperPoint.y;
-		
-		var scaledWidth:Float = _tileWidth;
-		var scaledHeight:Float = _tileHeight;
-		
-		var drawX:Float;
-		var drawY:Float;
-		
-		var _tileTransformMatrix:FlxMatrix = null;
-		var matrixToUse:FlxMatrix;
-		
-		var cr:Float = color.redFloat;
-		var cg:Float = color.greenFloat;
-		var cb:Float = color.blueFloat;
-		#end
+		if (FlxG.renderBlit)
+		{
+			Buffer.fill();
+		}
+		else
+		{
+			getScreenPosition(_point, Camera).copyToFlash(_helperPoint);
+			
+			_helperPoint.x = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.x) : _helperPoint.x;
+			_helperPoint.y = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.y) : _helperPoint.y;
+			
+			var scaledWidth:Float = _tileWidth;
+			var scaledHeight:Float = _tileHeight;
+			
+			var drawX:Float;
+			var drawY:Float;
+			
+			var _tileTransformMatrix:FlxMatrix = null;
+			var matrixToUse:FlxMatrix;
+			
+			var cr:Float = color.redFloat;
+			var cg:Float = color.greenFloat;
+			var cb:Float = color.blueFloat;
+		}
 		
 		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
 		
@@ -159,16 +162,17 @@ class FlxTilemapExt extends FlxTilemap
 					isSpecial = special.isSpecial();
 				}
 				
-				#if FLX_RENDER_BLIT
-				if (isSpecial) 
+				if (FlxG.renderBlit)
 				{
-					special.paint(Buffer.pixels, _flashPoint);
-					Buffer.dirty = (special.dirty || Buffer.dirty);
-				}
-				else if (tile != null && tile.visible && tile.frame.type != FlxFrameType.EMPTY)
-				{
-					tile.frame.paint(Buffer.pixels, _flashPoint, true);
-				}
+					if (isSpecial) 
+					{
+						special.paint(Buffer.pixels, _flashPoint);
+						Buffer.dirty = (special.dirty || Buffer.dirty);
+					}
+					else if (tile != null && tile.visible && tile.frame.type != FlxFrameType.EMPTY)
+					{
+						tile.frame.paint(Buffer.pixels, _flashPoint, true);
+					}
 				
 			#if !FLX_NO_DEBUG
 				if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
@@ -192,52 +196,58 @@ class FlxTilemapExt extends FlxTilemap
 					}
 				}
 			#end
-				#else
-				frame = (isSpecial) ? special.currFrame : tile.frame;
-				
-				if (frame != null)
-				{
-					drawX = _helperPoint.x + (columnIndex % widthInTiles) * scaledWidth;
-					drawY = _helperPoint.y + Math.floor(columnIndex / widthInTiles) * scaledHeight;
-					
-					if (isSpecial)
-					{
-						_tileTransformMatrix = special.getMatrix();
-						matrixToUse = _tileTransformMatrix;
-					}
-					else
-					{
-						frame.prepareMatrix(_matrix);
-						matrixToUse = _matrix;
-					}
-					
-					matrixToUse.translate(drawX, drawY);
-					Camera.drawPixels(frame, matrixToUse, cr, cg, cb, alpha, blend);
+			
 				}
-				#end
+				else
+				{
+					frame = (isSpecial) ? special.currFrame : tile.frame;
+					
+					if (frame != null)
+					{
+						drawX = _helperPoint.x + (columnIndex % widthInTiles) * scaledWidth;
+						drawY = _helperPoint.y + Math.floor(columnIndex / widthInTiles) * scaledHeight;
+						
+						if (isSpecial)
+						{
+							_tileTransformMatrix = special.getMatrix();
+							matrixToUse = _tileTransformMatrix;
+						}
+						else
+						{
+							frame.prepareMatrix(_matrix);
+							matrixToUse = _matrix;
+						}
+						
+						matrixToUse.translate(drawX, drawY);
+						Camera.drawPixels(frame, matrixToUse, cr, cg, cb, alpha, blend);
+					}
+				}
 				
-				#if FLX_RENDER_BLIT
-				_flashPoint.x += _tileWidth;
-				#end
+				if (FlxG.renderBlit)
+				{
+					_flashPoint.x += _tileWidth;
+				}
 				columnIndex++;
 			}
 			
 			rowIndex += widthInTiles;
-			#if FLX_RENDER_BLIT
-			_flashPoint.y += _tileHeight;
-			#end
+			if (FlxG.renderBlit)
+			{
+				_flashPoint.y += _tileHeight;
+			}
 		}
 		
 		Buffer.x = screenXInTiles * _tileWidth;
 		Buffer.y = screenYInTiles * _tileHeight;
 		
-		#if FLX_RENDER_BLIT
-		if (isColored)
+		if (FlxG.renderBlit)
 		{
-			Buffer.colorTransform(colorTransform);
+			if (isColored)
+			{
+				Buffer.colorTransform(colorTransform);
+			}
+			Buffer.blend = blend;
 		}
-		Buffer.blend = blend;
-		#end
 	}
 	
 	/**
@@ -247,10 +257,7 @@ class FlxTilemapExt extends FlxTilemap
 	public function setSpecialTiles(tiles:Array<FlxTileSpecial>):Void 
 	{
 		_specialTiles = new Array<FlxTileSpecial>();
-
-		#if FLX_RENDER_BLIT
-		var animIds:Array<Int>;
-		#end
+		
 		var tile:FlxTileSpecial;
 		for (i in 0...tiles.length) 
 		{
@@ -312,29 +319,32 @@ class FlxTilemapExt extends FlxTilemap
 			
 			buffer = _buffers[i++];
 			
-			#if FLX_RENDER_BLIT
-			if (!buffer.dirty)
+			if (FlxG.renderBlit)
 			{
+				if (!buffer.dirty)
+				{
+					// Copied from getScreenXY()
+					_point.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
+					_point.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
+					buffer.dirty = (_point.x > 0) || (_point.y > 0) || (_point.x + buffer.width < camera.width) || (_point.y + buffer.height < camera.height);
+				}
+				
+				if (buffer.dirty)
+				{
+					buffer.dirty = false;
+					drawTilemap(buffer, camera);
+				}
+				
 				// Copied from getScreenXY()
-				_point.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
-				_point.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
-				buffer.dirty = (_point.x > 0) || (_point.y > 0) || (_point.x + buffer.width < camera.width) || (_point.y + buffer.height < camera.height);
+				_flashPoint.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
+				_flashPoint.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
+				buffer.draw(camera, _flashPoint);
+				
 			}
-			
-			if (buffer.dirty)
+			else
 			{
-				buffer.dirty = false;
 				drawTilemap(buffer, camera);
 			}
-			
-			// Copied from getScreenXY()
-			_flashPoint.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
-			_flashPoint.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
-			buffer.draw(camera, _flashPoint);
-			
-			#else
-			drawTilemap(buffer, camera);
-			#end
 			
 			#if !FLX_NO_DEBUG
 			FlxBasic.visibleCount++;

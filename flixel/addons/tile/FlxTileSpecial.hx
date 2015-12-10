@@ -42,9 +42,7 @@ class FlxTileSpecial extends FlxBasic
 	private var _currAnimParam:AnimParams;
 	private var _frameTimer:Float = 0.0;
 	
-	#if FLX_RENDER_BLIT
 	public var dirty:Bool = true;
-	#end
 	
 	public function new(TilesetId:Int, FlipX:Bool, FlipY:Bool, Rotate:Int)
 	{
@@ -75,9 +73,10 @@ class FlxTileSpecial extends FlxBasic
 	override public function update(elapsed:Float):Void 
 	{
 		super.update(elapsed);
-		#if FLX_RENDER_BLIT
-		dirty = false;
-		#end
+		if (FlxG.renderBlit)
+		{
+			dirty = false;
+		}
 		// Modified from updateAnimation() in FlxSprite
 		if (animation != null && animation.delay > 0) 
 		{
@@ -104,9 +103,10 @@ class FlxTileSpecial extends FlxBasic
 				_currAnimParam = animation.framesData[_currIndex];
 			}
 			
-			#if FLX_RENDER_BLIT
-			dirty = !(_currIndex == _lastIndex);
-			#end
+			if (FlxG.renderBlit)
+			{
+				dirty = !(_currIndex == _lastIndex);
+			}
 		}
 	}
 	
@@ -125,9 +125,10 @@ class FlxTileSpecial extends FlxBasic
 		return animation != null;
 	}
 	
-	#if FLX_RENDER_BLIT
 	public function paint(bmd:BitmapData, at:Point):Void 
 	{
+		if (!FlxG.renderBlit) return;
+		
 		_tmp_flipH = flipX;
 		_tmp_flipV = flipY;
 		_tmp_rot = rotate;
@@ -151,7 +152,6 @@ class FlxTileSpecial extends FlxBasic
 		
 		currFrame.paintRotatedAndFlipped(bmd, at, rotation, _tmp_flipH, _tmp_flipV, true);
 	}
-	#end
 	
 	/**
 	 * Add an animation to this special tile
