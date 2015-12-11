@@ -212,6 +212,8 @@ class FlxBackdrop extends FlxSprite
 		var w:Int = ssw;
 		var h:Int = ssh;
 		
+		var frameBitmap:BitmapData = null;
+		
 		if (_repeatX) 
 		{
 			w += FlxG.width;
@@ -242,7 +244,7 @@ class FlxBackdrop extends FlxSprite
 		pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
 		_matrix.identity();
 		_matrix.scale(sx, sy);
-		var frameBitmap:BitmapData = _tileFrame.paint();
+		frameBitmap = _tileFrame.paint();
 		#end
 		
 		while (_ppoint.y < h)

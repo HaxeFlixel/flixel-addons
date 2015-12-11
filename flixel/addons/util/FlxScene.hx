@@ -412,6 +412,8 @@ class FlxScene
 	 */
 	private function applyTextProperties(instance:FlxText, element:Fast):Void
 	{
+		if (instance == null || element == null) return;
+		
 		if (element.has.text)
 		instance.text = element.att.text;
 
