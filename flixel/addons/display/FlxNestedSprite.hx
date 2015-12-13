@@ -334,39 +334,40 @@ class FlxNestedSprite extends FlxSprite
 		}
 		alpha = Alpha * relativeAlpha;
 		
-		#if FLX_RENDER_BLIT
-		if ((alpha != 1) || (color != 0x00ffffff))
+		if (FlxG.renderBlit)
 		{
-			var red:Float = (color >> 16) * _parentRed / 255;
-			var green:Float = (color >> 8 & 0xff) * _parentGreen / 255;
-			var blue:Float = (color & 0xff) * _parentBlue / 255;
-			
-			if (colorTransform == null)
+			if ((alpha != 1) || (color != 0x00ffffff))
 			{
-				colorTransform = new ColorTransform(red, green, blue, alpha);
+				var red:Float = (color >> 16) * _parentRed / 255;
+				var green:Float = (color >> 8 & 0xff) * _parentGreen / 255;
+				var blue:Float = (color & 0xff) * _parentBlue / 255;
+				
+				if (colorTransform == null)
+				{
+					colorTransform = new ColorTransform(red, green, blue, alpha);
+				}
+				else
+				{
+					colorTransform.redMultiplier = red;
+					colorTransform.greenMultiplier = green;
+					colorTransform.blueMultiplier = blue;
+					colorTransform.alphaMultiplier = alpha;
+				}
+				useColorTransform = true;
 			}
 			else
 			{
-				colorTransform.redMultiplier = red;
-				colorTransform.greenMultiplier = green;
-				colorTransform.blueMultiplier = blue;
-				colorTransform.alphaMultiplier = alpha;
+				if (colorTransform != null)
+				{
+					colorTransform.redMultiplier = 1;
+					colorTransform.greenMultiplier = 1;
+					colorTransform.blueMultiplier = 1;
+					colorTransform.alphaMultiplier = 1;
+				}
+				useColorTransform = false;
 			}
-			useColorTransform = true;
+			dirty = true;
 		}
-		else
-		{
-			if (colorTransform != null)
-			{
-				colorTransform.redMultiplier = 1;
-				colorTransform.greenMultiplier = 1;
-				colorTransform.blueMultiplier = 1;
-				colorTransform.alphaMultiplier = 1;
-			}
-			useColorTransform = false;
-		}
-		dirty = true;
-		#end
 		
 		if (children != null)
 		{
@@ -423,11 +424,12 @@ class FlxNestedSprite extends FlxSprite
 		
 		dirty = true;
 		
-		#if FLX_RENDER_TILE
-		color.redFloat = combinedRed;
-		color.greenFloat = combinedGreen;
-		color.blueFloat = combinedBlue;
-		#end
+		if (FlxG.renderTile)
+		{
+			color.redFloat = combinedRed;
+			color.greenFloat = combinedGreen;
+			color.blueFloat = combinedBlue;
+		}
 		
 		for (child in children)
 		{

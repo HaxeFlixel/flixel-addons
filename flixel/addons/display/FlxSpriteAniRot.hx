@@ -114,12 +114,13 @@ class FlxSpriteAniRot extends FlxSprite
 			frame = framesCache[idx].frames[angleIndex];
 		}
 		
-		#if FLX_RENDER_TILE
-		if (!RunOnCpp)
+		if (FlxG.renderTile)
 		{
-			return;
+			if (!RunOnCpp)
+			{
+				return;
+			}
 		}
-		#end
 		
 		super.calcFrame();
 	}
