@@ -103,20 +103,20 @@ class FlxTilemapExt extends FlxTilemap
 			
 			_helperPoint.x = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.x) : _helperPoint.x;
 			_helperPoint.y = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.y) : _helperPoint.y;
-			
-			var scaledWidth:Float = _tileWidth;
-			var scaledHeight:Float = _tileHeight;
-			
-			var drawX:Float;
-			var drawY:Float;
-			
-			var _tileTransformMatrix:FlxMatrix = null;
-			var matrixToUse:FlxMatrix;
-			
-			var cr:Float = color.redFloat;
-			var cg:Float = color.greenFloat;
-			var cb:Float = color.blueFloat;
 		}
+		
+		var scaledWidth:Float = _tileWidth;
+		var scaledHeight:Float = _tileHeight;
+		
+		var drawX:Float;
+		var drawY:Float;
+		
+		var _tileTransformMatrix:FlxMatrix = null;
+		var matrixToUse:FlxMatrix;
+		
+		var cr:Float = color.redFloat;
+		var cg:Float = color.greenFloat;
+		var cb:Float = color.blueFloat;
 		
 		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
 		
