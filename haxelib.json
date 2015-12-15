@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": ["game", "openfl", "flash", "neko", "cpp", "android", "ios", "cross"],
 	"description": "flixel-addons is a set of useful, additional classes for HaxeFlixel.",
-	"version": "1.1.0",
-	"releasenote": "Compatibility with flixel 3.3.0, several new classes, bugfixes and improvements. See the CHANGELOG.md for more details.",
+	"version": "1.1.1",
+	"releasenote": "Fix compilation with OpenFL 3.5 / Lime 2.8.",
 	"contributors": ["haxeflixel"]
 }
