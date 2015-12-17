@@ -1,7 +1,9 @@
 package flixel.addons.plugin.screengrab;
 
-#if (sys && systools)
-import systools.Dialogs;
+#if sys
+import lime.ui.FileDialog;
+import lime.ui.FileDialogType;
+import openfl.display.PNGEncoderOptions;
 #end
 
 #if !js
@@ -14,7 +16,7 @@ import flixel.addons.util.PNGEncoder;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
 
-#if flash
+#if !sys
 import flash.net.FileReference;
 #end
 
@@ -136,13 +138,8 @@ class FlxScreenGrab extends FlxBasic
 		return theBitmap;
 	}
 	
-	private static function save(Filename:String = ""):Void
+	private static function fixFilename(Filename:String):String
 	{
-		if (screenshot.bitmapData == null)
-		{
-			return;
-		}
-		
 		if (Filename == "")
 		{
 			var date:String = Date.now().toString();
@@ -155,28 +152,54 @@ class FlxScreenGrab extends FlxBasic
 		{
 			Filename = Filename + ".png";
 		}
+		return Filename;
+	}
+	
+	private static function save(Filename:String = ""):Void
+	{
+		if (screenshot.bitmapData == null)
+		{
+			return;
+		}
+		
+		Filename = fixFilename(Filename);
+		
+		var png:ByteArray;
+	#if flash
+		png = PNGEncoder.encode(screenshot.bitmapData);
+	#elseif openfl_legacy
+		png = screenshot.bitmapData.encode(screenshot.bitmapData.rect, "png");
+	#else
+		png = screenshot.bitmapData.encode(screenshot.bitmapData.rect, new PNGEncoderOptions());
+	#end
 		
 	#if !sys
-		var png:ByteArray = PNGEncoder.encode(screenshot.bitmapData);
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
-	#elseif systools
-		#if lime_legacy
-			var png:ByteArray = screenshot.bitmapData.encode('png');
-		#else
-			var png:ByteArray = screenshot.bitmapData.encode(screenshot.bitmapData.rect, 'png');
-		#end
-		var path:String = "";
+	#else
+		
 		var documentsDirectory = "";
-		var saveFile:Dynamic = null;
+		#if lime_legacy
+			documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+		#else
+			documentsDirectory = lime.system.System.documentsDirectory;
+		#end
+		
+		var fd:FileDialog = new FileDialog();
+		
+		var path = "";
+		
+		fd.onSelect.add(function(str:String) {
+			path = fixFilename(str);
+			var f = sys.io.File.write(path, true);
+			f.writeString(png.readUTFBytes(png.length));
+			f.close();
+			path = null;
+		});
+		
 		try
 		{
-			#if lime_legacy
-				documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
-			#else
-				documentsDirectory = lime.system.System.documentsDirectory;
-			#end
-			path = Dialogs.saveFile("", "", "", { count:1, descriptions:["png files"], extensions:["*.png"] } );
+			fd.browse(FileDialogType.SAVE, "*.png", documentsDirectory);
 		}
 		catch (msg:String)
 		{
@@ -185,12 +208,11 @@ class FlxScreenGrab extends FlxBasic
 		
 		if (path != "" && path != null)	//if path is empty, the user cancelled the save operation and we can safely do nothing
 		{
+			path = fixFilename(path);
 			var f = sys.io.File.write(path, true);
 			f.writeString(png.readUTFBytes(png.length));
 			f.close();
 		}
-	#else
-		FlxG.log.error("You need to include the 'systools' haxelib to use the SaveToFile option.");
 	#end
 	}
 	
