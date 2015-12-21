@@ -80,10 +80,13 @@ class FlxTransitionableState extends FlxState
 	
 	override public function switchTo(nextState:FlxState):Bool 
 	{
+		if (!hasTransOut)
+			return true;
+		
 		if (!_exiting)
 			transitionToState(nextState);
 
-		return hasTransOut && transOutFinished;
+		return transOutFinished;
 	}
 	
 	private function transitionToState(nextState:FlxState):Void
