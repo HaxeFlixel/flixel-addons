@@ -2,7 +2,6 @@ package flixel.addons.editors.tiled;
 
 import haxe.xml.Fast;
 
-
 class TiledImageLayer extends TiledLayer
 {
 	public var imagePath:String;

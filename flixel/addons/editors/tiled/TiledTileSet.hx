@@ -53,13 +53,7 @@ class TiledTileSet
 		
 		firstGID = (source.has.firstgid) ? Std.parseInt(source.att.firstgid) : 1;
 		
-		// check for external source
-		if (source.has.source)
-		{
-			
-		}
-		// internal
-		else 
+		if (!source.has.source) 
 		{
 			var node:Fast = source.node.image;
 			imageSource = node.att.source;

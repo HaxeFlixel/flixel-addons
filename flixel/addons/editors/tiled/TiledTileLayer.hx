@@ -1,9 +1,9 @@
 package flixel.addons.editors.tiled;
 
-import haxe.xml.Fast;
-import flixel.addons.editors.tiled.TiledLayer.TiledLayerType;
-import openfl.utils.ByteArray;
 import flash.utils.Endian;
+import flixel.addons.editors.tiled.TiledLayer.TiledLayerType;
+import haxe.xml.Fast;
+import openfl.utils.ByteArray;
 
 class TiledTileLayer extends TiledLayer
 {
@@ -54,7 +54,7 @@ class TiledTileLayer extends TiledLayer
 
 			if (xmlData.has.compression)
 			{
-				switch(xmlData.att.compression)
+				switch (xmlData.att.compression)
 				{
 					case "zlib":
 						compressed = true;
@@ -81,7 +81,7 @@ class TiledTileLayer extends TiledLayer
 		return result;
 	}
 
-	private static function base64ToByteArray(data:String):ByteArray
+	private function base64ToByteArray(data:String):ByteArray
 	{
 		var output:ByteArray = new ByteArray();
 
@@ -146,35 +146,6 @@ class TiledTileLayer extends TiledLayer
 		}
 		tiles.push(null);
 		return 0;
-	}
-
-	/**
-	 * Function that tries to resolve the tiles gid in the csv data.
-	 * TODO: It fails because I can't find a function to parse an unsigned int from a string :(
-	 * @param	csvData		The csv string to resolve
-	 * @return	The csv string resolved
-	 */
-	private function resolveCsvTiles(csvData:String):String
-	{
-		var buffer:StringBuf = new StringBuf();
-		var rows:Array<String> = csvData.split("\n");
-		var values:Array<String>;
-		for(row in rows) {
-			values = row.split(",");
-			var i:Int;
-			for (v in values) {
-				if (v == "") {
-					continue;
-				}
-				i = Std.parseInt(v);
-				buffer.add(resolveTile(i) + ",");
-			}
-			buffer.add("\n");
-		}
-
-		var result:String = buffer.toString();
-		buffer = null;
-		return result;
 	}
 	
 	private function get_encoding():String
