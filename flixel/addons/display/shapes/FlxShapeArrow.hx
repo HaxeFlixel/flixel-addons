@@ -54,6 +54,29 @@ class FlxShapeArrow extends FlxShape
 		shape_id = FlxShapeType.ARROW;
 	}
 	
+	override private function getStrokeOffsetX():Float
+	{
+		return strokeBuffer / 6;
+	}
+	
+	override private function getStrokeOffsetY():Float
+	{
+		return strokeBuffer / 6;
+	}
+	
+	override private function get_strokeBuffer():Float
+	{
+		return lineStyle.thickness * 3.0;
+	}
+	
+	override private function getStrokeOffsetMatrix(matrix:Matrix):Matrix
+	{
+		var buffer:Float = strokeBuffer / 3;
+		matrix.identity();
+		matrix.translate(buffer, buffer);
+		return matrix;
+	}
+	
 	override public function destroy():Void
 	{
 		super.destroy();
@@ -70,10 +93,12 @@ class FlxShapeArrow extends FlxShape
 		
 		//generate the arrowhead
 		var vertices:Array<FlxPoint> = new Array<FlxPoint>();
+		
+		vertices.push(FlxPoint.get(0, -arrowSize));
+		vertices.push(FlxPoint.get( -arrowSize, -arrowSize));
 		vertices.push(FlxPoint.get(0, 0));
-		vertices.push(FlxPoint.get(-arrowSize, -arrowSize));
-		vertices.push(FlxPoint.get(arrowSize, -arrowSize));
-		vertices.push(FlxPoint.get(0, 0));		//close it up
+		vertices.push(FlxPoint.get( arrowSize, -arrowSize));
+		vertices.push(FlxPoint.get(0, -arrowSize));				//close it up
 		
 		//get arrowhead rotation vector
 		var fv = FlxVector.get(point.x - point2.x, point.y - point2.y);
