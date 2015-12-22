@@ -63,6 +63,15 @@ class TiledMap
 		}
 		
 		source = source.node.map;
+		
+		loadAttributes(source);
+		loadProperties(source);
+		loadTilesets(source);
+		loadLayers(source);
+	}
+	
+	private function loadAttributes(source:Fast):Void
+	{
 		version = (source.att.version != null) ? source.att.version : "unknown";
 		orientation = (source.att.orientation != null) ? source.att.orientation : "orthogonal";
 		backgroundColor = (source.has.backgroundcolor && source.att.backgroundcolor != null) ?
@@ -76,8 +85,10 @@ class TiledMap
 		// Calculate the entire size
 		fullWidth = width * tileWidth;
 		fullHeight = height * tileHeight;
-		
-		// Load properties
+	}
+	
+	private function loadProperties(source:Fast):Void
+	{
 		for (node in source.nodes.properties)
 		{
 			properties.extend(node);
@@ -93,8 +104,10 @@ class TiledMap
 				noLoadHash.set(s.trim(), true);
 			}
 		}
-		
-		// Load tilesets
+	}
+	
+	private function loadTilesets(source:Fast):Void
+	{
 		for (node in source.nodes.tileset)
 		{
 			var name = node.att.name;
@@ -106,8 +119,10 @@ class TiledMap
 				tilesetArray.push(ts);
 			}
 		}
-		
-		// Load tile and object layers
+	}
+	
+	private function loadLayers(source:Fast):Void
+	{
 		for (el in source.elements)
 		{	
 			if (el.has.name && noLoadHash.exists(el.att.name))
