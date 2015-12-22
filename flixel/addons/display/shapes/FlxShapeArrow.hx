@@ -70,10 +70,12 @@ class FlxShapeArrow extends FlxShape
 		
 		//generate the arrowhead
 		var vertices:Array<FlxPoint> = new Array<FlxPoint>();
+		
+		vertices.push(FlxPoint.get(0, -arrowSize));
+		vertices.push(FlxPoint.get( -arrowSize, -arrowSize));
 		vertices.push(FlxPoint.get(0, 0));
-		vertices.push(FlxPoint.get(-arrowSize, -arrowSize));
-		vertices.push(FlxPoint.get(arrowSize, -arrowSize));
-		vertices.push(FlxPoint.get(0, 0));		//close it up
+		vertices.push(FlxPoint.get( arrowSize, -arrowSize));
+		vertices.push(FlxPoint.get(0, -arrowSize));				//close it up
 		
 		//get arrowhead rotation vector
 		var fv = FlxVector.get(point.x - point2.x, point.y - point2.y);
