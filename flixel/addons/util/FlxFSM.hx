@@ -133,7 +133,7 @@ class FlxFSM<T> implements IFlxDestroyable
 				
 				state = pools.get(newName).get();
 				
-				if (pools.exists(curName))
+				if (state != null && pools.exists(curName))
 				{
 					pools.get(curName).put(returnToPool);
 				}
