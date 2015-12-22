@@ -54,6 +54,29 @@ class FlxShapeArrow extends FlxShape
 		shape_id = FlxShapeType.ARROW;
 	}
 	
+	override private function getStrokeOffsetX():Float
+	{
+		return strokeBuffer / 6;
+	}
+	
+	override private function getStrokeOffsetY():Float
+	{
+		return strokeBuffer / 6;
+	}
+	
+	override private function get_strokeBuffer():Float
+	{
+		return lineStyle.thickness * 3.0;
+	}
+	
+	override private function getStrokeOffsetMatrix(matrix:Matrix):Matrix
+	{
+		var buffer:Float = strokeBuffer / 3;
+		matrix.identity();
+		matrix.translate(buffer, buffer);
+		return matrix;
+	}
+	
 	override public function destroy():Void
 	{
 		super.destroy();
