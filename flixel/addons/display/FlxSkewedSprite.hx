@@ -86,6 +86,10 @@ class FlxSkewedSprite extends FlxSprite
 			var cr:Float = colorTransform.redMultiplier;
 			var cg:Float = colorTransform.greenMultiplier;
 			var cb:Float = colorTransform.blueMultiplier;
+			var croff:Float = colorTransform.redOffset;
+			var cgoff:Float = colorTransform.greenOffset;
+			var cboff:Float = colorTransform.blueOffset;
+			var caoff:Float = colorTransform.alphaOffset;
 			
 			var simple:Bool = isSimpleRender(camera);
 			if (simple)
@@ -96,7 +100,7 @@ class FlxSkewedSprite extends FlxSprite
 				}
 				
 				_point.copyToFlash(_flashPoint);
-				camera.copyPixels(_frame, framePixels, _flashRect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
+				camera.copyPixels(_frame, framePixels, _flashRect, _flashPoint, cr, cg, cb, alpha, croff, cgoff, cboff, caoff, blend, antialiasing);
 			}
 			else
 			{
