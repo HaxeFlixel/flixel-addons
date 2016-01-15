@@ -40,34 +40,6 @@ class FlxFSMState<T> implements IFlxDestroyable
 }
 
 /**
- * Sample bitflags for FSM's type
- */
-@:enum
-abstract FSMType(Int) from Int to Int
-{
-	var any = 1;
-	var actor = 2;
-	var ai = 4;
-	var animation = 8;
-	var area = 16;
-	var audio = 32;
-	var collision = 64;
-	var damage = 128;
-	var effect = 256;
-	var environment = 512;
-	var game = 1024;
-	var machine = 2048;
-	var menu = 4096;
-	var npc = 8192;
-	var particle = 16384;
-	var physics = 32768;
-	var pickup = 65536;
-	var player = 131072;
-	var projectile = 262144;
-	var text = 524288;
-}
-
-/**
  * Helper typedef for FlxExtendedFSM's pools
  */
 typedef StatePool<T> = Map<String, FlxPool<FlxFSMState<T>>>
@@ -127,7 +99,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		this.age = 0;
 		this.owner = owner;
 		this.state = state;
-		this.type = FSMType.any;
+		this.type = 0;
 		this.transitions = new FlxFSMTransitionTable<T>();
 		this.pools = new StatePool<T>();
 	}
@@ -161,7 +133,7 @@ class FlxFSM<T> implements IFlxDestroyable
 				
 				state = pools.get(newName).get();
 				
-				if (pools.exists(curName))
+				if (state != null && pools.exists(curName))
 				{
 					pools.get(curName).put(returnToPool);
 				}
@@ -180,7 +152,6 @@ class FlxFSM<T> implements IFlxDestroyable
 		name = null;
 		transitions = null;
 		pools = null;
-		type = FSMType.any;
 	}
 	
 	private function set_owner(owner:T):T
@@ -722,8 +693,6 @@ class Transition<T>
 	/**
 	 * If this function returns true, the transition becomes active.
 	 * Note: you can override this function if you don't want to use functions passed as variables.
-	 * @param	target
-	 * @return
 	 */
 	public function evaluate(target:T):Bool
 	{

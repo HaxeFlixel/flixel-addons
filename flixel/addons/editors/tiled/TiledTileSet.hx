@@ -1,7 +1,7 @@
 package flixel.addons.editors.tiled;
 
 import flash.geom.Rectangle;
-import flash.utils.ByteArray;
+import openfl.utils.ByteArray;
 import haxe.xml.Fast;
 
 /**
@@ -41,7 +41,9 @@ class TiledTileSet
 		{
 			source = data;
 		}
-		else if (Std.is(data, ByteArray))
+		else if (Std.is(data, 
+			#if (lime_legacy || openfl <= "3.4.0") ByteArray #else ByteArrayData #end
+		))
 		{
 			source = new Fast(Xml.parse(data.toString()));
 			source = source.node.tileset;
@@ -53,13 +55,7 @@ class TiledTileSet
 		
 		firstGID = (source.has.firstgid) ? Std.parseInt(source.att.firstgid) : 1;
 		
-		// check for external source
-		if (source.has.source)
-		{
-			
-		}
-		// internal
-		else 
+		if (!source.has.source) 
 		{
 			if (!source.hasNode.image)
 			{

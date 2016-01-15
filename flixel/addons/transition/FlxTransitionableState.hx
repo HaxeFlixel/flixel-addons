@@ -49,7 +49,7 @@ class FlxTransitionableState extends FlxState
 	 * @param	TransOut	Plays when the state ends
 	 */
 	
-	public function new(?TransIn:TransitionData,?TransOut:TransitionData)
+	public function new(?TransIn:TransitionData, ?TransOut:TransitionData)
 	{
 		transIn = TransIn;
 		transOut = TransOut;
@@ -78,22 +78,25 @@ class FlxTransitionableState extends FlxState
 		transitionIn();
 	}
 	
-	override public function isTransitionNeeded():Bool
+	override public function switchTo(nextState:FlxState):Bool 
 	{
-		//If the transition exists and we have NOT yet finished our transition visual
-		return ((hasTransOut) && (transOutFinished == false));
+		if (!hasTransOut)
+			return true;
+		
+		if (!_exiting)
+			transitionToState(nextState);
+
+		return transOutFinished;
 	}
 	
-	override public function transitionToState(Next:FlxState):Void
+	private function transitionToState(nextState:FlxState):Void
 	{
 		//play the exit transition, and when it's done call FlxG.switchState
 		_exiting = true;
-		transitionOut(
-			function():Void
-			{
-				FlxG.switchState(Next);
-			}
-		);
+		transitionOut(function()
+		{
+			FlxG.switchState(nextState);
+		});
 		
 		if (skipNextTransOut)
 		{
@@ -119,7 +122,7 @@ class FlxTransitionableState extends FlxState
 				return;
 			}
 			
-			var _trans = getTransition(transIn);
+			var _trans = createTransition(transIn);
 			
 			_trans.setStatus(FULL);
 			openSubState(_trans);
@@ -137,7 +140,7 @@ class FlxTransitionableState extends FlxState
 		_onExit = OnExit;
 		if (hasTransOut)
 		{
-			var _trans = getTransition(transOut);
+			var _trans = createTransition(transOut);
 			
 			_trans.setStatus(EMPTY);
 			openSubState(_trans);
@@ -166,7 +169,7 @@ class FlxTransitionableState extends FlxState
 		return transOut != null && transOut.type != NONE;
 	}
 	
-	private function getTransition(data:TransitionData):Transition
+	private function createTransition(data:TransitionData):Transition
 	{
 		return switch(data.type)
 		{

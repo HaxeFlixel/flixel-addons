@@ -262,8 +262,7 @@ class FlxNapeSprite extends FlxSprite
 	 */	
 	private function updatePhysObjects():Void 
 	{
-		x = body.position.x - origin.x;
-		y = body.position.y - origin.y;
+		updatePosition();
 		
 		if (body.allowRotation)
 		{
@@ -277,6 +276,12 @@ class FlxNapeSprite extends FlxSprite
 			body.velocity.x *= _linearDrag;
 			body.velocity.y *= _linearDrag;
 		}
+	}
+	
+	private function updatePosition():Void
+	{
+		x = body.position.x - origin.x;
+		y = body.position.y - origin.y;
 	}
 	
 	private inline function set_physicsEnabled(Value:Bool):Bool
@@ -297,5 +302,7 @@ class FlxNapeSprite extends FlxSprite
 	{
 		body.position.x = X;
 		body.position.y = Y;
+		
+		updatePosition();
 	}
 }
