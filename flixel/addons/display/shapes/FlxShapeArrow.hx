@@ -111,6 +111,9 @@ class FlxShapeArrow extends FlxShape
 		var canvasWidth:Int = Std.int(Math.max(shapeWidth, arrowSize*2) + strokeBuffer);
 		var canvasHeight:Int = Std.int(Math.max(shapeHeight, arrowSize*2) + strokeBuffer);
 		
+		if (canvasWidth % 2 == 1) { canvasWidth += 1; }
+		if (canvasHeight % 2 == 1) { canvasHeight += 1; }
+		
 		if (pixels.width != canvasWidth || pixels.height != pixels.height)
 		{
 			makeGraphic(canvasWidth, canvasHeight, FlxColor.TRANSPARENT, true);
