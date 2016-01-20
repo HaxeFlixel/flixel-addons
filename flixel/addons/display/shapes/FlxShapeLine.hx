@@ -43,8 +43,8 @@ class FlxShapeLine extends FlxShape
 	
 	override public function destroy():Void 
 	{
-		FlxDestroyUtil.destroy(point);
-		FlxDestroyUtil.destroy(point2);
+		point = null;
+		point2 = null;
 		super.destroy();
 	}
 
