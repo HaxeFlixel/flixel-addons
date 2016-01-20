@@ -67,6 +67,7 @@ class FlxTransitionableState extends FlxState
 	
 	override public function destroy():Void
 	{
+		super.destroy();
 		transIn = null;
 		transOut = null;
 		_onExit = null;
