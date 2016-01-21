@@ -181,8 +181,8 @@ class TiledTileLayer extends TiledLayer
 			}
 
 			tileArray = new Array<Int>();
-
-			while ((mapData.position : Int) < mapData.length)
+			
+			while ((mapData.position : UInt) < mapData.length)
 			{
 				tileArray.push(resolveTile(mapData.readUnsignedInt()));
 			}
