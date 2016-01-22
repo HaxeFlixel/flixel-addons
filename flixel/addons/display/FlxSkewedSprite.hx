@@ -83,10 +83,6 @@ class FlxSkewedSprite extends FlxSprite
 			
 			getScreenPosition(_point, camera).subtractPoint(offset);
 			
-			var croff:Float = colorTransform.redOffset;
-			var cgoff:Float = colorTransform.greenOffset;
-			var cboff:Float = colorTransform.blueOffset;
-			var caoff:Float = colorTransform.alphaOffset;
 			var simple:Bool = isSimpleRender(camera);
 			if (simple)
 			{
