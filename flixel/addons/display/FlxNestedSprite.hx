@@ -5,6 +5,7 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.math.FlxMath;
 import flixel.system.FlxAssets;
 import flixel.math.FlxAngle;
 import flixel.util.FlxArrayUtil;
@@ -320,54 +321,45 @@ class FlxNestedSprite extends FlxSprite
 	
 	override private function set_alpha(Alpha:Float):Float
 	{
-		if (Alpha > 1)
-		{
-			Alpha = 1;
-		}
-		if (Alpha < 0)
-		{
-			Alpha = 0;
-		}
+		Alpha = FlxMath.bound(Alpha, 0, 1);
 		if (Alpha == alpha)
 		{
 			return alpha;
 		}
 		alpha = Alpha * relativeAlpha;
 		
-		if (FlxG.renderBlit)
+		if ((alpha != 1) || (color != 0x00ffffff))
 		{
-			if ((alpha != 1) || (color != 0x00ffffff))
+			var red:Float = (color >> 16) * _parentRed / 255;
+			var green:Float = (color >> 8 & 0xff) * _parentGreen / 255;
+			var blue:Float = (color & 0xff) * _parentBlue / 255;
+			
+			if (colorTransform == null)
 			{
-				var red:Float = (color >> 16) * _parentRed / 255;
-				var green:Float = (color >> 8 & 0xff) * _parentGreen / 255;
-				var blue:Float = (color & 0xff) * _parentBlue / 255;
-				
-				if (colorTransform == null)
-				{
-					colorTransform = new ColorTransform(red, green, blue, alpha);
-				}
-				else
-				{
-					colorTransform.redMultiplier = red;
-					colorTransform.greenMultiplier = green;
-					colorTransform.blueMultiplier = blue;
-					colorTransform.alphaMultiplier = alpha;
-				}
-				useColorTransform = true;
+				colorTransform = new ColorTransform(red, green, blue, alpha);
 			}
 			else
 			{
-				if (colorTransform != null)
-				{
-					colorTransform.redMultiplier = 1;
-					colorTransform.greenMultiplier = 1;
-					colorTransform.blueMultiplier = 1;
-					colorTransform.alphaMultiplier = 1;
-				}
-				useColorTransform = false;
+				colorTransform.redMultiplier = red;
+				colorTransform.greenMultiplier = green;
+				colorTransform.blueMultiplier = blue;
+				colorTransform.alphaMultiplier = alpha;
 			}
-			dirty = true;
+			useColorTransform = true;
 		}
+		else
+		{
+			if (colorTransform != null)
+			{
+				colorTransform.redMultiplier = 1;
+				colorTransform.greenMultiplier = 1;
+				colorTransform.blueMultiplier = 1;
+				colorTransform.alphaMultiplier = 1;
+			}
+			useColorTransform = false;
+		}
+		dirty = true;
+
 		
 		if (children != null)
 		{
