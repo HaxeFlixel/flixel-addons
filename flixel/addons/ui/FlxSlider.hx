@@ -327,9 +327,8 @@ class FlxSlider extends FlxSpriteGroup
 			
 			_lastPos = relativePos;
 			
-			if (callback != null) {
+			if (callback != null)
 				callback(relativePos);
-			}
 		}
 	}
 	

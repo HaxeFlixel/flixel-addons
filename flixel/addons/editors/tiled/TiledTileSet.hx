@@ -82,9 +82,8 @@ class TiledTileSet
 			
 			// read properties
 			properties = new TiledPropertySet();
-			for (prop in source.nodes.properties) {
+			for (prop in source.nodes.properties)
 				properties.extend(prop);
-			}
 			
 			// read tiles properties
 			tileProps = new Array<TiledPropertySet>();
