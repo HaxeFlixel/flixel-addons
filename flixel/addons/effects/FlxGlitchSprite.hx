@@ -60,9 +60,26 @@ class FlxGlitchSprite extends FlxSprite
 		initPixels();
 	}
 	
-	override public function update(elapsed:Float):Void
+	override public function draw():Void 
 	{
-		super.update(elapsed);
+		drawFrame();
+		super.draw();
+	}
+	
+	override public function drawFrame(Force:Bool = false):Void 
+	{
+		
+		if (target != null)
+		{
+			if (drawEffect())
+				Force = true;
+		}
+		
+		super.drawFrame(Force);
+	}
+	
+	private function drawEffect():Bool
+	{
 		
 		if (_time > delay)
 		{
@@ -70,17 +87,12 @@ class FlxGlitchSprite extends FlxSprite
 		}
 		else
 		{
-			_time += elapsed;
+			_time += FlxG.elapsed;
 		}
-	}
-	
-	override public function draw():Void
-	{
-		if (alpha == 0 || target == null)
-			return;
-			
+		
 		if (_time == 0)
 		{
+			target.drawFrame();
 			_time = 0;
 			pixels.lock();
 			pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
@@ -112,11 +124,11 @@ class FlxGlitchSprite extends FlxSprite
 			
 			pixels.unlock();
 			dirty = true;
+			return true;
 		}
-		
-		super.draw();
+		return false;
 	}
-	
+		
 	private function initPixels():Void
 	{
 		var oldGraphic:FlxGraphic = graphic;
