@@ -323,7 +323,8 @@ class FlxGameJolt
 		
 		var tempURL:String = URL_API + "trophies/" + RETURN_TYPE + _idURL;
 		
-		switch(DataType) {
+		switch (DataType)
+		{
 			case 0:
 				tempURL += "&achieved=";
 			case TROPHIES_MISSING:

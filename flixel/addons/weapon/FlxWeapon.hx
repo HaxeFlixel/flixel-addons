@@ -220,7 +220,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		currentBullet.elasticity = bulletElasticity;
 		currentBullet.lifespan = FlxG.random.float(bulletLifeSpan.min, bulletLifeSpan.max);
 		
-		switch(Mode)
+		switch (Mode)
 		{
 			case FIRE_AT_POSITION(x, y):
 				var p = FlxPoint.get(x, y);
@@ -424,7 +424,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	
 	private function internalFireAtPoint(bullet:TBullet, point:FlxPoint):Void
 	{
-		switch(speedMode)
+		switch (speedMode)
 		{
 			case SPEED(speed):
 				FlxVelocity.moveTowardsPoint(bullet, point, FlxG.random.float(speed.min, speed.max));
@@ -447,7 +447,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	private function internalFireFromAngle(bullet:TBullet, degrees:Float):Void
 	{
 		var radians = FlxAngle.asRadians(degrees);
-		switch(speedMode)
+		switch (speedMode)
 		{
 			case SPEED(speed):
 				//TODO need to create a function: FlxVelocity.moveFromAngle(radians, speed);
