@@ -29,7 +29,7 @@ class FlxZoomCamera extends FlxCamera
 	 */
 	private var _zoomMargin:Float;
 	
-	public function new(X:Int, Y:Int, Width:Int, Height:Int, Zoom:Float = 0)
+	public function new(X:Int, Y:Int, Width:Int, Height:Int, Zoom:Float = 0, ZoomSpeed:Float = 25, ZoomMargin:Float = 0.25)
 	{
 		super(X, Y, Width, Height, FlxCamera.defaultZoom);
 		
@@ -113,5 +113,19 @@ class FlxZoomCamera extends FlxCamera
 	{
 		flashSprite.scaleX = X;
 		flashSprite.scaleY = Y;
+	}
+	/**
+	 * Given a value passed in, updates the speed of zooming. Useful for real time changes.
+	 */
+	public function setZoomSpeed(Value:Float):Void
+	{
+		_zoomSpeed = Value;
+	}
+	/**
+	 * Given a value passed in, updates the margin of zooming. Useful for real time changes.
+	 */
+	public function setZoomMargin(Value:Float):Void
+	{
+		_zoomMargin = Value;
 	}
 }
