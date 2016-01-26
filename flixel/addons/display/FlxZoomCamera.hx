@@ -4,7 +4,7 @@ import flixel.FlxCamera;
 import flixel.math.FlxMath;
 
 /**
- * ZoomCamera: A FlxCamera that centers its zoom on the target that it follows
+ * FlxZoomCamera: A FlxCamera that centers its zoom on the target that it follows
  * 
  * @link http://www.kwarp.com
  * @author greglieberman
@@ -20,20 +20,17 @@ class FlxZoomCamera extends FlxCamera
 	/**
 	 * This number is pretty arbitrary, make sure it's greater than zero!
 	 */
-	private var _zoomSpeed:Float;
+	public var zoomSpeed:Float = 25;
 	
 	/**
-	 * Determines how far to "look ahead" when the target is near the edge of the camera's bounds
-	 * 0 = no effect, 1 = huge effect
+	 * Determines how far to "look ahead" when the target is near the
+	 * edge of the camera's bounds - 0 = no effect, 1 = huge effect
 	 */
-	private var _zoomMargin:Float;
+	public var zoomMargin:Float = 0.25;
 	
 	public function new(X:Int, Y:Int, Width:Int, Height:Int, Zoom:Float = 0)
 	{
 		super(X, Y, Width, Height, FlxCamera.defaultZoom);
-		
-		_zoomSpeed = 25;
-		_zoomMargin = 0.25;
 		targetZoom = Zoom;
 	}
 	
@@ -42,7 +39,7 @@ class FlxZoomCamera extends FlxCamera
 		super.update(elapsed);
 		
 		// Update camera zoom
-		zoom += (targetZoom - zoom) / 2 * elapsed * _zoomSpeed;
+		zoom += (targetZoom - zoom) / 2 * elapsed * zoomSpeed;
 		
 		// If we are zooming in, align the camera (x, y)
 		if (target != null && zoom != 1)
@@ -69,11 +66,11 @@ class FlxZoomCamera extends FlxCamera
 		var targetScreenY:Float = target.y - scroll.y;
 		
 		// Center on the target, until the camera bumps up to its bounds
-		// then gradually favor the edge of the screen based on _zoomMargin
-		var ratioMinX:Float = (targetScreenX / (width / 2)) - 1 - _zoomMargin;
-		var ratioMinY:Float = (targetScreenY / (height / 2)) - 1 - _zoomMargin;
-		var ratioMaxX:Float = (( -width + targetScreenX) / (width / 2)) + 1 + _zoomMargin;
-		var ratioMaxY:Float = (( -height + targetScreenY) / (height / 2)) + 1 + _zoomMargin;
+		// then gradually favor the edge of the screen based on zoomMargin
+		var ratioMinX:Float = (targetScreenX / (width / 2)) - 1 - zoomMargin;
+		var ratioMinY:Float = (targetScreenY / (height / 2)) - 1 - zoomMargin;
+		var ratioMaxX:Float = ((-width + targetScreenX) / (width / 2)) + 1 + zoomMargin;
+		var ratioMaxY:Float = ((-height + targetScreenY) / (height / 2)) + 1 + zoomMargin;
 		
 		// Offsets are numbers between [-1, 1]
 		var offsetX:Float = FlxMath.bound(ratioMinX, -1, 0) + FlxMath.bound(ratioMaxX, 0, 1);
@@ -81,7 +78,7 @@ class FlxZoomCamera extends FlxCamera
 		
 		// Offset the screen in any direction, based on zoom level
 		// Example: a zoom of 2 offsets it half the screen at most
-		x = -(width / 2) * (offsetX) * (zoom - FlxCamera.defaultZoom);
-		y = -(height / 2) * (offsetY) * (zoom - FlxCamera.defaultZoom);
+		x = -(width / 2) * offsetX * (zoom - FlxCamera.defaultZoom);
+		y = -(height / 2) * offsetY * (zoom - FlxCamera.defaultZoom);
 	}
 }
