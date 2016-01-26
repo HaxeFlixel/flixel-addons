@@ -1,11 +1,10 @@
 package flixel.addons.display;
 
 import flixel.FlxCamera;
-import flixel.FlxG;
+import flixel.math.FlxMath;
 
 /**
- * ZoomCamera: A FlxCamera that centers its zoom on the target that it follows 
- * Flixel version: 2.5+
+ * ZoomCamera: A FlxCamera that centers its zoom on the target that it follows
  * 
  * @link http://www.kwarp.com
  * @author greglieberman
@@ -77,35 +76,12 @@ class FlxZoomCamera extends FlxCamera
 		var ratioMaxY:Float = (( -height + targetScreenY) / (height / 2)) + 1 + _zoomMargin;
 		
 		// Offsets are numbers between [-1, 1]
-		var offsetX:Float = clamp(ratioMinX, -1, 0) + clamp(ratioMaxX, 0, 1);
-		var offsetY:Float = clamp(ratioMinY, -1, 0) + clamp(ratioMaxY, 0, 1);
+		var offsetX:Float = FlxMath.bound(ratioMinX, -1, 0) + FlxMath.bound(ratioMaxX, 0, 1);
+		var offsetY:Float = FlxMath.bound(ratioMinY, -1, 0) + FlxMath.bound(ratioMaxY, 0, 1);
 		
 		// Offset the screen in any direction, based on zoom level
 		// Example: a zoom of 2 offsets it half the screen at most
 		x = -(width / 2) * (offsetX) * (zoom - FlxCamera.defaultZoom);
 		y = -(height / 2) * (offsetY) * (zoom - FlxCamera.defaultZoom);
-	}
-	
-	/**
-	 * Given a value passed in, returns a Number between min and max (inclusive)
-	 * 
-	 * @param 	Value	The Number you want to evaluate
-	 * @param 	Min		The minimum number that should be returned
-	 * @param 	Max		The maximum number that should be returned
-	 * @return 	Value clamped between min and max
-	 * 
-	 */
-	private function clamp(Value:Float, Min:Float, Max:Float):Float
-	{
-		if (Value < Min) 
-		{
-			return Min;
-		}
-		if (Value > Max) 
-		{
-			return Max;
-		}
-		
-		return Value;
 	}
 }
