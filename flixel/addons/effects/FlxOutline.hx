@@ -67,7 +67,7 @@ class FlxOutline extends FlxSprite
 	{
 		lastFrame = target.frame;
 		
-		var targetPixels:BitmapData = target.getFlxFrameBitmapData();
+		var targetPixels:BitmapData = target.updateFramePixels();
 		graphic.bitmap.lock();
 		graphic.bitmap.fillRect(graphic.bitmap.rect, FlxColor.TRANSPARENT);
 		
