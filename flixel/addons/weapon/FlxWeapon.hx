@@ -223,14 +223,10 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		switch (Mode)
 		{
 			case FIRE_AT_POSITION(x, y):
-				var p = FlxPoint.get(x, y);
-				internalFireAtPoint(currentBullet, p);
-				p.put();
-			
+				internalFireAtPoint(currentBullet, FlxPoint.weak(x, y));
+
 			case FIRE_AT_TARGET(target):
-				var p = target.toPoint();
-				internalFireAtPoint(currentBullet, p);
-				p.put();
+				internalFireAtPoint(currentBullet, target.getPosition(FlxPoint.weak()));
 				
 			case FIRE_FROM_ANGLE(angle):
 				internalFireFromAngle(currentBullet, FlxG.random.float(angle.min, angle.max));
@@ -243,16 +239,12 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 				
 			#if !FLX_NO_TOUCH
 			case FIRE_AT_TOUCH(touch):
-				var p = touch.toPoint();
-				internalFireAtPoint(currentBullet, p);
-				p.put();
+				internalFireAtPoint(currentBullet, touch.getPosition(FlxPoint.weak()));
 			#end
 			
 			#if !FLX_NO_MOUSE
 			case FIRE_AT_MOUSE:
-				var p = FlxG.mouse.toPoint();
-				internalFireAtPoint(currentBullet, p);
-				p.put();
+				internalFireAtPoint(currentBullet, FlxG.mouse.getPosition(FlxPoint.weak()));
 			#end
 		}
 		
@@ -442,6 +434,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		{
 			bullet.angle = FlxAngle.angleBetweenPoint(bullet, point, true);
 		}
+		
+		point.putWeak();
 	}
 	
 	private function internalFireFromAngle(bullet:TBullet, degrees:Float):Void
