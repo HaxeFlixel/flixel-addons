@@ -114,10 +114,6 @@ class FlxTilemapExt extends FlxTilemap
 		var _tileTransformMatrix:FlxMatrix = null;
 		var matrixToUse:FlxMatrix;
 		
-		var cr:Float = color.redFloat;
-		var cg:Float = color.greenFloat;
-		var cb:Float = color.blueFloat;
-		
 		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
 		
 		// Copy tile images into the tile buffer
@@ -219,7 +215,7 @@ class FlxTilemapExt extends FlxTilemap
 						}
 						
 						matrixToUse.translate(drawX, drawY);
-						Camera.drawPixels(frame, matrixToUse, cr, cg, cb, alpha, blend);
+						Camera.drawPixels(frame, matrixToUse, colorTransform, blend);
 					}
 				}
 				

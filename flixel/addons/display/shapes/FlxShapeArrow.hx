@@ -77,11 +77,16 @@ class FlxShapeArrow extends FlxShape
 		return matrix;
 	}
 	
-	override public function destroy():Void
+	override public function destroy():Void 
 	{
+		point = null;
+		point2 = null;
+		FlxDestroyUtil.destroyArray(_vertices);
+		_vertices = null;
+		_matrix2 = null;
+		_matrix = null;
+		outlineStyle = null;
 		super.destroy();
-		point = FlxDestroyUtil.destroy(point);
-		point2 = FlxDestroyUtil.destroy(point2);
 	}
 	
 	public override function drawSpecificShape(?matrix:Matrix):Void 

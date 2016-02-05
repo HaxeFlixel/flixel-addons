@@ -20,10 +20,11 @@ import flixel.util.FlxTimer;
  * To achieve a specific effect, you should use a sub-class of this such as TileTransition or FadeTransition
  * @author Tim Hely, larsiusprime
  */
-
 class Transition extends FlxSubState
 {
 	public var finishCallback(get, set):Void->Void;
+	
+	private var _effect:TransitionEffect;
 	
 	public function new(data:TransitionData) 
 	{
@@ -56,11 +57,9 @@ class Transition extends FlxSubState
 		_effect.setStatus(NewStatus);
 	}
 	
-	private var _effect:TransitionEffect;
-	
 	private function createEffect(Data:TransitionData):TransitionEffect
 	{
-		switch(Data.type)
+		switch (Data.type)
 		{
 			case TransitionType.TILES: return new TransitionTiles(Data);
 			case TransitionType.FADE : return new TransitionFade(Data);

@@ -202,8 +202,8 @@ class FlxShapeLightning extends FlxShapeLine
 		shapeDirty = true;
 	}
 	
-	private function redrawFilter():Void {
-		
+	private function redrawFilter():Void
+	{
 		var skip = false;
 		if (lightningStyle.halo_colors == null) 
 		{

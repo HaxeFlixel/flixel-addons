@@ -59,17 +59,20 @@ class TiledTileSet
 		{
 			if (!source.hasNode.image)
 			{
-				//tileset with several images
-				var node:Fast = source.node.tile;
-				imageSource = "";
-				
-				name = source.att.name;
-				
-				if (source.has.tilewidth) 
-				{
-					tileWidth = Std.parseInt(source.att.tilewidth);
-				}
-				if (source.has.tileheight) 
+				margin = Std.parseInt(source.att.margin);
+			}
+			
+			// read properties
+			properties = new TiledPropertySet();
+			for (prop in source.nodes.properties)
+				properties.extend(prop);
+			
+			// read tiles properties
+			tileProps = new Array<TiledPropertySet>();
+			
+			for (node in source.nodes.tile)
+			{
+				if (!node.has.id)
 				{
 					tileHeight = Std.parseInt(source.att.tileheight);
 				}
