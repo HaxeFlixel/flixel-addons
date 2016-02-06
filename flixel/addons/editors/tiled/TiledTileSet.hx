@@ -65,8 +65,6 @@ class TiledTileSet
 				//single image
 				node = source.node.image;
 				imageSource = node.att.source;
-				
-
 			}
 			else
 			{
@@ -95,13 +93,11 @@ class TiledTileSet
 			if (node.has.width)
 			{
 				imgWidth = Std.parseInt(node.att.width);
-
 			}
 			var imgHeight = 0;
 			if (node.has.height)
 			{
 				imgHeight = Std.parseInt(node.att.height);
-
 			}
 			
 			if (source.has.tilewidth) 
