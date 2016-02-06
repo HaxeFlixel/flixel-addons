@@ -18,8 +18,6 @@ class TiledImageTile
 	{
 		for (img in Source.nodes.image)
 		{
-			//id = Std.string(img.att.id);
-			
 			width = Std.parseFloat( img.att.width);
 			height = Std.parseFloat(img.att.height);
 			source = img.att.source;
