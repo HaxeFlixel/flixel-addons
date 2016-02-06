@@ -1,8 +1,8 @@
 package flixel.addons.editors.tiled;
 
-import haxe.xml.Fast;
-import flixel.util.FlxColor;
 import flixel.addons.editors.tiled.TiledLayer.TiledLayerType;
+import flixel.util.FlxColor;
+import haxe.xml.Fast;
 
 /**
  * Copyright (c) 2013 by Samuel Batista

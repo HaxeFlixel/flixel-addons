@@ -17,7 +17,7 @@ class FlxOgmoLoader
 	private var _fastXml:Fast;
 
 	/**
-	 * Creates a new instance of OgmoLevelLoader and prepares the XML level data to be loaded.
+	 * Creates a new instance of FlxOgmoLoader and prepares the XML level data to be loaded.
 	 * This object can either be contained or ovewritten. 
 	 * 
 	 * IMPORTANT: -> Tile layers must have the Export Mode set to "CSV".
@@ -47,24 +47,22 @@ class FlxOgmoLoader
 
 		width = Std.parseInt(_fastXml.att.width);
 		height = Std.parseInt(_fastXml.att.height);
-
-		FlxG.camera.setScrollBoundsRect(0, 0, width, height, true);
 	}
 
 	/**
-	* Load a Tilemap. Tile layers must have the Export Mode set to "CSV".
-	* Collision with entities should be handled with the reference returned from this function. Here's a tip:
-	* 
+	 * Load a Tilemap. Tile layers must have the Export Mode set to "CSV".
+	 * Collision with entities should be handled with the reference returned from this function. Here's a tip:
+	 * 
 		// IMPORTANT: Always collide the map with objects, not the other way around. 
 		//            This prevents odd collision errors (collision separation code off by 1 px).
 		FlxG.collide(map, obj, notifyCallback);
-	* 
-	* @param	TileGraphic		A String or Class representing the location of the image asset for the tilemap.
-	* @param	TileWidth		The width of each individual tile.
-	* @param	TileHeight		The height of each individual tile.
-	* @param	TileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually "tiles" or "stage".
-	* @return	A FlxTilemap, where you can collide your entities against.
-	*/ 
+	 * 
+	 * @param	TileGraphic		A String or Class representing the location of the image asset for the tilemap.
+	 * @param	TileWidth		The width of each individual tile.
+	 * @param	TileHeight		The height of each individual tile.
+	 * @param	TileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually "tiles" or "stage".
+	 * @return	A FlxTilemap, where you can collide your entities against.
+	 */ 
 	public function loadTilemap(TileGraphic:Dynamic, TileWidth:Int = 16, TileHeight:Int = 16, TileLayer:String = "tiles"):FlxTilemap
 	{
 		var tileMap:FlxTilemap = new FlxTilemap();

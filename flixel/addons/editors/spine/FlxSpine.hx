@@ -1,8 +1,6 @@
 package flixel.addons.editors.spine;
 
-#if FLX_RENDER_TILE
 import flixel.graphics.tile.FlxDrawTrianglesItem;
-#end
 
 import flixel.addons.editors.spine.texture.FlixelTexture;
 import flixel.addons.editors.spine.texture.FlixelTextureLoader;

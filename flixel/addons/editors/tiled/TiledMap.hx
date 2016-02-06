@@ -1,14 +1,10 @@
 package flixel.addons.editors.tiled;
 
 import flixel.util.FlxColor;
-import openfl.Assets;
-import haxe.xml.Fast;
 import flixel.util.typeLimit.OneOfTwo;
-
-#if cpp
-import sys.io.File;
-import sys.FileSystem;
-#end
+import haxe.xml.Fast;
+import openfl.Assets;
+using StringTools;
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -30,31 +26,30 @@ class TiledMap
 	public var fullWidth:Int;
 	public var fullHeight:Int;
 	
-	public var properties:TiledPropertySet;
+	public var properties:TiledPropertySet = new TiledPropertySet();
 	
 	/**
 	 * Use to get a tileset by name
 	 */
-	public var tilesets:Map<String, TiledTileSet>;
+	public var tilesets:Map<String, TiledTileSet> = new Map<String, TiledTileSet>();
 	/**
 	 * Use for iterating over tilesets, and for merging tilesets (because order is important)
 	 */
-	public var tilesetArray:Array<TiledTileSet>;
+	public var tilesetArray:Array<TiledTileSet> = [];
 	
-	public var layers:Array<TiledLayer>;
+	public var layers:Array<TiledLayer> = [];
 	
 	// Add a "noload" property to your Map Properties.
 	// Add comma separated values of tilesets, layers, or object names.
 	// These will not be loaded.
-	private var noLoadHash:Map<String, Bool>;
-	private var layerMap:Map<String, TiledLayer>;
+	private var noLoadHash:Map<String, Bool> = new Map<String, Bool>();
+	private var layerMap:Map<String, TiledLayer> = new Map<String, TiledLayer>();
 	
 	/**
 	 * @param data Either a string or XML object containing the Tiled map data
 	 */
 	public function new(data:FlxTiledAsset)
 	{
-		properties = new TiledPropertySet();
 		var source:Fast = null;
 		var node:Fast = null;
 		
@@ -68,9 +63,18 @@ class TiledMap
 		}
 		
 		source = source.node.map;
+		
+		loadAttributes(source);
+		loadProperties(source);
+		loadTilesets(source);
+		loadLayers(source);
+	}
+	
+	private function loadAttributes(source:Fast):Void
+	{
 		version = (source.att.version != null) ? source.att.version : "unknown";
 		orientation = (source.att.orientation != null) ? source.att.orientation : "orthogonal";
-		backgroundColor = source.has.backgroundcolor && source.att.backgroundcolor != null ?
+		backgroundColor = (source.has.backgroundcolor && source.att.backgroundcolor != null) ?
 			FlxColor.fromString(source.att.backgroundcolor) : FlxColor.TRANSPARENT;
 		
 		width = Std.parseInt(source.att.width);
@@ -81,67 +85,61 @@ class TiledMap
 		// Calculate the entire size
 		fullWidth = width * tileWidth;
 		fullHeight = height * tileHeight;
-		
-		noLoadHash = new Map<String, Bool>();
-		tilesets = new Map<String, TiledTileSet>();
-		tilesetArray = new Array<TiledTileSet>();
-		layers = new Array<TiledLayer>();
-		
-		// Load properties
+	}
+	
+	private function loadProperties(source:Fast):Void
+	{
 		for (node in source.nodes.properties)
 		{
 			properties.extend(node);
 		}
 		
 		var noLoadStr = properties.get("noload");
-		
 		if (noLoadStr != null)
 		{
-			var regExp = ~/[,;|]/;
-			var noLoadArr = regExp.split(noLoadStr);
+			var noLoadArr = ~/[,;|]/.split(noLoadStr);
 			
 			for (s in noLoadArr)
 			{
-				noLoadHash.set(StringTools.trim(s), true);
+				noLoadHash.set(s.trim(), true);
 			}
 		}
-		
-		// Load tilesets
-		var name:String;
+	}
+	
+	private function loadTilesets(source:Fast):Void
+	{
 		for (node in source.nodes.tileset)
 		{
-			name = node.att.name;
+			var name = node.att.name;
 			
 			if (!noLoadHash.exists(name))
 			{
-				var ts:TiledTileSet = new TiledTileSet(node);
+				var ts = new TiledTileSet(node);
 				tilesets.set(name, ts);
 				tilesetArray.push(ts);
 			}
 		}
-		
-		layerMap = new Map<String, TiledLayer>();
-		// Load tile and object layers
+	}
+	
+	private function loadLayers(source:Fast):Void
+	{
 		for (el in source.elements)
 		{	
-			if (el.has.name && noLoadHash.exists(el.att.name)) continue;
+			if (el.has.name && noLoadHash.exists(el.att.name))
+				continue;
 			
-			if (el.name.toLowerCase() == "layer")
+			var layer:TiledLayer = switch (el.name.toLowerCase())
 			{
-				var tileLayer = new TiledTileLayer(el, this);
-				layers.push(tileLayer);
-				layerMap.set(tileLayer.name, tileLayer);
+				case "layer": new TiledTileLayer(el, this);
+				case "objectgroup": new TiledObjectLayer(el, this);
+				case "imagelayer": new TiledImageLayer(el, this);
+				case _: null;
 			}
-			else if (el.name.toLowerCase() == "objectgroup")
+			
+			if (layer != null)
 			{
-				var objectLayer = new TiledObjectLayer(el, this);
-				layers.push(objectLayer);
-				layerMap.set(objectLayer.name, objectLayer);
-			}
-			else if (el.name.toLowerCase() == "imagelayer") {
-				var imageLayer = new TiledImageLayer(el, this);
-				layers.push(imageLayer);
-				layerMap.set(imageLayer.name, imageLayer);
+				layers.push(layer);
+				layerMap.set(layer.name, layer);
 			}
 		}
 	}

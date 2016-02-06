@@ -27,7 +27,7 @@ class FlxPieDial extends FlxSprite
 		Frames:Int = 36, ?Shape:FlxPieDialShape, Clockwise:Bool = true, InnerRadius:Int = 0) 
 	{
 		if (Shape == null)
-			Shape = Circle;
+			Shape = CIRCLE;
 		super(X, Y);
 		makePieDialGraphic(Radius, Color, Frames, Shape, Clockwise, InnerRadius);
 		amount = 1.0;
@@ -171,7 +171,7 @@ class FlxPieDial extends FlxSprite
 		
 		var dR = Radius - InnerRadius;
 		
-		if (Shape == Square)
+		if (Shape == SQUARE)
 		{
 			fullFrame.pixels.fillRect(fullFrame.pixels.rect, Color);
 			if (InnerRadius > 0)
@@ -180,7 +180,7 @@ class FlxPieDial extends FlxSprite
 				fullFrame.pixels.fillRect(_flashRect, FlxColor.TRANSPARENT);
 			}
 		}
-		else if (Shape == Circle)
+		else if (Shape == CIRCLE)
 		{
 			if (InnerRadius > 0)
 			{
@@ -293,6 +293,6 @@ class FlxPieDial extends FlxSprite
 
 enum FlxPieDialShape
 {
-	Circle;
-	Square;
+	CIRCLE;
+	SQUARE;
 }

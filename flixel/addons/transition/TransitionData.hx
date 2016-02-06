@@ -1,4 +1,5 @@
 package flixel.addons.transition;
+
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
@@ -44,6 +45,8 @@ class TransitionData implements IFlxDestroyable
 		tweenOptions.onComplete = null;
 		tweenOptions.ease = null;
 		tweenOptions = null;
+		region = null;
+		direction = null;
 	}
 	
 	public function new(TransType:TransitionType=FADE,Color:FlxColor=FlxColor.WHITE,Duration:Float=1.0,?Direction:FlxPoint,?TileData:TransitionTileData,?Region:FlxRect) 

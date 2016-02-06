@@ -46,6 +46,10 @@
 * `FlxOgmoLoader`: added `getProperty()`
 * `FlxScreenGrab`: fixed `defineHotkeys()` arguments overriding those in `grab()`
 
+1.1.1
+------------------------------
+* Fix compilation with OpenFL 3.5 / Lime 2.8
+
 1.1.0
 ------------------------------
 * Compatibility with flixel 3.3.0
