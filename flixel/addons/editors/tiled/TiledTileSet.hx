@@ -1,3 +1,4 @@
+
 package flixel.addons.editors.tiled;
 
 import flash.geom.Rectangle;
@@ -25,10 +26,10 @@ class TiledTileSet
 	public var numCols:Int;
 	
 	public var properties:TiledPropertySet;
+	
 	public var tileProps:Array<TiledPropertySet>;
 	
-	public var imagesSources:TiledImageSet;
-	public var tileImagesSources:Array<TiledImageSet>;
+	public var tileImagesSources:Array<TiledImageTile>;
 	
 	public function new(data:Dynamic)
 	{
@@ -57,7 +58,65 @@ class TiledTileSet
 		
 		if (!source.has.source) 
 		{
-			if (!source.hasNode.image)
+			var node:Fast;
+			
+			if (source.hasNode.image)
+			{
+				//single image
+				node = source.node.image;
+				imageSource = node.att.source;
+				
+
+			}
+			else
+			{
+				//several images
+				node = source.node.tile;
+				imageSource = "";
+				
+				// read tiles images
+				tileImagesSources = new Array<TiledImageTile>();
+				
+				for (node in source.nodes.tile)
+				{
+					if (!node.has.id)
+					{
+						continue;
+					}
+					
+					var id:Int = Std.parseInt(node.att.id);
+					tileImagesSources[id] = new TiledImageTile(node);
+				}
+			}
+			
+			name = source.att.name;
+			
+			var imgWidth = 0;
+			if (node.has.width)
+			{
+				imgWidth = Std.parseInt(node.att.width);
+
+			}
+			var imgHeight = 0;
+			if (node.has.height)
+			{
+				imgHeight = Std.parseInt(node.att.height);
+
+			}
+			
+			if (source.has.tilewidth) 
+			{
+				tileWidth = Std.parseInt(source.att.tilewidth);
+			}
+			if (source.has.tileheight) 
+			{
+				tileHeight = Std.parseInt(source.att.tileheight);
+			}
+			if (source.has.spacing) 
+			{
+				spacing = Std.parseInt(source.att.spacing);
+			}
+			if (source.has.margin) 
 			{
 				margin = Std.parseInt(source.att.margin);
 			}
@@ -74,125 +133,23 @@ class TiledTileSet
 			{
 				if (!node.has.id)
 				{
-					tileHeight = Std.parseInt(source.att.tileheight);
+					continue;
 				}
-				if (source.has.spacing) 
+				
+				var id:Int = Std.parseInt(node.att.id);
+				tileProps[id] = new TiledPropertySet();
+				tileProps[id].keys.set("id", Std.string(id));
+				for (prop in node.nodes.properties)
 				{
-					spacing = Std.parseInt(source.att.spacing);
+					tileProps[id].extend(prop);
 				}
-				if (source.has.margin) 
-				{
-					margin = Std.parseInt(source.att.margin);
-				}
-				
-				// read properties
-				properties = new TiledPropertySet();
-				for (prop in source.nodes.properties) {
-					properties.extend(prop);
-				}
-				
-				// read tiles properties
-				tileProps = new Array<TiledPropertySet>();
-				
-				for (node in source.nodes.tile)
-				{
-					if (!node.has.id)
-					{
-						continue;
-					}
-					
-					var id:Int = Std.parseInt(node.att.id);
-					tileProps[id] = new TiledPropertySet();
-					tileProps[id].keys.set("id", Std.string(id));
-					for (prop in node.nodes.properties)
-					{
-						tileProps[id].extend(prop);
-					}
-				}
-				
-				// read tiles images
-				tileImagesSources = new Array<TiledImageSet>();
-				
-				for (node in source.nodes.tile)
-				{
-					if (!node.has.id)
-					{
-						continue;
-					}
-					
-					var id:Int = Std.parseInt(node.att.id);
-					tileImagesSources[id] = new TiledImageSet();
-					tileImagesSources[id].keys.set("id", Std.string(id));
-					tileImagesSources[id].extend(node);
-				}
-				
-				if (tileWidth > 0 && tileHeight > 0)
-				{
-					numRows = 0;//cast(imgWidth / tileWidth);
-					numCols = 0;// cast(imgHeight / tileHeight);
-					numTiles = 0;// numRows * numCols;
-				}
-				
 			}
-			else
+			
+			if (tileWidth > 0 && tileHeight > 0)
 			{
-				//normal tileset
-				var node:Fast = source.node.image;
-				imageSource = node.att.source;
-				
-				var imgWidth = Std.parseInt(node.att.width);
-				var imgHeight = Std.parseInt(node.att.height);
-				
-				name = source.att.name;
-				
-				if (source.has.tilewidth) 
-				{
-					tileWidth = Std.parseInt(source.att.tilewidth);
-				}
-				if (source.has.tileheight) 
-				{
-					tileHeight = Std.parseInt(source.att.tileheight);
-				}
-				if (source.has.spacing) 
-				{
-					spacing = Std.parseInt(source.att.spacing);
-				}
-				if (source.has.margin) 
-				{
-					margin = Std.parseInt(source.att.margin);
-				}
-				
-				// read properties
-				properties = new TiledPropertySet();
-				for (prop in source.nodes.properties) {
-					properties.extend(prop);
-				}
-				
-				// read tiles properties
-				tileProps = new Array<TiledPropertySet>();
-				
-				for (node in source.nodes.tile)
-				{
-					if (!node.has.id)
-					{
-						continue;
-					}
-					
-					var id:Int = Std.parseInt(node.att.id);
-					tileProps[id] = new TiledPropertySet();
-					tileProps[id].keys.set("id", Std.string(id));
-					for (prop in node.nodes.properties)
-					{
-						tileProps[id].extend(prop);
-					}
-				}
-				
-				if (tileWidth > 0 && tileHeight > 0)
-				{
-					numRows = cast(imgWidth / tileWidth);
-					numCols = cast(imgHeight / tileHeight);
-					numTiles = numRows * numCols;
-				}
+				numRows = Std.int(imgWidth / tileWidth);
+				numCols = Std.int(imgHeight / tileHeight);
+				numTiles = numRows * numCols;
 			}
 		}
 	}
@@ -227,7 +184,7 @@ class TiledTileSet
 		return tileProps[ID];
 	}
 	
-	public function getImageSourceByGid(Gid:Int):TiledImageSet
+	public function getImageSourceByGid(Gid:Int):TiledImageTile
 	{
 		if (tileImagesSources != null)
 		{
@@ -237,7 +194,7 @@ class TiledTileSet
 		return null;
 	}
 	
-	public inline function getImageSource(ID:Int):TiledImageSet
+	public inline function getImageSource(ID:Int):TiledImageTile
 	{
 		return tileImagesSources[ID];
 	}
