@@ -1,3 +1,4 @@
+
 package flixel.addons.editors.tiled;
 
 import flash.geom.Rectangle;
@@ -28,6 +29,8 @@ class TiledTileSet
 	
 	public var tileProps:Array<TiledPropertySet>;
 	
+	public var tileImagesSources:Array<TiledImageTile>;
+	
 	public function new(data:Dynamic)
 	{
 		var node:Fast, source:Fast;
@@ -55,13 +58,47 @@ class TiledTileSet
 		
 		if (!source.has.source) 
 		{
-			var node:Fast = source.node.image;
-			imageSource = node.att.source;
+			var node:Fast;
 			
-			var imgWidth = Std.parseInt(node.att.width);
-			var imgHeight = Std.parseInt(node.att.height);
+			if (source.hasNode.image)
+			{
+				//single image
+				node = source.node.image;
+				imageSource = node.att.source;
+			}
+			else
+			{
+				//several images
+				node = source.node.tile;
+				imageSource = "";
+				
+				// read tiles images
+				tileImagesSources = new Array<TiledImageTile>();
+				
+				for (node in source.nodes.tile)
+				{
+					if (!node.has.id)
+					{
+						continue;
+					}
+					
+					var id:Int = Std.parseInt(node.att.id);
+					tileImagesSources[id] = new TiledImageTile(node);
+				}
+			}
 			
 			name = source.att.name;
+			
+			var imgWidth = 0;
+			if (node.has.width)
+			{
+				imgWidth = Std.parseInt(node.att.width);
+			}
+			var imgHeight = 0;
+			if (node.has.height)
+			{
+				imgHeight = Std.parseInt(node.att.height);
+			}
 			
 			if (source.has.tilewidth) 
 			{
@@ -106,8 +143,8 @@ class TiledTileSet
 			
 			if (tileWidth > 0 && tileHeight > 0)
 			{
-				numRows = cast(imgWidth / tileWidth);
-				numCols = cast(imgHeight / tileHeight);
+				numRows = Std.int(imgWidth / tileWidth);
+				numCols = Std.int(imgHeight / tileHeight);
 				numTiles = numRows * numCols;
 			}
 		}
@@ -141,6 +178,21 @@ class TiledTileSet
 	public inline function getProperties(ID:Int):TiledPropertySet
 	{
 		return tileProps[ID];
+	}
+	
+	public function getImageSourceByGid(Gid:Int):TiledImageTile
+	{
+		if (tileImagesSources != null)
+		{
+			return tileImagesSources[Gid - firstGID];
+		}
+		
+		return null;
+	}
+	
+	public inline function getImageSource(ID:Int):TiledImageTile
+	{
+		return tileImagesSources[ID];
 	}
 	
 	public inline function getRect(ID:Int):Rectangle
