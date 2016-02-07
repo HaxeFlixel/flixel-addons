@@ -12,7 +12,7 @@ import openfl.geom.Rectangle;
  * @author Tim Hely / tims-world.com
  * @author adrianulima
  */
-class FlxEffectGlitch implements IFlxEffect
+class FlxGlitchEffect implements IFlxEffect
 {
 	public var active:Bool = true;
 	public var offset:Point;
@@ -140,7 +140,7 @@ class FlxEffectGlitch implements IFlxEffect
 		}
 		
 		if (_pixels != null)
-			return _pixels;
+			return _pixels.clone();
 			
 		return bitmapData;
 	}

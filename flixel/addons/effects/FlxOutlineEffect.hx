@@ -12,7 +12,7 @@ import openfl.geom.Rectangle;
  * @author red__hara
  * @author adrianulima
  */
-class FlxEffectOutline implements IFlxEffect
+class FlxOutlineEffect implements IFlxEffect
 {
 	public var active:Bool = true;
 	public var offset:Point;
@@ -41,7 +41,7 @@ class FlxEffectOutline implements IFlxEffect
 	private var _pixels:BitmapData;
 	
 	/**
-	 * Creates an outline around the bitmapData with the specified color and thickness.
+	 * Creates an outline around the bitmapData with the specified color and thickness. To update, dirty need to be setted as true.
 	 *
 	 * @param Color		Color of the outline.
 	 * @param Thickness	Outline thickness in pixels.
@@ -94,8 +94,7 @@ class FlxEffectOutline implements IFlxEffect
 		if (_pixels != null)
 		{
 			_pixels.copyPixels(bitmapData, bitmapData.rect, new Point(thickness, thickness), null, null, true);
-			
-			return _pixels;
+			return _pixels.clone();
 		}
 		
 		return bitmapData;

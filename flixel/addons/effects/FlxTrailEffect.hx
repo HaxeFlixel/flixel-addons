@@ -15,10 +15,15 @@ using flixel.util.FlxArrayUtil;
  * 
  * @author adrianulima
  */
-class FlxEffectTrail implements IFlxEffect
+class FlxTrailEffect implements IFlxEffect
 {
 	public var active:Bool = true;
 	public var offset:Point;
+	
+	/**
+	 * The target FlxEffectSprite that to apply the trail.
+	 */
+	public var target(default, null):FlxEffectSprite;
 	
 	/**
 	 * The amount of trail images to create. 
@@ -53,8 +58,9 @@ class FlxEffectTrail implements IFlxEffect
 	 * @param	Alpha		The alpha value for the first trailsprite.
 	 * @param	Frames		How many frames wait until next updated.
 	 */
-	public function new(Length:Int = 10, Alpha:Float = 0.5, Frames:Int = 2) 
+	public function new(Target:FlxEffectSprite, Length:Int = 10, Alpha:Float = 0.5, Frames:Int = 2) 
 	{
+		target = Target;
 		length = FlxMath.maxInt(1, Length);
 		frames = Frames;
 		alpha = Alpha;
@@ -74,6 +80,24 @@ class FlxEffectTrail implements IFlxEffect
 	public function update(elapsed:Float):Void 
 	{
 		_currentFrames++;
+		
+		if (_currentFrames >= frames)
+		{
+			var p:FlxPoint = null;
+			if (_recentPositions.length >= length)
+			{
+				p = _recentPositions.shift();
+			}
+			else
+			{
+				p = FlxPoint.get();
+			}
+			
+			p.set(target.x, target.y);
+			_recentPositions.push(p);
+			
+			_currentFrames = 0;
+		}
 	}
 	
 	public function apply(bitmapData:BitmapData):BitmapData 
@@ -142,37 +166,10 @@ class FlxEffectTrail implements IFlxEffect
 			_pixels.draw(bitmapData, matrix);
 			_pixels.unlock();
 			
-			return _pixels;
+			return _pixels.clone();
 		}
 		
 		return bitmapData;
-	}
-	
-	/**
-	 * This saves the last position of the target to draw trail images. Must be called every frame.
-	 * 
-	 * @param	x	The last X position of the trail target.
-	 * @param	y	The last Y position of the trail target.
-	 */
-	public function setPos(x:Float, y:Float)
-	{
-		if (_currentFrames >= frames)
-		{
-			var p:FlxPoint = null;
-			if (_recentPositions.length >= length)
-			{
-				p = _recentPositions.shift();
-			}
-			else
-			{
-				p = FlxPoint.get();
-			}
-			
-			p.set(x, y);
-			_recentPositions.push(p);
-			
-			_currentFrames = 0;
-		}
 	}
 	
 	public function set_length(Value:Int):Int 

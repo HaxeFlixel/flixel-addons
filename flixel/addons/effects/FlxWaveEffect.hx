@@ -13,12 +13,12 @@ import openfl.geom.Rectangle;
  * @author Tim Hely / tims-world.com
  * @author adrianulima
  */
-class FlxEffectWave implements IFlxEffect
+class FlxWaveEffect implements IFlxEffect
 {
 	public var active:Bool = true;
 	public var offset:Point;
 	
-	private static inline var BASE_STRENGTH:Float = 0.06;
+	private static inline var BASE_STRENGTH:Float = 0.11;
 	
 	/**
 	 * Which mode we're using for the effect
@@ -72,7 +72,7 @@ class FlxEffectWave implements IFlxEffect
 	 * @param	Wavelength	How long waves are.
 	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL).
 	 */
-	public function new(?Mode:FlxWaveMode, Strength:Int = 20, Center:Int = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection) 
+	public function new(?Mode:FlxWaveMode, Strength:Int = 10, Center:Int = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection) 
 	{
 		strength = Strength;
 		mode = (Mode == null) ? ALL : Mode;
@@ -154,8 +154,9 @@ class FlxEffectWave implements IFlxEffect
 			}
 			_pixels.copyPixels(bitmapData, _flashRect, _flashPoint);
 		}
+		bitmapData.dispose();
 		
-		return _pixels;
+		return _pixels.clone();
 	}
 	
 	private inline function calculateOffset(p:Float):Float

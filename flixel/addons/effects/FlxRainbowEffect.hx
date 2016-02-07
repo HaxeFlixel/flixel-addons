@@ -12,7 +12,7 @@ import openfl.geom.Point;
  * @author Tim Hely / tims-world.com
  * @author adrianulima
  */
-class FlxEffectRainbow implements IFlxEffect
+class FlxRainbowEffect implements IFlxEffect
 {
 	public var active:Bool = true;
 	public var offset:Point;

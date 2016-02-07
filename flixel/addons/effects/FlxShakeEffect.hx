@@ -9,7 +9,7 @@ import openfl.geom.Point;
  * 
  * @author adrianulima
  */
-class FlxEffectShake implements IFlxEffect
+class FlxShakeEffect implements IFlxEffect
 {
 	public var active:Bool = true;
 	public var offset:Point;
@@ -46,7 +46,10 @@ class FlxEffectShake implements IFlxEffect
 	 */
 	public function new(Intensity:Float = 5, Duration:Float = 0.5, ?OnComplete:Void->Void, ?Axes:FlxAxes) 
 	{
-		reset(Intensity, Duration, OnComplete, Axes);
+		intensity = Intensity;
+		_duration = Duration;
+		onComplete = OnComplete;
+		axes = Axes;
 		
 		offset = new Point();
 	}
