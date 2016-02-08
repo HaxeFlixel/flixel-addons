@@ -90,12 +90,14 @@ class FlxEffectSprite extends FlxSprite
 			target.drawFrame(true);
 			#end
 			
+			FlxDestroyUtil.dispose(pixels);
+			
 			pixels = target.framePixels.clone();
 			_effectOffset.set(0, 0);
 			
 			if (pixels == null)
 				return;
-				
+			
 			pixels.lock();
 			for (effect in effects) 
 			{
