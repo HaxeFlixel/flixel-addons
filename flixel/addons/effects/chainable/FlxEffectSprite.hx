@@ -1,4 +1,4 @@
-package flixel.addons.effects;
+package flixel.addons.effects.chainable;
 
 import flixel.FlxCamera;
 import flixel.FlxSprite;

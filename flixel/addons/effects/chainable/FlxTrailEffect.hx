@@ -1,4 +1,4 @@
-package flixel.addons.effects;
+package flixel.addons.effects.chainable;
 
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
@@ -16,7 +16,7 @@ import openfl.geom.Matrix;
 class FlxTrailEffect implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offset:FlxPoint;
+	public var offset(default, null):FlxPoint;
 	
 	/**
 	 * The target FlxEffectSprite that to apply the trail.

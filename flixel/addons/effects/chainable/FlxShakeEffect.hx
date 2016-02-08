@@ -1,4 +1,4 @@
-package flixel.addons.effects;
+package flixel.addons.effects.chainable;
 
 import flixel.math.FlxPoint;
 import flixel.util.FlxAxes;
@@ -13,7 +13,7 @@ import openfl.display.BitmapData;
 class FlxShakeEffect implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offset:FlxPoint;
+	public var offset(default, null):FlxPoint;
 	
 	/**
 	 * Value in pixels representing the maximum distance that the bitmapData can move while shaking.
