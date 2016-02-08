@@ -15,7 +15,7 @@ import openfl.geom.Point;
 
 /**
  * Use this class to chain bitmap effects to your target FlxSprite frame.
- * @author Adriano Lima
+ * @author adrianulima
  */
 class FlxEffectSprite extends FlxSprite
 {
@@ -47,7 +47,7 @@ class FlxEffectSprite extends FlxSprite
 	 * @param	Y				The initial Y position of the sprite.
 	 * @param	SimpleGraphic	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
 	 */
-	public function new(Target:FlxSprite, ?Effects:Array<IFlxEffect> = null)
+	public function new(Target:FlxSprite, ?Effects:Array<IFlxEffect>)
 	{
 		super();
 		
@@ -63,57 +63,70 @@ class FlxEffectSprite extends FlxSprite
 	 */
 	override public function destroy():Void
 	{
-		for (effect in effects) 
-		{
-			effect.destroy();
-		}
-		
-		effects = null;
+		effects = FlxDestroyUtil.destroyArray(effects);
 		_effectOffset = FlxDestroyUtil.put(_point);
 		
 		super.destroy();
 	}
 	
+	/**
+	 * Call this function to figure out the on-screen position of the object.
+	 * 
+	 * @param	Point		Takes a FlxPoint object and assigns the post-scrolled X and Y values of this object to it.
+	 * @param	Camera		Specify which game camera you want.  If null getScreenPosition() will just grab the first global camera.
+	 * @return	The Point you passed in, or a new Point if you didn't pass one, containing the screen X and Y position of this object.
+	 */
 	override public function getScreenPosition(?point:FlxPoint, ?Camera:FlxCamera):FlxPoint 
 	{
 		return super.getScreenPosition(point, Camera).addPoint(_effectOffset);
 	}
 	
-	/**
-	 * Core update loop
-	 */
-	override public function update(elapsed:Float):Void
+	override public function draw():Void 
 	{
+		target.drawFrame();
+		
+		if (target.framePixels == null)
+			return;
+		
+		FlxDestroyUtil.dispose(pixels);
+		pixels = target.framePixels.clone();
+		_effectOffset.set(0, 0);
+		
 		if (effectsEnabled)
 		{
-			#if !FLX_RENDER_BLIT
-			target.drawFrame(true);
-			#end
-			
-			FlxDestroyUtil.dispose(pixels);
-			
-			pixels = target.framePixels.clone();
-			_effectOffset.set(0, 0);
-			
-			if (pixels == null)
-				return;
-			
 			pixels.lock();
 			for (effect in effects) 
 			{
 				if (effect.active)
 				{
-					effect.update(elapsed);
 					pixels = effect.apply(pixels);
 					if (effect.offset != null)
 					{
-						_effectOffset.add(effect.offset.x, effect.offset.y);
+						_effectOffset.addPoint(effect.offset);
 					}
 				}
 			}
 			pixels.unlock();
-			
 			_flashRect = pixels.rect;
+		}
+		
+		super.draw();
+	}
+	
+	/**
+	 * Core update loop, and updates each active effect.
+	 */
+	override public function update(elapsed:Float):Void
+	{
+		if (effectsEnabled)
+		{
+			for (effect in effects) 
+			{
+				if (effect.active)
+				{
+					effect.update(elapsed);
+				}
+			}
 		}
 		
 		super.update(elapsed);

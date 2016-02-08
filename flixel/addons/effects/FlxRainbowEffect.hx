@@ -1,6 +1,7 @@
 package flixel.addons.effects;
 
 import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
@@ -15,7 +16,7 @@ import openfl.geom.Point;
 class FlxRainbowEffect implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offset:Point;
+	public var offset:FlxPoint;
 	
 	/**
 	 * How fast the hue should change each tick.

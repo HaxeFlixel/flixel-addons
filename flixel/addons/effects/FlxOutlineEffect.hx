@@ -1,5 +1,6 @@
 package flixel.addons.effects;
 
+import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
@@ -7,7 +8,7 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
 /**
- * This creates an outline around the bitmapData.
+ * This creates an outline around the bitmapData. This is a modified version of FlxOutline by red__hara
  * 
  * @author red__hara
  * @author adrianulima
@@ -15,7 +16,7 @@ import openfl.geom.Rectangle;
 class FlxOutlineEffect implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offset:Point;
+	public var offset:FlxPoint;
 	
 	/**
 	 * Set this flag to true to force the effect to update during the apply() call.

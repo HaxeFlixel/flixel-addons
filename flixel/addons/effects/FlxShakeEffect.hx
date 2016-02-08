@@ -1,8 +1,9 @@
 package flixel.addons.effects;
 
+import flixel.math.FlxPoint;
 import flixel.util.FlxAxes;
+import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
-import openfl.geom.Point;
 
 /**
  * This will shake the bitmapData.
@@ -12,7 +13,7 @@ import openfl.geom.Point;
 class FlxShakeEffect implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offset:Point;
+	public var offset:FlxPoint;
 	
 	/**
 	 * Value in pixels representing the maximum distance that the bitmapData can move while shaking.
@@ -51,38 +52,39 @@ class FlxShakeEffect implements IFlxEffect
 		onComplete = OnComplete;
 		axes = Axes;
 		
-		offset = new Point();
+		offset = FlxPoint.get();
 	}
 	
 	public function destroy():Void 
 	{
-		offset = null;
+		offset = FlxDestroyUtil.put(offset);
 		onComplete = null;
 	}
 	
 	public function update(elapsed:Float):Void 
 	{
+		if (_time <= 0)
+			return;
+		
+		_time -= elapsed;
+		
 		if (_time > 0)
 		{
-			_time -= elapsed;
-			if (_time <= 0)
+			if (axes != FlxAxes.Y)
 			{
-				offset.setTo(0, 0);
-				if (onComplete != null)
-				{
-					onComplete();
-				}
+				offset.x = FlxG.random.float( -intensity, intensity);
 			}
-			else
+			if (axes != FlxAxes.X)
 			{
-				if (axes != FlxAxes.Y)
-				{
-					offset.x = FlxG.random.float( -intensity, intensity);
-				}
-				if (axes != FlxAxes.X)
-				{
-					offset.y = FlxG.random.float( -intensity, intensity);
-				}
+				offset.y = FlxG.random.float( -intensity, intensity);
+			}
+		}
+		else
+		{
+			offset.set(0, 0);
+			if (onComplete != null)
+			{
+				onComplete();
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package flixel.addons.effects;
 
 import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import openfl.display.BitmapData;
@@ -16,7 +17,7 @@ import openfl.geom.Rectangle;
 class FlxWaveEffect implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offset:Point;
+	public var offset:FlxPoint;
 	
 	private static inline var BASE_STRENGTH:Float = 0.11;
 	
@@ -82,17 +83,17 @@ class FlxWaveEffect implements IFlxEffect
 		if (Center < 0)
 			center = 0.5;
 		
-		offset = new Point();
+		offset = FlxPoint.get();
 		_flashPoint = new Point();
 		_flashRect = new Rectangle();
 	}
 	
 	public function destroy():Void 
 	{
-		offset = null;
 		_flashPoint = null;
 		_flashRect = null;
 		
+		offset = FlxDestroyUtil.put(offset);
 		_pixels = FlxDestroyUtil.dispose(_pixels);
 	}
 	
@@ -105,7 +106,7 @@ class FlxWaveEffect implements IFlxEffect
 	{
 		var horizontalStrength:Int = (direction == HORIZONTAL) ? strength : 0;
 		var verticalStrength:Int = (direction == VERTICAL) ? strength : 0;
-		offset.setTo( -horizontalStrength, -verticalStrength);
+		offset.set( -horizontalStrength, -verticalStrength);
 		
 		if (_pixels == null || _pixels.width < bitmapData.width + horizontalStrength * 2 || _pixels.height < bitmapData.height + verticalStrength * 2)
 		{
@@ -116,7 +117,7 @@ class FlxWaveEffect implements IFlxEffect
 			_pixels.fillRect(_pixels.rect, FlxColor.TRANSPARENT);
 		}
 		
-		var offset:Float = 0;
+		var pixelOffset:Float = 0;
 		var centerP = Std.int(((direction == HORIZONTAL) ? bitmapData.height : bitmapData.width) * 0.5);
 		var length = (direction == HORIZONTAL) ? bitmapData.height : bitmapData.width;
 		for (p in 0...length)
@@ -125,31 +126,31 @@ class FlxWaveEffect implements IFlxEffect
 			switch (mode)
 			{
 				case ALL:
-					offset = offsetP * calculateOffset(p);
+					pixelOffset = offsetP * calculateOffset(p);
 					
 				case END:
 					if (p >= centerP)
 					{
 						offsetP = p - centerP;
-						offset = offsetP * calculateOffset(offsetP);
+						pixelOffset = offsetP * calculateOffset(offsetP);
 					}
 					
 				case START:
 					if (p <= centerP)
 					{
 						offsetP = centerP - p;
-						offset = offsetP * calculateOffset(offsetP);
+						pixelOffset = offsetP * calculateOffset(offsetP);
 					}
 			}
 			
 			if (direction == HORIZONTAL)
 			{
-				_flashPoint.setTo(strength + offset, p);
+				_flashPoint.setTo(strength + pixelOffset, p);
 				_flashRect.setTo(0, p, bitmapData.width, 1);
 			}
 			else
 			{
-				_flashPoint.setTo(p, strength + offset);
+				_flashPoint.setTo(p, strength + pixelOffset);
 				_flashRect.setTo(p, 0, 1, bitmapData.height);
 			}
 			_pixels.copyPixels(bitmapData, _flashRect, _flashPoint);
