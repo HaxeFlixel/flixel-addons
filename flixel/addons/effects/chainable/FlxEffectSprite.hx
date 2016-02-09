@@ -83,13 +83,25 @@ class FlxEffectSprite extends FlxSprite
 	
 	override public function draw():Void 
 	{
-		target.drawFrame();
+		if (target.dirty)
+		{
+			target.drawFrame();
+		}
 		
 		if (target.framePixels == null)
-			return;
+			return super.draw();
 		
-		FlxDestroyUtil.dispose(pixels);
-		pixels = target.framePixels.clone();
+		if (pixels != null && pixels.width == target.framePixels.width && pixels.height == target.framePixels.height)
+		{
+			pixels.fillRect(pixels.rect, FlxColor.TRANSPARENT);
+			pixels.draw(target.framePixels);
+		}
+		else
+		{
+			FlxDestroyUtil.dispose(pixels);
+			pixels = target.framePixels.clone();
+		}
+		
 		_effectOffset.set(0, 0);
 		
 		if (effectsEnabled)
@@ -118,6 +130,11 @@ class FlxEffectSprite extends FlxSprite
 	 */
 	override public function update(elapsed:Float):Void
 	{
+		if (target.animation.frames > 1)
+		{
+			target.updateAnimation(elapsed);
+		}
+		
 		if (effectsEnabled)
 		{
 			for (effect in effects) 

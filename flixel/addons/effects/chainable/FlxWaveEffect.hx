@@ -19,8 +19,6 @@ class FlxWaveEffect implements IFlxEffect
 	public var active:Bool = true;
 	public var offset(default, null):FlxPoint;
 	
-	private static inline var BASE_STRENGTH:Float = 0.11;
-	
 	/**
 	 * Which mode we're using for the effect
 	 */
@@ -73,15 +71,22 @@ class FlxWaveEffect implements IFlxEffect
 	 * @param	Wavelength	How long waves are.
 	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL).
 	 */
-	public function new(?Mode:FlxWaveMode, Strength:Int = 10, Center:Int = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection) 
+	public function new(?Mode:FlxWaveMode, Strength:Int = 10, Center:Float = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection) 
 	{
 		strength = Strength;
 		mode = (Mode == null) ? ALL : Mode;
 		speed = Speed;
 		wavelength = Wavelength;
 		direction = (Direction != null) ? Direction : HORIZONTAL;
+		center = Center;
 		if (Center < 0)
+		{
 			center = 0.5;
+		}
+		else if (Center > 1)
+		{
+			center = 1;
+		}
 		
 		offset = FlxPoint.get();
 		_flashPoint = new Point();
@@ -117,43 +122,56 @@ class FlxWaveEffect implements IFlxEffect
 			_pixels.fillRect(_pixels.rect, FlxColor.TRANSPARENT);
 		}
 		
-		var pixelOffset:Float = 0;
-		var centerP = Std.int(((direction == HORIZONTAL) ? bitmapData.height : bitmapData.width) * 0.5);
 		var length = (direction == HORIZONTAL) ? bitmapData.height : bitmapData.width;
-		for (p in 0...length)
+		var p:Int = 0;
+		while (p < length)
 		{
-			var offsetP:Float = centerP;
+			var pixelOffset:Float = 0;
+			var offsetP:Float = length * center;
+			var size:Int = 1;
 			switch (mode)
 			{
 				case ALL:
-					pixelOffset = offsetP * calculateOffset(p);
-					
-				case END:
-					if (p >= centerP)
-					{
-						offsetP = p - centerP;
-						pixelOffset = offsetP * calculateOffset(offsetP);
-					}
+					offsetP = strength;
 					
 				case START:
-					if (p <= centerP)
+					if (p <= offsetP)
 					{
-						offsetP = centerP - p;
-						pixelOffset = offsetP * calculateOffset(offsetP);
+						offsetP = (1 - p / offsetP) * strength;
+					}
+					else
+					{
+						size = length - p;
+						offsetP = 0;
+					}
+					
+				case END:
+					if (p >= offsetP)
+					{
+						offsetP =  (1 - (1 - (p / length)) / (1 - center)) * strength;
+					}
+					else
+					{
+						size = Math.ceil(offsetP);
+						offsetP = 0;
 					}
 			}
+			
+			pixelOffset = offsetP * calculateOffset(p);
 			
 			if (direction == HORIZONTAL)
 			{
 				_flashPoint.setTo(strength + pixelOffset, p);
-				_flashRect.setTo(0, p, bitmapData.width, 1);
+				_flashRect.setTo(0, p, bitmapData.width, size);
 			}
 			else
 			{
 				_flashPoint.setTo(p, strength + pixelOffset);
-				_flashRect.setTo(p, 0, 1, bitmapData.height);
+				_flashRect.setTo(p, 0, size, bitmapData.height);
 			}
 			_pixels.copyPixels(bitmapData, _flashRect, _flashPoint);
+			
+			p += size;
 		}
 		bitmapData.dispose();
 		
@@ -162,7 +180,7 @@ class FlxWaveEffect implements IFlxEffect
 	
 	private inline function calculateOffset(p:Float):Float
 	{
-		return (strength * BASE_STRENGTH) * BASE_STRENGTH * FlxMath.fastSin((p / wavelength) + _time);
+		return FlxMath.fastSin((p / wavelength) + _time);
 	}
 }
 
