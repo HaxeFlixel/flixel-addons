@@ -62,81 +62,36 @@ class FlxSkewedSprite extends FlxSprite
 		super.destroy();
 	}
 	
-	override public function draw():Void 
+	override function drawComplex(camera:FlxCamera):Void 
 	{
-		if (alpha == 0 || frame.type == FlxFrameType.EMPTY)
+		_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
+		_matrix.translate(-origin.x, -origin.y);
+		_matrix.scale(scale.x, scale.y);
+		
+		if (matrixExposed)
 		{
-			return;
+			_matrix.concat(transformMatrix);
+		}
+		else
+		{
+			if (bakedRotationAngle <= 0)
+			{
+				updateTrig();
+				
+				if (angle != 0)
+					_matrix.rotateWithTrig(_cosAngle, _sinAngle);
+			}
+			
+			updateSkewMatrix();
+			_matrix.concat(_skewMatrix);
 		}
 		
-		if (dirty)	//rarely 
-		{
-			calcFrame();
-		}
+		_point.add(origin.x, origin.y);
+		if (isPixelPerfectRender(camera))
+			_point.floor();
 		
-		for (camera in cameras)
-		{
-			if (!isOnScreen(camera) || !camera.visible || !camera.exists)
-			{
-				continue;
-			}
-			
-			getScreenPosition(_point, camera).subtractPoint(offset);
-			
-			var simple:Bool = isSimpleRender(camera);
-			if (simple)
-			{
-				if (isPixelPerfectRender(camera))
-				{
-					_point.floor();
-				}
-				
-				_point.copyToFlash(_flashPoint);
-				camera.copyPixels(_frame, framePixels, _flashRect, _flashPoint, colorTransform, blend, antialiasing);
-			}
-			else
-			{
-				_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, flipX, flipY);
-				_matrix.translate( -origin.x, -origin.y);
-			}
-			
-			_matrix.identity();
-			_matrix.translate( -origin.x, -origin.y);
-			
-			if (matrixExposed)
-			{
-				_matrix.concat(transformMatrix);
-			}
-			else
-			{
-				_matrix.scale(scale.x, scale.y);
-				if (bakedRotationAngle <= 0)
-				{
-					updateTrig();
-					
-					if (angle != 0)
-					{
-						_matrix.rotateWithTrig(_cosAngle, _sinAngle);
-					}
-				}
-				
-				updateSkewMatrix();
-				_matrix.concat(_skewMatrix);
-			}
-			
-			_point.add(origin.x, origin.y);
-			if (isPixelPerfectRender(camera))
-			{
-				_point.floor();
-			}
-			
-			_matrix.translate(_point.x, _point.y);
-			camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing);
-			
-			#if !FLX_NO_DEBUG
-			FlxBasic.activeCount++;
-			#end
-		}
+		_matrix.translate(_point.x, _point.y);
+		camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing);
 	}
 	
 	private function updateSkewMatrix():Void
