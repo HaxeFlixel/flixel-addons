@@ -1,4 +1,5 @@
 package flixel.addons.transition;
+
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.addons.transition.TransitionData;
 import flixel.group.FlxGroup;

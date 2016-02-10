@@ -1,4 +1,5 @@
 package flixel.addons.tile;
+
 import flixel.math.FlxRandom;
 
 /**

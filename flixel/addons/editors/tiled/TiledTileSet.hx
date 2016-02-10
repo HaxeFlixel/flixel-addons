@@ -1,4 +1,3 @@
-
 package flixel.addons.editors.tiled;
 
 import flash.geom.Rectangle;
@@ -20,7 +19,7 @@ class TiledTileSet
 	public var margin:Int;
 	public var imageSource:String;
 	
-	// Available only after immage has been assigned:
+	// Available only after image has been assigned:
 	public var numTiles:Int;
 	public var numRows:Int;
 	public var numCols:Int;

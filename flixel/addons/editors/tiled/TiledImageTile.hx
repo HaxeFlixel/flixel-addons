@@ -23,5 +23,4 @@ class TiledImageTile
 			source = img.att.source;
 		}
 	}
-	
 }
