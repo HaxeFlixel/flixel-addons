@@ -55,7 +55,7 @@ class FlxBackdrop extends FlxSprite
 	 * @param	SpaceX		Amount of spacing between tiles on the X axis
 	 * @param	SpaceY		Amount of spacing between tiles on the Y axis
 	 */
-	public function new(Graphic:FlxGraphicAsset, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true, SpaceX:Int = 0, SpaceY:Int = 0) 
+	public function new(?Graphic:FlxGraphicAsset, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true, SpaceX:Int = 0, SpaceY:Int = 0) 
 	{
 		super();
 		
@@ -73,7 +73,10 @@ class FlxBackdrop extends FlxSprite
 		scrollFactor.x = ScrollX;
 		scrollFactor.y = ScrollY;
 		
-		loadGraphic(Graphic);
+		if (Graphic != null)
+		{
+			loadGraphic(Graphic);
+		}
 		
 		FlxG.signals.gameResized.add(onGameResize);
 	}
