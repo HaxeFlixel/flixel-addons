@@ -3,6 +3,7 @@ import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.graphics.frames.FlxFrame.FlxFrameType;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxPoint;
@@ -79,10 +80,11 @@ class FlxClothSprite extends FlxSprite
 	private var _uvtData:DrawData<Float>;
 	public var colors:DrawData<Int>;
 	
+	private var frameGraphic:FlxGraphic;
 	/**
 	 * Use to offset the drawing position of the mesh.
 	 */
-	private var _drawOffset:Point;
+	private var _drawOffset:FlxPoint;
 	/**
 	 * The actual Flash BitmapData object representing the current display state of the modified framePixels.
 	 */
@@ -108,7 +110,7 @@ class FlxClothSprite extends FlxSprite
 		this.columns = Std.int(Math.max(2, Columns));
 		this.crossingConstraints = CrossingConstraints;
 		
-		_drawOffset = new Point();
+		_drawOffset = FlxPoint.get();
 		setMesh(columns, rows);
 	}
 	
@@ -124,7 +126,7 @@ class FlxClothSprite extends FlxSprite
 		_indices = null;
 		_uvtData = null;
 		colors = null;
-		_drawOffset = null;
+		_drawOffset = FlxDestroyUtil.put(_drawOffset);
 		
 		meshVelocity = FlxDestroyUtil.put(meshVelocity);
 		meshFriction = FlxDestroyUtil.put(meshFriction);
@@ -147,79 +149,48 @@ class FlxClothSprite extends FlxSprite
 		super.update(elapsed);
 	}
 	
-	/**
-	 * Called by game loop, updates then blits or renders current frame of animation to the screen.
-	 */
-	override public function draw():Void 
+	override function drawSimple(camera:FlxCamera):Void 
 	{
-		if (_frame == null || meshPixels == null)
-		{
-			super.draw();
-			return;
-		}
-		
-		if (alpha == 0 || _frame.type == FlxFrameType.EMPTY)
-		{
-			return;
-		}
-		
-		if (dirty)	//rarely 
-		{
-			calcFrame();
-		}
-		
 		calcImage();
 		drawImage();
 		
-		for (camera in cameras)
+		if (isPixelPerfectRender(camera))
+			_point.floor();
+		
+		_point.addPoint(_drawOffset).copyToFlash(_flashPoint);
+		camera.copyPixels(_frame, meshPixels, meshPixels.rect, _flashPoint, colorTransform, blend, antialiasing);
+	}
+	
+	override function drawComplex(camera:FlxCamera):Void 
+	{
+		calcImage();
+		drawFrame();
+		
+		_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
+		_matrix.translate(-origin.x, -origin.y);
+		_matrix.scale(scale.x, scale.y);
+		
+		if (bakedRotationAngle <= 0)
 		{
-			if (!camera.visible || !camera.exists || !isOnScreen(camera))
-			{
-				continue;
-			}
+			updateTrig();
 			
-			getScreenPosition(_point, camera).subtractPoint(offset);
-			
-			var cr:Float = colorTransform.redMultiplier;
-			var cg:Float = colorTransform.greenMultiplier;
-			var cb:Float = colorTransform.blueMultiplier;
-			
-			var simple:Bool = isSimpleRender(camera);
-			if (simple)
-			{
-				if (isPixelPerfectRender(camera))
-				{
-					_point.floor();
-				}
-				
-				_flashPoint = new Point(_point.x + _drawOffset.x, _point.y + _drawOffset.y);
-				camera.copyPixels(_frame, meshPixels, meshPixels.rect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
-			}
-			else
-			{
-				_point.add(_drawOffset.x, _drawOffset.y);
-				if (isPixelPerfectRender(camera))
-				{
-					_point.floor();
-				}
-				
-				// Create a temporary frame and draw mesh's bitmapData
-				var frameGraphic:FlxGraphic = FlxGraphic.fromBitmapData(framePixels, true, null, false);
-				
-				camera.drawTriangles(frameGraphic, _vertices, _indices, _uvtData, colors, _point, blend, antialiasing);
-			}
-			
-			#if !FLX_NO_DEBUG
-			FlxBasic.visibleCount++;
-			#end
+			if (angle != 0)
+				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
 		}
 		
-		#if !FLX_NO_DEBUG
-		if (FlxG.debugger.drawDebug)
+		if (isPixelPerfectRender(camera))
+			_point.floor();
+		
+		if (frameGraphic == null)
 		{
-			drawDebug();
+			frameGraphic = FlxGraphic.fromBitmapData(framePixels, true, null, false);
 		}
-		#end
+		else
+		{
+			frameGraphic.bitmap = framePixels;
+		}
+			
+		camera.drawTriangles(frameGraphic, _vertices, _indices, _uvtData, colors, _point.addPoint(_drawOffset), blend, antialiasing);
 	}
 	
 	#if !FLX_NO_DEBUG	
@@ -453,8 +424,7 @@ class FlxClothSprite extends FlxSprite
 		}
 		
 		// Apply an offset to keep image positioned in the origin
-		_drawOffset.x = minX;
-		_drawOffset.y = minY;
+		_drawOffset.set(minX, minY);
 		
 		var i:Int = 0;
 		while (i < _vertices.length - 1)
@@ -487,9 +457,6 @@ class FlxClothSprite extends FlxSprite
 	 */
 	private function drawImage():Void
 	{
-		#if !FLX_RENDER_BLIT
-		getFlxFrameBitmapData();
-		#else
 		if (meshPixels != null)
 		{
 			FlxSpriteUtil.flashGfx.clear();
@@ -499,7 +466,6 @@ class FlxClothSprite extends FlxSprite
 			
 			this.meshPixels.draw(FlxSpriteUtil.flashGfxSprite);
 		}
-		#end
 	}
 }
 
