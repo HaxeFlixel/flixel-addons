@@ -1,18 +1,13 @@
 package flixel.addons.display;
 
 import flash.geom.Matrix;
-import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxG;
-import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
-import flixel.graphics.frames.FlxFrame.FlxFrameType;
-import flixel.graphics.tile.FlxDrawTilesItem;
-import flixel.system.FlxAssets;
 import flixel.math.FlxAngle;
-import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
+import flixel.util.FlxDestroyUtil;
 
 /**
  * ...
@@ -20,13 +15,13 @@ import flixel.math.FlxPoint;
  */
 class FlxSkewedSprite extends FlxSprite
 {
-	public var skew(default, null):FlxPoint;
+	public var skew(default, null):FlxPoint = FlxPoint.get();
 	
 	/**
 	 * Tranformation matrix for this sprite.
 	 * Used only when matrixExposed is set to true
 	 */
-	public var transformMatrix(default, null):Matrix;
+	public var transformMatrix(default, null):Matrix = new Matrix();
 	
 	/**
 	 * Bool flag showing whether transformMatrix is used for rendering or not.
@@ -37,16 +32,7 @@ class FlxSkewedSprite extends FlxSprite
 	/**
 	 * Internal helper matrix object. Used for rendering calculations when matrixExposed is set to false
 	 */
-	private var _skewMatrix:Matrix;
-	
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset)
-	{
-		super(X, Y, SimpleGraphic);
-		
-		skew = FlxPoint.get();
-		_skewMatrix = new Matrix();
-		transformMatrix = new Matrix();
-	}
+	private var _skewMatrix:Matrix = new Matrix();
 	
 	/**
 	 * WARNING: This will remove this sprite entirely. Use kill() if you 
@@ -86,7 +72,7 @@ class FlxSkewedSprite extends FlxSprite
 			_matrix.concat(_skewMatrix);
 		}
 		
-		_point.add(origin.x, origin.y);
+		_point.addPoint(origin);
 		if (isPixelPerfectRender(camera))
 			_point.floor();
 		
@@ -98,7 +84,7 @@ class FlxSkewedSprite extends FlxSprite
 	{
 		_skewMatrix.identity();
 		
-		if ((skew.x != 0) || (skew.y != 0))
+		if (skew.x != 0 || skew.y != 0)
 		{
 			_skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
 			_skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
@@ -109,7 +95,7 @@ class FlxSkewedSprite extends FlxSprite
 	{
 		if (FlxG.renderBlit)
 		{
-			return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0) && (!matrixExposed);
+			return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0) && !matrixExposed;
 		}
 		else
 		{
