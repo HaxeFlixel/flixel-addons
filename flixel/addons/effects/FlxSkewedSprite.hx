@@ -1,4 +1,4 @@
-package flixel.addons.display;
+package flixel.addons.effects;
 
 import flash.geom.Matrix;
 import flixel.FlxCamera;

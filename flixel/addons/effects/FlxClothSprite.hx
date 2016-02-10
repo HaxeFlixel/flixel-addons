@@ -1,4 +1,5 @@
-package flixel.addons.display;
+package flixel.addons.effects;
+
 import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -104,10 +105,10 @@ class FlxClothSprite extends FlxSprite
 	{
 		super(X, Y, SimpleGraphic);
 		
-		this.pinnedSide = PinnedSide;
-		this.rows = Std.int(Math.max(2, Rows));
-		this.columns = Std.int(Math.max(2, Columns));
-		this.crossingConstraints = CrossingConstraints;
+		pinnedSide = PinnedSide;
+		rows = Std.int(Math.max(2, Rows));
+		columns = Std.int(Math.max(2, Columns));
+		crossingConstraints = CrossingConstraints;
 		
 		_drawOffset = FlxPoint.get();
 		setMesh(columns, rows);
@@ -254,7 +255,7 @@ class FlxClothSprite extends FlxSprite
 			return;
 		}
 		
-		this.meshPixels = new BitmapData(meshPixelsWidth, meshPixelsHeight, true, FlxColor.TRANSPARENT);
+		meshPixels = new BitmapData(meshPixelsWidth, meshPixelsHeight, true, FlxColor.TRANSPARENT);
 		
 		points = [];
 		constraints = [];
@@ -262,10 +263,10 @@ class FlxClothSprite extends FlxSprite
 		_uvtData = [];
 		_indices = [];
 		
-		this.rows = Std.int(Math.max(2, rows));
-		this.columns = Std.int(Math.max(2, columns));
-		this.widthInTiles = (frameWidth / (columns - 1)) * meshScale.x;
-		this.heightInTiles = (frameHeight / (rows - 1)) * meshScale.y;
+		rows = Std.int(Math.max(2, rows));
+		columns = Std.int(Math.max(2, columns));
+		widthInTiles = (frameWidth / (columns - 1)) * meshScale.x;
+		heightInTiles = (frameHeight / (rows - 1)) * meshScale.y;
 		
 		var hyp = Math.sqrt(heightInTiles * heightInTiles + widthInTiles * widthInTiles);
 		for (r in 0...rows) 
@@ -361,8 +362,8 @@ class FlxClothSprite extends FlxSprite
 				
 				p.x += meshVelocity.x * elapsed;
 				p.y += meshVelocity.y * elapsed;
-				p.x -= this.velocity.x * elapsed;
-				p.y -= this.velocity.y * elapsed;
+				p.x -= velocity.x * elapsed;
+				p.y -= velocity.y * elapsed;
 			}
 		}
 	}
@@ -459,7 +460,7 @@ class FlxClothSprite extends FlxSprite
 			FlxSpriteUtil.flashGfx.drawTriangles(_vertices, _indices, _uvtData);
 			FlxSpriteUtil.flashGfx.endFill();
 			
-			this.meshPixels.draw(FlxSpriteUtil.flashGfxSprite);
+			meshPixels.draw(FlxSpriteUtil.flashGfxSprite);
 		}
 	}
 }
