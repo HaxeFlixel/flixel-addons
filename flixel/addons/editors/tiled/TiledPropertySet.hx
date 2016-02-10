@@ -9,6 +9,8 @@ import haxe.xml.Fast;
  */
 class TiledPropertySet implements Dynamic<String>
 {
+	public var keys:Map<String, String>;
+	
 	public function new()
 	{
 		keys = new Map<String, String>();
@@ -43,6 +45,4 @@ class TiledPropertySet implements Dynamic<String>
 			keys.set(prop.att.name, prop.att.value);
 		}
 	}
-	
-	public var keys:Map<String, String>;
 }

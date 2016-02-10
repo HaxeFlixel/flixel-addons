@@ -83,10 +83,6 @@ class FlxSkewedSprite extends FlxSprite
 			
 			getScreenPosition(_point, camera).subtractPoint(offset);
 			
-			var cr:Float = colorTransform.redMultiplier;
-			var cg:Float = colorTransform.greenMultiplier;
-			var cb:Float = colorTransform.blueMultiplier;
-			
 			var simple:Bool = isSimpleRender(camera);
 			if (simple)
 			{
@@ -96,7 +92,7 @@ class FlxSkewedSprite extends FlxSprite
 				}
 				
 				_point.copyToFlash(_flashPoint);
-				camera.copyPixels(_frame, framePixels, _flashRect, _flashPoint, cr, cg, cb, alpha, blend, antialiasing);
+				camera.copyPixels(_frame, framePixels, _flashRect, _flashPoint, colorTransform, blend, antialiasing);
 			}
 			else
 			{
@@ -135,7 +131,7 @@ class FlxSkewedSprite extends FlxSprite
 			}
 			
 			_matrix.translate(_point.x, _point.y);
-			camera.drawPixels(_frame, framePixels, _matrix, cr, cg, cb, alpha, blend, antialiasing);
+			camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing);
 			
 			#if !FLX_NO_DEBUG
 			FlxBasic.activeCount++;
@@ -156,10 +152,13 @@ class FlxSkewedSprite extends FlxSprite
 	
 	override public function isSimpleRender(?camera:FlxCamera):Bool
 	{
-		#if FLX_RENDER_BLIT
-		return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0) && (!matrixExposed);
-		#else
-		return false;
-		#end
+		if (FlxG.renderBlit)
+		{
+			return super.isSimpleRender(camera) && (skew.x == 0) && (skew.y == 0) && (!matrixExposed);
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

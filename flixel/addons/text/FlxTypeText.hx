@@ -295,6 +295,7 @@ class FlxTypeText extends FlxText
 		_erasing = false;
 		paused = false;
 		_waiting = false;
+		_length = 0;
 	}
 	
 	/**

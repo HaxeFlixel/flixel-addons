@@ -190,7 +190,7 @@ class FlxTrailArea extends FlxSprite
 					
 					if (simpleRender) 
 					{
-						_areaPixels.copyPixels(member.getFlxFrameBitmapData(), 
+						_areaPixels.copyPixels(member.updateFramePixels(),
 							new Rectangle(0, 0, member.frameWidth, member.frameHeight), 
 							new Point(finalX, finalY), null, null, true);
 					}
@@ -213,7 +213,7 @@ class FlxTrailArea extends FlxSprite
 							_matrix.translate(member.origin.x, member.origin.y);
 						}
 						_matrix.translate(finalX, finalY);
-						_areaPixels.draw(member.getFlxFrameBitmapData(), _matrix, member.colorTransform, blendMode, null, antialiasing);
+						_areaPixels.draw(member.updateFramePixels(), _matrix, member.colorTransform, blendMode, null, antialiasing);
 					}
 				}
 			}

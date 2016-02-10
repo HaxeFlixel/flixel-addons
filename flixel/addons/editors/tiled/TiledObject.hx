@@ -117,23 +117,30 @@ class TiledObject
 		}
 		
 		// Let's see if it's another object
-		if (source.hasNode.ellipse) {
+		if (source.hasNode.ellipse)
+		{
 			objectType = ELLIPSE;
-		} else if (source.hasNode.polygon) {
+		}
+		else if (source.hasNode.polygon)
+		{
 			objectType = POLYGON;
 			getPoints(source.node.polygon);
-		} else if (source.hasNode.polyline) {
+		}
+		else if (source.hasNode.polyline)
+		{
 			objectType = POLYLINE;
 			getPoints(source.node.polyline);
 		}
 	}
 	
-	private function getPoints(node:Fast):Void {
+	private function getPoints(node:Fast):Void
+	{
 		points = new Array<FlxPoint>();
 		
 		var pointsStr:Array<String> = node.att.points.split(" ");
 		var pair:Array<String>;
-		for (p in pointsStr) {
+		for (p in pointsStr)
+		{
 			pair = p.split(",");
 			points.push(FlxPoint.get(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
 		}
