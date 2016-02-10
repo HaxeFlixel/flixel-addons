@@ -66,11 +66,11 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * An array containing all vertices of the mesh, they are indexed row by row.
 	 */
-	public var points(default, null):Array<ClothPoint> = [];
+	public var points(default, null):Array<FlxClothPoint> = [];
 	/**
 	 * An array containing all vertices conections.
 	 */
-	public var constraints(default, null):Array<ClothConstraint> = [];
+	public var constraints(default, null):Array<FlxClothConstraint> = [];
 	
 	/**
 	 * Mesh arrays. Vertices, indices, uvtData and colors to drawTriangles().
@@ -80,7 +80,6 @@ class FlxClothSprite extends FlxSprite
 	private var _uvtData:DrawData<Float>;
 	public var colors:DrawData<Int>;
 	
-	private var frameGraphic:FlxGraphic;
 	/**
 	 * Use to offset the drawing position of the mesh.
 	 */
@@ -181,16 +180,12 @@ class FlxClothSprite extends FlxSprite
 		if (isPixelPerfectRender(camera))
 			_point.floor();
 		
-		if (frameGraphic == null)
+		if (_frameGraphic == null)
 		{
-			frameGraphic = FlxGraphic.fromBitmapData(framePixels, true, null, false);
+			_frameGraphic = FlxGraphic.fromBitmapData(framePixels, false, null, false);
 		}
-		else
-		{
-			frameGraphic.bitmap = framePixels;
-		}
-			
-		camera.drawTriangles(frameGraphic, _vertices, _indices, _uvtData, colors, _point.addPoint(_drawOffset), blend, antialiasing);
+		
+		camera.drawTriangles(_frameGraphic, _vertices, _indices, _uvtData, colors, _point.addPoint(_drawOffset), blend, antialiasing);
 	}
 	
 	#if !FLX_NO_DEBUG	
@@ -469,7 +464,7 @@ class FlxClothSprite extends FlxSprite
 	}
 }
 
-typedef ClothPoint = {
+typedef FlxClothPoint = {
 	x: Float,
 	y: Float,
 	oldx: Float,
@@ -477,8 +472,8 @@ typedef ClothPoint = {
 	?pinned:Bool
 }
 
-typedef ClothConstraint = {
-	p0: ClothPoint,
-	p1: ClothPoint,
+typedef FlxClothConstraint = {
+	p0: FlxClothPoint,
+	p1: FlxClothPoint,
 	length: Float
 }
