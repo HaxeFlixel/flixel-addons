@@ -64,7 +64,8 @@ class FlxEffectSprite extends FlxSprite
 	override public function destroy():Void
 	{
 		effects = FlxDestroyUtil.destroyArray(effects);
-		_effectOffset = FlxDestroyUtil.put(_point);
+		_effectOffset = FlxDestroyUtil.put(_effectOffset);
+		target = null;
 		
 		super.destroy();
 	}
