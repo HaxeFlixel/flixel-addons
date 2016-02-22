@@ -141,8 +141,11 @@ class FlxGlitchEffect implements IFlxEffect
 		}
 		
 		if (_pixels != null)
+		{
+			FlxDestroyUtil.dispose(bitmapData);
 			return _pixels.clone();
-			
+		}
+		
 		return bitmapData;
 	}
 }

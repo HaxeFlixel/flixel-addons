@@ -94,9 +94,7 @@ class FlxTrailEffect implements IFlxEffect
 		_pixels = FlxDestroyUtil.dispose(_pixels);
 	}
 	
-	public function update(elapsed:Float):Void 
-	{
-	}
+	public function update(elapsed:Float):Void {}
 	
 	public function updateRecents():Void 
 	{
@@ -152,10 +150,10 @@ class FlxTrailEffect implements IFlxEffect
 				hh = _recentPixels[i].height;
 			}
 			
-			minX = Math.min(_recentPositions[i].x -target.x, Math.min(minX, 0));
-			minY = Math.min(_recentPositions[i].y -target.y, Math.min(minY, 0));
-			maxX = Math.max(_recentPositions[i].x -target.x + ww, Math.max(maxX, 0));
-			maxY = Math.max(_recentPositions[i].y -target.y + hh, Math.max(maxY, 0));
+			minX = Math.min(_recentPositions[i].x - target.x, Math.min(minX, 0));
+			minY = Math.min(_recentPositions[i].y - target.y, Math.min(minY, 0));
+			maxX = Math.max(_recentPositions[i].x - target.x + ww, Math.max(maxX, 0));
+			maxY = Math.max(_recentPositions[i].y - target.y + hh, Math.max(maxY, 0));
 		}
 		
 		offset.set(minX, minY);
@@ -189,8 +187,8 @@ class FlxTrailEffect implements IFlxEffect
 		for (i in 0..._recentPositions.length)
 		{
 			_cTransform.alphaMultiplier = alphaDiff * i;
-			_matrix.tx = _recentPositions[i].x -target.x - offset.x;
-			_matrix.ty = _recentPositions[i].y -target.y - offset.y;
+			_matrix.tx = _recentPositions[i].x - target.x - offset.x;
+			_matrix.ty = _recentPositions[i].y - target.y - offset.y;
 			
 			if (cachePixels || _matrix.tx != 0 || _matrix.ty != 0)
 			{
@@ -214,6 +212,15 @@ class FlxTrailEffect implements IFlxEffect
 		FlxDestroyUtil.dispose(bitmapData);
 		
 		return _pixels.clone();
+	}
+	
+	public function clear():Void
+	{
+		if (_recentPositions.length > 0)
+		{
+			FlxDestroyUtil.putArray(_recentPositions);
+			disposeCachedPixels();
+		}
 	}
 	
 	private function disposeCachedPixels()
