@@ -57,6 +57,9 @@ class FlxTrailEffect implements IFlxEffect
 	 */
 	private var _pixels:BitmapData;
 	
+	private var _matrix:Matrix;
+	private var _cTransform:ColorTransform;
+	
 	/**
 	 * Creates a trail effect.
 	 * 
@@ -65,7 +68,7 @@ class FlxTrailEffect implements IFlxEffect
 	 * @param	FramesDelay		How many frames wait until next trail updated.
 	 * @param	CachePixels		Whether to cache current pixels bitmapData of the target for every trail position. Disable if target never update graphics.
 	 */
-	public function new(Target:FlxEffectSprite, Length:Int = 10, Alpha:Float = 0.5, FramesDelay:Int = 2, CachePixels:Bool = true) 
+	public function new(Target:FlxEffectSprite, Length:Int = 10, Alpha:Float = 0.5, FramesDelay:Int = 2, CachePixels:Bool = true)
 	{
 		target = Target;
 		length = FlxMath.maxInt(1, Length);
@@ -74,6 +77,8 @@ class FlxTrailEffect implements IFlxEffect
 		cachePixels = CachePixels;
 		
 		offset = FlxPoint.get();
+		_matrix = new Matrix();
+		_cTransform = new ColorTransform();
 	}
 	
 	public function destroy():Void 
@@ -82,13 +87,14 @@ class FlxTrailEffect implements IFlxEffect
 		_recentPixels = null;
 		_recentPositions = FlxDestroyUtil.putArray(_recentPositions);
 		
+		_matrix = null;
+		_cTransform = null;
+		
 		offset = FlxDestroyUtil.put(offset);
 		_pixels = FlxDestroyUtil.dispose(_pixels);
 	}
 	
-	public function update(elapsed:Float):Void 
-	{
-	}
+	public function update(elapsed:Float):Void {}
 	
 	public function updateRecents():Void 
 	{
@@ -136,7 +142,7 @@ class FlxTrailEffect implements IFlxEffect
 		var ww:Int = bitmapData.width;
 		var hh:Int = bitmapData.height;
 		
-		for (i in 0..._recentPositions.length) 
+		for (i in 0..._recentPositions.length)
 		{
 			if (cachePixels)
 			{
@@ -144,10 +150,10 @@ class FlxTrailEffect implements IFlxEffect
 				hh = _recentPixels[i].height;
 			}
 			
-			minX = Math.min(_recentPositions[i].x -target.x, Math.min(minX, 0));
-			minY = Math.min(_recentPositions[i].y -target.y, Math.min(minY, 0));
-			maxX = Math.max(_recentPositions[i].x -target.x + ww, Math.max(maxX, 0));
-			maxY = Math.max(_recentPositions[i].y -target.y + hh, Math.max(maxY, 0));
+			minX = Math.min(_recentPositions[i].x - target.x, Math.min(minX, 0));
+			minY = Math.min(_recentPositions[i].y - target.y, Math.min(minY, 0));
+			maxX = Math.max(_recentPositions[i].x - target.x + ww, Math.max(maxX, 0));
+			maxY = Math.max(_recentPositions[i].y - target.y + hh, Math.max(maxY, 0));
 		}
 		
 		offset.set(minX, minY);
@@ -176,41 +182,50 @@ class FlxTrailEffect implements IFlxEffect
 		}
 		
 		var alphaDiff:Float = alpha / _recentPositions.length;
-		var matrix = new Matrix();
-		var cTransform = new ColorTransform();
 		
 		_pixels.lock();
-		for (i in 0..._recentPositions.length) 
+		for (i in 0..._recentPositions.length)
 		{
-			cTransform.alphaMultiplier = alphaDiff * i;
-			matrix.tx = _recentPositions[i].x -target.x - offset.x;
-			matrix.ty = _recentPositions[i].y -target.y - offset.y;
+			_cTransform.alphaMultiplier = alphaDiff * i;
+			_matrix.tx = _recentPositions[i].x - target.x - offset.x;
+			_matrix.ty = _recentPositions[i].y - target.y - offset.y;
 			
-			if (cachePixels || matrix.tx != 0 || matrix.ty != 0)
+			if (cachePixels || _matrix.tx != 0 || _matrix.ty != 0)
 			{
 				if (cachePixels && _recentPixels.length > i)
 				{
-					_pixels.draw(_recentPixels[i], matrix, cTransform);
+					_pixels.draw(_recentPixels[i], _matrix, _cTransform);
 				}
 				else
 				{
-					_pixels.draw(bitmapData, matrix, cTransform);
+					_pixels.draw(bitmapData, _matrix, _cTransform);
 				}
 			}
 		}
 		
-		matrix.tx = -offset.x;
-		matrix.ty = -offset.y;
+		_matrix.tx = -offset.x;
+		_matrix.ty = -offset.y;
 		
-		_pixels.draw(bitmapData, matrix);
+		_pixels.draw(bitmapData, _matrix);
 		_pixels.unlock();
+		
+		FlxDestroyUtil.dispose(bitmapData);
 		
 		return _pixels.clone();
 	}
 	
-	private function disposeCachedPixels() 
+	public function clear():Void
 	{
-		while (_recentPixels.length > 0) 
+		if (_recentPositions.length > 0)
+		{
+			FlxDestroyUtil.putArray(_recentPositions);
+			disposeCachedPixels();
+		}
+	}
+	
+	private function disposeCachedPixels()
+	{
+		while (_recentPixels.length > 0)
 		{
 			FlxDestroyUtil.dispose(_recentPixels.shift());
 		}

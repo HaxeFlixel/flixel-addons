@@ -45,7 +45,7 @@ class FlxShakeEffect implements IFlxEffect
 	 * @param	OnComplete	Optional completion callback function.
 	 * @param	Axes		On what axes to shake. Default value is XY / both.
 	 */
-	public function new(Intensity:Float = 5, Duration:Float = 0.5, ?OnComplete:Void->Void, ?Axes:FlxAxes) 
+	public function new(Intensity:Float = 5, Duration:Float = 0.5, ?OnComplete:Void->Void, ?Axes:FlxAxes)
 	{
 		intensity = Intensity;
 		_duration = Duration;
@@ -117,7 +117,7 @@ class FlxShakeEffect implements IFlxEffect
 	 * @param	OnComplete	Optional completion callback function.
 	 * @param	Axes		On what axes to shake. Default value is XY / both.
 	 */
-	public function reset(Intensity:Float = 5, Duration:Float = 0.5, ?OnComplete:Void->Void, ?Axes:FlxAxes) 
+	public function reset(Intensity:Float = 5, Duration:Float = 0.5, ?OnComplete:Void->Void, ?Axes:FlxAxes)
 	{
 		if (Axes == null)
 			Axes = XY;
