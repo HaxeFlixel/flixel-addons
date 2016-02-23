@@ -16,7 +16,7 @@ import openfl.geom.Matrix;
 class FlxTrailEffect implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offset(default, null):FlxPoint;
+	public var offset(default, null):FlxPoint = FlxPoint.get();
 	
 	/**
 	 * The target FlxEffectSprite that to apply the trail.
@@ -57,8 +57,8 @@ class FlxTrailEffect implements IFlxEffect
 	 */
 	private var _pixels:BitmapData;
 	
-	private var _matrix:Matrix;
-	private var _cTransform:ColorTransform;
+	private var _matrix:Matrix = new Matrix();
+	private var _colorTransform:ColorTransform = new ColorTransform();
 	
 	/**
 	 * Creates a trail effect.
@@ -75,10 +75,6 @@ class FlxTrailEffect implements IFlxEffect
 		framesDelay = FramesDelay;
 		alpha = Alpha;
 		cachePixels = CachePixels;
-		
-		offset = FlxPoint.get();
-		_matrix = new Matrix();
-		_cTransform = new ColorTransform();
 	}
 	
 	public function destroy():Void 
@@ -88,7 +84,7 @@ class FlxTrailEffect implements IFlxEffect
 		_recentPositions = FlxDestroyUtil.putArray(_recentPositions);
 		
 		_matrix = null;
-		_cTransform = null;
+		_colorTransform = null;
 		
 		offset = FlxDestroyUtil.put(offset);
 		_pixels = FlxDestroyUtil.dispose(_pixels);
@@ -186,7 +182,7 @@ class FlxTrailEffect implements IFlxEffect
 		_pixels.lock();
 		for (i in 0..._recentPositions.length)
 		{
-			_cTransform.alphaMultiplier = alphaDiff * i;
+			_colorTransform.alphaMultiplier = alphaDiff * i;
 			_matrix.tx = _recentPositions[i].x - target.x - offset.x;
 			_matrix.ty = _recentPositions[i].y - target.y - offset.y;
 			
@@ -194,11 +190,11 @@ class FlxTrailEffect implements IFlxEffect
 			{
 				if (cachePixels && _recentPixels.length > i)
 				{
-					_pixels.draw(_recentPixels[i], _matrix, _cTransform);
+					_pixels.draw(_recentPixels[i], _matrix, _colorTransform);
 				}
 				else
 				{
-					_pixels.draw(bitmapData, _matrix, _cTransform);
+					_pixels.draw(bitmapData, _matrix, _colorTransform);
 				}
 			}
 		}
