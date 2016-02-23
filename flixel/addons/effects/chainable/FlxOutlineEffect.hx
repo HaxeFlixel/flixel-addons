@@ -37,6 +37,10 @@ class FlxOutlineEffect implements IFlxEffect
 	 */
 	public var thickness:Int;
 	/**
+	 * Set alpha sensativity to a number between 0 and 1.
+	 */
+	public var threshold:Int;
+	/**
 	 * How many iterations do use when drawing the outline. 0: only 1 iteration, 1: one iteration for every pixel in thickness
 	 * A value of 1 will have the best quality for large border sizes, but might reduce performance. 
 	 * NOTE: If the thickness is 1, quality of 0 or 1 will have the exact same effect (and performance).
@@ -73,6 +77,7 @@ class FlxOutlineEffect implements IFlxEffect
 		color = Color;
 		thickness = Thickness;
 		quality = Quality;
+		threshold = Threshold;
 	}
 	
 	public function destroy():Void 
@@ -111,7 +116,7 @@ class FlxOutlineEffect implements IFlxEffect
 					for (x in 0...bitmapData.width)
 					{
 						var c:FlxColor = bitmapData.getPixel32(x, y);
-						if (c.alpha > 0)
+						if (c.alpha > threshold)
 						{
 							surroundPixel(x, y, brush);
 						}
