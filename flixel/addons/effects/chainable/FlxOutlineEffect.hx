@@ -71,13 +71,13 @@ class FlxOutlineEffect implements IFlxEffect
 	 * @param	Quality 	Outline quality - # of iterations to use when drawing. 0:just 1, 1:equal number to Thickness. Not used with PIXEL_BY_PIXEL mode.
 	 * @param	Threshold	Alpha sensativity, only used with PIXEL_BY_PIXEL mode.
 	 */
-	public function new(?Mode:FlxOutlineMode, Color:FlxColor = FlxColor.WHITE, Thickness:Int = 1, Quality:Float = 1, Threshold:Int = 0)
+	public function new(?Mode:FlxOutlineMode, Color:FlxColor = FlxColor.WHITE, Thickness:Int = 1, Threshold:Int = 0, Quality:Float = 1)
 	{
 		mode = (Mode == null) ? FAST : Mode;
 		color = Color;
 		thickness = Thickness;
-		quality = Quality;
 		threshold = Threshold;
+		quality = Quality;
 	}
 	
 	public function destroy():Void 
@@ -100,6 +100,7 @@ class FlxOutlineEffect implements IFlxEffect
 			
 			if (_pixels == null || _pixels.width < bitmapData.width + brush || _pixels.height < bitmapData.height + brush)
 			{
+				FlxDestroyUtil.dispose(_pixels);
 				_pixels = new BitmapData(bitmapData.width + brush, bitmapData.height + brush, true, color);
 			}
 			else
@@ -109,24 +110,13 @@ class FlxOutlineEffect implements IFlxEffect
 			
 			if (mode == PIXEL_BY_PIXEL)
 			{
-				_pixels.fillRect(_pixels.rect, FlxColor.TRANSPARENT);
-				
-				for (y in 0...bitmapData.height)
-				{
-					for (x in 0...bitmapData.width)
-					{
-						var c:FlxColor = bitmapData.getPixel32(x, y);
-						if (c.alpha > threshold)
-						{
-							surroundPixel(x, y, brush);
-						}
-					}
-				}
+				drawPixelByPixel(bitmapData);
 			}
 			else
 			{
 				if (_borderPixels == null || _borderPixels.width < bitmapData.width || _borderPixels.height < bitmapData.height)
 				{
+					FlxDestroyUtil.dispose(_borderPixels);
 					_borderPixels = new BitmapData(bitmapData.width, bitmapData.height, true, FlxColor.TRANSPARENT);
 				}
 				else
@@ -136,49 +126,19 @@ class FlxOutlineEffect implements IFlxEffect
 				
 				_flashPoint.setTo(0, 0);
 				_borderPixels.copyPixels(_pixels, _pixels.rect, _flashPoint, bitmapData, null, true);
-				
 				_pixels.fillRect(_pixels.rect, FlxColor.TRANSPARENT);
 				
-				var iterations:Int = Std.int(thickness * quality);
-				if (iterations <= 0)
-				{ 
-					iterations = 1;
-				}
-				var delta:Float = thickness / iterations;
 				_matrix.identity();
 				_matrix.translate(thickness, thickness);
 				
+				var iterations:Int = Std.int(Math.max(1, thickness * quality));
 				switch (mode)
 				{
 					case NORMAL:
-						var curDelta:Float = delta;
-						for (i in 0...iterations)
-						{
-							drawBorder(-curDelta, -curDelta);
-							drawBorder(curDelta, 0);
-							drawBorder(curDelta, 0);
-							drawBorder(0, curDelta);
-							drawBorder(0, curDelta);
-							drawBorder(-curDelta, 0);
-							drawBorder(-curDelta, 0);
-							drawBorder(0, -curDelta);
-							
-							_matrix.translate(curDelta, 0);
-							curDelta += delta;
-						}
+						drawNormal(iterations);
 						
 					case FAST:
-						var curDelta:Float = delta;
-						for (i in 0...iterations)
-						{
-							drawBorder(-curDelta, -curDelta);
-							drawBorder(curDelta * 2, 0);
-							drawBorder(0, curDelta * 2);
-							drawBorder(-curDelta * 2, 0);
-							
-							_matrix.translate(curDelta, -curDelta);
-							curDelta += delta;
-						}
+						drawFast(iterations);
 						
 					case PIXEL_BY_PIXEL:
 				}
@@ -201,7 +161,60 @@ class FlxOutlineEffect implements IFlxEffect
 		return bitmapData;
 	}
 	
-	private inline function drawBorder(x:Float, y:Float)
+	private function drawPixelByPixel(bitmapData:BitmapData):Void
+	{
+		_pixels.fillRect(_pixels.rect, FlxColor.TRANSPARENT);
+		
+		for (y in 0...bitmapData.height)
+		{
+			for (x in 0...bitmapData.width)
+			{
+				var c:FlxColor = bitmapData.getPixel32(x, y);
+				if (c.alpha > threshold)
+				{
+					surroundPixel(x, y, thickness * 2);
+				}
+			}
+		}
+	}
+	
+	private function drawNormal(iterations:Int):Void
+	{
+		var delta:Float = thickness / iterations;
+		var curDelta:Float = delta;
+		for (i in 0...iterations)
+		{
+			drawBorder(-curDelta, -curDelta);
+			drawBorder(curDelta, 0);
+			drawBorder(curDelta, 0);
+			drawBorder(0, curDelta);
+			drawBorder(0, curDelta);
+			drawBorder(-curDelta, 0);
+			drawBorder(-curDelta, 0);
+			drawBorder(0, -curDelta);
+			
+			_matrix.translate(curDelta, 0);
+			curDelta += delta;
+		}
+	}
+	
+	private function drawFast(iterations:Int):Void
+	{
+		var delta:Float = thickness / iterations;
+		var curDelta:Float = delta;
+		for (i in 0...iterations)
+		{
+			drawBorder(-curDelta, -curDelta);
+			drawBorder(curDelta * 2, 0);
+			drawBorder(0, curDelta * 2);
+			drawBorder(-curDelta * 2, 0);
+			
+			_matrix.translate(curDelta, -curDelta);
+			curDelta += delta;
+		}
+	}
+	
+	private inline function drawBorder(x:Float, y:Float):Void
 	{
 		_matrix.translate(x, y);
 		_pixels.draw(_borderPixels, _matrix);
