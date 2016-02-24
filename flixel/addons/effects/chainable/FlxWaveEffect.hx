@@ -71,7 +71,7 @@ class FlxWaveEffect implements IFlxEffect
 	 * @param	Wavelength	How long waves are.
 	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL).
 	 */
-	public function new(?Mode:FlxWaveMode, Strength:Int = 10, Center:Float = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection) 
+	public function new(?Mode:FlxWaveMode, Strength:Int = 10, Center:Float = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection)
 	{
 		strength = Strength;
 		mode = (Mode == null) ? ALL : Mode;
@@ -173,7 +173,7 @@ class FlxWaveEffect implements IFlxEffect
 			
 			p += size;
 		}
-		bitmapData.dispose();
+		FlxDestroyUtil.dispose(bitmapData);
 		
 		return _pixels.clone();
 	}

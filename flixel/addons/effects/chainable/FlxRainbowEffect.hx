@@ -56,7 +56,7 @@ class FlxRainbowEffect implements IFlxEffect
 	 * @param	Speed		How fast the hue should change each tick.
 	 * @param	StartHue	The initial hue of the effect.
 	 */
-	public function new(Alpha:Float = 1, Brightness:Float = 1, Speed:Float = 5, StartHue:Int = 0) 
+	public function new(Alpha:Float = 1, Brightness:Float = 1, Speed:Float = 5, StartHue:Int = 0)
 	{
 		alpha = Alpha;
 		brightness = Brightness;
