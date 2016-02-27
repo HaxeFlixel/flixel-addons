@@ -1,3 +1,11 @@
+2.1.0
+------------------------------
+* `FlxTrailEffect`:
+ * added `clear()` (#229) 
+* `FlxOutlineEffect` improvements (#230):
+ * added `mode` / `FlxOutlineMode`
+ * added `quality`
+
 2.0.0
 ------------------------------
 * Compatibility with flixel 4.0.0
