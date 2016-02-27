@@ -161,6 +161,7 @@ class FlxTrailEffect implements IFlxEffect
 		
 		if (_pixels == null)
 		{
+			FlxDestroyUtil.dispose(_pixels);
 			_pixels = new BitmapData(Std.int(maxX - minX), Std.int(maxY - minY), true, FlxColor.TRANSPARENT);
 		}
 		else
