@@ -37,7 +37,7 @@ class FlxOutlineEffect implements IFlxEffect
 	 */
 	public var thickness:Int;
 	/**
-	 * Set alpha sensativity to a number between 0 and 1.
+	 * Set alpha sensitivity to a number between 0 and 1.
 	 */
 	public var threshold:Int;
 	/**
@@ -69,7 +69,7 @@ class FlxOutlineEffect implements IFlxEffect
 	 * @param	Color		Color of the outline.
 	 * @param	Thickness	Outline thickness in pixels.
 	 * @param	Quality 	Outline quality - # of iterations to use when drawing. 0:just 1, 1:equal number to Thickness. Not used with PIXEL_BY_PIXEL mode.
-	 * @param	Threshold	Alpha sensativity, only used with PIXEL_BY_PIXEL mode.
+	 * @param	Threshold	Alpha sensitivity, only used with PIXEL_BY_PIXEL mode.
 	 */
 	public function new(?Mode:FlxOutlineMode, Color:FlxColor = FlxColor.WHITE, Thickness:Int = 1, Threshold:Int = 0, Quality:Float = 1)
 	{
