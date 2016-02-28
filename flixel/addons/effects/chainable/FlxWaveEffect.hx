@@ -43,6 +43,10 @@ class FlxWaveEffect implements IFlxEffect
 	 * How strong the wave effect should be
 	 */
 	public var strength:Int;
+	/**
+	 * Whether to interlace the wave.
+	 */
+	public var interlaced:Bool;
 	
 	/**
 	 * Current time of the effect.
@@ -71,13 +75,14 @@ class FlxWaveEffect implements IFlxEffect
 	 * @param	Wavelength	How long waves are.
 	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL).
 	 */
-	public function new(?Mode:FlxWaveMode, Strength:Int = 10, Center:Float = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection)
+	public function new(?Mode:FlxWaveMode, Strength:Int = 10, Center:Float = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection, ?Interlaced:Bool = false)
 	{
 		strength = Strength;
 		mode = (Mode == null) ? ALL : Mode;
 		speed = Speed;
 		wavelength = Wavelength;
 		direction = (Direction != null) ? Direction : HORIZONTAL;
+		interlaced = Interlaced;
 		center = Center;
 		if (Center < 0)
 		{
@@ -157,7 +162,7 @@ class FlxWaveEffect implements IFlxEffect
 					}
 			}
 			
-			pixelOffset = offsetP * calculateOffset(p);
+			pixelOffset = offsetP * calculateOffset(p, length);
 			
 			if (direction == HORIZONTAL)
 			{
@@ -178,8 +183,13 @@ class FlxWaveEffect implements IFlxEffect
 		return _pixels.clone();
 	}
 	
-	private inline function calculateOffset(p:Float):Float
+	private inline function calculateOffset(p:Float, length:Int):Float
 	{
+		if (interlaced && FlxMath.isOdd(p))
+		{
+			p -= length * 0.5;
+		}
+
 		return FlxMath.fastSin((p / wavelength) + _time);
 	}
 }
