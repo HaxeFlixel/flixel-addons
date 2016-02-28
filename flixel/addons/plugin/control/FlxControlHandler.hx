@@ -189,6 +189,9 @@ class FlxControlHandler
 	private var _thrustKey:String;
 	private var _reverseKey:String;
 	
+	private var _invertMovementHorizontally:Bool;
+	private var _invertMovementVertically:Bool;
+	
 	// Sounds
 	private var _jumpSound:FlxSound;
 	private var _fireSound:FlxSound;
@@ -224,6 +227,8 @@ class FlxControlHandler
 		}
 		
 		enabled = true;
+		_invertMovementHorizontally = false;
+		_invertMovementVertically = false;
 	}
 	
 	/**
@@ -631,7 +636,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_upKey]))
+		if (FlxG.keys.anyPressed([_invertMovementVertically ? _downKey : _upKey]))
 		{
 			move = true;
 			isPressedUp = true;
@@ -663,7 +668,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_downKey]))
+		if (FlxG.keys.anyPressed([_invertMovementVertically ? _upKey : _downKey]))
 		{
 			move = true;
 			isPressedDown = true;
@@ -696,7 +701,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_leftKey]))
+		if (FlxG.keys.anyPressed([_invertMovementHorizontally ? _rightKey : _leftKey]))
 		{
 			move = true;
 			isPressedLeft = true;
@@ -728,7 +733,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_rightKey]))
+		if (FlxG.keys.anyPressed([_invertMovementHorizontally ? _leftKey : _rightKey]))
 		{
 			move = true;
 			isPressedRight = true;
@@ -1108,22 +1113,22 @@ class FlxControlHandler
 			
 			if (_up)
 			{
-				movedY = moveUp();
+				movedY = _invertMovementVertically ? moveDown() : moveUp();
 			}
 			
 			if (_down && movedY == false)
 			{
-				movedY = moveDown();
+				movedY = _invertMovementVertically ? moveUp() : moveDown();
 			}
 			
 			if (_left)
 			{
-				movedX = moveLeft();
+				movedX = _invertMovementHorizontally ? moveRight() : moveLeft();
 			}
 			
 			if (_right && movedX == false)
 			{
-				movedX = moveRight();
+				movedX = _invertMovementHorizontally ? moveLeft() : moveRight();
 			}
 			
 			if (movedX && movedY)
@@ -1177,6 +1182,14 @@ class FlxControlHandler
 			}
 		}
 		#end
+	}
+	
+	public function invertMovement(horizontally : Bool = true, vertically : Bool = true)
+	{
+		if (horizontally)
+			_invertMovementHorizontally = !_invertMovementHorizontally;
+		if (vertically)
+			_invertMovementVertically = !_invertMovementVertically;
 	}
 	
 	/**
