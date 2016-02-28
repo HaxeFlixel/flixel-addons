@@ -172,7 +172,7 @@ class FlxTransitionableState extends FlxState
 	
 	private function createTransition(data:TransitionData):Transition
 	{
-		return switch(data.type)
+		return switch (data.type)
 		{
 			case TILES: new Transition(data);
 			case FADE: new Transition(data);

@@ -1,11 +1,5 @@
 package flixel.addons.plugin.screengrab;
 
-#if sys
-import lime.ui.FileDialog;
-import lime.ui.FileDialogType;
-import openfl.display.PNGEncoderOptions;
-#end
-
 #if !js
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -16,7 +10,13 @@ import flixel.addons.util.PNGEncoder;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
 
-#if !sys
+#if sys
+#if (!lime_legacy || lime < "2.9.0")
+import lime.ui.FileDialog;
+import lime.ui.FileDialogType;
+import openfl.display.PNGEncoderOptions;
+#end
+#else
 import flash.net.FileReference;
 #end
 
@@ -176,7 +176,7 @@ class FlxScreenGrab extends FlxBasic
 	#if !sys
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
-	#else
+	#elseif (!lime_legacy || lime < "2.9.0")
 		
 		var documentsDirectory = "";
 		#if lime_legacy

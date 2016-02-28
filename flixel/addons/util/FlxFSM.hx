@@ -597,7 +597,7 @@ class FlxFSMTransitionTable<T>
 	 */
 	public function remove(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:Null<T->Bool>)
 	{
-		switch([from, to, condition])
+		switch ([from, to, condition])
 		{
 			case [f, null, null]:
 				for (transition in _table)
@@ -647,7 +647,7 @@ class FlxFSMTransitionTable<T>
 	 */
 	public function hasTransition(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:Null<T->Bool>):Bool
 	{
-		switch([from, to, condition])
+		switch ([from, to, condition])
 		{
 			case [f, null, null]:
 				for (transition in _table)

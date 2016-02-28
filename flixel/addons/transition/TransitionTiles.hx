@@ -88,7 +88,8 @@ class TransitionTiles extends TransitionEffect
 		_isCenter = (data.direction.x == 0 && data.direction.y == 0);
 	}
 	
-	public override function destroy():Void {
+	public override function destroy():Void
+	{
 		super.destroy();
 		_grpSprites = null;
 	}

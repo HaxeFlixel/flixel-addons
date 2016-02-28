@@ -21,10 +21,10 @@ import flixel.util.FlxDestroyUtil;
 class FlxBackdrop extends FlxSprite
 {
 	private var _ppoint:Point;
-	private var _scrollW:Int;
-	private var _scrollH:Int;
-	private var _repeatX:Bool;
-	private var _repeatY:Bool;
+	private var _scrollW:Int = 0;
+	private var _scrollH:Int = 0;
+	private var _repeatX:Bool = false;
+	private var _repeatY:Bool = false;
 	
 	private var _spaceX:Int = 0;
 	private var _spaceY:Int = 0;
@@ -55,7 +55,7 @@ class FlxBackdrop extends FlxSprite
 	 * @param	SpaceX		Amount of spacing between tiles on the X axis
 	 * @param	SpaceY		Amount of spacing between tiles on the Y axis
 	 */
-	public function new(Graphic:FlxGraphicAsset, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true, SpaceX:Int = 0, SpaceY:Int = 0) 
+	public function new(?Graphic:FlxGraphicAsset, ScrollX:Float = 1, ScrollY:Float = 1, RepeatX:Bool = true, RepeatY:Bool = true, SpaceX:Int = 0, SpaceY:Int = 0) 
 	{
 		super();
 		
@@ -73,7 +73,8 @@ class FlxBackdrop extends FlxSprite
 		scrollFactor.x = ScrollX;
 		scrollFactor.y = ScrollY;
 		
-		loadGraphic(Graphic);
+		if (Graphic != null)
+			loadGraphic(Graphic);
 		
 		FlxG.signals.gameResized.add(onGameResize);
 	}
@@ -137,7 +138,8 @@ class FlxBackdrop extends FlxSprite
 			if (_repeatX)
 			{   
 				_ppoint.x = ((x - camera.scroll.x * scrollFactor.x) % ssw);
-				if (_ppoint.x > 0) _ppoint.x -= ssw;
+				if (_ppoint.x > 0)
+					_ppoint.x -= ssw;
 			}
 			else 
 			{
@@ -148,7 +150,8 @@ class FlxBackdrop extends FlxSprite
 			if (_repeatY)
 			{
 				_ppoint.y = ((y - camera.scroll.y * scrollFactor.y) % ssh);
-				if (_ppoint.y > 0) _ppoint.y -= ssh;
+				if (_ppoint.y > 0)
+					_ppoint.y -= ssh;
 			}
 			else 
 			{
@@ -158,15 +161,16 @@ class FlxBackdrop extends FlxSprite
 			// Draw to the screen
 			if (FlxG.renderBlit)
 			{
+				if (graphic == null)
+					return;
+				
 				_flashRect2.setTo(0, 0, graphic.width, graphic.height);
 				camera.copyPixels(frame, framePixels, _flashRect2, _ppoint);
 			}
 			else
 			{
 				if (_tileFrame == null)
-				{
 					return;
-				}
 				
 				var drawItem = camera.startQuadBatch(_tileFrame.parent, false);
 				

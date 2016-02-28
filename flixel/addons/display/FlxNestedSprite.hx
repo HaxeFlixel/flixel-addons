@@ -5,12 +5,14 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.system.FlxAssets;
 import flixel.math.FlxAngle;
-import flixel.util.FlxArrayUtil;
-import flixel.util.FlxDestroyUtil;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVelocity;
+import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
+using flixel.util.FlxArrayUtil;
 
 /**
  * Some sort of DisplayObjectContainer but very limited.
@@ -48,22 +50,22 @@ class FlxNestedSprite extends FlxSprite
 	/**
 	 * Scale of this sprite relative to parent
 	 */
-	public var relativeScale(default, null):FlxPoint;
+	public var relativeScale(default, null):FlxPoint = FlxPoint.get(1, 1);
 	
 	/**
 	 * Velocity relative to parent sprite
 	 */
-	public var relativeVelocity(default, null):FlxPoint;
+	public var relativeVelocity(default, null):FlxPoint = FlxPoint.get();
 	
 	/**
 	 * Acceleration relative to parent sprite
 	 */
-	public var relativeAcceleration(default, null):FlxPoint;
+	public var relativeAcceleration(default, null):FlxPoint = FlxPoint.get();
 	
 	/**
 	 * All FlxNestedSprites in this list.
 	 */
-	public var children(default, null):Array<FlxNestedSprite>;
+	public var children(default, null):Array<FlxNestedSprite> = [];
 	
 	/**
 	 * Amount of Graphics in this list.
@@ -73,15 +75,6 @@ class FlxNestedSprite extends FlxSprite
 	private var _parentRed:Float = 1;
 	private var _parentGreen:Float = 1;
 	private var _parentBlue:Float = 1;
-	
-	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset) 
-	{
-		super(X, Y, SimpleGraphic);
-		children = [];
-		relativeScale = FlxPoint.get(1, 1);
-		relativeVelocity = FlxPoint.get();
-		relativeAcceleration = FlxPoint.get();
-	}
 	
 	/**
 	 * WARNING: This will remove this sprite entirely. Use kill() if you 
@@ -95,16 +88,7 @@ class FlxNestedSprite extends FlxSprite
 		relativeScale = FlxDestroyUtil.put(relativeScale);
 		relativeVelocity = FlxDestroyUtil.put(relativeVelocity);
 		relativeAcceleration = FlxDestroyUtil.put(relativeAcceleration);
-		
-		if (children != null)
-		{
-			for (child in children)
-			{
-				child.destroy();
-			}
-			
-			children = null;
-		}
+		children = FlxDestroyUtil.destroyArray(children);
 	}
 	
 	/**
@@ -115,25 +99,19 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public function add(Child:FlxNestedSprite):FlxNestedSprite
 	{
-		if (children.indexOf(Child) < 0)
-		{
-			children.push(Child);
-			Child.velocity.x = Child.velocity.y = 0;
-			Child.acceleration.x = Child.acceleration.y = 0;
-			Child.scrollFactor.x = scrollFactor.x;
-			Child.scrollFactor.y = scrollFactor.y;
-			
-			Child.alpha = Child.relativeAlpha * alpha;
-
-			var thisRed:Float = (color >> 16) / 255;
-			var thisGreen:Float = (color >> 8 & 0xff) / 255;
-			var thisBlue:Float = (color & 0xff) / 255;
-			
-			Child._parentRed = thisRed;
-			Child._parentGreen = thisGreen;
-			Child._parentBlue = thisBlue;
-			Child.color = Child.color;
-		}
+		if (children.contains(Child))
+			return Child;
+		
+		children.push(Child);
+		Child.velocity.set(0, 0);
+		Child.acceleration.set(0, 0);
+		Child.scrollFactor.copyFrom(scrollFactor);
+		
+		Child.alpha = Child.relativeAlpha * alpha;
+		Child._parentRed = color.redFloat;
+		Child._parentGreen = color.greenFloat;
+		Child._parentBlue = color.blueFloat;
+		Child.color = Child.color;
 		
 		return Child;
 	}
@@ -188,8 +166,7 @@ class FlxNestedSprite extends FlxSprite
 		FlxBasic.activeCount++;
 		#end
 		
-		last.x = x;
-		last.y = y;
+		last.set(x, y);
 		
 		for (child in children)
 		{
@@ -320,54 +297,45 @@ class FlxNestedSprite extends FlxSprite
 	
 	override private function set_alpha(Alpha:Float):Float
 	{
-		if (Alpha > 1)
-		{
-			Alpha = 1;
-		}
-		if (Alpha < 0)
-		{
-			Alpha = 0;
-		}
+		Alpha = FlxMath.bound(Alpha, 0, 1);
 		if (Alpha == alpha)
 		{
 			return alpha;
 		}
 		alpha = Alpha * relativeAlpha;
 		
-		if (FlxG.renderBlit)
+		if ((alpha != 1) || (color != 0x00ffffff))
 		{
-			if ((alpha != 1) || (color != 0x00ffffff))
+			var red:Float = (color >> 16) * _parentRed / 255;
+			var green:Float = (color >> 8 & 0xff) * _parentGreen / 255;
+			var blue:Float = (color & 0xff) * _parentBlue / 255;
+			
+			if (colorTransform == null)
 			{
-				var red:Float = (color >> 16) * _parentRed / 255;
-				var green:Float = (color >> 8 & 0xff) * _parentGreen / 255;
-				var blue:Float = (color & 0xff) * _parentBlue / 255;
-				
-				if (colorTransform == null)
-				{
-					colorTransform = new ColorTransform(red, green, blue, alpha);
-				}
-				else
-				{
-					colorTransform.redMultiplier = red;
-					colorTransform.greenMultiplier = green;
-					colorTransform.blueMultiplier = blue;
-					colorTransform.alphaMultiplier = alpha;
-				}
-				useColorTransform = true;
+				colorTransform = new ColorTransform(red, green, blue, alpha);
 			}
 			else
 			{
-				if (colorTransform != null)
-				{
-					colorTransform.redMultiplier = 1;
-					colorTransform.greenMultiplier = 1;
-					colorTransform.blueMultiplier = 1;
-					colorTransform.alphaMultiplier = 1;
-				}
-				useColorTransform = false;
+				colorTransform.redMultiplier = red;
+				colorTransform.greenMultiplier = green;
+				colorTransform.blueMultiplier = blue;
+				colorTransform.alphaMultiplier = alpha;
 			}
-			dirty = true;
+			useColorTransform = true;
 		}
+		else
+		{
+			if (colorTransform != null)
+			{
+				colorTransform.redMultiplier = 1;
+				colorTransform.greenMultiplier = 1;
+				colorTransform.blueMultiplier = 1;
+				colorTransform.alphaMultiplier = 1;
+			}
+			useColorTransform = false;
+		}
+		dirty = true;
+
 		
 		if (children != null)
 		{
@@ -380,15 +348,15 @@ class FlxNestedSprite extends FlxSprite
 		return alpha;
 	}
 	
-	override private function set_color(Color:Int):Int
+	override private function set_color(Color:FlxColor):FlxColor
 	{
-		Color &= 0x00ffffff;
+		Color = Color.to24Bit();
 		
 		var combinedRed:Float = (Color >> 16) * _parentRed / 255;
 		var combinedGreen:Float = (Color >> 8 & 0xff) * _parentGreen / 255;
 		var combinedBlue:Float = (Color & 0xff) * _parentBlue / 255;
 		
-		var combinedColor:Int = Std.int(combinedRed * 255) << 16 | Std.int(combinedGreen * 255) << 8 | Std.int(combinedBlue * 255);
+		var combinedColor:Int = FlxColor.fromRGBFloat(combinedRed, combinedGreen, combinedBlue, 0);
 		
 		if (color == combinedColor)
 		{
@@ -439,7 +407,7 @@ class FlxNestedSprite extends FlxSprite
 			var childGreen:Float = (childColor >> 8 & 0xff) / (255 * child._parentGreen);
 			var childBlue:Float = (childColor & 0xff) / (255 * child._parentBlue);
 			
-			combinedColor = Std.int(childRed * combinedRed * 255) << 16 | Std.int(childGreen * combinedGreen * 255) << 8 | Std.int(childBlue * combinedBlue * 255);
+			combinedColor = FlxColor.fromRGBFloat(childRed, childGreen, childBlue, 0);
 			
 			child.color = combinedColor;
 			

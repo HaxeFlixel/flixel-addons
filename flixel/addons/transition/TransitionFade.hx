@@ -49,13 +49,13 @@ class TransitionFade extends TransitionEffect
 		
 		setTweenValues(NewStatus, _data.direction.x, _data.direction.y);
 		
-		switch(tweenStr)
+		switch (tweenStr)
 		{
 			case "alpha":	back.alpha = tweenValStart;
 			case "x":		back.x = tweenValStart;
 			case "y":		back.y = tweenValStart;
 		}
-		switch(tweenStr2)
+		switch (tweenStr2)
 		{
 			case "alpha":	back.alpha = tweenValStart2;
 			case "x": 		back.x = tweenValStart2;
