@@ -42,7 +42,7 @@ class FlxRainbowEffect implements IFlxEffect
 	/**
 	 * Internal, reused frequently during drawing and animating. Always contains (0,0).
 	 */
-	private var _flashPointZero:Point;
+	private var _flashPoint:Point = new Point();
 	/**
 	 * The actual Flash BitmapData object representing the current effect state.
 	 */
@@ -62,13 +62,11 @@ class FlxRainbowEffect implements IFlxEffect
 		brightness = Brightness;
 		speed = Speed;
 		_time = _hue = Std.int(FlxMath.bound(StartHue, 0, 360));
-		
-		_flashPointZero = new Point();
 	}
 	
 	public function destroy():Void 
 	{
-		_flashPointZero = null;
+		_flashPoint = null;
 		
 		_pixels = FlxDestroyUtil.dispose(_pixels);
 	}
@@ -88,6 +86,7 @@ class FlxRainbowEffect implements IFlxEffect
 	{
 		if (_pixels == null || _pixels.width < bitmapData.width || _pixels.height < bitmapData.height)
 		{
+			FlxDestroyUtil.dispose(_pixels);
 			_pixels = new BitmapData(bitmapData.width, bitmapData.height, true, FlxColor.fromHSB(_hue, 1, brightness, alpha));
 		}
 		else
@@ -95,7 +94,7 @@ class FlxRainbowEffect implements IFlxEffect
 			_pixels.fillRect(_pixels.rect, FlxColor.fromHSB(_hue, 1, brightness, alpha));
 		}
 		
-		bitmapData.copyPixels(_pixels, _pixels.rect, _flashPointZero, bitmapData, null, true);
+		bitmapData.copyPixels(_pixels, _pixels.rect, _flashPoint, bitmapData, null, true);
 		
 		return bitmapData;
 	}

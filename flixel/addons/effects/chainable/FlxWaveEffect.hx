@@ -17,7 +17,7 @@ import openfl.geom.Rectangle;
 class FlxWaveEffect implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offset(default, null):FlxPoint;
+	public var offset(default, null):FlxPoint = FlxPoint.get();
 	
 	/**
 	 * Which mode we're using for the effect
@@ -55,11 +55,11 @@ class FlxWaveEffect implements IFlxEffect
 	/**
 	 * Internal, reused frequently during drawing and animating.
 	 */
-	private var _flashPoint:Point;
+	private var _flashPoint:Point = new Point();
 	/**
 	 * Internal, reused frequently during drawing and animating.
 	 */
-	private var _flashRect:Rectangle;
+	private var _flashRect:Rectangle = new Rectangle();
 	/**
 	 * The actual Flash BitmapData object representing the current effect state.
 	 */
@@ -92,10 +92,6 @@ class FlxWaveEffect implements IFlxEffect
 		{
 			center = 1;
 		}
-		
-		offset = FlxPoint.get();
-		_flashPoint = new Point();
-		_flashRect = new Rectangle();
 	}
 	
 	public function destroy():Void 
@@ -120,6 +116,7 @@ class FlxWaveEffect implements IFlxEffect
 		
 		if (_pixels == null || _pixels.width < bitmapData.width + horizontalStrength * 2 || _pixels.height < bitmapData.height + verticalStrength * 2)
 		{
+			FlxDestroyUtil.dispose(_pixels);
 			_pixels = new BitmapData(bitmapData.width + horizontalStrength * 2, bitmapData.height + verticalStrength * 2, true, FlxColor.TRANSPARENT);
 		}
 		else
