@@ -76,9 +76,6 @@ class FlxNapeTilemap extends FlxTilemap
 		var polygon:Polygon;
 		for (index in tileIndices) {
 			var coords:Array<FlxPoint> = getTileCoords(index, false);
-<<<<<<< HEAD
-			for (point in coords) {
-=======
 
 			if (coords == null)
 			{
@@ -87,7 +84,6 @@ class FlxNapeTilemap extends FlxTilemap
 
 			for (point in coords)
 			{
->>>>>>> f17a9d6... Error handling.
 				polygon = new Polygon(vertices, mat);
 				polygon.translate(Vec2.get(point.x, point.y));
 				body.shapes.add(polygon);
