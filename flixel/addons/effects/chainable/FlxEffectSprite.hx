@@ -32,7 +32,7 @@ class FlxEffectSprite extends FlxSprite
 	/**
 	 * Whether to call target's FlxSprite#updateAnimation() every FlxEffectSprite#update(). Set this false if the target is also added to state.
 	 */
-	public var updateTarget:Bool = true;
+	public var updateTargetAnimation:Bool = true;
 	
 	/**
 	 * Effects applied to frames
@@ -136,7 +136,7 @@ class FlxEffectSprite extends FlxSprite
 	 */
 	override public function update(elapsed:Float):Void
 	{
-		if (updateTarget && target.animation.frames > 1)
+		if (updateTargetAnimation && target.animation.frames > 1)
 		{
 			target.updateAnimation(elapsed);
 		}
