@@ -186,8 +186,7 @@ class FlxWaveEffect implements IFlxEffect
 
 	private function set_interlaceOffset(InterlaceOffset:Float):Float
 	{
-		interlaceOffset = FlxMath.bound(InterlaceOffset, 0, 1);
-		return interlaceOffset;
+		return interlaceOffset = FlxMath.bound(InterlaceOffset, 0, 1);
 	}
 }
 
