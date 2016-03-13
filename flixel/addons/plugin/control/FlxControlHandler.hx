@@ -188,7 +188,7 @@ class FlxControlHandler
 	private var _clockwiseKey:String;
 	private var _thrustKey:String;
 	private var _reverseKey:String;
-	// 
+	// Signal movement inverted on hor/vert axis
 	private var invertMovementHorizontally(get, null):Bool;
 	private var invertMovementVertically(get, null):Bool;
 	
