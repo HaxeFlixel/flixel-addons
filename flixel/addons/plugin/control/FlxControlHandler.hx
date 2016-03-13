@@ -188,9 +188,9 @@ class FlxControlHandler
 	private var _clockwiseKey:String;
 	private var _thrustKey:String;
 	private var _reverseKey:String;
-	
-	private var _invertMovementHorizontally:Bool;
-	private var _invertMovementVertically:Bool;
+	// 
+	private var invertMovementHorizontally(get, null):Bool;
+	private var invertMovementVertically(get, null):Bool;
 	
 	// Sounds
 	private var _jumpSound:FlxSound;
@@ -227,8 +227,8 @@ class FlxControlHandler
 		}
 		
 		enabled = true;
-		_invertMovementHorizontally = false;
-		_invertMovementVertically = false;
+		invertMovementHorizontally = false;
+		invertMovementVertically = false;
 	}
 	
 	/**
@@ -636,7 +636,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_invertMovementVertically ? _downKey : _upKey]))
+		if (FlxG.keys.anyPressed([invertMovementVertically ? _downKey : _upKey]))
 		{
 			move = true;
 			isPressedUp = true;
@@ -668,7 +668,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_invertMovementVertically ? _upKey : _downKey]))
+		if (FlxG.keys.anyPressed([invertMovementVertically ? _upKey : _downKey]))
 		{
 			move = true;
 			isPressedDown = true;
@@ -701,7 +701,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_invertMovementHorizontally ? _rightKey : _leftKey]))
+		if (FlxG.keys.anyPressed([invertMovementHorizontally ? _rightKey : _leftKey]))
 		{
 			move = true;
 			isPressedLeft = true;
@@ -733,7 +733,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_invertMovementHorizontally ? _leftKey : _rightKey]))
+		if (FlxG.keys.anyPressed([invertMovementHorizontally ? _leftKey : _rightKey]))
 		{
 			move = true;
 			isPressedRight = true;
@@ -1113,22 +1113,22 @@ class FlxControlHandler
 			
 			if (_up)
 			{
-				movedY = _invertMovementVertically ? moveDown() : moveUp();
+				movedY = invertMovementVertically ? moveDown() : moveUp();
 			}
 			
 			if (_down && movedY == false)
 			{
-				movedY = _invertMovementVertically ? moveUp() : moveDown();
+				movedY = invertMovementVertically ? moveUp() : moveDown();
 			}
 			
 			if (_left)
 			{
-				movedX = _invertMovementHorizontally ? moveRight() : moveLeft();
+				movedX = invertMovementHorizontally ? moveRight() : moveLeft();
 			}
 			
 			if (_right && movedX == false)
 			{
-				movedX = _invertMovementHorizontally ? moveLeft() : moveRight();
+				movedX = invertMovementHorizontally ? moveLeft() : moveRight();
 			}
 			
 			if (movedX && movedY)
@@ -1184,12 +1184,28 @@ class FlxControlHandler
 		#end
 	}
 	
-	public function invertMovement(horizontally : Bool = true, vertically : Bool = true)
+	public function get_invertMovementHorizontally():Bool
+	{
+		return invertMovementHorizontally;
+	}
+	
+	public function get_invertMovementVertically():Bool
+	{
+		return invertMovementVertically;
+	}
+	
+	/**
+	 * Makes the controlled character move in the direction opposite to the one in input. 
+	 * 
+	 * @param	horizontally	Whether to invert movement on the horizontal axis (left/right)
+	 * @param	vertically	Whether to invert movement on the vertical axis (up/down)
+	 */
+	public function invertMovement(horizontally : Bool = true, vertically : Bool = true):Void
 	{
 		if (horizontally)
-			_invertMovementHorizontally = !_invertMovementHorizontally;
+			invertMovementHorizontally = !invertMovementHorizontally;
 		if (vertically)
-			_invertMovementVertically = !_invertMovementVertically;
+			invertMovementVertically = !invertMovementVertically;
 	}
 	
 	/**
