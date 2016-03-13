@@ -20,15 +20,15 @@ class FlxWaveEffect implements IFlxEffect
 	public var offset(default, null):FlxPoint = FlxPoint.get();
 	
 	/**
-	 * Which mode we're using for the effect
+	 * Which mode we're using for the effect.
 	 */
 	public var mode:FlxWaveMode;
 	/**
-	 * How fast should the wave effect be (higher = faster)
+	 * How fast should the wave effect be (higher = faster).
 	 */
 	public var speed:Float;
 	/**
-	 * The 'center' of our sprite (where the wave effect should start/end)
+	 * The 'center' of our sprite (where the wave effect should start/end). Ratio based on the bitmapData size.
 	 */
 	public var center:Float;
 	/**
@@ -36,13 +36,17 @@ class FlxWaveEffect implements IFlxEffect
 	 */
 	public var direction:FlxWaveDirection;
 	/**
-	 * How long waves are
+	 * How long waves are.
 	 */
 	public var wavelength:Int;
 	/**
-	 * How strong the wave effect should be
+	 * How strong the wave effect should be.
 	 */
 	public var strength:Int;
+	/**
+	 * The wave ratio to offset every odd line of the bitmapData. Must be a value between 0 and 1;
+	 */
+	public var interlaceOffset(default, set):Float;
 	
 	/**
 	 * Current time of the effect.
@@ -64,14 +68,15 @@ class FlxWaveEffect implements IFlxEffect
 	/**
 	 * Creates a new FlxEffectWave, which applies a wave-distortion effect.
 	 * 
-	 * @param	Mode		Which Mode you would like to use for the effect. ALL = applies a constant distortion throughout the image, END = makes the effect get stronger towards the bottom of the image, and START = the reverse of END.
-	 * @param	Strength	How strong you want the effect.
-	 * @param	Center		The 'center' of the effect when using END or START modes. Anything before(END)/after(START) this point on the image will have no distortion effect.
-	 * @param	Speed		How fast you want the effect to move. Higher values = faster.
-	 * @param	Wavelength	How long waves are.
-	 * @param	Direction	Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL).
+	 * @param	Mode			Which Mode you would like to use for the effect. ALL = applies a constant distortion throughout the image, END = makes the effect get stronger towards the bottom of the image, and START = the reverse of END.
+	 * @param	Strength		How strong you want the effect.
+	 * @param	Center			The 'center' of the effect when using END or START modes. Anything before(END)/after(START) this point on the image will have no distortion effect. Ratio based on the bitmapData size.
+	 * @param	Speed			How fast you want the effect to move. Higher values = faster.
+	 * @param	Wavelength		How long waves are.
+	 * @param	Direction		Which Direction you want the effect to be applied (HORIZONTAL or VERTICAL).
+	 * @param	InterlaceOffset	The wave ratio to offset every odd line of the bitmapData. Must be a value between 0 and 1;
 	 */
-	public function new(?Mode:FlxWaveMode, Strength:Int = 10, Center:Float = -1, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection)
+	public function new(?Mode:FlxWaveMode, Strength:Int = 10, Center:Float = 0.5, Speed:Float = 3, Wavelength:Int = 5, ?Direction:FlxWaveDirection, InterlaceOffset:Float = 0)
 	{
 		strength = Strength;
 		mode = (Mode == null) ? ALL : Mode;
@@ -79,14 +84,7 @@ class FlxWaveEffect implements IFlxEffect
 		wavelength = Wavelength;
 		direction = (Direction != null) ? Direction : HORIZONTAL;
 		center = Center;
-		if (Center < 0)
-		{
-			center = 0.5;
-		}
-		else if (Center > 1)
-		{
-			center = 1;
-		}
+		interlaceOffset = InterlaceOffset;
 	}
 	
 	public function destroy():Void 
@@ -154,7 +152,7 @@ class FlxWaveEffect implements IFlxEffect
 					}
 			}
 			
-			pixelOffset = offsetP * calculateOffset(p);
+			pixelOffset = offsetP * calculateOffset(p, length);
 			
 			if (direction == HORIZONTAL)
 			{
@@ -175,9 +173,20 @@ class FlxWaveEffect implements IFlxEffect
 		return _pixels.clone();
 	}
 	
-	private inline function calculateOffset(p:Float):Float
+	private inline function calculateOffset(p:Float, length:Int):Float
 	{
-		return FlxMath.fastSin((p / wavelength) + _time);
+		var waveOffset:Float = 0;
+		if (interlaceOffset != 0 && interlaceOffset != 1 && FlxMath.isOdd(p))
+		{
+			waveOffset = Math.PI * 2 * interlaceOffset;
+		}
+
+		return FlxMath.fastSin((p / wavelength) + _time + waveOffset);
+	}
+
+	private function set_interlaceOffset(InterlaceOffset:Float):Float
+	{
+		return interlaceOffset = FlxMath.bound(InterlaceOffset, 0, 1);
 	}
 }
 
