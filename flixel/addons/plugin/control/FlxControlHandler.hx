@@ -188,6 +188,9 @@ class FlxControlHandler
 	private var _clockwiseKey:String;
 	private var _thrustKey:String;
 	private var _reverseKey:String;
+	// Invert movement on horizontal/vetical axis eg. pressing left moves right etc.
+	public var invertX:Bool;
+	public var invertY:Bool;
 	
 	// Sounds
 	private var _jumpSound:FlxSound;
@@ -224,6 +227,8 @@ class FlxControlHandler
 		}
 		
 		enabled = true;
+		invertX = false;
+		invertY = false;
 	}
 	
 	/**
@@ -631,7 +636,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_upKey]))
+		if (FlxG.keys.anyPressed([invertY ? _downKey : _upKey]))
 		{
 			move = true;
 			isPressedUp = true;
@@ -663,7 +668,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_downKey]))
+		if (FlxG.keys.anyPressed([invertY ? _upKey : _downKey]))
 		{
 			move = true;
 			isPressedDown = true;
@@ -696,7 +701,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_leftKey]))
+		if (FlxG.keys.anyPressed([invertX ? _rightKey : _leftKey]))
 		{
 			move = true;
 			isPressedLeft = true;
@@ -728,7 +733,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_rightKey]))
+		if (FlxG.keys.anyPressed([invertX ? _leftKey : _rightKey]))
 		{
 			move = true;
 			isPressedRight = true;
@@ -1108,22 +1113,22 @@ class FlxControlHandler
 			
 			if (_up)
 			{
-				movedY = moveUp();
+				movedY = invertY ? moveDown() : moveUp();
 			}
 			
 			if (_down && movedY == false)
 			{
-				movedY = moveDown();
+				movedY = invertY ? moveUp() : moveDown();
 			}
 			
 			if (_left)
 			{
-				movedX = moveLeft();
+				movedX = invertX ? moveRight() : moveLeft();
 			}
 			
 			if (_right && movedX == false)
 			{
-				movedX = moveRight();
+				movedX = invertX ? moveLeft() : moveRight();
 			}
 			
 			if (movedX && movedY)
