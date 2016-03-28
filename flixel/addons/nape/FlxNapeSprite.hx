@@ -95,6 +95,7 @@ class FlxNapeSprite extends FlxSprite
 	}
 
 	/**
+	/**
 	 * Handy function for "killing" game objects.
 	 * Default behavior is to flag them as nonexistent AND dead.
 	 */
@@ -102,12 +103,16 @@ class FlxNapeSprite extends FlxSprite
 	{
 		super.kill();
 		
-		if (body != null)
+		if (body != null && body.compound == null)
 		{
 			body.space = null;
 		}
+		else if (body.compound != null)
+		{
+			body.compound.bodies.remove(body);
+		}
 	}
-
+	
 	/**
 	 * Handy function for bringing game objects "back to life". Just sets alive and exists back to true.
 	 * In practice, this function is most often called by FlxObject.reset().
@@ -116,9 +121,13 @@ class FlxNapeSprite extends FlxSprite
 	{
 		super.revive();
 		
-		if (body != null)
+		if (body != null && body.compound == null)
 		{
 			body.space = FlxNapeSpace.space;
+		}
+		else if (body.compound != null)
+		{
+			body.compound.bodies.add(body);
 		}
 	}
 	
