@@ -93,8 +93,7 @@ class FlxNapeSprite extends FlxSprite
 			updatePhysObjects();
 		}
 	}
-
-	/**
+	
 	/**
 	 * Handy function for "killing" game objects.
 	 * Default behavior is to flag them as nonexistent AND dead.
@@ -103,13 +102,12 @@ class FlxNapeSprite extends FlxSprite
 	{
 		super.kill();
 		
-		if (body != null && body.compound == null)
+		if (body != null)
 		{
-			body.space = null;
-		}
-		else if (body.compound != null)
-		{
-			body.compound.bodies.remove(body);
+			if (body.compound == null)
+				body.space = null;
+			else
+				body.compound.bodies.remove(body);
 		}
 	}
 	
@@ -121,13 +119,12 @@ class FlxNapeSprite extends FlxSprite
 	{
 		super.revive();
 		
-		if (body != null && body.compound == null)
+		if (body != null)
 		{
-			body.space = FlxNapeSpace.space;
-		}
-		else if (body.compound != null)
-		{
-			body.compound.bodies.add(body);
+			if (body.compound == null)
+				body.space = FlxNapeSpace.space;
+			else
+				body.compound.bodies.add(body);
 		}
 	}
 	
