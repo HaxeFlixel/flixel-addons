@@ -1,7 +1,6 @@
 package flixel.addons.display;
 
 import flash.display.BitmapData;
-import flash.geom.ColorTransform;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxG;
