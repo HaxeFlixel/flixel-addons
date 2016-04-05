@@ -30,7 +30,6 @@ class FlxBackdrop extends FlxSprite
 	private var _spaceX:Int = 0;
 	private var _spaceY:Int = 0;
 	
-	private var _colorTransform:ColorTransform;
 	private var _blitPixels: BitmapData;
 	
 	/**
@@ -73,7 +72,6 @@ class FlxBackdrop extends FlxSprite
 		_spaceY = SpaceY;
 		
 		_ppoint = new Point();
-		_colorTransform = new ColorTransform();
 		
 		scrollFactor.x = ScrollX;
 		scrollFactor.y = ScrollY;
@@ -87,9 +85,9 @@ class FlxBackdrop extends FlxSprite
 	override public function set_alpha(alpha:Float):Float
 	{
 		super.alpha = alpha;
-		_colorTransform.alphaMultiplier = alpha;
+		colorTransform.alphaMultiplier = alpha;
 		_blitPixels.copyPixels(pixels, _flashRect2, _flashPointZero, null, null, true);
-		_blitPixels.colorTransform(_flashRect2, _colorTransform);
+		_blitPixels.colorTransform(_flashRect2, colorTransform);
 
 		return alpha;
 	}
@@ -213,7 +211,7 @@ class FlxBackdrop extends FlxSprite
 					_matrix.tx = tx + (_ppoint.x + currTileX);
 					_matrix.ty = ty + (_ppoint.y + currTileY);
 					
-					drawItem.addQuad(_tileFrame, _matrix, _colorTransform);
+					drawItem.addQuad(_tileFrame, _matrix, colorTransform);
 				}
 			}
 		}
@@ -303,7 +301,7 @@ class FlxBackdrop extends FlxSprite
 			dirty = true;
 			calcFrame();
 			_blitPixels.copyPixels(pixels, _flashRect2, _flashPointZero, null, null, true);
-			_blitPixels.colorTransform(_flashRect2, _colorTransform);
+			_blitPixels.colorTransform(_flashRect2, colorTransform);
 		}
 	}
 	
