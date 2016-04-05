@@ -1,6 +1,7 @@
 package flixel.addons.display;
 
 import flash.display.BitmapData;
+import flash.geom.ColorTransform;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.FlxG;
@@ -28,6 +29,9 @@ class FlxBackdrop extends FlxSprite
 	
 	private var _spaceX:Int = 0;
 	private var _spaceY:Int = 0;
+	
+	private var _colorTransform:ColorTransform;
+	private var _blitPixels: BitmapData;
 	
 	/**
 	 * Frame used for tiling
@@ -69,6 +73,7 @@ class FlxBackdrop extends FlxSprite
 		_spaceY = SpaceY;
 		
 		_ppoint = new Point();
+		_colorTransform = new ColorTransform();
 		
 		scrollFactor.x = ScrollX;
 		scrollFactor.y = ScrollY;
@@ -79,6 +84,16 @@ class FlxBackdrop extends FlxSprite
 		FlxG.signals.gameResized.add(onGameResize);
 	}
 	
+	override public function set_alpha(alpha:Float):Float
+	{
+		super.alpha = alpha;
+		_colorTransform.alphaMultiplier = alpha;
+		_blitPixels.copyPixels(pixels, _flashRect2, _flashPointZero, null, null, true);
+		_blitPixels.colorTransform(_flashRect2, _colorTransform);
+
+		return alpha;
+	}
+
 	override public function destroy():Void 
 	{
 		_tileInfo = null;
@@ -165,7 +180,7 @@ class FlxBackdrop extends FlxSprite
 					return;
 				
 				_flashRect2.setTo(0, 0, graphic.width, graphic.height);
-				camera.copyPixels(frame, framePixels, _flashRect2, _ppoint);
+				camera.copyPixels(frame, _blitPixels, _flashRect2, _ppoint);
 			}
 			else
 			{
@@ -198,7 +213,7 @@ class FlxBackdrop extends FlxSprite
 					_matrix.tx = tx + (_ppoint.x + currTileX);
 					_matrix.ty = ty + (_ppoint.y + currTileY);
 					
-					drawItem.addQuad(_tileFrame, _matrix);
+					drawItem.addQuad(_tileFrame, _matrix, _colorTransform);
 				}
 			}
 		}
@@ -231,6 +246,7 @@ class FlxBackdrop extends FlxSprite
 			if (graphic == null || (graphic.width != w || graphic.height != h))
 			{
 				makeGraphic(w, h, FlxColor.TRANSPARENT, true);
+				_blitPixels = new BitmapData(w, h, true, FlxColor.TRANSPARENT);
 			}
 		}
 		else
@@ -286,6 +302,8 @@ class FlxBackdrop extends FlxSprite
 			pixels.unlock();
 			dirty = true;
 			calcFrame();
+			_blitPixels.copyPixels(pixels, _flashRect2, _flashPointZero, null, null, true);
+			_blitPixels.colorTransform(_flashRect2, _colorTransform);
 		}
 	}
 	
