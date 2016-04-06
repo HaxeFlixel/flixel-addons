@@ -29,8 +29,6 @@ class FlxBackdrop extends FlxSprite
 	private var _spaceX:Int = 0;
 	private var _spaceY:Int = 0;
 	
-	private var _blitPixels: BitmapData;
-	
 	/**
 	 * Frame used for tiling
 	 */
@@ -81,16 +79,6 @@ class FlxBackdrop extends FlxSprite
 		FlxG.signals.gameResized.add(onGameResize);
 	}
 	
-	override public function set_alpha(alpha:Float):Float
-	{
-		super.alpha = alpha;
-		colorTransform.alphaMultiplier = alpha;
-		_blitPixels.copyPixels(pixels, _flashRect2, _flashPointZero, null, null, true);
-		_blitPixels.colorTransform(_flashRect2, colorTransform);
-
-		return alpha;
-	}
-
 	override public function destroy():Void 
 	{
 		_tileInfo = null;
@@ -176,8 +164,11 @@ class FlxBackdrop extends FlxSprite
 				if (graphic == null)
 					return;
 				
+				if (dirty)
+					calcFrame(useFramePixels);
+				
 				_flashRect2.setTo(0, 0, graphic.width, graphic.height);
-				camera.copyPixels(frame, _blitPixels, _flashRect2, _ppoint);
+				camera.copyPixels(frame, framePixels, _flashRect2, _ppoint);
 			}
 			else
 			{
@@ -243,7 +234,6 @@ class FlxBackdrop extends FlxSprite
 			if (graphic == null || (graphic.width != w || graphic.height != h))
 			{
 				makeGraphic(w, h, FlxColor.TRANSPARENT, true);
-				_blitPixels = new BitmapData(w, h, true, FlxColor.TRANSPARENT);
 			}
 		}
 		else
@@ -299,8 +289,6 @@ class FlxBackdrop extends FlxSprite
 			pixels.unlock();
 			dirty = true;
 			calcFrame();
-			_blitPixels.copyPixels(pixels, _flashRect2, _flashPointZero, null, null, true);
-			_blitPixels.colorTransform(_flashRect2, colorTransform);
 		}
 	}
 	
