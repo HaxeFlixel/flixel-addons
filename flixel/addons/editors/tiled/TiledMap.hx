@@ -49,7 +49,7 @@ class TiledMap
 	
 	/**
 	 * @param data Either a string or XML object containing the Tiled map data
-	 * @param homePath Path to use as root to resolve any internal file references
+	 * @param rootPath Path to use as root to resolve any internal file references
 	 */
 	public function new(data:FlxTiledMapAsset, rootPath:String="")
 	{

@@ -212,5 +212,5 @@ class TiledTileSet
 	}
 }
 
-typedef ValidByteArray = #if (lime_legacy || openfl <= "3.4.0") ByteArray #else ByteArrayData #end;
+private typedef ValidByteArray = #if (lime_legacy || openfl <= "3.4.0") ByteArray #else ByteArrayData #end;
 typedef FlxTiledTileAsset = OneOfTwo<Fast, ValidByteArray>;
