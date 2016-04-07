@@ -51,7 +51,7 @@ class TiledMap
 	 * @param data Either a string or XML object containing the Tiled map data
 	 * @param homePath Path to use as root to resolve any internal file references
 	 */
-	public function new(data:FlxTiledAsset, rootPath:String="")
+	public function new(data:FlxTiledMapAsset, rootPath:String="")
 	{
 		var source:Fast = null;
 		var node:Fast = null;
@@ -179,4 +179,4 @@ class TiledMap
 	}
 }
 
-typedef FlxTiledAsset = OneOfTwo<String, Xml>;
+typedef FlxTiledMapAsset = OneOfTwo<String, Xml>;

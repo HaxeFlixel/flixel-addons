@@ -1,6 +1,7 @@
 package flixel.addons.editors.tiled;
 
 import flash.geom.Rectangle;
+import flixel.util.typeLimit.OneOfTwo;
 import openfl.Assets;
 import openfl.utils.ByteArray;
 import haxe.xml.Fast;
@@ -31,7 +32,7 @@ class TiledTileSet
 	
 	public var tileImagesSources:Array<TiledImageTile>;
 	
-	public function new(data:Dynamic, rootPath:String="")
+	public function new(data:FlxTiledTileAsset, rootPath:String="")
 	{
 		var node:Fast, source:Fast;
 		numTiles = 0xFFFFFF;
@@ -42,11 +43,10 @@ class TiledTileSet
 		{
 			source = data;
 		}
-		else if (Std.is(data, 
-			#if (lime_legacy || openfl <= "3.4.0") ByteArray #else ByteArrayData #end
-		))
+		else if (Std.is(data, ValidByteArray))
 		{
-			source = new Fast(Xml.parse(data.toString()));
+			var bytes:ValidByteArray = cast data;
+			source = new Fast(Xml.parse(bytes.toString()));
 			source = source.node.tileset;
 		}
 		else 
@@ -211,3 +211,6 @@ class TiledTileSet
 		return new Rectangle((ID % numCols) * tileWidth, (ID / numCols) * tileHeight);
 	}
 }
+
+typedef ValidByteArray = #if (lime_legacy || openfl <= "3.4.0") ByteArray #else ByteArrayData #end;
+typedef FlxTiledTileAsset = OneOfTwo<Fast, ValidByteArray>;
