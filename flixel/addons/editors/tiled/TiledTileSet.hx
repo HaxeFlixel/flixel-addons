@@ -1,6 +1,7 @@
 package flixel.addons.editors.tiled;
 
 import flash.geom.Rectangle;
+import openfl.Assets;
 import openfl.utils.ByteArray;
 import haxe.xml.Fast;
 
@@ -30,7 +31,7 @@ class TiledTileSet
 	
 	public var tileImagesSources:Array<TiledImageTile>;
 	
-	public function new(data:Dynamic)
+	public function new(data:Dynamic, rootPath:String="")
 	{
 		var node:Fast, source:Fast;
 		numTiles = 0xFFFFFF;
@@ -54,6 +55,16 @@ class TiledTileSet
 		}
 		
 		firstGID = (source.has.firstgid) ? Std.parseInt(source.att.firstgid) : 1;
+		
+		if (source.has.source)
+		{
+			var sourcePath = rootPath + source.att.source;
+			if (Assets.exists(sourcePath))
+			{
+				source = new Fast(Xml.parse(Assets.getText(sourcePath)));
+				source = source.node.tileset;
+			}
+		}
 		
 		if (!source.has.source) 
 		{
