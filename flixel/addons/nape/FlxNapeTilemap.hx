@@ -101,11 +101,8 @@ class FlxNapeTilemap extends FlxTilemap
 		for (index in tileIndices)
 		{
 			var coords:Array<FlxPoint> = getTileCoords(index, false);
-
 			if (coords == null)
-			{
 				continue;
-			}
 
 			for (point in coords)
 			{

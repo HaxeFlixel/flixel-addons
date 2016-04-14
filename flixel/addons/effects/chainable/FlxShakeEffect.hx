@@ -13,7 +13,7 @@ import openfl.display.BitmapData;
 class FlxShakeEffect implements IFlxEffect
 {
 	public var active:Bool = true;
-	public var offset(default, null):FlxPoint;
+	public var offset(default, null):FlxPoint = FlxPoint.get();
 	
 	/**
 	 * Value in pixels representing the maximum distance that the bitmapData can move while shaking.
@@ -45,14 +45,12 @@ class FlxShakeEffect implements IFlxEffect
 	 * @param	OnComplete	Optional completion callback function.
 	 * @param	Axes		On what axes to shake. Default value is XY / both.
 	 */
-	public function new(Intensity:Float = 5, Duration:Float = 0.5, ?OnComplete:Void->Void, ?Axes:FlxAxes) 
+	public function new(Intensity:Float = 5, Duration:Float = 0.5, ?OnComplete:Void->Void, ?Axes:FlxAxes)
 	{
 		intensity = Intensity;
 		_duration = Duration;
 		onComplete = OnComplete;
 		axes = Axes;
-		
-		offset = FlxPoint.get();
 	}
 	
 	public function destroy():Void 
@@ -117,7 +115,7 @@ class FlxShakeEffect implements IFlxEffect
 	 * @param	OnComplete	Optional completion callback function.
 	 * @param	Axes		On what axes to shake. Default value is XY / both.
 	 */
-	public function reset(Intensity:Float = 5, Duration:Float = 0.5, ?OnComplete:Void->Void, ?Axes:FlxAxes) 
+	public function reset(Intensity:Float = 5, Duration:Float = 0.5, ?OnComplete:Void->Void, ?Axes:FlxAxes)
 	{
 		if (Axes == null)
 			Axes = XY;

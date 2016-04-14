@@ -164,6 +164,9 @@ class FlxBackdrop extends FlxSprite
 				if (graphic == null)
 					return;
 				
+				if (dirty)
+					calcFrame(useFramePixels);
+				
 				_flashRect2.setTo(0, 0, graphic.width, graphic.height);
 				camera.copyPixels(frame, framePixels, _flashRect2, _ppoint);
 			}
@@ -198,7 +201,7 @@ class FlxBackdrop extends FlxSprite
 					_matrix.tx = tx + (_ppoint.x + currTileX);
 					_matrix.ty = ty + (_ppoint.y + currTileY);
 					
-					drawItem.addQuad(_tileFrame, _matrix);
+					drawItem.addQuad(_tileFrame, _matrix, colorTransform);
 				}
 			}
 		}

@@ -1,3 +1,19 @@
+2.1.0
+------------------------------
+* `FlxTrailEffect`: added `clear()` (#229) 
+* `FlxOutlineEffect`: added `mode` / `FlxOutlineMode` and `quality` (#230)
+* `FlxWaveEffect`: added `interlaceOffset` (#232) 
+* `FlxNapeTilemap`: added a null check to `placeCustomPolygon()` (#235)
+* `FlxEffectSprite`: added `updateTargetAnimation` (#236) 
+* `FlxControlHandler`: added `invertX` and `invertY` (#239) 
+* `FlxBackdrop`: added support for `alpha` (#244) 
+* `TiledMap`:
+ * added a `rootPath` argument to `new()` (#245)
+ * renamed `FlxTiledAsset` to `FlxTiledMapAsset` (#245)
+* `TiledTileLayer`:
+ * added support for CSV encoding to `tileArray` (#245)
+ * changed `new()`'s `data` argument from `Dynamic` to `FlxTiledTileAsset` (#245)
+
 2.0.0
 ------------------------------
 * Compatibility with flixel 4.0.0
