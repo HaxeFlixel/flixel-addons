@@ -45,13 +45,18 @@ class TiledMap
 	private var noLoadHash:Map<String, Bool> = new Map<String, Bool>();
 	private var layerMap:Map<String, TiledLayer> = new Map<String, TiledLayer>();
 	
+	private var rootPath:String="";
+	
 	/**
 	 * @param data Either a string or XML object containing the Tiled map data
+	 * @param rootPath Path to use as root to resolve any internal file references
 	 */
-	public function new(data:FlxTiledAsset)
+	public function new(data:FlxTiledMapAsset, rootPath:String="")
 	{
 		var source:Fast = null;
 		var node:Fast = null;
+		
+		this.rootPath = rootPath;
 		
 		if (Std.is(data, String)) 
 		{
@@ -110,12 +115,12 @@ class TiledMap
 	{
 		for (node in source.nodes.tileset)
 		{
-			var name = node.att.name;
+			var name = node.has.name ? node.att.name : "";
 			
 			if (!noLoadHash.exists(name))
 			{
-				var ts = new TiledTileSet(node);
-				tilesets.set(name, ts);
+				var ts = new TiledTileSet(node, rootPath);
+				tilesets.set(ts.name, ts);
 				tilesetArray.push(ts);
 			}
 		}
@@ -174,4 +179,4 @@ class TiledMap
 	}
 }
 
-typedef FlxTiledAsset = OneOfTwo<String, Xml>;
+typedef FlxTiledMapAsset = OneOfTwo<String, Xml>;
