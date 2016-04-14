@@ -3,6 +3,7 @@ package flixel.addons.display.shapes;
 import flash.geom.Matrix;
 import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
 
@@ -38,6 +39,13 @@ class FlxShapeLine extends FlxShape
 		b.putWeak();
 		
 		shape_id = FlxShapeType.LINE;
+	}
+	
+	override public function destroy():Void 
+	{
+		point = null;
+		point2 = null;
+		super.destroy();
 	}
 
 	override public function drawSpecificShape(?matrix:Matrix):Void 

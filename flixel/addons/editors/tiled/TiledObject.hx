@@ -4,7 +4,6 @@ import haxe.xml.Fast;
 import flixel.math.FlxPoint;
 
 /**
- * Last modified 10/3/2013 by Samuel Batista
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
  * This content is released under the MIT License.
  */
@@ -42,16 +41,17 @@ class TiledObject
 	public var gid:Int;
 	/**
 	 * Custom properties that users can set on this object
+	 * If "type" is not defined, the parent layer's "defaultType" is used
 	 */
-	public var custom:TiledPropertySet;
+	public var properties:TiledPropertySet;
 	/** 
 	 * Shared properties are tileset properties added on object tile
 	 */ 
 	public var shared:TiledPropertySet;
 	/**
-	 * Information on the group or "Layer" that contains this object
+	 * Information on the layer that contains this object
 	 */
-	public var group:TiledObjectGroup;
+	public var layer:TiledObjectLayer;
 	/**
 	 * The type of the object (RECTANGLE, ELLIPSE, POLYGON, POLYLINE, TILE)
 	 */
@@ -69,17 +69,18 @@ class TiledObject
 	 */
 	public var points:Array<FlxPoint>;
 	
-	public function new(Source:Fast, Parent:TiledObjectGroup)
+	public function new(source:Fast, parent:TiledObjectLayer)
 	{
-		xmlData = Source;
-		group = Parent;
-		name = (Source.has.name) ? Source.att.name : "[object]";
-		type = (Source.has.type) ? Source.att.type : Parent.name;
-		x = Std.parseInt(Source.att.x);
-		y = Std.parseInt(Source.att.y);
-		width = (Source.has.width) ? Std.parseInt(Source.att.width) : 0;
-		height = (Source.has.height) ? Std.parseInt(Source.att.height) : 0;
-		angle = (Source.has.rotation) ? Std.parseFloat(Source.att.rotation) : 0;
+		xmlData = source;
+		layer = parent;
+		name = (source.has.name) ? source.att.name : "[object]";
+		type = (source.has.type) ? source.att.type :
+		        (parent.properties.contains("defaultType") ? parent.properties.get("defaultType") : "");
+		x = Std.parseInt(source.att.x);
+		y = Std.parseInt(source.att.y);
+		width = (source.has.width) ? Std.parseInt(source.att.width) : 0;
+		height = (source.has.height) ? Std.parseInt(source.att.height) : 0;
+		angle = (source.has.rotation) ? Std.parseFloat(source.att.rotation) : 0;
 		// By default let's it be a rectangle object
 		objectType = RECTANGLE;
 		
@@ -88,12 +89,12 @@ class TiledObject
 		gid = -1;
 		
 		// object with tile association?
-		if (Source.has.gid && Source.att.gid.length != 0) 
+		if (source.has.gid && source.att.gid.length != 0) 
 		{
-			gid = Std.parseInt(Source.att.gid);
+			gid = Std.parseInt(source.att.gid);
 			var set:TiledTileSet;
 			
-			for (set in group.map.tilesets)
+			for (set in layer.map.tilesets)
 			{
 				shared = set.getPropertiesByGid(gid);
 				
@@ -108,31 +109,38 @@ class TiledObject
 		
 		// load properties
 		var node:Xml;
-		custom = new TiledPropertySet();
+		properties = new TiledPropertySet();
 		
-		for (node in Source.nodes.properties)
+		for (node in source.nodes.properties)
 		{
-			custom.extend(node);
+			properties.extend(node);
 		}
 		
 		// Let's see if it's another object
-		if (Source.hasNode.ellipse) {
+		if (source.hasNode.ellipse)
+		{
 			objectType = ELLIPSE;
-		} else if (Source.hasNode.polygon) {
+		}
+		else if (source.hasNode.polygon)
+		{
 			objectType = POLYGON;
-			getPoints(Source.node.polygon);
-		} else if (Source.hasNode.polyline) {
+			getPoints(source.node.polygon);
+		}
+		else if (source.hasNode.polyline)
+		{
 			objectType = POLYLINE;
-			getPoints(Source.node.polyline);
+			getPoints(source.node.polyline);
 		}
 	}
 	
-	private function getPoints(Node:Fast):Void {
+	private function getPoints(node:Fast):Void
+	{
 		points = new Array<FlxPoint>();
 		
-		var pointsStr:Array<String> = Node.att.points.split(" ");
+		var pointsStr:Array<String> = node.att.points.split(" ");
 		var pair:Array<String>;
-		for (p in pointsStr) {
+		for (p in pointsStr)
+		{
 			pair = p.split(",");
 			points.push(FlxPoint.get(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
 		}

@@ -1,13 +1,10 @@
 package flixel.addons.editors.tiled;
 
 import flixel.util.FlxColor;
-import openfl.Assets;
+import flixel.util.typeLimit.OneOfTwo;
 import haxe.xml.Fast;
-
-#if cpp
-import sys.io.File;
-import sys.FileSystem;
-#end
+import openfl.Assets;
+using StringTools;
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -29,66 +26,56 @@ class TiledMap
 	public var fullWidth:Int;
 	public var fullHeight:Int;
 	
-	public var properties:TiledPropertySet;
+	public var properties:TiledPropertySet = new TiledPropertySet();
+	
+	/**
+	 * Use to get a tileset by name
+	 */
+	public var tilesets:Map<String, TiledTileSet> = new Map<String, TiledTileSet>();
+	/**
+	 * Use for iterating over tilesets, and for merging tilesets (because order is important)
+	 */
+	public var tilesetArray:Array<TiledTileSet> = [];
+	
+	public var layers:Array<TiledLayer> = [];
 	
 	// Add a "noload" property to your Map Properties.
 	// Add comma separated values of tilesets, layers, or object names.
 	// These will not be loaded.
-	private var noLoadHash:Map<String, Bool>;
+	private var noLoadHash:Map<String, Bool> = new Map<String, Bool>();
+	private var layerMap:Map<String, TiledLayer> = new Map<String, TiledLayer>();
 	
-	// Use hash, we don't care about order
-	public var tilesets: Map<String, TiledTileSet>;
-	// Use array to preserve load order
-	public var layers:Array<TiledLayer>;
-	public var objectGroups:Array<TiledObjectGroup>;
-	
-	public function new(Data:Dynamic)
+	/**
+	 * @param data Either a string or XML object containing the Tiled map data
+	 */
+	public function new(data:FlxTiledAsset)
 	{
-		properties = new TiledPropertySet();
 		var source:Fast = null;
 		var node:Fast = null;
 		
-		if (Std.is(Data, String)) 
+		if (Std.is(data, String)) 
 		{
-			source = new Fast(Xml.parse(Assets.getText(Data)));
+			source = new Fast(Xml.parse(Assets.getText(data)));
 		}
-		else if (Std.is(Data, Xml)) 
+		else if (Std.is(data, Xml)) 
 		{
-			source = new Fast(Data);
-		}
-		else 
-		{
-			throw "Unknown TMX map format";
+			source = new Fast(data);
 		}
 		
 		source = source.node.map;
 		
-		// map header
-		version = source.att.version;
-		
-		if (version == null) 
-		{
-			version = "unknown";
-		}
-		
-		orientation = source.att.orientation;
-		
-		if (orientation == null) 
-		{
-			orientation = "orthogonal";
-		}
-		
-		backgroundColor = FlxColor.TRANSPARENT;
-		
-		if (source.has.backgroundcolor)
-		{
-			var bgColorStr = source.att.backgroundcolor;
-			if (bgColorStr != null) 
-			{
-				bgColorStr = StringTools.replace(bgColorStr.toUpperCase(), "#", "0x");
-				backgroundColor = FlxColor.fromString(bgColorStr);
-			}
-		}
+		loadAttributes(source);
+		loadProperties(source);
+		loadTilesets(source);
+		loadLayers(source);
+	}
+	
+	private function loadAttributes(source:Fast):Void
+	{
+		version = (source.att.version != null) ? source.att.version : "unknown";
+		orientation = (source.att.orientation != null) ? source.att.orientation : "orthogonal";
+		backgroundColor = (source.has.backgroundcolor && source.att.backgroundcolor != null) ?
+			FlxColor.fromString(source.att.backgroundcolor) : FlxColor.TRANSPARENT;
 		
 		width = Std.parseInt(source.att.width);
 		height = Std.parseInt(source.att.height);
@@ -98,110 +85,86 @@ class TiledMap
 		// Calculate the entire size
 		fullWidth = width * tileWidth;
 		fullHeight = height * tileHeight;
-		
-		noLoadHash = new Map<String, Bool>();
-		tilesets = new Map<String, TiledTileSet>();
-		layers = new Array<TiledLayer>();
-		objectGroups = new Array<TiledObjectGroup>();
-		
-		// read properties
+	}
+	
+	private function loadProperties(source:Fast):Void
+	{
 		for (node in source.nodes.properties)
 		{
 			properties.extend(node);
 		}
 		
 		var noLoadStr = properties.get("noload");
-		
 		if (noLoadStr != null)
 		{
-			var regExp = ~/[,;|]/;
-			var noLoadArr = regExp.split(noLoadStr);
+			var noLoadArr = ~/[,;|]/.split(noLoadStr);
 			
 			for (s in noLoadArr)
 			{
-				noLoadHash.set(StringTools.trim(s), true);
+				noLoadHash.set(s.trim(), true);
 			}
 		}
-		
-		// load tilesets
-		var name:String;
+	}
+	
+	private function loadTilesets(source:Fast):Void
+	{
 		for (node in source.nodes.tileset)
 		{
-			name = node.att.name;
+			var name = node.att.name;
 			
 			if (!noLoadHash.exists(name))
 			{
-				tilesets.set(name, new TiledTileSet(node));
+				var ts = new TiledTileSet(node);
+				tilesets.set(name, ts);
+				tilesetArray.push(ts);
 			}
 		}
-		
-		// load layer
-		for (node in source.nodes.layer)
-		{
-			name = node.att.name;
+	}
+	
+	private function loadLayers(source:Fast):Void
+	{
+		for (el in source.elements)
+		{	
+			if (el.has.name && noLoadHash.exists(el.att.name))
+				continue;
 			
-			if (!noLoadHash.exists(name))
+			var layer:TiledLayer = switch (el.name.toLowerCase())
 			{
-				layers.push(new TiledLayer(node, this));
+				case "layer": new TiledTileLayer(el, this);
+				case "objectgroup": new TiledObjectLayer(el, this);
+				case "imagelayer": new TiledImageLayer(el, this);
+				case _: null;
 			}
-		}
-		
-		// load object group
-		for (node in source.nodes.objectgroup)
-		{
-			name = node.att.name;
 			
-			if (!noLoadHash.exists(name))
+			if (layer != null)
 			{
-				objectGroups.push(new TiledObjectGroup(node, this));
+				layers.push(layer);
+				layerMap.set(layer.name, layer);
 			}
 		}
 	}
 	
-	public function getTileSet(Name:String):TiledTileSet
+	public function getTileSet(name:String):TiledTileSet
 	{
-		return tilesets.get(Name);
+		return tilesets.get(name);
 	}
 	
-	public function getLayer(Name:String):TiledLayer
-	{
-		var i = layers.length;
-		
-		while (i > 0)
-		{
-			if (layers[--i].name == Name)
-			{
-				return layers[i];
-			}
-		}
-		
-		return null;
+	public function getLayer(name:String):TiledLayer
+	{	
+		return layerMap.get(name);
 	}
 	
-	public function getObjectGroup(Name:String):TiledObjectGroup
-	{
-		var i = objectGroups.length;
-		
-		while (i > 0)
-		{
-			if (objectGroups[--i].name == Name)
-			{
-				return objectGroups[i];
-			}
-		}
-		
-		return null;
-	}
-	
-	// works only after TiledTileSet has been initialized with an image...
-	public function getGidOwner(Gid:Int):TiledTileSet
+	/**
+	 * works only after TiledTileSet has been initialized with an image...
+	 */
+	public function getGidOwner(gid:Int):TiledTileSet
 	{
 		var last:TiledTileSet = null;
 		var set:TiledTileSet;
 		
 		for (set in tilesets)
 		{
-			if (set.hasGid(Gid))
+			if (set.hasGid(gid))
 			{
 				return set;
 			}
@@ -210,3 +173,5 @@ class TiledMap
 		return null;
 	}
 }
+
+typedef FlxTiledAsset = OneOfTwo<String, Xml>;

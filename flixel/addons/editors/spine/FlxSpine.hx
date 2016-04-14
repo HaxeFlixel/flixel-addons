@@ -1,8 +1,6 @@
 package flixel.addons.editors.spine;
 
-#if FLX_RENDER_TILE
 import flixel.graphics.tile.FlxDrawTrianglesItem;
-#end
 
 import flixel.addons.editors.spine.texture.FlixelTexture;
 import flixel.addons.editors.spine.texture.FlixelTextureLoader;
@@ -224,7 +222,7 @@ class FlxSpine extends FlxSprite
 					var region:RegionAttachment = cast slot.attachment;
 					verticesLength = 8;
 					region.computeWorldVertices(skeleton.x, skeleton.y, slot.bone, worldVertices);
-					uvtData = region.uvtData;
+					uvtData = region.uvs;
 					triangles = _quadTriangles;
 					
 					if (region.wrapperStrip != null)

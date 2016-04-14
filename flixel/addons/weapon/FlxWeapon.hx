@@ -220,17 +220,13 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		currentBullet.elasticity = bulletElasticity;
 		currentBullet.lifespan = FlxG.random.float(bulletLifeSpan.min, bulletLifeSpan.max);
 		
-		switch(Mode)
+		switch (Mode)
 		{
 			case FIRE_AT_POSITION(x, y):
-				var p = FlxPoint.get(x, y);
-				internalFireAtPoint(currentBullet, p);
-				p.put();
-			
+				internalFireAtPoint(currentBullet, FlxPoint.weak(x, y));
+
 			case FIRE_AT_TARGET(target):
-				var p = target.toPoint();
-				internalFireAtPoint(currentBullet, p);
-				p.put();
+				internalFireAtPoint(currentBullet, target.getPosition(FlxPoint.weak()));
 				
 			case FIRE_FROM_ANGLE(angle):
 				internalFireFromAngle(currentBullet, FlxG.random.float(angle.min, angle.max));
@@ -239,20 +235,16 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 				internalFireFromAngle(currentBullet, parent.angle + FlxG.random.float(angle.min, angle.max));
 				
 			case FIRE_FROM_PARENT_FACING(angle):
-				internalFireFromAngle(currentBullet, FlxAngle.angleFromFacing(parent) + FlxG.random.float(angle.min, angle.max));
+				internalFireFromAngle(currentBullet, FlxAngle.angleFromFacing(parent.facing) + FlxG.random.float(angle.min, angle.max));
 				
 			#if !FLX_NO_TOUCH
 			case FIRE_AT_TOUCH(touch):
-				var p = touch.toPoint();
-				internalFireAtPoint(currentBullet, p);
-				p.put();
+				internalFireAtPoint(currentBullet, touch.getPosition(FlxPoint.weak()));
 			#end
 			
 			#if !FLX_NO_MOUSE
 			case FIRE_AT_MOUSE:
-				var p = FlxG.mouse.toPoint();
-				internalFireAtPoint(currentBullet, p);
-				p.put();
+				internalFireAtPoint(currentBullet, FlxG.mouse.getPosition(FlxPoint.weak()));
 			#end
 		}
 		
@@ -400,7 +392,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-  	private function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
+	private function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
 	{
 		if (parent == Object && skipParentCollision)
 		{
@@ -417,14 +409,14 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-  	private function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
+	private function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
 	{
 		Bullet.kill();
 	}
 	
 	private function internalFireAtPoint(bullet:TBullet, point:FlxPoint):Void
 	{
-		switch(speedMode)
+		switch (speedMode)
 		{
 			case SPEED(speed):
 				FlxVelocity.moveTowardsPoint(bullet, point, FlxG.random.float(speed.min, speed.max));
@@ -442,12 +434,14 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		{
 			bullet.angle = FlxAngle.angleBetweenPoint(bullet, point, true);
 		}
+		
+		point.putWeak();
 	}
 	
 	private function internalFireFromAngle(bullet:TBullet, degrees:Float):Void
 	{
 		var radians = FlxAngle.asRadians(degrees);
-		switch(speedMode)
+		switch (speedMode)
 		{
 			case SPEED(speed):
 				//TODO need to create a function: FlxVelocity.moveFromAngle(radians, speed);

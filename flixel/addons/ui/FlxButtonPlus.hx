@@ -195,7 +195,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		
 		for (camera in buttonNormal.cameras)
 		{
-			if (FlxMath.mouseInFlxRect(false, buttonNormal.rect))
+			if (FlxMath.mouseInFlxRect(true, buttonNormal.rect))
 			{
 				offAll = false;
 				

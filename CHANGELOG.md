@@ -1,3 +1,78 @@
+2.0.0
+------------------------------
+* Compatibility with flixel 4.0.0
+* `flixel.addons.editors.tiled`:
+ * `TiledLayer` and `TiledObjectGroup` have been replaced with `TiledTileLayer` and `TiledObjectLayer` with a common base class `TiledLayer`
+ * `TiledMap` now stores object layers and tile layers in a single array, `layers`, to maintain the order of object and tile layers
+ * `TileTileLayer`: added `encoding`
+ * `TiledTileSet`: added `"id"` to `tileProps`
+ * added `TiledImageLayer`
+ * added `TiledImageTile` and `TiledTileSet#tileImagesSources`
+* `FlxTileSpecial`:
+ * fixed bugs related to rotation happening after flipping
+ * `flipHorizontal` -> `flipX`
+ * `flipVertical` -> `flipY`
+* added `flixel.addons.util.FlxFSM`
+* `FlxTrail`:
+ * now extends `FlxSpriteGroup`
+ * now supports animations
+* `FlxTrailArea`: fixed the `offset` of sprites not being taken into account
+* `flixel.addons.weapon`:
+ * abstracted `FlxWeapon` into `FlxTypedWeapon` (`FlxWeapon` is now a `typedef` for `FlxTypedWeapon<FlxBullet>`)
+ * `FlxTypedWeapon#new()` now requires a `BulletFactory` function
+ * moved firing logic from `FlxBullet` to `FlxTypedWeapon`
+ * removed `onFireCallback` and `onFireSound`
+* `FlxTypeText`:
+ * changed `Dynamic` callbacks to `Void->Void`
+ * replaced `sound` by a `sounds` array, from which one is randomnly picked
+ * fixed jumping between lines during typing
+ * added `useDefaultSound` which is `false` by default
+* added `flixel.addons.editors.pex.FlxPexParser`
+* added `flixel.addons.transition`
+* added `flixel.addons.util.FlxScene`
+* `flixel.addons.nape`:
+ * refactored `FlxNapeState` into a plugin called `FlxNapeSpace`, making it possible to use nape with other `FlxState` child classes like `FlxUIState`
+ * `FlxNapeSpace`: added `napePhysicsEnabled`
+ * `FlxNapeSpace`: made `shapeDebug` public
+ * `FlxNapeSprite`: `setPosition()` is now overriden and sets `body.position`
+ * `FlxNapeSprite#new()`: the `EnablePhysics` argument is now no longer ignored if `CreateRectangularBody` is `false`
+* `flixel.addons.plugin.taskManager`: 
+ * `AntTaskManager` -> `FlxTaskManager`
+ * `AntTask` -> `FlxTask`
+* `FlxBackdrop`: added support for  `scale`, `loadGraphic()` and `loadFrame()`
+* `flixel.addons.editors.spine`:
+ * now uses [spinehaxe](https://github.com/bendmorris/spinehaxe) instead of [spinehx](https://github.com/nitrobin/spinehx)
+ * `FlxSpine#readSkeletonData()` now allows for different atlas and animation file names
+* `FlxOgmoLoader`:
+ * added `getProperty()`
+ * the constructor no longer sets the camera bounds
+* `FlxScreenGrab`:
+ * fixed `defineHotkeys()` arguments overriding those in `grab()`
+ * now uses linc_dialogs instead of systools on native targets
+* `FlxTilemapExt`:
+ * added support for slopes with 22.5 and 67.5 degrees
+ * added `setGentle()` and `setSteep()`
+ * removed `setClouds()`
+* `FlxExtendedSprite`: `mouseStartDragCallback` and `mouseStopDragCallback` now work 
+* added `flixel.addons.display.FlxPieDial`
+* `FlxGridOverlay`: removed the non-functional `AddLegend` arguments
+* `FlxZoomCamera`: made `zoomSpeed` and `zoomMargin` public
+* added `flixel.addons.text.FlxTextField` (moved from core Flixel)
+* added `flixel.addons.effects.chainable`:
+ * `IFlxEffect`
+ * `FlxEffectSprite`
+ * `FlxGlitchEffect` (replaces `FlxGlitchSprite`)
+ * `FlxWaveEffect` (replaces `FlxWaveSprite`)
+ * `FlxRainbowEffect`
+ * `FlxOutlineEffect`
+ * `FlxTrailEffect`
+ * `FlxShakeEffect`
+* added `flixel.addons.effects.FlxClothSprite`
+
+1.1.1
+------------------------------
+* Fix compilation with OpenFL 3.5 / Lime 2.8
+
 1.1.0
 ------------------------------
 * Compatibility with flixel 3.3.0

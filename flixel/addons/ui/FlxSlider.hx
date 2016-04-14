@@ -1,5 +1,4 @@
 package flixel.addons.ui;
-import flixel.util.FlxColor;
 
 #if !FLX_NO_MOUSE
 import flixel.FlxG;
@@ -11,6 +10,7 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxSpriteUtil;
+import flixel.util.FlxColor;
 
 /**
  * A slider GUI element for float and integer manipulation. 
@@ -327,9 +327,8 @@ class FlxSlider extends FlxSpriteGroup
 			
 			_lastPos = relativePos;
 			
-			if (callback != null) {
+			if (callback != null)
 				callback(relativePos);
-			}
 		}
 	}
 	
