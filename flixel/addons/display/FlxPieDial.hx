@@ -33,18 +33,6 @@ class FlxPieDial extends FlxSprite
 		amount = 1.0;
 	}
 	
-	public function set_amount(f:Float):Float
-	{
-		amount = FlxMath.bound(f, 0.0, 1.0);
-		var frame:Int = Std.int(f * pieFrames);
-		animation.frameIndex = frame;
-		if (amount == 1.0)
-		{
-			animation.frameIndex = 0; //special case for full frame
-		}
-		return amount;
-	}
-	
 	override public function draw():Void 
 	{
 		if (amount == 0) return;
@@ -288,6 +276,18 @@ class FlxPieDial extends FlxSprite
 		polygon[4].set(halfW, halfH);
 		
 		nextFrame.drawPolygon(polygon, fore);
+	}
+
+	private function set_amount(f:Float):Float
+	{
+		amount = FlxMath.bound(f, 0.0, 1.0);
+		var frame:Int = Std.int(f * pieFrames);
+		animation.frameIndex = frame;
+		if (amount == 1.0)
+		{
+			animation.frameIndex = 0; //special case for full frame
+		}
+		return amount;
 	}
 }
 
