@@ -3,6 +3,7 @@ package flixel.addons.nape;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets;
 import flixel.math.FlxAngle;
+import nape.constraint.Constraint;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -109,6 +110,8 @@ class FlxNapeSprite extends FlxSprite
 			else
 				body.compound.bodies.remove(body);
 		}
+		
+		
 	}
 	
 	/**
@@ -223,8 +226,23 @@ class FlxNapeSprite extends FlxSprite
 	{
 		if (body != null) 
 		{
-			if (FlxNapeSpace.space != null)
-				FlxNapeSpace.space.bodies.remove(body);
+			
+			body.constraints.foreach(function(c:Constraint)
+			{
+				c.active = false;
+			});
+			
+			if (body.compound == null)
+			{
+				body.space = null;
+			}
+			else
+			{
+				body.compound.bodies.remove(body);
+			}
+			
+			
+				
 			body = null;
 		}
 	}
