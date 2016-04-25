@@ -73,7 +73,7 @@ class TiledObject
 	{
 		xmlData = source;
 		layer = parent;
-		name = (source.has.name) ? source.att.name : "[object]";
+		name = (source.has.name) ? source.att.name : "";
 		type = (source.has.type) ? source.att.type :
 		        (parent.properties.contains("defaultType") ? parent.properties.get("defaultType") : "");
 		x = Std.parseInt(source.att.x);
