@@ -137,25 +137,25 @@ class FlxBackdrop extends FlxSprite
 			// Find x position
 			if (_repeatX)
 			{   
-				_ppoint.x = ((x - camera.scroll.x * scrollFactor.x) % ssw);
+				_ppoint.x = ((x - (camera.scroll.x - offset.x) * scrollFactor.x) % ssw);
 				if (_ppoint.x > 0)
 					_ppoint.x -= ssw;
 			}
 			else 
 			{
-				_ppoint.x = (x - camera.scroll.x * scrollFactor.x);
+				_ppoint.x = (x - (camera.scroll.x - offset.x) * scrollFactor.x);
 			}
 			
 			// Find y position
 			if (_repeatY)
 			{
-				_ppoint.y = ((y - camera.scroll.y * scrollFactor.y) % ssh);
+				_ppoint.y = ((y - (camera.scroll.y - offset.y) * scrollFactor.y) % ssh);
 				if (_ppoint.y > 0)
 					_ppoint.y -= ssh;
 			}
 			else 
 			{
-				_ppoint.y = (y - camera.scroll.y * scrollFactor.y);
+				_ppoint.y = (y - (camera.scroll.y - offset.y) * scrollFactor.y);
 			}
 			
 			// Draw to the screen
