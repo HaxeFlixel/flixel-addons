@@ -125,9 +125,29 @@ class FlxTiledSprite extends FlxStrip
 		
 		if (FlxG.renderBlit)
 		{
+			graphicVisible = true;
+			
 			if (renderSprite == null)
 			{
 				renderSprite = new FlxSprite();
+			}
+			
+			var rectX:Float = repeatX ? 0 : scrollX;
+			var rectWidth:Float = repeatX ? width : graphic.bitmap.width;
+			
+			if (!repeatX && (rectX > width || rectX + rectWidth < 0))
+			{
+				graphicVisible = false;
+				return;
+			}
+			
+			var rectY:Float = repeatY ? 0 : scrollY;
+			var rectHeight:Float = repeatY ? height : graphic.bitmap.height;
+			
+			if (!repeatY && (rectY > height || rectY + rectHeight < 0))
+			{
+				graphicVisible = false;
+				return;
 			}
 			
 			if (renderSprite.width != width || renderSprite.height != height)
@@ -142,8 +162,6 @@ class FlxTiledSprite extends FlxStrip
 			
 			FlxSpriteUtil.flashGfx.clear();
 			
-			// TODO: handle repeatX and repeatY
-			
 			if (scrollX != 0 || scrollY != 0)
 			{
 				_matrix.identity();
@@ -156,7 +174,7 @@ class FlxTiledSprite extends FlxStrip
 				FlxSpriteUtil.flashGfx.beginBitmapFill(graphic.bitmap);
 			}
 			
-			FlxSpriteUtil.flashGfx.drawRect(0, 0, width, height);
+			FlxSpriteUtil.flashGfx.drawRect(rectX, rectY, rectWidth, rectHeight);
 			renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
 			renderSprite.dirty = true;
 		}
@@ -208,8 +226,8 @@ class FlxTiledSprite extends FlxStrip
 		}
 		else
 		{
-			vertices[0] = vertices[6] = FlxMath.bound( -scrollX, 0, width);
-			vertices[2] = vertices[4] = FlxMath.bound( -scrollX + frame.sourceSize.x, 0, width);
+			vertices[0] = vertices[6] = FlxMath.bound(scrollX, 0, width);
+			vertices[2] = vertices[4] = FlxMath.bound(scrollX + frame.sourceSize.x, 0, width);
 			
 			if (vertices[2] - vertices[0] <= 0)
 			{
@@ -217,7 +235,7 @@ class FlxTiledSprite extends FlxStrip
 				return;
 			}
 			
-			uvtData[0] = uvtData[6] = (vertices[0] + scrollX) / frame.sourceSize.x;
+			uvtData[0] = uvtData[6] = (vertices[0] - scrollX) / frame.sourceSize.x;
 			uvtData[2] = uvtData[4] = uvtData[0] + (vertices[2] - vertices[0]) / frame.sourceSize.x;
 		}
 		
@@ -231,8 +249,8 @@ class FlxTiledSprite extends FlxStrip
 		}
 		else
 		{
-			vertices[1] = vertices[3] = FlxMath.bound( -scrollY, 0, height);
-			vertices[5] = vertices[7] = FlxMath.bound( -scrollY + frame.sourceSize.y, 0, height);
+			vertices[1] = vertices[3] = FlxMath.bound(scrollY, 0, height);
+			vertices[5] = vertices[7] = FlxMath.bound(scrollY + frame.sourceSize.y, 0, height);
 			
 			if (vertices[5] - vertices[1] <= 0)
 			{
@@ -240,7 +258,7 @@ class FlxTiledSprite extends FlxStrip
 				return;
 			}
 			
-			uvtData[1] = uvtData[3] = (vertices[1] + scrollY) / frame.sourceSize.y;
+			uvtData[1] = uvtData[3] = (vertices[1] - scrollY) / frame.sourceSize.y;
 			uvtData[5] = uvtData[7] = uvtData[1] + (vertices[5] - vertices[1]) / frame.sourceSize.y;
 		}
 	}
