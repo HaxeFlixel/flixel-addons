@@ -18,6 +18,8 @@ class TiledLayer
 	public var opacity:Float;
 	public var visible:Bool;
 	public var properties:TiledPropertySet;
+	public var offsetX:Float;
+	public var offsetY:Float;
 
 	private function new(source:Fast, parent:TiledMap)
 	{
@@ -26,6 +28,8 @@ class TiledLayer
 		name = source.att.name;
 		visible = (source.has.visible && source.att.visible == "0") ? false : true;
 		opacity = (source.has.opacity) ? Std.parseFloat(source.att.opacity) : 1.0;
+		offsetX = (source.has.offsetx) ? Std.parseFloat(source.att.offsetx) : 0.0;
+		offsetY = (source.has.offsety) ? Std.parseFloat(source.att.offsety) : 0.0;
 		
 		loadProperties(source);
 	}
