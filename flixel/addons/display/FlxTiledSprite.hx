@@ -181,13 +181,13 @@ class FlxTiledSprite extends FlxStrip
 		uvtData[2] = uvtData[4] = uvtData[0] + width / frame.sourceSize.x;
 		
 		uvtData[1] = uvtData[3] = -scrollY / frame.sourceSize.y;
-		uvtData[5] = uvtData[7] = uvtData[0] + height / frame.sourceSize.x;
+		uvtData[5] = uvtData[7] = uvtData[0] + height / frame.sourceSize.y;
 		
 		vertices[2] = vertices[4] = width;
 		uvtData[2] = uvtData[4] = uvtData[0] + width / frame.sourceSize.x;
 		
 		vertices[5] = vertices[7] = height;
-		uvtData[5] = uvtData[5] = uvtData[0] + height / frame.sourceSize.x;
+		uvtData[5] = uvtData[5] = uvtData[0] + height / frame.sourceSize.y;
 	}
 	
 	override function set_width(Width:Float):Float 
