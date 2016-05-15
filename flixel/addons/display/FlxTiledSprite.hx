@@ -4,6 +4,7 @@ import flixel.FlxStrip;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
+import flixel.math.FlxMath;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
@@ -25,13 +26,24 @@ class FlxTiledSprite extends FlxStrip
 	public var scrollY(default, set):Float = 0;
 	
 	/**
+	 * Repeat texture on x axis. Default is true
+	 */
+	public var repeatX(default, set):Bool = true;
+	/**
+	 * Repeat texture on y axis. Default is true
+	 */
+	public var repeatY(default, set):Bool = true;
+	
+	/**
 	 * Helper sprite, which does actual rendering in blit render mode.
 	 */
 	private var renderSprite:FlxSprite;
 	
 	private var regen:Bool = true;
 	
-	public function new(?Graphic:FlxGraphicAsset, Width:Float, Height:Float) 
+	private var graphicVisible:Bool = true;
+	
+	public function new(?Graphic:FlxGraphicAsset, Width:Float, Height:Float, RepeatX:Bool = true, RepeatY:Bool = true) 
 	{
 		super();
 		
@@ -64,6 +76,9 @@ class FlxTiledSprite extends FlxStrip
 		
 		width = Width;
 		height = Height;
+		
+		repeatX = RepeatX;
+		repeatY = RepeatY;
 		
 		if (FlxG.renderBlit)
 		{
@@ -127,6 +142,8 @@ class FlxTiledSprite extends FlxStrip
 			
 			FlxSpriteUtil.flashGfx.clear();
 			
+			// TODO: handle repeatX and repeatY
+			
 			if (scrollX != 0 || scrollY != 0)
 			{
 				_matrix.identity();
@@ -156,6 +173,9 @@ class FlxTiledSprite extends FlxStrip
 		if (regen)
 			regenGraphic();
 		
+		if (!graphicVisible)
+			return;
+			
 		if (FlxG.renderBlit)
 		{
 			renderSprite.x = x;
@@ -176,18 +196,53 @@ class FlxTiledSprite extends FlxStrip
 			return;
 		
 		var frame:FlxFrame = graphic.imageFrame.frame;
+		graphicVisible = true;
 		
-		uvtData[0] = uvtData[6] = -scrollX / frame.sourceSize.x;
-		uvtData[2] = uvtData[4] = uvtData[0] + width / frame.sourceSize.x;
+		if (repeatX)
+		{
+			vertices[0] = vertices[6] = 0.0;
+			vertices[2] = vertices[4] = width;
+			
+			uvtData[0] = uvtData[6] = -scrollX / frame.sourceSize.x;
+			uvtData[2] = uvtData[4] = uvtData[0] + width / frame.sourceSize.x;
+		}
+		else
+		{
+			vertices[0] = vertices[6] = FlxMath.bound( -scrollX, 0, width);
+			vertices[2] = vertices[4] = FlxMath.bound( -scrollX + frame.sourceSize.x, 0, width);
+			
+			if (vertices[2] - vertices[0] <= 0)
+			{
+				graphicVisible = false;
+				return;
+			}
+			
+			uvtData[0] = uvtData[6] = (vertices[0] + scrollX) / frame.sourceSize.x;
+			uvtData[2] = uvtData[4] = uvtData[0] + (vertices[2] - vertices[0]) / frame.sourceSize.x;
+		}
 		
-		uvtData[1] = uvtData[3] = -scrollY / frame.sourceSize.y;
-		uvtData[5] = uvtData[7] = uvtData[0] + height / frame.sourceSize.y;
-		
-		vertices[2] = vertices[4] = width;
-		uvtData[2] = uvtData[4] = uvtData[0] + width / frame.sourceSize.x;
-		
-		vertices[5] = vertices[7] = height;
-		uvtData[5] = uvtData[5] = uvtData[0] + height / frame.sourceSize.y;
+		if (repeatY)
+		{
+			vertices[1] = vertices[3] = 0.0;
+			vertices[5] = vertices[7] = height;
+			
+			uvtData[1] = uvtData[3] = -scrollY / frame.sourceSize.y;
+			uvtData[5] = uvtData[7] = uvtData[1] + height / frame.sourceSize.y;
+		}
+		else
+		{
+			vertices[1] = vertices[3] = FlxMath.bound( -scrollY, 0, height);
+			vertices[5] = vertices[7] = FlxMath.bound( -scrollY + frame.sourceSize.y, 0, height);
+			
+			if (vertices[5] - vertices[1] <= 0)
+			{
+				graphicVisible = false;
+				return;
+			}
+			
+			uvtData[1] = uvtData[3] = (vertices[1] + scrollY) / frame.sourceSize.y;
+			uvtData[5] = uvtData[7] = uvtData[1] + (vertices[5] - vertices[1]) / frame.sourceSize.y;
+		}
 	}
 	
 	override function set_width(Width:Float):Float 
@@ -226,5 +281,21 @@ class FlxTiledSprite extends FlxStrip
 			regen = true;
 		
 		return scrollY = Value;
+	}
+	
+	private function set_repeatX(Value:Bool):Bool
+	{
+		if (Value != repeatX)
+			regen = true;
+		
+		return repeatX = Value;
+	}
+	
+	private function set_repeatY(Value:Bool):Bool
+	{
+		if (Value != repeatY)
+			regen = true;
+		
+		return repeatY = Value;
 	}
 }
