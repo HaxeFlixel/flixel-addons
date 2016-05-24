@@ -80,11 +80,6 @@ class FlxTiledSprite extends FlxStrip
 		repeatX = RepeatX;
 		repeatY = RepeatY;
 		
-		if (FlxG.renderBlit)
-		{
-			renderSprite = new FlxSprite();
-		}
-		
 		if (Graphic != null)
 			loadGraphic(Graphic);
 	}
@@ -109,12 +104,9 @@ class FlxTiledSprite extends FlxStrip
 	
 	override function set_graphic(Value:FlxGraphic):FlxGraphic 
 	{
-		if (renderSprite != null)
-		{
-			renderSprite.graphic = Value;
-		}
+		if (graphic != Value)
+			regen = true;
 		
-		regen = true;
 		return super.set_graphic(Value);
 	}
 	
@@ -128,9 +120,7 @@ class FlxTiledSprite extends FlxStrip
 			graphicVisible = true;
 			
 			if (renderSprite == null)
-			{
 				renderSprite = new FlxSprite();
-			}
 			
 			var rectX:Float = repeatX ? 0 : scrollX;
 			var rectWidth:Float = repeatX ? width : graphic.bitmap.width;
