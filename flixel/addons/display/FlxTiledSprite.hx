@@ -166,6 +166,7 @@ class FlxTiledSprite extends FlxStrip
 			
 			FlxSpriteUtil.flashGfx.drawRect(rectX, rectY, rectWidth, rectHeight);
 			renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
+			FlxSpriteUtil.flashGfx.clear();
 			renderSprite.dirty = true;
 		}
 		else
