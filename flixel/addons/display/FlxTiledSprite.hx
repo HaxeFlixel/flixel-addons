@@ -117,57 +117,7 @@ class FlxTiledSprite extends FlxStrip
 		
 		if (FlxG.renderBlit)
 		{
-			graphicVisible = true;
-			
-			if (renderSprite == null)
-				renderSprite = new FlxSprite();
-			
-			var rectX:Float = repeatX ? 0 : scrollX;
-			var rectWidth:Float = repeatX ? width : graphic.bitmap.width;
-			
-			if (!repeatX && (rectX > width || rectX + rectWidth < 0))
-			{
-				graphicVisible = false;
-				return;
-			}
-			
-			var rectY:Float = repeatY ? 0 : scrollY;
-			var rectHeight:Float = repeatY ? height : graphic.bitmap.height;
-			
-			if (!repeatY && (rectY > height || rectY + rectHeight < 0))
-			{
-				graphicVisible = false;
-				return;
-			}
-			
-			if (renderSprite.width != width || renderSprite.height != height)
-			{
-				renderSprite.makeGraphic(Std.int(width), Std.int(height), FlxColor.TRANSPARENT, true);
-			}
-			else
-			{
-				_flashRect2.setTo(0, 0, width, height);
-				renderSprite.pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
-			}
-			
-			FlxSpriteUtil.flashGfx.clear();
-			
-			if (scrollX != 0 || scrollY != 0)
-			{
-				_matrix.identity();
-				_matrix.tx = Math.round(scrollX);
-				_matrix.ty = Math.round(scrollY);
-				FlxSpriteUtil.flashGfx.beginBitmapFill(graphic.bitmap, _matrix);
-			}
-			else
-			{
-				FlxSpriteUtil.flashGfx.beginBitmapFill(graphic.bitmap);
-			}
-			
-			FlxSpriteUtil.flashGfx.drawRect(rectX, rectY, rectWidth, rectHeight);
-			renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
-			FlxSpriteUtil.flashGfx.clear();
-			renderSprite.dirty = true;
+			updateRenderSprite();
 		}
 		else
 		{
@@ -197,6 +147,61 @@ class FlxTiledSprite extends FlxStrip
 		{
 			super.draw();
 		}
+	}
+	
+	private function updateRenderSprite():Void
+	{
+		graphicVisible = true;
+			
+		if (renderSprite == null)
+			renderSprite = new FlxSprite();
+		
+		var rectX:Float = repeatX ? 0 : scrollX;
+		var rectWidth:Float = repeatX ? width : graphic.bitmap.width;
+		
+		if (!repeatX && (rectX > width || rectX + rectWidth < 0))
+		{
+			graphicVisible = false;
+			return;
+		}
+		
+		var rectY:Float = repeatY ? 0 : scrollY;
+		var rectHeight:Float = repeatY ? height : graphic.bitmap.height;
+		
+		if (!repeatY && (rectY > height || rectY + rectHeight < 0))
+		{
+			graphicVisible = false;
+			return;
+		}
+		
+		if (renderSprite.width != width || renderSprite.height != height)
+		{
+			renderSprite.makeGraphic(Std.int(width), Std.int(height), FlxColor.TRANSPARENT, true);
+		}
+		else
+		{
+			_flashRect2.setTo(0, 0, width, height);
+			renderSprite.pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
+		}
+		
+		FlxSpriteUtil.flashGfx.clear();
+		
+		if (scrollX != 0 || scrollY != 0)
+		{
+			_matrix.identity();
+			_matrix.tx = Math.round(scrollX);
+			_matrix.ty = Math.round(scrollY);
+			FlxSpriteUtil.flashGfx.beginBitmapFill(graphic.bitmap, _matrix);
+		}
+		else
+		{
+			FlxSpriteUtil.flashGfx.beginBitmapFill(graphic.bitmap);
+		}
+		
+		FlxSpriteUtil.flashGfx.drawRect(rectX, rectY, rectWidth, rectHeight);
+		renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
+		FlxSpriteUtil.flashGfx.clear();
+		renderSprite.dirty = true;
 	}
 	
 	private function updateVerticesData():Void

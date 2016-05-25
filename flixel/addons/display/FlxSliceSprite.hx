@@ -374,15 +374,10 @@ class FlxSliceSprite extends FlxStrip
 				
 				getScreenPosition(_point, camera);
 				
-				drawTileOnCamera(CENTER, camera);
-				drawTileOnCamera(TOP, camera);
-				drawTileOnCamera(BOTTOM, camera);
-				drawTileOnCamera(LEFT, camera);
-				drawTileOnCamera(RIGHT, camera);
-				drawTileOnCamera(TOP_LEFT, camera);
-				drawTileOnCamera(TOP_RIGHT, camera);
-				drawTileOnCamera(BOTTOM_LEFT, camera);
-				drawTileOnCamera(BOTTOM_RIGHT, camera);
+				for (i in 0...9)
+				{
+					drawTileOnCamera(i, camera);
+				}
 			}
 		}
 	}
