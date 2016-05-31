@@ -1,16 +1,16 @@
 package flixel.addons.display;
 
-import flixel.FlxStrip;
 import flixel.FlxSprite;
+import flixel.FlxStrip;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
+import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxMath;
 import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxSpriteUtil;
-import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 
 /**
  * Sprite which can be used for various sorts of slicing (9-slice, 3 slice, tiled sprite but without scrolling).
@@ -102,7 +102,7 @@ class FlxSliceSprite extends FlxStrip
 	private var _snappedWidth:Float = -1;
 	private var _snappedHeight:Float = -1;
 	
-	public function new(Graphic:FlxGraphicAsset, SliceRect:FlxRect, Width:Float, Height:Float) 
+	public function new(Graphic:FlxGraphicAsset, SliceRect:FlxRect, Width:Float, Height:Float)
 	{
 		super();
 		
@@ -132,7 +132,7 @@ class FlxSliceSprite extends FlxStrip
 		height = Height;
 	}
 	
-	override public function destroy():Void 
+	override public function destroy():Void
 	{
 		sliceRect = null;
 		sliceRects = null;
@@ -145,7 +145,7 @@ class FlxSliceSprite extends FlxStrip
 		super.destroy();
 	}
 	
-	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite 
+	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite
 	{
 		graphic = FlxG.bitmap.add(Graphic);
 		return this;
@@ -157,7 +157,7 @@ class FlxSliceSprite extends FlxStrip
 		return this;
 	}
 	
-	override function set_graphic(Value:FlxGraphic):FlxGraphic 
+	override function set_graphic(Value:FlxGraphic):FlxGraphic
 	{
 		if (graphic != Value)
 			regen = regenSlices = true;
@@ -270,7 +270,7 @@ class FlxSliceSprite extends FlxStrip
 			
 			sliceV[0] = X;
 			sliceV[1] = Y;
-			sliceV[2] = X +Width;
+			sliceV[2] = X + Width;
 			sliceV[3] = Y;
 			sliceV[4] = X + Width;
 			sliceV[5] = Y + Height;
@@ -302,7 +302,7 @@ class FlxSliceSprite extends FlxStrip
 		}
 	}
 	
-	function regenSliceFrames():Void
+	private function regenSliceFrames():Void
 	{
 		if (!regenSlices || graphic == null || sliceRect == null)
 			return;
@@ -350,7 +350,7 @@ class FlxSliceSprite extends FlxStrip
 		regenSlices = false;
 	}
 	
-	override public function draw():Void 
+	override public function draw():Void
 	{
 		if (regen)
 			regenGraphic();
@@ -390,7 +390,7 @@ class FlxSliceSprite extends FlxStrip
 		}
 	}
 	
-	override function set_width(Width:Float):Float 
+	override function set_width(Width:Float):Float
 	{
 		if (Width <= 0)
 			return Width;
@@ -401,7 +401,7 @@ class FlxSliceSprite extends FlxStrip
 		return super.set_width(Width);
 	}
 	
-	override function set_height(Height:Float):Float 
+	override function set_height(Height:Float):Float
 	{
 		if (Height <= 0)
 			return Height;
