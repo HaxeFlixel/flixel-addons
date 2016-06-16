@@ -12,7 +12,7 @@ class TiledObject
 	/**
 	 * Use these to determine whether a sprite should be flipped, for example:
 	 * 
-	 * var flipped:Bool = cast (oject.gid & TiledObject.FLIPPED_HORIZONTALLY_FLAG);
+	 * var flipped:Bool = (oject.gid & TiledObject.FLIPPED_HORIZONTALLY_FLAG) > 0;
 	 * sprite.facing = flipped ? FlxObject.LEFT : FlxObject.RIGHT;
 	 */
 	public static inline var FLIPPED_VERTICALLY_FLAG = 0x40000000;
@@ -145,17 +145,14 @@ class TiledObject
 			points.push(FlxPoint.get(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
 		}
 	}
-	
-	/**
-	 * Property accessors
-	 */
+
 	private inline function get_flippedHorizontally():Bool
 	{
-		return cast (gid & FLIPPED_HORIZONTALLY_FLAG);
+		return (gid & FLIPPED_HORIZONTALLY_FLAG) > 0;
 	}
-	
+
 	private inline function get_flippedVertically():Bool
 	{
-		return cast (gid & FLIPPED_VERTICALLY_FLAG);
+		return (gid & FLIPPED_VERTICALLY_FLAG) > 0;
 	}
 }
