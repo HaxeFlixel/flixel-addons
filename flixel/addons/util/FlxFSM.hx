@@ -124,7 +124,7 @@ class FlxFSM<T> implements IFlxDestroyable
 				var curName = Type.getClassName(stateClass);
 				var newName = Type.getClassName(newStateClass);
 				
-				if (pools.exists(newName) == false)
+				if (newName != null && pools.exists(newName) == false)
 				{
 					pools.set(newName, new FlxPool<FlxFSMState<T>>(newStateClass));
 				}
@@ -133,7 +133,7 @@ class FlxFSM<T> implements IFlxDestroyable
 				
 				state = pools.get(newName).get();
 				
-				if (state != null && pools.exists(curName))
+				if (state != null && curName != null && pools.exists(curName))
 				{
 					pools.get(curName).put(returnToPool);
 				}
