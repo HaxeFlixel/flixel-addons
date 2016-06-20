@@ -36,6 +36,11 @@ class FlxScreenGrab extends FlxBasic
 	private static var _region:Rectangle;
 	
 	/**
+	 * Defines a preset path to use on non-flash lime legacy >= 2.9.0 (the current default), because no file dialog is available in this case.
+	 */
+	public static var presetPath:String = "";
+	
+	/**
 	 * Defines the region of the screen that should be captured. If you need it to be a fixed location then use this.
 	 * If you want to grab the whole SWF size, you don't need to set this as that is the default.
 	 * Remember that if your game is running in a zoom mode > 1 you need to account for this here.
@@ -172,7 +177,15 @@ class FlxScreenGrab extends FlxBasic
 	#else
 		png = screenshot.bitmapData.encode(screenshot.bitmapData.rect, new PNGEncoderOptions());
 	#end
-		
+	#if sys
+		var writerFunc = function(str:String) {
+			var path = fixFilename(str);
+			var f = sys.io.File.write(path, true);
+			f.writeString(png.readUTFBytes(png.length));
+			f.close();
+			path = null;
+		}
+	#end
 	#if !sys
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
@@ -189,13 +202,7 @@ class FlxScreenGrab extends FlxBasic
 		
 		var path = "";
 		
-		fd.onSelect.add(function(str:String) {
-			path = fixFilename(str);
-			var f = sys.io.File.write(path, true);
-			f.writeString(png.readUTFBytes(png.length));
-			f.close();
-			path = null;
-		});
+		fd.onSelect.add(writerFunc);
 		
 		try
 		{
@@ -205,15 +212,13 @@ class FlxScreenGrab extends FlxBasic
 		{
 			path = Filename;			//if there was an error write out to default directory (game install directory)
 		}
-		
-		if (path != "" && path != null)	//if path is empty, the user cancelled the save operation and we can safely do nothing
-		{
-			path = fixFilename(path);
-			var f = sys.io.File.write(path, true);
-			f.writeString(png.readUTFBytes(png.length));
-			f.close();
-		}
+	#else
+		var path = presetPath;
+		if (path != "" && path != null)
+			path += Filename;
 	#end
+		if (path != "" && path != null)	//if path is empty, the user cancelled the save operation and we can safely do nothing
+			writerFunc(path);
 	}
 	
 	override public function update(elapsed:Float):Void
