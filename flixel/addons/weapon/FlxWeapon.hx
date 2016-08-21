@@ -206,9 +206,21 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		switch (fireFrom)
 		{
-			case PARENT(parent, offset):
-				currentBullet.last.x = currentBullet.x = parent.x + FlxG.random.float(offset.min.x, offset.max.x);
-				currentBullet.last.y = currentBullet.y = parent.y + FlxG.random.float(offset.min.y, offset.max.y);
+			case PARENT(parent, offset, useParentDirection):
+				
+				//stote new offset in a new variable
+				var actualOffset = new FlxPoint(FlxG.random.float(offset.min.x, offset.max.x),FlxG.random.float(offset.min.y, offset.max.y));
+				if(useParentDirection == true )
+				{
+					//rotate actual offset around parent origin using the parent angle
+					actualOffset = rotatePoints(actualOffset, parent.origin, parent.angle);
+
+					//reposition offset to have it's origin at the new returned point
+					actualOffset.subtract(currentBullet.width/2,currentBullet.height/2);
+				}
+
+				currentBullet.last.x = currentBullet.x = parent.x + actualOffset.x;
+				currentBullet.last.y = currentBullet.y = parent.y + actualOffset.y;
 				
 			case POSITION(position):
 				currentBullet.last.x = currentBullet.x = FlxG.random.float(position.min.x, position.max.x);
@@ -269,6 +281,28 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		return true;
 	}
 		
+	/**
+	 * Calculates the new position for a point rotated around another point 
+	 * 
+	 * @param	point	The to be rotated point
+	 * @param	origin	The to be rotated around point. usually the origin of the parent flxsprite
+	 * @param	point	the current angle from of the origin. usually the parent angle.
+	 * @return	The new rotated Point
+	 */
+	public inline function rotatePoints(point:FlxPoint,origin:FlxPoint, angle:Float):FlxPoint
+	{
+		var returnedPoint:FlxPoint = FlxPoint.weak();
+
+		var inBetweenAngle:Float = origin.angleBetween(point) - 90;
+		inBetweenAngle =  angle + inBetweenAngle;
+		var inBetweenDistance : Float = origin.distanceTo(point);
+		
+		returnedPoint.x = Math.cos(inBetweenAngle * Math.PI / 180) * inBetweenDistance;
+		returnedPoint.y = Math.sin(inBetweenAngle * Math.PI / 180) * inBetweenDistance;
+		return returnedPoint.add(origin.x, origin.y);
+		
+	}
+
 	/**
 	 * Fires a bullet (if one is available) based on the facing (UP/DOWN/LEFT/RIGHT) of the Weapons parent
 	 * 
@@ -468,7 +502,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	{
 		switch (v) 
 		{
-			case PARENT(p, o): 
+			case PARENT(p, o, u): 
 				parent = p;
 			default: 
 				parent = null;
@@ -479,7 +513,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 
 enum FlxWeaponFireFrom
 {
-	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>);
+	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>, useParentAngle:Bool = false);
 	POSITION(position:FlxBounds<FlxPoint>);
 }
 
