@@ -513,7 +513,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 
 enum FlxWeaponFireFrom
 {
-	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>, ?useParentAngle:Bool);
+	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>, useParentAngle:Bool = false);
 	POSITION(position:FlxBounds<FlxPoint>);
 }
 
