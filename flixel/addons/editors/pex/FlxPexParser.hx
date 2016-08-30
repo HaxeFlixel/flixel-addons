@@ -25,9 +25,10 @@ class FlxPexParser
 	 * @param	data			The data to be parsed. It has to be an ID to the assets file, a file embedded with @:file(), a string with the content of the file or a XML object.
 	 * @param	particleGraphic	The particle graphic
 	 * @param	emitter			(optional) A FlxEmitter. Most properties will be overwritten!
+	 * @param	scale			(optional) Used to scale the resulting emitter. Will scale both the texture size and positions of resulting particles.
 	 * @return	A new emitter	
 	 */
-	public static function parse<T:FlxEmitter>(data:Dynamic, particleGraphic:FlxGraphicAsset, ?emitter:T):T
+	public static function parse<T:FlxEmitter>(data:Dynamic, particleGraphic:FlxGraphicAsset, ?emitter:T, scale:Float = 1):T
 	{
 		if (emitter == null)
 		{
@@ -54,7 +55,7 @@ class FlxPexParser
 		var angle = minMax("angle", config);
 		
 		var startSize = minMax("startParticleSize", config);
-		var finishSize = minMax("finishParticleSize", "FinishParticleSizeVariance", config);
+		var finishSize = minMax("finishParticleSize", "finishParticleSizeVariance", config);
 		var rotationStart = minMax("rotationStart", config);
 		var rotationEnd = minMax("rotationEnd", config);
 		
@@ -70,24 +71,24 @@ class FlxPexParser
 		emitter.launchMode = FlxEmitterMode.CIRCLE;
 		emitter.loadParticles(particleGraphic, maxParticles);
 		
-		emitter.width = sourcePositionVariance.x == 0 ? 1 : sourcePositionVariance.x * 2;
-		emitter.height = sourcePositionVariance.y == 0 ? 1 : sourcePositionVariance.y * 2;
+		emitter.width = (sourcePositionVariance.x == 0 ? 1 : sourcePositionVariance.x * 2) * scale;
+		emitter.height = (sourcePositionVariance.y == 0 ? 1 : sourcePositionVariance.y * 2) * scale;
 		
 		emitter.lifespan.set(lifespan.min, lifespan.max);
 		
-		emitter.acceleration.set(gravity.x, gravity.y);		
+		emitter.acceleration.set(gravity.x * scale, gravity.y * scale);
 		
 		emitter.launchAngle.set(angle.min, angle.max);
 		
-		emitter.speed.start.set(speed.min, speed.max);
-		emitter.speed.end.set(speed.min, speed.max);
+		emitter.speed.start.set(speed.min * scale, speed.max * scale);
+		emitter.speed.end.set(speed.min * scale, speed.max * scale);
 		
 		emitter.angle.set(rotationStart.min, rotationStart.max, rotationEnd.min, rotationEnd.max);
 		
-		emitter.scale.start.min.set(startSize.min / particle.frameWidth, startSize.min / particle.frameHeight);
-		emitter.scale.start.max.set(startSize.max / particle.frameWidth, startSize.max / particle.frameHeight);
-		emitter.scale.end.min.set(finishSize.min / particle.frameWidth, finishSize.min / particle.frameHeight);
-		emitter.scale.end.max.set(finishSize.max / particle.frameWidth, finishSize.max / particle.frameHeight);
+		emitter.scale.start.min.set(startSize.min / particle.frameWidth * scale, startSize.min / particle.frameHeight * scale);
+		emitter.scale.start.max.set(startSize.max / particle.frameWidth * scale, startSize.max / particle.frameHeight * scale);
+		emitter.scale.end.min.set(finishSize.min / particle.frameWidth * scale, finishSize.min / particle.frameHeight * scale);
+		emitter.scale.end.max.set(finishSize.max / particle.frameWidth * scale, finishSize.max / particle.frameHeight * scale);
 		
 		emitter.alpha.set(startColors.minColor.alphaFloat, startColors.maxColor.alphaFloat, finishColors.minColor.alphaFloat, finishColors.maxColor.alphaFloat);
 		emitter.color.set(startColors.minColor, startColors.maxColor, finishColors.minColor, finishColors.maxColor);
@@ -104,8 +105,8 @@ class FlxPexParser
 			propertyVariance = property + "Variance";
 		}
 		
-		var node = config.node.resolve(property);
-		var varianceNode = config.node.resolve(propertyVariance);
+		var node = config.node.resolve(getNodeName(property, config));
+		var varianceNode = config.node.resolve(getNodeName(propertyVariance, config));
 		
 		var min = Std.parseFloat(node.att.value);
 		var variance = Std.parseFloat(varianceNode.att.value);
@@ -119,7 +120,7 @@ class FlxPexParser
 	
 	private static function xy(property:String, config:Fast): { x:Float, y:Float }
 	{
-		var node = config.node.resolve(property);
+		var node = config.node.resolve(getNodeName(property, config));
 		
 		return 
 		{
@@ -130,8 +131,8 @@ class FlxPexParser
 	
 	private static function color(property:String, config:Fast): { minColor:FlxColor, maxColor:FlxColor }
 	{
-		var node = config.node.resolve(property);
-		var varianceNode = config.node.resolve(property + "Variance");
+		var node = config.node.resolve(getNodeName(property, config));
+		var varianceNode = config.node.resolve(getNodeName(property + "Variance", config));
 		
 		var minR = Std.parseFloat(node.att.red);
 		var minG = Std.parseFloat(node.att.green);
@@ -149,7 +150,14 @@ class FlxPexParser
 			maxColor: FlxColor.fromRGBFloat(minR + varR, minG + varG, minB + varB, minA + varA)
 		};
 	}
-	
+
+	private static inline function getNodeName(property:String, config:Fast):String
+	{
+		// for backwards compatibility, check for versions of properties that
+		// start with either lower or upper case
+		return config.hasNode.resolve(property) ? property : (property.substr(0, 1).toUpperCase() + property.substr(1));
+	}
+
 	private static function getFastNode(data:Dynamic):Fast
 	{
 		var str:String = "";
