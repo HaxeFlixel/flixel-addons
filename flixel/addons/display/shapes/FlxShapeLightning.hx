@@ -64,10 +64,7 @@ class FlxShapeLightning extends FlxShapeLine
 		
 		list_segs = new Array<LineSegment>();
 		list_branch = new Array<LineSegment>();
-		
-		var w:Float = Math.abs(A.x - B.x);
-		var h:Float = Math.abs(A.y - B.y);
-		
+
 		super(X, Y, A, B, { thickness: lightningStyle.thickness, color: lightningStyle.color});
 		
 		//create the main lightning bolt
@@ -131,7 +128,6 @@ class FlxShapeLightning extends FlxShapeLine
 		var down:Float = 0;
 		var right:Float = 0;
 		
-		var l:LineSegment;
 		for (l in list_segs) 
 		{
 			if (l.ax < left)	{ left	= l.ax; }

@@ -26,9 +26,6 @@ class FlxShapeSquareDonut extends FlxShape
 	
 	override public function drawSpecificShape(?matrix:Matrix):Void 
 	{
-		var cx:Float = Math.ceil(width / 2);
-		var cy:Float = Math.ceil(height / 2);
-		
 		FlxSpriteUtil.drawRect(this, 0, 0, radius_out * 2, radius_out * 2, fillColor, lineStyle, { matrix: matrix });
 		if (radius_in > 0)
 		{

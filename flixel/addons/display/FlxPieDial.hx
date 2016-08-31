@@ -78,9 +78,6 @@ class FlxPieDial extends FlxSprite
 			degrees *= -1;
 		}
 		
-		var halfW = W / 2;
-		var halfH = H / 2;
-		
 		var sweep:Float = Clockwise ? 0 : 360;
 		var bmp2 = new BitmapData(bmp.width, bmp.height, true, FlxColor.TRANSPARENT);
 		var fullBmp:BitmapData = fullFrame.pixels.clone();
@@ -145,12 +142,6 @@ class FlxPieDial extends FlxSprite
 		var W = Radius * 2;
 		var H = Radius * 2;
 		
-		var rows:Int = Math.ceil(Math.sqrt(Frames));
-		var cols:Int = Math.ceil(Frames / rows);
-		
-		var back = Clockwise ? FlxColor.BLACK : FlxColor.WHITE;
-		var fore = Clockwise ? FlxColor.WHITE : FlxColor.BLACK;
-		
 		var fullFrame = new FlxSprite().makeGraphic(W, H, FlxColor.TRANSPARENT, true);
 		if (InnerRadius > Radius)
 		{
@@ -199,8 +190,6 @@ class FlxPieDial extends FlxSprite
 		
 		nextFrame.pixels.fillRect(nextFrame.pixels.rect, back);
 		polygon[0].set(halfW, halfH);
-		
-		var shortPolygon = [];
 		
 		if (sweep < 45)
 		{

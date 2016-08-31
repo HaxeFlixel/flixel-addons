@@ -54,7 +54,6 @@ class TiledMap
 	public function new(data:FlxTiledMapAsset, rootPath:String="")
 	{
 		var source:Fast = null;
-		var node:Fast = null;
 		
 		this.rootPath = rootPath;
 		
@@ -164,9 +163,6 @@ class TiledMap
 	 */
 	public function getGidOwner(gid:Int):TiledTileSet
 	{
-		var last:TiledTileSet = null;
-		var set:TiledTileSet;
-		
 		for (set in tilesets)
 		{
 			if (set.hasGid(gid))

@@ -92,7 +92,6 @@ class TiledObject
 		if (source.has.gid && source.att.gid.length != 0) 
 		{
 			gid = Std.parseInt(source.att.gid);
-			var set:TiledTileSet;
 			
 			for (set in layer.map.tilesets)
 			{
@@ -108,7 +107,6 @@ class TiledObject
 		}
 		
 		// load properties
-		var node:Xml;
 		properties = new TiledPropertySet();
 		
 		for (node in source.nodes.properties)

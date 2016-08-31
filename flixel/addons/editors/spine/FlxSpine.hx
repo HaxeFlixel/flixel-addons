@@ -198,7 +198,6 @@ class FlxSpine extends FlxSprite
 	{
 		var drawOrder:Array<Slot> = skeleton.drawOrder;
 		var n:Int = drawOrder.length;
-		var graph:FlxGraphic = null;
 		var wrapper:FlxStrip;
 		var worldVertices:Array<Float> = _tempVertices;
 		var triangles:Array<Int> = null;
@@ -208,7 +207,6 @@ class FlxSpine extends FlxSprite
 		
 		var r:Float = 0, g:Float = 0, b:Float = 0, a:Float = 0;
 		var wrapperColor:Int;
-		var wrapperBlending:BlendMode;
 		
 		for (i in 0...n) 
 		{

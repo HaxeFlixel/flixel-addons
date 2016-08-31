@@ -34,7 +34,7 @@ class TiledTileSet
 	
 	public function new(data:FlxTiledTileAsset, rootPath:String="")
 	{
-		var node:Fast, source:Fast;
+		var source:Fast;
 		numTiles = 0xFFFFFF;
 		numRows = numCols = 1;
 		

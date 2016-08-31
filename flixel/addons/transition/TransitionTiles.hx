@@ -21,8 +21,6 @@ class TransitionTiles extends TransitionEffect
 		
 		_grpSprites = new FlxTypedSpriteGroup<FlxTransitionSprite>();
 		var delay:Float = 0;
-		var yloops:Int = 0;
-		var xloops:Int = 0;
 		
 		if (data.tileData == null)
 		{

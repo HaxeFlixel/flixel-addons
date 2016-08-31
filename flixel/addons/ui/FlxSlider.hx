@@ -439,7 +439,7 @@ class FlxSlider extends FlxSpriteGroup
 	{
 		try 
 		{
-			var prop:Dynamic = Reflect.getProperty(_object, Value);
+			Reflect.getProperty(_object, Value);
 			varString = Value;
 		}
 		catch (e:Dynamic) 
