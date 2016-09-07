@@ -1,7 +1,7 @@
 package flixel.addons.editors.spine.texture;
 
-import openfl.Assets;
 import openfl.display.BitmapData;
+import flixel.system.FlxAssets;
 import spinehaxe.atlas.AtlasPage;
 import spinehaxe.atlas.AtlasRegion;
 import spinehaxe.atlas.Texture;
@@ -23,7 +23,7 @@ class FlixelTextureLoader implements TextureLoader
 	
 	public function loadPage(page:AtlasPage, path:String):Void 
 	{
-		var bitmapData:BitmapData = Assets.getBitmapData(this.path + path);
+		var bitmapData:BitmapData = FlxAssets.getBitmapData(this.path + path);
 		if (bitmapData == null)
 			throw ("BitmapData not found with name: " + this.path + path);
 		page.rendererObject = bitmapData;
