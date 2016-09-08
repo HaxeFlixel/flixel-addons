@@ -189,36 +189,37 @@ class FlxScreenGrab extends FlxBasic
 	#if !sys
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
-	#elseif (!lime_legacy || lime < "2.9.0")
-		
-		var documentsDirectory = "";
-		#if lime_legacy
-			documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
-		#else
-			documentsDirectory = lime.system.System.documentsDirectory;
-		#end
-		
-		var fd:FileDialog = new FileDialog();
-		
-		var path = "";
-		
-		fd.onSelect.add(writerFunc);
-		
-		try
-		{
-			fd.browse(FileDialogType.SAVE, "*.png", documentsDirectory);
-		}
-		catch (msg:String)
-		{
-			path = Filename;			//if there was an error write out to default directory (game install directory)
-		}
 	#else
-		var path = presetPath;
-		if (path != "" && path != null)
-			path += Filename;
-	#end
+		#if (!lime_legacy || lime < "2.9.0")
+			var documentsDirectory = "";
+			#if lime_legacy
+				documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+			#else
+				documentsDirectory = lime.system.System.documentsDirectory;
+			#end
+
+			var fd:FileDialog = new FileDialog();
+
+			var path = "";
+
+			fd.onSelect.add(writerFunc);
+
+			try
+			{
+				fd.browse(FileDialogType.SAVE, "*.png", documentsDirectory);
+			}
+			catch (msg:String)
+			{
+				path = Filename;			//if there was an error write out to default directory (game install directory)
+			}
+		#else
+			var path = presetPath;
+			if (path != "" && path != null)
+				path += Filename;
+		#end
 		if (path != "" && path != null)	//if path is empty, the user cancelled the save operation and we can safely do nothing
 			writerFunc(path);
+	#end
 	}
 	
 	override public function update(elapsed:Float):Void
