@@ -59,9 +59,6 @@ class FlxPexParser
 		var rotationStart = minMax("rotationStart", config);
 		var rotationEnd = minMax("rotationEnd", config);
 		
-		var radialAccel = minMax("radialAcceleration", "radialAccelVariance", config);
-		var tangentialAccel = minMax("tangentialAcceleration", "tangentialAccelVariance", config);
-		
 		var sourcePositionVariance = xy("sourcePositionVariance", config);
 		var gravity = xy("gravity", config);
 		
