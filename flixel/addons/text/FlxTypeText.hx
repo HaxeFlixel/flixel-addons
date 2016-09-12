@@ -388,12 +388,14 @@ class FlxTypeText extends FlxText
 		{
 			if (_typing && _timer >= delay)
 			{
-				_length ++;
+				_length += Std.int(_timer / delay);
+				if (_length > _finalText.length) _length = _finalText.length;
 			}
 			
 			if (_erasing && _timer >= eraseDelay)
 			{
-				_length --;
+				_length -= Std.int(_timer / eraseDelay);
+				if (_length < 0) _length = 0;
 			}
 			
 			if ((_typing && _timer >= delay) || (_erasing && _timer >= eraseDelay))
@@ -411,7 +413,7 @@ class FlxTypeText extends FlxText
 				}
 				else
 				{
-					_timer = 0;
+					_timer %= delay;
 				}
 				
 				if (sounds != null && !useDefaultSound)
