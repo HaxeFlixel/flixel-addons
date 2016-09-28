@@ -28,7 +28,7 @@ class TiledTileSet
 	
 	public var properties:TiledPropertySet;
 	
-	public var tileProps:Array<TiledPropertySet>;
+	public var tileProps:Array<TiledTilePropertySet>;
 	
 	public var tileImagesSources:Array<TiledImageTile>;
 	
@@ -133,7 +133,7 @@ class TiledTileSet
 				properties.extend(prop);
 			
 			// read tiles properties
-			tileProps = new Array<TiledPropertySet>();
+			tileProps = new Array<TiledTilePropertySet>();
 			
 			for (node in source.nodes.tile)
 			{
@@ -143,11 +143,21 @@ class TiledTileSet
 				}
 				
 				var id:Int = Std.parseInt(node.att.id);
-				tileProps[id] = new TiledPropertySet();
+				tileProps[id] = new TiledTilePropertySet(id);
 				tileProps[id].keys.set("id", Std.string(id));
 				for (prop in node.nodes.properties)
 				{
 					tileProps[id].extend(prop);
+				}
+				if (node.hasNode.animation)
+				{
+					for (frame in node.node.animation.nodes.frame)
+					{
+						tileProps[id].addAnimationFrame(
+							Std.parseInt(frame.att.tileid),
+							Std.parseFloat(frame.att.duration)
+						);
+					}
 				}
 			}
 			
