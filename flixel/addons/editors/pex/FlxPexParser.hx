@@ -11,7 +11,15 @@ import openfl.Assets;
 import openfl.display.BlendMode;
 
 /**
- * Parser for Starling/Sparrow particle files created with http://onebyonedesign.com/flash/particleeditor/ 
+ * Parser for particle files created with "Starling Particle Editor" or "Particle Designer".
+ *
+ * Starling Particle Editor:
+ * @see http://onebyonedesign.com/flash/particleeditor/
+ * @see https://github.com/devon-o/Starling-Particle-Editor
+ *
+ * Particle Designer:
+ * @see https://71squared.com/particledesigner
+ *
  * @author MrCdK
  */
 class FlxPexParser
