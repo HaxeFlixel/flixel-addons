@@ -90,7 +90,41 @@ class FlxPexParser
 		emitter.alpha.set(startColors.minColor.alphaFloat, startColors.maxColor.alphaFloat, finishColors.minColor.alphaFloat, finishColors.maxColor.alphaFloat);
 		emitter.color.set(startColors.minColor, startColors.maxColor, finishColors.minColor, finishColors.maxColor);
 		
-		emitter.blend = BlendMode.ADD;
+		if (config.hasNode.blendFuncSource && config.hasNode.blendFuncDestination)
+		{
+			/**
+			 * ParticleDesigner blend function values:
+			 *
+			 * 0x000: ZERO
+			 * 0x001: ONE
+			 * 0x300: SOURCE_COLOR
+			 * 0x301: ONE_MINUS_SOURCE_COLOR
+			 * 0x302: SOURCE_ALPHA
+			 * 0x303: ONE_MINUS_SOURCE_ALPHA
+			 * 0x304: DESTINATION_ALPHA
+			 * 0x305: ONE_MINUS_DESTINATION_ALPHA
+			 * 0x306: DESTINATION_COLOR
+			 * 0x307: ONE_MINUS_DESTINATION_COLOR
+			 **/
+			
+			var src = Std.parseInt(config.node.blendFuncSource.att.value),
+				dst = Std.parseInt(config.node.blendFuncDestination.att.value);
+			emitter.blend = switch ((src << 12) | dst)
+			{
+				case 0x306303:
+					BlendMode.MULTIPLY;
+				case 0x001301:
+					BlendMode.SCREEN;
+				case 0x001303, 0x302303:
+					BlendMode.NORMAL;
+				default:
+					BlendMode.ADD;
+			}
+		}
+		else
+		{
+			emitter.blend = BlendMode.ADD;
+		}
 		emitter.keepScaleRatio = true;
 		return emitter;
 	}
