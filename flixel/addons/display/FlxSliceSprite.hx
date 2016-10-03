@@ -390,6 +390,8 @@ class FlxSliceSprite extends FlxStrip
 		if (slices[TileIndex] != null)
 		{
 			Camera.drawTriangles(slices[TileIndex], sliceVertices[TileIndex], indices, sliceUVTs[TileIndex], colors, _point, blend, repeat, antialiasing);
+			
+			// TODO: drawUVQuad... if openfl 4...  
 		}
 	}
 	
