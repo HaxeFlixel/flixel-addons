@@ -7,6 +7,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.system.render.blit.FlxBlitView;
+import flixel.system.render.hardware.FlxHardwareView;
 import flixel.text.FlxText;
 
 /**
@@ -136,11 +138,11 @@ class FlxTextField extends FlxText
 		{
 			if (FlxG.renderTile)
 			{
-				_camera.canvas.addChild(textField);
+				cast(_camera.view, FlxHardwareView).flashSprite.addChild(textField);
 			}
 			else 
 			{
-				_camera.flashSprite.addChild(textField);
+				cast(_camera.view, FlxBlitView).flashSprite.addChild(textField);
 			}
 			
 			_addedToDisplay = true;
@@ -189,11 +191,11 @@ class FlxTextField extends FlxText
 		{
 			if (FlxG.renderTile)
 			{
-				Value.canvas.addChild(textField);
+				cast(Value.view, FlxHardwareView).flashSprite.addChild(textField);
 			}
 			else
 			{
-				Value.flashSprite.addChild(textField);
+				cast(Value.view, FlxBlitView).flashSprite.addChild(textField);
 			}
 			
 			_addedToDisplay = true;

@@ -7,7 +7,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
-import flixel.graphics.tile.FlxDrawTilesItem;
 import flixel.math.FlxPoint;
 import flixel.math.FlxPoint.FlxCallbackPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
@@ -36,13 +35,6 @@ class FlxBackdrop extends FlxSprite
 	
 	private var _tileInfo:Array<Float>;
 	private var _numTiles:Int = 0;
-	
-	// TODO: remove this hack and add docs about how to avoid tearing problem by preparing assets and some code...
-	/**
-	 * Try to eliminate 1 px gap between tiles in tile render mode by increasing tile scale, 
-	 * so the tile will look one pixel wider than it is.
-	 */
-	public var useScaleHack:Bool = true;
 	
 	/**
 	 * Creates an instance of the FlxBackdrop class, used to create infinitely scrolling backgrounds.
@@ -175,20 +167,8 @@ class FlxBackdrop extends FlxSprite
 				if (_tileFrame == null)
 					return;
 				
-				var drawItem = camera.startQuadBatch(_tileFrame.parent, false);
-				
 				_tileFrame.prepareMatrix(_matrix);
-				
-				var scaleX:Float = scale.x;
-				var scaleY:Float = scale.y;
-				
-				if (useScaleHack)
-				{
-					scaleX += 1 / (_tileFrame.sourceSize.x * camera.totalScaleX);
-					scaleY += 1 / (_tileFrame.sourceSize.y * camera.totalScaleY);
-				}
-				
-				_matrix.scale(scaleX, scaleY);
+				_matrix.scale(scale.x, scale.y);
 				
 				var tx:Float = _matrix.tx;
 				var ty:Float = _matrix.ty;
@@ -201,7 +181,7 @@ class FlxBackdrop extends FlxSprite
 					_matrix.tx = tx + (_ppoint.x + currTileX);
 					_matrix.ty = ty + (_ppoint.y + currTileY);
 					
-					drawItem.addQuad(_tileFrame, _matrix, colorTransform);
+					camera.drawPixels(_tileFrame, _matrix, colorTransform, null, antialiasing, shader);
 				}
 			}
 		}

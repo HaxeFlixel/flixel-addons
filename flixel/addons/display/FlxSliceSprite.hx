@@ -353,7 +353,10 @@ class FlxSliceSprite extends FlxStrip
 	override public function draw():Void
 	{
 		if (regen)
+		{
 			regenGraphic();
+			dirty = true;
+		}
 		
 		if (FlxG.renderBlit)
 		{
