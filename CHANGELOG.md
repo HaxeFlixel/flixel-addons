@@ -1,3 +1,15 @@
+2.2.0
+------------------------------
+* Compatibility with flixel 4.2.0
+* `FlxWeaponFireFrom`: added a `useParentAngle` argument to `PARENT` (#261)
+* `FlxPexParser`:
+ * added a `scale` argument to `new()` (#263)
+ * added support for blend modes (#270)
+* `FlxSpine`: fixed an issue with texture loading and state switches (#265)
+* `FlxTypeText`: added support for adding / removing more than one char per frame (#267)
+* `flixel.addons.editors.tiled`: added support for animated tiles (#268)
+* `FlxFSM`: fixed a runtime error on HTML5 (#271)
+
 2.1.0
 ------------------------------
 * Compatibility with flixel 4.1.0
