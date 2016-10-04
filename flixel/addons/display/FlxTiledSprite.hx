@@ -40,10 +40,19 @@ class FlxTiledSprite extends FlxSprite
 	
 	private var graphicVisible:Bool = true;
 	
+	/**
+	 * Quad rectangle. Rendering related.
+	 */
 	private var rect:FlxRect;
 	
+	/**
+	 * Quad UV coordinates. Rendering related.
+	 */
 	private var uv:FlxRect;
 	
+	/**
+	 * Graphic to tile sprite with.
+	 */
 	public var tileGraphic(default, set):FlxGraphic;
 	
 	public function new(?Graphic:FlxGraphicAsset, Width:Float, Height:Float, RepeatX:Bool = true, RepeatY:Bool = true) 
@@ -65,7 +74,10 @@ class FlxTiledSprite extends FlxSprite
 	
 	override public function destroy():Void 
 	{
-		renderSprite = FlxDestroyUtil.destroy(renderSprite);
+		tileGraphic = null;
+		rect = FlxDestroyUtil.put(rect);
+		uv = FlxDestroyUtil.put(uv);
+		
 		super.destroy();
 	}
 	
@@ -103,14 +115,14 @@ class FlxTiledSprite extends FlxSprite
 	{
 		if (!regen || tileGraphic == null)
 			return;
-		// TODO: continue from here...
+		
 		if (FlxG.renderBlit)
 		{
-			updateRenderSprite(); // TODO: rename this method...
+			updateGraphic();
 		}
 		else
 		{
-			updateVerticesData(); // TODO: rename this method...
+			updateFrameData();
 		}
 		
 		regen = false;
@@ -133,13 +145,47 @@ class FlxTiledSprite extends FlxSprite
 		}
 		else
 		{
-			super.draw();
+			for (camera in cameras)
+			{
+				if (!camera.visible || !camera.exists || !isOnScreen(camera))
+					continue;
+				
+				getScreenPosition(_point, camera).subtractPoint(offset);
+				
+				_matrix.identity();
+				_matrix.translate(-origin.x, -origin.y);
+				_matrix.scale(scale.x, scale.y);
+				
+				updateTrig();
+				
+				if (angle != 0)
+					_matrix.rotateWithTrig(_cosAngle, _sinAngle);
+				
+				_point.add(origin.x, origin.y);
+				_point.add(rect.x, rect.y);
+				_matrix.translate(_point.x, _point.y);
+				
+				if (isPixelPerfectRender(camera))
+				{
+					_matrix.tx = Math.floor(_matrix.tx);
+					_matrix.ty = Math.floor(_matrix.ty);
+				}
+				
+				camera.drawUVQuad(tileGraphic, rect, uv, _matrix, colorTransform, blend, antialiasing, shader);
+				
+				#if FLX_DEBUG
+				FlxBasic.visibleCount++;
+				#end
+			}
 			
-			// TODO: drawUVQuad... if openfl 4...
+			#if FLX_DEBUG
+			if (FlxG.debugger.drawDebug)
+				drawDebug();
+			#end
 		}
 	}
 	
-	private function updateRenderSprite():Void
+	private function updateGraphic():Void
 	{
 		graphicVisible = true;
 		
@@ -161,14 +207,14 @@ class FlxTiledSprite extends FlxSprite
 			return;
 		}
 		
-		if (renderSprite.width != width || renderSprite.height != height)
+		if (graphic == null || (graphic.width != width || graphic.height != height))
 		{
-			renderSprite.makeGraphic(Std.int(width), Std.int(height), FlxColor.TRANSPARENT, true);
+			makeGraphic(Std.int(width), Std.int(height), FlxColor.TRANSPARENT, true);
 		}
 		else
 		{
 			_flashRect2.setTo(0, 0, width, height);
-			renderSprite.pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
+			pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
 		}
 		
 		FlxSpriteUtil.flashGfx.clear();
@@ -178,71 +224,74 @@ class FlxTiledSprite extends FlxSprite
 			_matrix.identity();
 			_matrix.tx = Math.round(scrollX);
 			_matrix.ty = Math.round(scrollY);
-			FlxSpriteUtil.flashGfx.beginBitmapFill(graphic.bitmap, _matrix);
+			FlxSpriteUtil.flashGfx.beginBitmapFill(tileGraphic.bitmap, _matrix);
 		}
 		else
 		{
-			FlxSpriteUtil.flashGfx.beginBitmapFill(graphic.bitmap);
+			FlxSpriteUtil.flashGfx.beginBitmapFill(tileGraphic.bitmap);
 		}
 		
 		FlxSpriteUtil.flashGfx.drawRect(rectX, rectY, rectWidth, rectHeight);
-		renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
+		pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
 		FlxSpriteUtil.flashGfx.clear();
-		renderSprite.dirty = true;
+		dirty = true;
 	}
 	
-	private function updateVerticesData():Void
+	private function updateFrameData():Void
 	{
-		if (graphic == null)
+		if (tileGraphic == null)
+		{
+			graphicVisible = false;
 			return;
+		}
 		
-		var frame:FlxFrame = graphic.imageFrame.frame;
+		var frame:FlxFrame = tileGraphic.imageFrame.frame;
 		graphicVisible = true;
 		
 		if (repeatX)
 		{
-			vertices[0] = vertices[6] = 0.0;
-			vertices[2] = vertices[4] = width;
+			rect.x = 0.0;
+			rect.width = width;
 			
-			uvtData[0] = uvtData[6] = -scrollX / frame.sourceSize.x;
-			uvtData[2] = uvtData[4] = uvtData[0] + width / frame.sourceSize.x;
+			uv.x = -scrollX / frame.sourceSize.x;
+			uv.width = uv.x + width / frame.sourceSize.x;
 		}
 		else
 		{
-			vertices[0] = vertices[6] = FlxMath.bound(scrollX, 0, width);
-			vertices[2] = vertices[4] = FlxMath.bound(scrollX + frame.sourceSize.x, 0, width);
+			rect.x = FlxMath.bound(scrollX, 0, width);
+			rect.right = FlxMath.bound(scrollX + frame.sourceSize.x, 0, width);
 			
-			if (vertices[2] - vertices[0] <= 0)
+			if (rect.width <= 0)
 			{
 				graphicVisible = false;
 				return;
 			}
 			
-			uvtData[0] = uvtData[6] = (vertices[0] - scrollX) / frame.sourceSize.x;
-			uvtData[2] = uvtData[4] = uvtData[0] + (vertices[2] - vertices[0]) / frame.sourceSize.x;
+			uv.x = (rect.x - scrollX) / frame.sourceSize.x;
+			uv.width = uv.x + rect.width / frame.sourceSize.x;
 		}
 		
 		if (repeatY)
 		{
-			vertices[1] = vertices[3] = 0.0;
-			vertices[5] = vertices[7] = height;
+			rect.y = 0.0;
+			rect.height = height;
 			
-			uvtData[1] = uvtData[3] = -scrollY / frame.sourceSize.y;
-			uvtData[5] = uvtData[7] = uvtData[1] + height / frame.sourceSize.y;
+			uv.y = -scrollY / frame.sourceSize.y;
+			uv.height = uv.y + height / frame.sourceSize.y;
 		}
 		else
 		{
-			vertices[1] = vertices[3] = FlxMath.bound(scrollY, 0, height);
-			vertices[5] = vertices[7] = FlxMath.bound(scrollY + frame.sourceSize.y, 0, height);
+			rect.y = FlxMath.bound(scrollY, 0, height);
+			rect.bottom = FlxMath.bound(scrollY + frame.sourceSize.y, 0, height);
 			
-			if (vertices[5] - vertices[1] <= 0)
+			if (rect.height <= 0)
 			{
 				graphicVisible = false;
 				return;
 			}
 			
-			uvtData[1] = uvtData[3] = (vertices[1] - scrollY) / frame.sourceSize.y;
-			uvtData[5] = uvtData[7] = uvtData[1] + (vertices[5] - vertices[1]) / frame.sourceSize.y;
+			uv.y = (rect.y - scrollY) / frame.sourceSize.y;
+			uv.height = uv.y + rect.height / frame.sourceSize.y;
 		}
 	}
 	
