@@ -88,8 +88,15 @@ class FlxSliceSprite extends FlxSprite
 	 */
 	private var sliceRects:Array<FlxRect>;
 	
-	private var sliceVertices:Array<DrawData<Float>>;
-	private var sliceUVTs:Array<DrawData<Float>>;
+	// TODO: document these vars...
+	/**
+	 * 
+	 */
+	private var sliceQuads:Array<FlxRect>;
+	/**
+	 * 
+	 */
+	private var sliceUVs:Array<FlxRect>;
 	
 	private var regen:Bool = true;
 	
@@ -110,9 +117,10 @@ class FlxSliceSprite extends FlxSprite
 		
 		for (i in 0...9)
 		{
+			// TODO: properly initialize these vars...
 			sliceRects[i] = new FlxRect();
-			sliceVertices[i] = new DrawData<Float>();
-			sliceUVTs[i] = new DrawData<Float>();
+			sliceQuads[i] = new FlxRect();	// TODO: init this var in tile render mode only...
+			sliceUVs[i] = new FlxRect();	// TODO: init this var in tile render mode only...
 		}
 		
 		sliceRect = SliceRect;
@@ -125,10 +133,10 @@ class FlxSliceSprite extends FlxSprite
 	override public function destroy():Void
 	{
 		sliceGraphic = null;
-		sliceRect = null;
-		sliceRects = null;
-		sliceVertices = null;
-		sliceUVTs = null;
+		sliceRect = null;	// TODO: properly clean this var...
+		sliceRects = null;	// TODO: properly clean this var...
+		sliceQuads = null;	// TODO: properly clean this var...
+		sliceUVs = null;	// TODO: properly clean this var...
 		slices = FlxDestroyUtil.destroyArray(slices);
 		helperFrame = FlxDestroyUtil.destroy(helperFrame);
 		
@@ -262,39 +270,18 @@ class FlxSliceSprite extends FlxSprite
 		
 		if (tile != null)
 		{
-			var sliceV:DrawData<Float> = sliceVertices[TileIndex];
-			var sliceUVs:DrawData<Float> = sliceUVTs[TileIndex];
+			var quad:FlxRect = sliceQuads[TileIndex];
+			var uv:FlxRect = sliceUVs[TileIndex];
 			
-			sliceV[0] = X;
-			sliceV[1] = Y;
-			sliceV[2] = X + Width;
-			sliceV[3] = Y;
-			sliceV[4] = X + Width;
-			sliceV[5] = Y + Height;
-			sliceV[6] = X;
-			sliceV[7] = Y + Height;
+			quad.set(X, Y, Width, Height);
 			
 			if (Stretch)
 			{
-				sliceUVs[0] = 0;
-				sliceUVs[1] = 0;
-				sliceUVs[2] = 1;
-				sliceUVs[3] = 0;
-				sliceUVs[4] = 1;
-				sliceUVs[5] = 1;
-				sliceUVs[6] = 0;
-				sliceUVs[7] = 1;
+				uv.set(0, 0, 1, 1);
 			}
 			else
 			{
-				sliceUVs[0] = 0;
-				sliceUVs[1] = 0;
-				sliceUVs[2] = Width / tile.width;
-				sliceUVs[3] = 0;
-				sliceUVs[4] = Width / tile.width;
-				sliceUVs[5] = Height / tile.height;
-				sliceUVs[6] = 0;
-				sliceUVs[7] = Height / tile.height;
+				uv.set(0, 0, Width / tile.width, Height / tile.height);
 			}
 		}
 	}
@@ -364,11 +351,9 @@ class FlxSliceSprite extends FlxSprite
 			for (camera in cameras)
 			{
 				if (!camera.visible || !camera.exists)
-				{
 					continue;
-				}
 				
-				
+				// TODO: continue from here...
 				
 				/*
 				getScreenPosition(_point, camera);
