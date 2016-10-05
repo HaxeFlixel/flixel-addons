@@ -5,6 +5,7 @@ import flixel.FlxStrip;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
 import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.render.common.DrawItem.DrawData;
@@ -82,21 +83,24 @@ class FlxSliceSprite extends FlxSprite
 	/**
 	 * Internal array of FlxGraphic objects for each element of slice grid.
 	 */
-	private var slices:Array<FlxGraphic>;
+	private var slices:Array<FlxGraphic> = [];
 	/**
 	 * Internal array of FlxRect objects for each element of slice grid.
 	 */
-	private var sliceRects:Array<FlxRect>;
+	private var sliceRects:Array<FlxRect> = [];
 	
-	// TODO: document these vars...
 	/**
-	 * 
+	 * Rectangles for each part of sliced sprite. Used in tile render mode only.
 	 */
-	private var sliceQuads:Array<FlxRect>;
+	private var sliceQuads:Array<FlxRect> = [];
 	/**
-	 * 
+	 * UV coordinates for each part of sliced sprite. Used in tile render mode only.
 	 */
-	private var sliceUVs:Array<FlxRect>;
+	private var sliceUVs:Array<FlxRect> = [];
+	/**
+	 * Helper point which is used for rendering in tile render mode.
+	 */
+	private var slicePoint:FlxPoint;
 	
 	private var regen:Bool = true;
 	
@@ -111,18 +115,18 @@ class FlxSliceSprite extends FlxSprite
 	{
 		super();
 		
-		sliceRects = [];
-		sliceVertices = [];
-		sliceUVTs = [];
-		
 		for (i in 0...9)
 		{
-			// TODO: properly initialize these vars...
-			sliceRects[i] = new FlxRect();
-			sliceQuads[i] = new FlxRect();	// TODO: init this var in tile render mode only...
-			sliceUVs[i] = new FlxRect();	// TODO: init this var in tile render mode only...
+			sliceRects[i] = FlxRect.get();
+			
+			if (FlxG.renderTile)
+			{
+				sliceQuads[i] = FlxRect.get();
+				sliceUVs[i] = FlxRect.get();
+			}
 		}
 		
+		slicePoint = FlxPoint.get();
 		sliceRect = SliceRect;
 		loadGraphic(Graphic);
 		
@@ -133,10 +137,12 @@ class FlxSliceSprite extends FlxSprite
 	override public function destroy():Void
 	{
 		sliceGraphic = null;
-		sliceRect = null;	// TODO: properly clean this var...
-		sliceRects = null;	// TODO: properly clean this var...
-		sliceQuads = null;	// TODO: properly clean this var...
-		sliceUVs = null;	// TODO: properly clean this var...
+		sliceRect = null;
+		
+		sliceRects = FlxDestroyUtil.putArray(sliceRects);
+		sliceQuads = FlxDestroyUtil.putArray(sliceQuads);
+		sliceUVs = FlxDestroyUtil.putArray(sliceUVs);
+		slicePoint = FlxDestroyUtil.put(slicePoint);
 		slices = FlxDestroyUtil.destroyArray(slices);
 		helperFrame = FlxDestroyUtil.destroy(helperFrame);
 		
@@ -350,36 +356,60 @@ class FlxSliceSprite extends FlxSprite
 		{
 			for (camera in cameras)
 			{
-				if (!camera.visible || !camera.exists)
+				if (!camera.visible || !camera.exists || !isOnScreen(camera))
 					continue;
 				
-				// TODO: continue from here...
-				
-				/*
-				getScreenPosition(_point, camera);
+				getScreenPosition(_point, camera).subtractPoint(offset);
 				
 				_matrix.identity();
+				_matrix.translate(-origin.x, -origin.y);
+				_matrix.scale(scale.x, scale.y);
+				
+				updateTrig();
+				
+				if (angle != 0)
+					_matrix.rotateWithTrig(_cosAngle, _sinAngle);
+				
+				_point.add(origin.x, origin.y);
 				_matrix.translate(_point.x, _point.y);
+				
+				if (isPixelPerfectRender(camera))
+				{
+					_matrix.tx = Math.floor(_matrix.tx);
+					_matrix.ty = Math.floor(_matrix.ty);
+				}
+				
+				var sliceGraphic:FlxGraphic;
+				var quad:FlxRect;
+				var uv:FlxRect;
 				
 				for (i in 0...9)
 				{
-					drawTileOnCamera(i, camera);
+					sliceGraphic = slices[i];
+					
+					if (sliceGraphic != null)
+					{
+						quad = sliceQuads[i];
+						uv = sliceUVs[i];
+						
+						slicePoint.set(quad.x, quad.y);
+						slicePoint.transform(_matrix);
+						
+						_matrix.translate(slicePoint.x, slicePoint.y);
+						
+						camera.drawUVQuad(sliceGraphic, quad, uv, _matrix, colorTransform, blend, antialiasing, shader);
+						
+						_matrix.translate( -slicePoint.x, -slicePoint.y);
+					}
 				}
-				*/
+				
+				#if FLX_DEBUG
+				FlxBasic.visibleCount++;
+				#end
 			}
 		}
 	}
-	/*
-	private inline function drawTileOnCamera(TileIndex:Int, Camera:FlxCamera):Void
-	{
-		if (slices[TileIndex] != null)
-		{
-			Camera.drawTriangles(slices[TileIndex], sliceVertices[TileIndex], indices, sliceUVTs[TileIndex], _matrix, colorTransform, blend, repeat, antialiasing);
-			
-			// TODO: drawUVQuad... if openfl 4...  
-		}
-	}
-	*/
+	
 	override function set_width(Width:Float):Float
 	{
 		if (Width <= 0)
