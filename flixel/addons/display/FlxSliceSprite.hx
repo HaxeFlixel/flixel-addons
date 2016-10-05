@@ -66,6 +66,8 @@ class FlxSliceSprite extends FlxSprite
 	 */
 	public var sliceRect(default, set):FlxRect;
 	
+	public var sliceGraphic(default, set):FlxGraphic;
+	
 	/**
 	 * Actual width of the sprite which will be visible.
 	 * Its calculation is based on snapWidth and sliceRect values. 
@@ -122,6 +124,7 @@ class FlxSliceSprite extends FlxSprite
 	
 	override public function destroy():Void
 	{
+		sliceGraphic = null;
 		sliceRect = null;
 		sliceRects = null;
 		sliceVertices = null;
@@ -134,27 +137,37 @@ class FlxSliceSprite extends FlxSprite
 	
 	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite
 	{
-		graphic = FlxG.bitmap.add(Graphic);
+		sliceGraphic = FlxG.bitmap.add(Graphic);
 		return this;
 	}
 	
 	public function loadFrame(Frame:FlxFrame):FlxSliceSprite
 	{
-		graphic = FlxGraphic.fromFrame(Frame);
+		sliceGraphic = FlxGraphic.fromFrame(Frame);
 		return this;
 	}
 	
-	override function set_graphic(Value:FlxGraphic):FlxGraphic
+	private function set_sliceGraphic(Value:FlxGraphic):FlxGraphic
 	{
-		if (graphic != Value)
-			regen = regenSlices = true;
+		var oldGraphic:FlxGraphic = sliceGraphic;
 		
-		return super.set_graphic(Value);
+		if ((sliceGraphic != Value) && (Value != null))
+		{
+			Value.useCount++;
+			regen = regenSlices = true;
+		}
+		
+		if ((oldGraphic != null) && (oldGraphic != Value))
+		{
+			oldGraphic.useCount--;
+		}
+		
+		return sliceGraphic = Value;
 	}
 	
 	private function regenGraphic():Void
 	{
-		if (!regen || graphic == null)
+		if (!regen || sliceGraphic == null)
 			return;
 		
 		if (regenSlices)
@@ -180,17 +193,14 @@ class FlxSliceSprite extends FlxSprite
 		
 		if (FlxG.renderBlit)
 		{
-			if (renderSprite == null)
-				renderSprite = new FlxSprite();
-			
-			if (renderSprite.width != _snappedWidth || renderSprite.height != _snappedHeight)
+			if (graphic == null || (graphic.width != Std.int(_snappedWidth) || graphic.height != Std.int(_snappedHeight)))
 			{
-				renderSprite.makeGraphic(Std.int(_snappedWidth), Std.int(_snappedHeight), FlxColor.TRANSPARENT, true);
+				makeGraphic(Std.int(_snappedWidth), Std.int(_snappedHeight), FlxColor.TRANSPARENT, true);
 			}
 			else
 			{
 				_flashRect2.setTo(0, 0, _snappedWidth, _snappedHeight);
-				renderSprite.pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
+				pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
 			}
 			
 			blitTileOnCanvas(CENTER, stretchCenter, sliceRects[CENTER].x, sliceRects[CENTER].y, centerWidth, centerHeight);
@@ -203,7 +213,7 @@ class FlxSliceSprite extends FlxSprite
 			blitTileOnCanvas(BOTTOM_LEFT, false, 0, _snappedHeight - sliceRects[BOTTOM_LEFT].height, sliceRects[BOTTOM_LEFT].width, sliceRects[BOTTOM_LEFT].height);
 			blitTileOnCanvas(BOTTOM_RIGHT, false, _snappedWidth - sliceRects[BOTTOM_RIGHT].width, _snappedHeight - sliceRects[BOTTOM_RIGHT].height, sliceRects[BOTTOM_RIGHT].width, sliceRects[BOTTOM_RIGHT].height);
 			
-			renderSprite.dirty = true;
+			dirty = true;
 		}
 		else
 		{
@@ -241,7 +251,7 @@ class FlxSliceSprite extends FlxSprite
 			}
 			
 			FlxSpriteUtil.flashGfx.drawRect(X, Y, Width, Height);
-			renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
+			pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
 			FlxSpriteUtil.flashGfx.clear();
 		}
 	}
@@ -291,11 +301,11 @@ class FlxSliceSprite extends FlxSprite
 	
 	private function regenSliceFrames():Void
 	{
-		if (!regenSlices || graphic == null || sliceRect == null)
+		if (!regenSlices || sliceGraphic == null || sliceRect == null)
 			return;
 			
-		var sourceWidth:Int = graphic.width;
-		var sourceHeight:Int = graphic.height;
+		var sourceWidth:Int = sliceGraphic.width;
+		var sourceHeight:Int = sliceGraphic.height;
 		
 		var rectX:Float = Std.int(FlxMath.bound(sliceRect.x, 0, sourceWidth));
 		var rectY:Float = Std.int(FlxMath.bound(sliceRect.y, 0, sourceHeight));
@@ -329,7 +339,7 @@ class FlxSliceSprite extends FlxSprite
 			
 			if (tempRect.width > 0 && tempRect.height > 0)
 			{
-				helperFrame = graphic.imageFrame.frame.subFrameTo(tempRect, helperFrame);
+				helperFrame = sliceGraphic.imageFrame.frame.subFrameTo(tempRect, helperFrame);
 				slices[i] = FlxGraphic.fromFrame(helperFrame, true, null, false);
 			}
 		}
@@ -347,11 +357,7 @@ class FlxSliceSprite extends FlxSprite
 		
 		if (FlxG.renderBlit)
 		{
-			renderSprite.x = x;
-			renderSprite.y = y;
-			renderSprite.scrollFactor.set(scrollFactor.x, scrollFactor.y);
-			renderSprite.cameras = cameras;
-			renderSprite.draw();
+			super.draw();
 		}
 		else
 		{
@@ -362,6 +368,9 @@ class FlxSliceSprite extends FlxSprite
 					continue;
 				}
 				
+				
+				
+				/*
 				getScreenPosition(_point, camera);
 				
 				_matrix.identity();
@@ -371,10 +380,11 @@ class FlxSliceSprite extends FlxSprite
 				{
 					drawTileOnCamera(i, camera);
 				}
+				*/
 			}
 		}
 	}
-	
+	/*
 	private inline function drawTileOnCamera(TileIndex:Int, Camera:FlxCamera):Void
 	{
 		if (slices[TileIndex] != null)
@@ -384,7 +394,7 @@ class FlxSliceSprite extends FlxSprite
 			// TODO: drawUVQuad... if openfl 4...  
 		}
 	}
-	
+	*/
 	override function set_width(Width:Float):Float
 	{
 		if (Width <= 0)
