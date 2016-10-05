@@ -208,7 +208,7 @@ class FlxSliceSprite extends FlxStrip
 			
 			blitTileOnCanvas(CENTER, stretchCenter, sliceRects[CENTER].x, sliceRects[CENTER].y, centerWidth, centerHeight);
 			blitTileOnCanvas(TOP, stretchTop, sliceRects[TOP].x, 0, centerWidth, sliceRects[TOP].height);
-			blitTileOnCanvas(BOTTOM, stretchBottom, sliceRects[TOP].x, _snappedHeight - sliceRects[TOP].height, centerWidth, sliceRects[TOP].height);
+			blitTileOnCanvas(BOTTOM, stretchBottom, sliceRects[BOTTOM].x, _snappedHeight - sliceRects[BOTTOM].height, centerWidth, sliceRects[BOTTOM].height);
 			blitTileOnCanvas(LEFT, stretchLeft, 0, sliceRects[LEFT].y, sliceRects[LEFT].width, centerHeight);
 			blitTileOnCanvas(RIGHT, stretchRight, _snappedWidth - sliceRects[RIGHT].width, sliceRects[RIGHT].y, sliceRects[RIGHT].width, centerHeight);
 			blitTileOnCanvas(TOP_LEFT, false, 0, 0, sliceRects[TOP_LEFT].width, sliceRects[TOP_LEFT].height);
@@ -222,7 +222,7 @@ class FlxSliceSprite extends FlxStrip
 		{
 			fillTileVerticesUVs(CENTER, stretchCenter, sliceRects[CENTER].x, sliceRects[CENTER].y, centerWidth, centerHeight);
 			fillTileVerticesUVs(TOP, stretchTop, sliceRects[TOP].x, 0, centerWidth, sliceRects[TOP].height);
-			fillTileVerticesUVs(BOTTOM, stretchBottom, sliceRects[TOP].x, _snappedHeight - sliceRects[TOP].height, centerWidth, sliceRects[TOP].height);
+			fillTileVerticesUVs(BOTTOM, stretchBottom, sliceRects[TOP].x, _snappedHeight - sliceRects[BOTTOM].height, centerWidth, sliceRects[BOTTOM].height);
 			fillTileVerticesUVs(LEFT, stretchLeft, 0, sliceRects[LEFT].y, sliceRects[LEFT].width, centerHeight);
 			fillTileVerticesUVs(RIGHT, stretchRight, _snappedWidth - sliceRects[RIGHT].width, sliceRects[RIGHT].y, sliceRects[RIGHT].width, centerHeight);
 			fillTileVerticesUVs(TOP_LEFT, false, 0, 0, sliceRects[TOP_LEFT].width, sliceRects[TOP_LEFT].height);
