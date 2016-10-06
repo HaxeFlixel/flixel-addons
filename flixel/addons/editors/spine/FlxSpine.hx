@@ -1,7 +1,5 @@
 package flixel.addons.editors.spine;
 
-import flixel.graphics.tile.FlxDrawTrianglesItem;
-
 import flixel.addons.editors.spine.texture.FlixelTexture;
 import flixel.addons.editors.spine.texture.FlixelTextureLoader;
 import flixel.FlxCamera;
@@ -333,6 +331,7 @@ class FlxSpine extends FlxSprite
 					}
 					
 					wrapper.blend = slot.data.additiveBlending ? BlendMode.ADD : null;
+					wrapper.dirty = true;
 					wrapper.draw();
 				}
 			}
