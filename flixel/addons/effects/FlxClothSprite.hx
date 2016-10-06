@@ -6,9 +6,9 @@ import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.graphics.frames.FlxFrame.FlxFrameType;
-import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.system.render.common.DrawItem.DrawData;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxSpriteUtil;
@@ -186,7 +186,13 @@ class FlxClothSprite extends FlxSprite
 			_frameGraphic = FlxGraphic.fromBitmapData(framePixels, false, null, false);
 		}
 		
-		camera.drawTriangles(_frameGraphic, _vertices, _indices, _uvtData, colors, _point.addPoint(_drawOffset), blend, antialiasing);
+		_point.addPoint(_drawOffset);
+		_matrix.translate(_point.x, _point.y);
+		
+		camera.drawTriangles(_frameGraphic, _vertices, _indices, _uvtData, #if (openfl < "4.0.0") colors, #end _matrix, colorTransform, blend, true, antialiasing);
+		
+		_matrix.translate( -_point.x, -_point.y);
+		_point.subtractPoint(_drawOffset);
 	}
 	
 	#if !FLX_NO_DEBUG	
@@ -259,9 +265,9 @@ class FlxClothSprite extends FlxSprite
 		
 		points = [];
 		constraints = [];
-		_vertices = [];
-		_uvtData = [];
-		_indices = [];
+		_vertices = new DrawData<Float>();
+		_uvtData = new DrawData<Float>();
+		_indices = new DrawData<Int>();
 		
 		rows = Std.int(Math.max(2, rows));
 		columns = Std.int(Math.max(2, columns));
@@ -400,7 +406,7 @@ class FlxClothSprite extends FlxSprite
 	 */
 	private function calcImage():Void
 	{
-		_vertices = [];
+		_vertices = new DrawData<Float>();
 		
 		// Get the bounds of the mesh
 		var minX:Float = 0;
