@@ -166,7 +166,8 @@ class FlxClothSprite extends FlxSprite
 		calcImage();
 		drawFrame();
 		
-		_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
+		_matrix.identity();
+	//	_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
 		_matrix.translate(-origin.x, -origin.y);
 		_matrix.scale(scale.x, scale.y);
 		
@@ -178,21 +179,17 @@ class FlxClothSprite extends FlxSprite
 				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
 		}
 		
+		_matrix.translate(origin.x, origin.y);
+		_point.addPoint(_drawOffset);
+		_matrix.translate(_point.x, _point.y);
+		
 		if (isPixelPerfectRender(camera))
 			_point.floor();
 		
 		if (_frameGraphic == null)
-		{
 			_frameGraphic = FlxGraphic.fromBitmapData(framePixels, false, null, false);
-		}
-		
-		_point.addPoint(_drawOffset);
-		_matrix.translate(_point.x, _point.y);
 		
 		camera.drawTriangles(_frameGraphic, _vertices, _indices, _uvtData, #if (openfl < "4.0.0") colors, #end _matrix, colorTransform, blend, true, antialiasing);
-		
-		_matrix.translate( -_point.x, -_point.y);
-		_point.subtractPoint(_drawOffset);
 	}
 	
 	#if !FLX_NO_DEBUG	
