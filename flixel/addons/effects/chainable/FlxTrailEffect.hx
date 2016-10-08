@@ -211,6 +211,7 @@ class FlxTrailEffect implements IFlxEffect
 		return _pixels.clone();
 	}
 	
+	/** @since 2.1.0 */
 	public function clear():Void
 	{
 		if (_recentPositions.length > 0)

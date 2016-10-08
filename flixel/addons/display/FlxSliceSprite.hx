@@ -17,6 +17,7 @@ import flixel.util.FlxSpriteUtil;
  * Based on Kyle Pulver's NineSlice class for FlashPunk: http://kpulv.com/96/Flashpunk_NineSlice_Class__Updated__/
  * @author kpulv
  * @author Zaphod
+ * @since  2.1.0
  */
 class FlxSliceSprite extends FlxStrip
 {

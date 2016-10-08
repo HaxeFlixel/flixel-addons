@@ -13,6 +13,7 @@ import flixel.util.FlxSpriteUtil;
 /**
  * Tiled sprite which displays repeated and clipped graphic.
  * @author Zaphod
+ * @since  2.1.0
  */
 class FlxTiledSprite extends FlxStrip
 {

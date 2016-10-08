@@ -18,7 +18,9 @@ class TiledLayer
 	public var opacity:Float;
 	public var visible:Bool;
 	public var properties:TiledPropertySet;
+	/** @since 2.1.0 */
 	public var offsetX:Float;
+	/** @since 2.1.0 */
 	public var offsetY:Float;
 
 	private function new(source:Fast, parent:TiledMap)

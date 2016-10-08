@@ -189,7 +189,9 @@ class FlxControlHandler
 	private var _thrustKey:String;
 	private var _reverseKey:String;
 	// Invert movement on horizontal/vetical axis eg. pressing left moves right etc.
+	/** @since 2.1.0 */
 	public var invertX:Bool;
+	/** @since 2.1.0 */
 	public var invertY:Bool;
 	
 	// Sounds

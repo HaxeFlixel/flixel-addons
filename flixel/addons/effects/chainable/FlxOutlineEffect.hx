@@ -26,6 +26,7 @@ class FlxOutlineEffect implements IFlxEffect
 	public var dirty:Bool = true;
 	/**
 	 * Which mode we're using for the effect
+	 * @since 2.1.0
 	 */
 	public var mode:FlxOutlineMode;
 	/**
@@ -44,6 +45,7 @@ class FlxOutlineEffect implements IFlxEffect
 	 * How many iterations do use when drawing the outline. 0: only 1 iteration, 1: one iteration for every pixel in thickness
 	 * A value of 1 will have the best quality for large border sizes, but might reduce performance. 
 	 * NOTE: If the thickness is 1, quality of 0 or 1 will have the exact same effect (and performance).
+	 * @since 2.1.0
 	 */
 	public var quality:Float;
 	
@@ -227,6 +229,7 @@ class FlxOutlineEffect implements IFlxEffect
 	}
 }
 
+/** @since 2.1.0 */
 enum FlxOutlineMode
 {
 	FAST;

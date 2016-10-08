@@ -44,7 +44,8 @@ class FlxWaveEffect implements IFlxEffect
 	 */
 	public var strength:Int;
 	/**
-	 * The wave ratio to offset every odd line of the bitmapData. Must be a value between 0 and 1;
+	 * The wave ratio to offset every odd line of the `BitmapData`. Must be a value between 0 and 1.
+	 * @since 2.1.0
 	 */
 	public var interlaceOffset(default, set):Float;
 	
