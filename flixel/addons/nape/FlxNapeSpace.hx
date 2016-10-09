@@ -187,21 +187,18 @@ class FlxNapeSpace extends FlxBasic
 	{
 		#if !FLX_NO_DEBUG
 		if (shapeDebug == null || space == null)
-		{
 			return;
-		}
 		
 		shapeDebug.clear();
 		shapeDebug.draw(space);
 		
-		var zoom = FlxG.camera.zoom;
 		var sprite = shapeDebug.display;
 		
-		sprite.scaleX = zoom;
-		sprite.scaleY = zoom;
+		sprite.scaleX = FlxG.camera.totalScaleX;
+		sprite.scaleY = FlxG.camera.totalScaleY;
 		
-		sprite.x = -FlxG.camera.scroll.x * zoom;
-		sprite.y = -FlxG.camera.scroll.y * zoom;
+		sprite.x = -FlxG.camera.scroll.x * FlxG.camera.totalScaleX;
+		sprite.y = -FlxG.camera.scroll.y * FlxG.camera.totalScaleY;
 		#end
 	}
 }
