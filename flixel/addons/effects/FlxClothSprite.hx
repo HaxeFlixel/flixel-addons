@@ -189,7 +189,7 @@ class FlxClothSprite extends FlxSprite
 		camera.drawTriangles(_frameGraphic, _vertices, _indices, _uvtData, colors, _point.addPoint(_drawOffset), blend, antialiasing);
 	}
 	
-	#if !FLX_NO_DEBUG	
+	#if FLX_DEBUG	
 	override public function drawDebugOnCamera(camera:FlxCamera):Void 
 	{
 		if (!camera.visible || !camera.exists || !isOnScreen(camera))

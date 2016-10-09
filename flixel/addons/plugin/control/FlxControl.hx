@@ -1,6 +1,6 @@
 package flixel.addons.plugin.control;
 
-#if !FLX_NO_KEYBOARD
+#if FLX_KEYBOARD
 import flixel.FlxBasic;
 import flixel.FlxSprite;
 import haxe.ds.ObjectMap;

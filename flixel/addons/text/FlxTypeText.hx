@@ -350,7 +350,7 @@ class FlxTypeText extends FlxText
 	override public function update(elapsed:Float):Void
 	{
 		// If the skip key was pressed, complete the animation.
-		#if !FLX_NO_KEYBOARD
+		#if FLX_KEYBOARD
 		if (skipKeys != null && skipKeys.length > 0 && FlxG.keys.anyJustPressed(skipKeys))
 		{
 			skip();
@@ -499,7 +499,7 @@ class FlxTypeText extends FlxText
 	#if !bitfive
 	private function loadDefaultSound():Void
 	{
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		_sound = FlxG.sound.load(new TypeSound());
 		#else
 		_sound = new FlxSound();

@@ -237,7 +237,7 @@ class FlxNapeSprite extends FlxSprite
 		_angularDrag = AngularDrag;
 	}
 	
-	#if !FLX_NO_DEBUG
+	#if FLX_DEBUG
 	/**
 	 * Hide debug outline on physics sprites if the physics debug shapes are turned on
 	 */	

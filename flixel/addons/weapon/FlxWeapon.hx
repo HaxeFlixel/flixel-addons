@@ -180,7 +180,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 			onPreFireCallback();
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (onPreFireSound != null)
 		{
 			onPreFireSound.play();
@@ -248,12 +248,12 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 			case FIRE_FROM_PARENT_FACING(angle):
 				internalFireFromAngle(currentBullet, FlxAngle.angleFromFacing(parent.facing) + FlxG.random.float(angle.min, angle.max));
 				
-			#if !FLX_NO_TOUCH
+			#if FLX_TOUCH
 			case FIRE_AT_TOUCH(touch):
 				internalFireAtPoint(currentBullet, touch.getPosition(FlxPoint.weak()));
 			#end
 			
-			#if !FLX_NO_MOUSE
+			#if FLX_MOUSE
 			case FIRE_AT_MOUSE:
 				internalFireAtPoint(currentBullet, FlxG.mouse.getPosition(FlxPoint.weak()));
 			#end
@@ -270,7 +270,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 			onPostFireCallback();
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (onPostFireSound != null)
 		{
 			onPostFireSound.play();
@@ -311,7 +311,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		return runFire(FIRE_FROM_PARENT_FACING(angleNoise));
 	}
 	
-	#if !FLX_NO_MOUSE
+	#if FLX_MOUSE
 	/**
 	 * Fires a bullet (if one is available) at the mouse coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 	 * 
@@ -323,7 +323,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	}
 	#end
 	
-	#if !FLX_NO_TOUCH
+	#if FLX_TOUCH
 	/**
 	 * Fires a bullet (if one is available) at the FlxTouch coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 	 * 
@@ -523,11 +523,11 @@ enum FlxWeaponFireMode
 	FIRE_FROM_PARENT_ANGLE(angleNoise:FlxBounds<Float>);
 	FIRE_FROM_PARENT_FACING(angleNoise:FlxBounds<Float>);
 	
-#if !FLX_NO_TOUCH 
+#if FLX_TOUCH 
 	FIRE_AT_TOUCH(touch:FlxTouch);
 #end
 
-#if !FLX_NO_MOUSE
+#if FLX_MOUSE
 	FIRE_AT_MOUSE;
 #end
 }

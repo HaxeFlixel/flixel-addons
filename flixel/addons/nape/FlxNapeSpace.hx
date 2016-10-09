@@ -11,7 +11,7 @@ import nape.phys.Material;
 import nape.shape.Polygon;
 import nape.space.Space;
 
-#if !FLX_NO_DEBUG
+#if FLX_DEBUG
 import nape.util.ShapeDebug;
 
 @:bitmap("assets/images/napeDebug.png")
@@ -44,7 +44,7 @@ class FlxNapeSpace extends FlxBasic
 	 */
 	public static var drawDebug(default, set):Bool;
 	
-	#if !FLX_NO_DEBUG
+	#if FLX_DEBUG
 	/**
 	 * A useful "canvas" which can be used to draw debug information on.
 	 * To get a better idea of its use, see the official Nape demo 'SpatialQueries'
@@ -72,7 +72,7 @@ class FlxNapeSpace extends FlxBasic
 		
 		FlxG.signals.stateSwitched.add(onStateSwitch);
 		
-		#if !FLX_NO_DEBUG
+		#if FLX_DEBUG
 		// Add a button to toggle Nape debug shapes to the debugger
 		drawDebugButton = FlxG.debugger.addButton(RIGHT, new GraphicNapeDebug(0, 0), function()
 		{
@@ -128,7 +128,7 @@ class FlxNapeSpace extends FlxBasic
 	
 	private static function set_drawDebug(drawDebug:Bool):Bool
 	{
-		#if !FLX_NO_DEBUG
+		#if FLX_DEBUG
 		if (drawDebugButton != null)
 			drawDebugButton.toggled = !drawDebug;
 		
@@ -161,7 +161,7 @@ class FlxNapeSpace extends FlxBasic
 			space = null; // resets atributes like gravity.
 		}
 		
-		#if !FLX_NO_DEBUG
+		#if FLX_DEBUG
 		drawDebug = false;
 		
 		if (drawDebugButton != null)
@@ -185,7 +185,7 @@ class FlxNapeSpace extends FlxBasic
 	 */
 	override public function draw():Void
 	{
-		#if !FLX_NO_DEBUG
+		#if FLX_DEBUG
 		if (shapeDebug == null || space == null)
 			return;
 		

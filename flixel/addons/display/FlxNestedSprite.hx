@@ -162,7 +162,7 @@ class FlxNestedSprite extends FlxSprite
 	
 	public function preUpdate(elapsed:Float):Void 
 	{
-		#if !FLX_NO_DEBUG
+		#if FLX_DEBUG
 		FlxBasic.activeCount++;
 		#end
 		
@@ -280,7 +280,7 @@ class FlxNestedSprite extends FlxSprite
 		}
 	}
 	
-	#if !FLX_NO_DEBUG
+	#if FLX_DEBUG
 	override public function drawDebug():Void 
 	{
 		super.drawDebug();

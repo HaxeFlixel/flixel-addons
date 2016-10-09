@@ -1,6 +1,6 @@
 package flixel.addons.plugin.control;
 
-#if !FLX_NO_KEYBOARD
+#if FLX_KEYBOARD
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -844,7 +844,7 @@ class FlxControlHandler
 			}
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (move && _thrustSound != null)
 		{
 			_thrustSound.play(false);
@@ -913,7 +913,7 @@ class FlxControlHandler
 			}
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (fired && _fireSound != null)
 		{
 			_fireSound.play(true);
@@ -991,7 +991,7 @@ class FlxControlHandler
 			jumped = true;
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (jumped && _jumpSound != null)
 		{
 			_jumpSound.play(true);
@@ -1171,7 +1171,7 @@ class FlxControlHandler
 			}
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (_walkSound != null)
 		{
 			if ((_movement == MOVEMENT_INSTANT && _entity.velocity.x != 0) || (_movement == MOVEMENT_ACCELERATES && _entity.acceleration.x != 0))

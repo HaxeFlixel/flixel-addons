@@ -71,11 +71,11 @@ class FlxClickArea extends FlxObject
 	{
 		if (FlxG.stage != null)
 		{
-			#if !FLX_NO_MOUSE
+			#if FLX_MOUSE
 				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			#end
 			
-			#if !FLX_NO_TOUCH
+			#if FLX_TOUCH
 				Lib.current.stage.removeEventListener(TouchEvent.TOUCH_END, onMouseUp);
 			#end
 		}
@@ -94,10 +94,10 @@ class FlxClickArea extends FlxObject
 		{
 			if (FlxG.stage != null)
 			{
-				#if !FLX_NO_MOUSE
+				#if FLX_MOUSE
 					Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 				#end
-				#if !FLX_NO_TOUCH
+				#if FLX_TOUCH
 					Lib.current.stage.addEventListener(TouchEvent.TOUCH_END, onMouseUp);
 				#end
 				_initialized = true;
@@ -116,11 +116,11 @@ class FlxClickArea extends FlxObject
 		// Figure out if the button is highlighted or pressed or what
 		var continueUpdate = false;
 		
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 			continueUpdate = true;
 		#end
 		
-		#if !FLX_NO_TOUCH
+		#if FLX_TOUCH
 			continueUpdate = true;
 		#end
 		
@@ -129,11 +129,11 @@ class FlxClickArea extends FlxObject
 			var offAll:Bool = true;
 			for (camera in cameras)
 			{
-				#if !FLX_NO_MOUSE
+				#if FLX_MOUSE
 					FlxG.mouse.getWorldPosition(camera, _point);
 					offAll = (updateButtonStatus(_point, camera, FlxG.mouse.justPressed) == false) ? false : offAll;
 				#end
-				#if !FLX_NO_TOUCH
+				#if FLX_TOUCH
 					for (touch in FlxG.touches.list)
 					{
 						touch.getWorldPosition(camera, _point);

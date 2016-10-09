@@ -1,6 +1,6 @@
 package flixel.addons.ui;
 
-#if !FLX_NO_MOUSE
+#if FLX_MOUSE
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.Lib;

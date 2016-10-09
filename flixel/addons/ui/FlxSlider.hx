@@ -1,6 +1,6 @@
 package flixel.addons.ui;
 
-#if !FLX_NO_MOUSE
+#if FLX_MOUSE
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -252,7 +252,7 @@ class FlxSlider extends FlxSpriteGroup
 				alpha = hoverAlpha;
 			}
 			
-			#if !FLX_NO_SOUND_SYSTEM
+			#if FLX_SOUND_SYSTEM
 			if (hoverSound != null && !_justHovered)
 			{
 				FlxG.sound.play(hoverSound);
@@ -266,7 +266,7 @@ class FlxSlider extends FlxSpriteGroup
 				handle.x = FlxG.mouse.screenX;
 				updateValue();
 				
-				#if !FLX_NO_SOUND_SYSTEM
+				#if FLX_SOUND_SYSTEM
 				if (clickSound != null && !_justClicked) 
 				{
 					FlxG.sound.play(clickSound);

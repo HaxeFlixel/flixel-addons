@@ -1,6 +1,6 @@
 package flixel.addons.plugin;
 
-#if !FLX_NO_MOUSE
+#if FLX_MOUSE
 import flixel.addons.display.FlxExtendedSprite;
 import flixel.FlxBasic;
 import flixel.FlxG;

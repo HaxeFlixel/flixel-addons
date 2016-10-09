@@ -168,7 +168,7 @@ class FlxNapeTilemap extends FlxTilemap
 		constructCollider(mat);
 	}
 	
-	#if !FLX_NO_DEBUG
+	#if FLX_DEBUG
 	override public function drawDebug():Void 
 	{
 		if (!FlxNapeSpace.drawDebug)
