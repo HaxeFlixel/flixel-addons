@@ -9,6 +9,8 @@
 * `FlxTypeText`: added support for adding / removing more than one char per frame (#267)
 * `flixel.addons.editors.tiled`: added support for animated tiles (#268)
 * `FlxFSM`: fixed a runtime error on HTML5 (#271)
+* `FlxSliceSprite`: fixed incorrect vertex positions on the bottom part (#272)
+* `FlxNapeSpace`: fixed `drawDebug` positioning with scaling (00b2b37)
 
 2.1.0
 ------------------------------
