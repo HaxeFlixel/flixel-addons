@@ -172,9 +172,7 @@ class FlxNapeTilemap extends FlxTilemap
 	override public function drawDebug():Void 
 	{
 		if (!FlxNapeSpace.drawDebug)
-		{
 			super.drawDebug();
-		}
 	}
 	#end
 	
@@ -201,9 +199,8 @@ class FlxNapeTilemap extends FlxTilemap
 				{
 					//Mark the beginning of a new rectangle
 					if (startRow == -1) 
-					{
 						startRow = y;
-					}
+					
 					//Mark the tile as already read
 					_binaryData[tileIndex] = -1;
 					

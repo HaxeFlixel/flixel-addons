@@ -307,7 +307,7 @@ class FlxSliceSprite extends FlxStrip
 	{
 		if (!regenSlices || graphic == null || sliceRect == null)
 			return;
-			
+		
 		var sourceWidth:Int = graphic.width;
 		var sourceHeight:Int = graphic.height;
 		
@@ -369,16 +369,12 @@ class FlxSliceSprite extends FlxStrip
 			for (camera in cameras)
 			{
 				if (!camera.visible || !camera.exists)
-				{
 					continue;
-				}
 				
 				getScreenPosition(_point, camera);
 				
 				for (i in 0...9)
-				{
 					drawTileOnCamera(i, camera);
-				}
 			}
 		}
 	}
@@ -386,9 +382,7 @@ class FlxSliceSprite extends FlxStrip
 	private inline function drawTileOnCamera(TileIndex:Int, Camera:FlxCamera):Void
 	{
 		if (slices[TileIndex] != null)
-		{
 			Camera.drawTriangles(slices[TileIndex], sliceVertices[TileIndex], indices, sliceUVTs[TileIndex], colors, _point, blend, repeat, antialiasing);
-		}
 	}
 	
 	override function set_width(Width:Float):Float

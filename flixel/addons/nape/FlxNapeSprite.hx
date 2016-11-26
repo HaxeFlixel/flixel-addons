@@ -244,9 +244,7 @@ class FlxNapeSprite extends FlxSprite
 	override public function drawDebug():Void
 	{
 		if (!FlxNapeSpace.drawDebug)
-		{
 			super.drawDebug();
-		}
 	}
 	#end
 	
@@ -265,9 +263,7 @@ class FlxNapeSprite extends FlxSprite
 		updatePosition();
 		
 		if (body.allowRotation)
-		{
 			angle = body.rotation * FlxAngle.TO_DEG;
-		}
 		
 		// Applies custom physics drag.
 		if (_linearDrag < 1 || _angularDrag < 1) 
@@ -288,6 +284,7 @@ class FlxNapeSprite extends FlxSprite
 	{
 		if (body != null)
 			body.space = Value ? FlxNapeSpace.space : null;
+		
 		return physicsEnabled = Value;
 	}
 	

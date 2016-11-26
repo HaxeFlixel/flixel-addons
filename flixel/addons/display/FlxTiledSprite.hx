@@ -153,7 +153,7 @@ class FlxTiledSprite extends FlxStrip
 	private function updateRenderSprite():Void
 	{
 		graphicVisible = true;
-			
+		
 		if (renderSprite == null)
 			renderSprite = new FlxSprite();
 		
