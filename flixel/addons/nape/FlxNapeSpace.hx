@@ -193,12 +193,11 @@ class FlxNapeSpace extends FlxBasic
 		shapeDebug.draw(space);
 		
 		var sprite = shapeDebug.display;
-		
-		sprite.scaleX = FlxG.camera.totalScaleX;
-		sprite.scaleY = FlxG.camera.totalScaleY;
-		
-		sprite.x = -FlxG.camera.scroll.x * FlxG.camera.totalScaleX;
-		sprite.y = -FlxG.camera.scroll.y * FlxG.camera.totalScaleY;
+		sprite.x = 0;
+		sprite.y = 0;
+		sprite.scaleX = 1;
+		sprite.scaleY = 1;
+		FlxG.camera.transformObject(sprite);
 		#end
 	}
 }
