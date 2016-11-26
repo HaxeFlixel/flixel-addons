@@ -14,6 +14,8 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
+using flixel.util.FlxColorTransformUtil;
+
 /**
  * Used for showing infinitely scrolling backgrounds.
  * @author Chevy Ray
@@ -124,6 +126,9 @@ class FlxBackdrop extends FlxSprite
 
 	override public function draw():Void
 	{
+		var isColored:Bool = (alpha != 1) || (color != 0xffffff);
+		var hasColorOffsets:Bool = (colorTransform != null && colorTransform.hasRGBAOffsets());
+		
 		for (camera in cameras)
 		{
 			if (!camera.visible || !camera.exists)
@@ -175,7 +180,7 @@ class FlxBackdrop extends FlxSprite
 				if (_tileFrame == null)
 					return;
 				
-				var drawItem = camera.startQuadBatch(_tileFrame.parent, false);
+				var drawItem = camera.startQuadBatch(_tileFrame.parent, isColored, hasColorOffsets);
 				
 				_tileFrame.prepareMatrix(_matrix);
 				
