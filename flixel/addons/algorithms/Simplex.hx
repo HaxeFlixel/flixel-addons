@@ -49,12 +49,12 @@ class Noise
 	static var A2_0:Int;
 	static var A2_1:Int;
 	
-	public static function simplexTiles(x:Float, y:Float, baseX:Float, baseY:Float, numOctaves:Int):Float
+	public static function simplexTiles(x:Float, y:Float, baseX:Float, baseY:Float, scale:Float = 1, persistence:Float = 1, octaves:Int = 1):Float
 	{
-		return Math.cos(simplexOctaves(x % Std.int(baseX), y % Std.int(baseY), 1, 1, numOctaves));
+		return Math.cos(simplexOctaves(x % Std.int(baseX), y % Std.int(baseY), scale, persistence, octaves));
 	}
 	
-	public static function simplexOctaves(x:Float, y:Float, scale:Float, persistence:Float, octaves:Int = 1):Float
+	public static function simplexOctaves(x:Float, y:Float, scale:Float = 1, persistence:Float = 1, octaves:Int = 1):Float
 	{
 		var max:Float = 0, amp:Float = 1, n:Float = 0;
 		var freq = scale;
@@ -73,8 +73,8 @@ class Noise
 	{
 		var t = (x + y) * SKEW;
 		
-		i = fastFloor(x + t);
-		j = fastFloor(y + t);
+		i = Math.floor(x + t);
+		j = Math.floor(y + t);
 		
 		t = (i + j) * UNSKEW;
 		
