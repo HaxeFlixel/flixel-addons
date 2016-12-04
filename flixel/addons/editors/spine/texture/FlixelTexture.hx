@@ -19,12 +19,12 @@ class FlixelTexture implements Texture
 		this.key = graphic.key;
 	}
 	
-	public function get_width():Int 
+	private function get_width():Int 
 	{
 		return bd.width;
 	}
 	
-	public function get_height():Int 
+	private function get_height():Int 
 	{
 		return bd.height;
 	}
