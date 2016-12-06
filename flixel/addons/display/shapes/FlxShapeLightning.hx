@@ -255,7 +255,7 @@ class FlxShapeLightning extends FlxShapeLine
 		updateMotion(0);
 	}
 	
-	override public function get_strokeBuffer():Float
+	override private function get_strokeBuffer():Float
 	{
 		return lightningStyle.thickness * 2;
 	}

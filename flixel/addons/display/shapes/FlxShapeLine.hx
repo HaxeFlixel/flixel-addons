@@ -67,17 +67,17 @@ class FlxShapeLine extends FlxShape
 		shapeDirty = true;
 	}
 	
-	override public function get_strokeBuffer():Float
+	override private function get_strokeBuffer():Float
 	{
 		return lineStyle.thickness * 2.0;
 	}
 	
-	private override function getStrokeOffsetX():Float
+	override private function getStrokeOffsetX():Float
 	{
 		return strokeBuffer / 2;
 	}
 	
-	private override function getStrokeOffsetY():Float
+	override private function getStrokeOffsetY():Float
 	{
 		return strokeBuffer / 2;
 	}
