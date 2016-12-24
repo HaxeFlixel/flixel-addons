@@ -20,7 +20,18 @@ class TiledTileLayer extends TiledLayer
 	private var xmlData:Fast;
 
 	private static inline var BASE64_CHARS:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-	
+	private static var BASE64_LOOKUP:Array<Int> = {
+		// initialize lookup table
+		var lookup:Array<Int> = new Array<Int>();
+
+		for (c in 0...BASE64_CHARS.length)
+		{
+			lookup[BASE64_CHARS.charCodeAt(c)] = c;
+		}
+
+		lookup;
+	};
+
 	public function new(source:Fast, parent:TiledMap)
 	{
 		super(source, parent);
@@ -85,14 +96,6 @@ class TiledTileLayer extends TiledLayer
 	{
 		var output:ByteArray = new ByteArray();
 
-		// initialize lookup table
-		var lookup:Array<Int> = new Array<Int>();
-
-		for (c in 0...BASE64_CHARS.length)
-		{
-			lookup[BASE64_CHARS.charCodeAt(c)] = c;
-		}
-
 		var i:Int = 0;
 		while (i < data.length - 3)
 		{
@@ -103,10 +106,10 @@ class TiledTileLayer extends TiledLayer
 			}
 
 			// read 4 bytes and look them up in the table
-			var a0:Int = lookup[data.charCodeAt(i)];
-			var a1:Int = lookup[data.charCodeAt(i + 1)];
-			var a2:Int = lookup[data.charCodeAt(i + 2)];
-			var a3:Int = lookup[data.charCodeAt(i + 3)];
+			var a0:Int = BASE64_LOOKUP[data.charCodeAt(i)];
+			var a1:Int = BASE64_LOOKUP[data.charCodeAt(i + 1)];
+			var a2:Int = BASE64_LOOKUP[data.charCodeAt(i + 2)];
+			var a3:Int = BASE64_LOOKUP[data.charCodeAt(i + 3)];
 
 			// convert to and write 3 bytes
 			if (a1 < 64)
