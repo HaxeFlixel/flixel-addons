@@ -106,7 +106,6 @@ private class FlxStarField extends FlxSprite
 {
 	public var bgColor:Int = FlxColor.BLACK;
 
-	private var _starsIndex:Vector<Int>;
 	private var _starsX:Vector<Float>;
 	private var _starsY:Vector<Float>;
 	private var _starsD:Vector<Float>;
@@ -123,7 +122,6 @@ private class FlxStarField extends FlxSprite
 		Width = (Width <= 0) ? FlxG.width : Width;
 		Height = (Height <= 0) ? FlxG.height : Height;
 		makeGraphic(Width, Height, bgColor, true);
-		_starsIndex = new Vector(StarAmount);
 		_starsX = new Vector(StarAmount);
 		_starsY = new Vector(StarAmount);
 		_starsD = new Vector(StarAmount);
@@ -132,7 +130,6 @@ private class FlxStarField extends FlxSprite
 
 		for (i in 0...StarAmount)
 		{
-			_starsIndex[i] = i;
 			_starsX[i] = FlxG.random.int(0, Width);
 			_starsY[i] = FlxG.random.int(0, Height);
 			_starsD[i] = 1;
@@ -142,7 +139,6 @@ private class FlxStarField extends FlxSprite
 	
 	override public function destroy():Void
 	{
-		_starsIndex = null;
 		_starsX = null;
 		_starsY = null;
 		_starsD = null;
