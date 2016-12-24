@@ -106,11 +106,15 @@ private class FlxStarField extends FlxSprite
 {
 	public var bgColor:Int = FlxColor.BLACK;
 
+	// Why five Vectors instead of one that has an FlxStar class?  This is better
+	// for the cache, as all the data is being accessed sequentially so it'll be a
+	// little faster.
 	private var _starsX:Vector<Float>;
 	private var _starsY:Vector<Float>;
 	private var _starsD:Vector<Float>;
 	private var _starsR:Vector<Float>;
 	private var _starsSpeed:Vector<Float>;
+	// TODO: Can we speed this up more by just using one big Vector that's five times as long as StarAmount?
 
 	private var _depthColors:Array<Int>;
 	private var _minSpeed:Float;
