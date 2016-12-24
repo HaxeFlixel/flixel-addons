@@ -1,5 +1,6 @@
 package flixel.addons.display;
 
+import haxe.ds.Vector;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -22,7 +23,7 @@ import flixel.util.FlxSpriteUtil;
  */
 class FlxSpriteAniRot extends FlxSprite
 {
-	private var framesCache:Array<FlxFramesCollection>;
+	private var framesCache:Vector<FlxFramesCollection>;
 	private var rotations:Float = 0;
 	private var angleIndex:Int = -1;
 	
@@ -47,7 +48,7 @@ class FlxSpriteAniRot extends FlxSprite
 		graphic.destroyOnNoUse = false;
 		
 		rotations = Rotations;
-		framesCache = [];
+		framesCache = new Vector(numFrames);
 		
 		var num:Int = numFrames;
 		var helperSprite:FlxSprite = new FlxSprite();
@@ -61,7 +62,7 @@ class FlxSpriteAniRot extends FlxSprite
 			// Create the rotation spritesheet for that frame
 			helperSprite.loadRotatedFrame(frameToLoad, Rotations, Antialiasing, AutoBuffer);
 			helperSprite.graphic.destroyOnNoUse = false;
-			framesCache.push(helperSprite.frames);
+			framesCache[i] = helperSprite.frames;
 		}
 		
 		helperSprite.destroy();
