@@ -4,6 +4,7 @@
  */
 package flixel.addons.display;
 
+import haxe.ds.Vector;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
@@ -107,7 +108,7 @@ private class FlxStarField extends FlxSprite
 {
 	public var bgColor:Int = FlxColor.BLACK;
 	
-	private var _stars:Array<FlxStar>;
+	private var _stars:Vector<FlxStar>;
 	private var _depthColors:Array<Int>;
 	private var _minSpeed:Float;
 	private var _maxSpeed:Float;
@@ -118,7 +119,7 @@ private class FlxStarField extends FlxSprite
 		Width = (Width <= 0) ? FlxG.width : Width;
 		Height = (Height <= 0) ? FlxG.height : Height;
 		makeGraphic(Width, Height, bgColor, true);
-		_stars = [];
+		_stars = new Vector(StarAmount);
 		
 		for (i in 0...StarAmount)
 		{
@@ -128,7 +129,7 @@ private class FlxStarField extends FlxSprite
 			star.y = FlxG.random.int(0, Height);
 			star.d = 1;
 			star.r = FlxG.random.float() * Math.PI * 2;
-			_stars.push(star);
+			_stars[i] = star;
 		}
 	}
 	
@@ -184,6 +185,7 @@ private class FlxStarField extends FlxSprite
 	}
 }
 
+// TODO: If we just make this a series of Vectors, will the result be cache-friendly (and thus faster)?
 private class FlxStar
 {
 	public var index:Int;
