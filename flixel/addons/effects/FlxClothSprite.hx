@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.graphics.frames.FlxFrame.FlxFrameType;
+import flixel.graphics.TrianglesData;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.render.common.DrawItem.DrawData;
@@ -69,17 +70,16 @@ class FlxClothSprite extends FlxSprite
 	 */
 	public var points(default, null):Array<FlxClothPoint> = [];
 	/**
-	 * An array containing all vertices conections.
+	 * An array containing all vertices connections.
 	 */
 	public var constraints(default, null):Array<FlxClothConstraint> = [];
 	
 	/**
 	 * Mesh arrays. Vertices, indices, uvtData and colors to drawTriangles().
 	 */
-	private var _vertices:DrawData<Float>;
-	private var _indices:DrawData<Int>;
-	private var _uvtData:DrawData<Float>;
-	public var colors:DrawData<Int>;
+	private var _data:TrianglesData;
+	
+	public var colors(get, set):DrawData<Int>;
 	
 	/**
 	 * Use to offset the drawing position of the mesh.
@@ -111,6 +111,7 @@ class FlxClothSprite extends FlxSprite
 		crossingConstraints = CrossingConstraints;
 		
 		_drawOffset = FlxPoint.get();
+		_data = new TrianglesData();
 		setMesh(columns, rows);
 	}
 	
@@ -122,12 +123,10 @@ class FlxClothSprite extends FlxSprite
 	{
 		points = null;
 		constraints = null;
-		_vertices = null;
-		_indices = null;
-		_uvtData = null;
-		colors = null;
+		
 		_drawOffset = FlxDestroyUtil.put(_drawOffset);
 		
+		_data = FlxDestroyUtil.destroy(_data);
 		meshVelocity = FlxDestroyUtil.put(meshVelocity);
 		meshFriction = FlxDestroyUtil.put(meshFriction);
 		meshPixels = FlxDestroyUtil.dispose(meshPixels);
@@ -141,10 +140,9 @@ class FlxClothSprite extends FlxSprite
 	override public function update(elapsed:Float):Void
 	{
 		updatePoints(elapsed);
+		
 		for (i in 0...iterations) 
-		{
 			updateConstraints(elapsed);
-		}
 		
 		super.update(elapsed);
 	}
@@ -167,7 +165,6 @@ class FlxClothSprite extends FlxSprite
 		drawFrame();
 		
 		_matrix.identity();
-	//	_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
 		_matrix.translate(-origin.x, -origin.y);
 		_matrix.scale(scale.x, scale.y);
 		
@@ -189,16 +186,14 @@ class FlxClothSprite extends FlxSprite
 		if (_frameGraphic == null)
 			_frameGraphic = FlxGraphic.fromBitmapData(framePixels, false, null, false);
 		
-		camera.drawTriangles(_frameGraphic, _vertices, _indices, _uvtData, colors, _matrix, colorTransform, blend, true, antialiasing);
+		camera.drawTriangles(_frameGraphic, _data, _matrix, colorTransform, blend, true, antialiasing);
 	}
 	
 	#if FLX_DEBUG	
 	override public function drawDebugOnCamera(camera:FlxCamera):Void 
 	{
 		if (!camera.visible || !camera.exists || !isOnScreen(camera))
-		{
 			return;
-		}
 		
 		var rect = getBoundingBox(camera);
 		
@@ -207,13 +202,9 @@ class FlxClothSprite extends FlxSprite
 		if (color == null)
 		{
 			if (allowCollisions != FlxObject.NONE)
-			{
 				color = immovable ? FlxColor.GREEN : FlxColor.RED;
-			}
 			else
-			{
 				color = FlxColor.BLUE;
-			}
 		}
 		
 		//fill static graphics object with square shape
@@ -224,15 +215,18 @@ class FlxClothSprite extends FlxSprite
 		//draw meshes and rect of pixels meshPixels
 		gfx.lineStyle(1, FlxColor.CYAN, 0.5);
 		gfx.drawRect(rect.x + _drawOffset.x, rect.y + _drawOffset.y, meshPixels.rect.width, meshPixels.rect.height);
+		
 		for (p in points) 
 		{
 			gfx.drawCircle(rect.x + p.x, rect.y + p.y, 2);
 		}
+		
 		for (s in constraints) 
 		{
 			gfx.moveTo(rect.x + s.p0.x, rect.y + s.p0.y);
 			gfx.lineTo(rect.x + s.p1.x, rect.y + s.p1.y);
 		}
+		
 		endDrawDebug(camera);
 	}
 	#end
@@ -262,9 +256,11 @@ class FlxClothSprite extends FlxSprite
 		
 		points = [];
 		constraints = [];
-		_vertices = new DrawData<Float>();
-		_uvtData = new DrawData<Float>();
-		_indices = new DrawData<Int>();
+		
+		_data.clear();
+		var vertices = _data.vertices;
+		var indices = _data.indices;
+		var uvtData = _data.uvs;
 		
 		rows = Std.int(Math.max(2, rows));
 		columns = Std.int(Math.max(2, columns));
@@ -287,11 +283,11 @@ class FlxClothSprite extends FlxSprite
 							|| (c == columns-1 && pinnedSide & FlxObject.RIGHT != 0))
 				});
 				
-				_vertices.push(c * widthInTiles);
-				_vertices.push(r * heightInTiles);
+				vertices.push(c * widthInTiles);
+				vertices.push(r * heightInTiles);
 				
-				_uvtData.push((c) / (columns - 1));
-				_uvtData.push((r) / (rows - 1));
+				uvtData.push((c) / (columns - 1));
+				uvtData.push((r) / (rows - 1));
 				
 				if (c > 0)
 				{
@@ -312,13 +308,13 @@ class FlxClothSprite extends FlxSprite
 				
 				if (r > 0 && c > 0)
 				{					
-					_indices.push((r * columns) + c);
-					_indices.push(((r - 1) * columns) + c - 1);
-					_indices.push(((r - 1) * columns) + c);
+					indices.push((r * columns) + c);
+					indices.push(((r - 1) * columns) + c - 1);
+					indices.push(((r - 1) * columns) + c);
 					
-					_indices.push((r * columns) + c);
-					_indices.push(((r - 1) * columns) + c - 1);
-					_indices.push((r * columns) + c - 1);
+					indices.push((r * columns) + c);
+					indices.push(((r - 1) * columns) + c - 1);
+					indices.push((r * columns) + c - 1);
 					
 					if (crossingConstraints)
 					{
@@ -340,10 +336,10 @@ class FlxClothSprite extends FlxSprite
 		if (pinned != null)
 		{
 			for (i in pinned) 
-			{
 				points[i].pinned = true;
-			}
 		}
+		
+		_data.dirty = true;
 	}
 	
 	/**
@@ -390,6 +386,7 @@ class FlxClothSprite extends FlxSprite
 				s.p0.x -= offsetX;
 				s.p0.y -= offsetY;
 			}
+			
 			if (!s.p1.pinned)
 			{
 				s.p1.x += offsetX;
@@ -403,7 +400,9 @@ class FlxClothSprite extends FlxSprite
 	 */
 	private function calcImage():Void
 	{
-		_vertices = new DrawData<Float>();
+		var vertices = _data.vertices;
+		vertices.splice(0, vertices.length);
+		_data.verticesDirty = true;
 		
 		// Get the bounds of the mesh
 		var minX:Float = 0;
@@ -413,8 +412,8 @@ class FlxClothSprite extends FlxSprite
 		
 		for (p in points) 
 		{
-			_vertices.push(p.x);
-			_vertices.push(p.y);
+			vertices.push(p.x);
+			vertices.push(p.y);
 			
 			minX = Math.min(minX, p.x);
 			minY = Math.min(minY, p.y);
@@ -426,29 +425,24 @@ class FlxClothSprite extends FlxSprite
 		_drawOffset.set(minX, minY);
 		
 		var i:Int = 0;
-		while (i < _vertices.length - 1)
+		while (i < vertices.length - 1)
 		{
-			_vertices[i] = _vertices[i] - minX;
-			_vertices[i + 1] = _vertices[i + 1] - minY;
+			vertices[i] = vertices[i] - minX;
+			vertices[i + 1] = vertices[i + 1] - minY;
 			i += 2;
 		}
 		
 		if (meshPixels == null)
-		{
 			return;
-		}
 		
 		// Check if the bitmapData is smaller than the current image and create new one if needed
 		var w:Int = Std.int(Math.max(meshPixels.width, maxX - minX));
 		var h:Int = Std.int(Math.max(meshPixels.height, maxY - minY));
+		
 		if (meshPixels.width < w || meshPixels.height < h)
-		{
 			meshPixels = new BitmapData(w, h, true, FlxColor.TRANSPARENT);
-		}
 		else
-		{
 			meshPixels.fillRect(meshPixels.rect, FlxColor.TRANSPARENT);
-		}
 	}
 	
 	/**
@@ -460,11 +454,21 @@ class FlxClothSprite extends FlxSprite
 		{
 			FlxSpriteUtil.flashGfx.clear();
 			FlxSpriteUtil.flashGfx.beginBitmapFill(framePixels, null, false, true);
-			FlxSpriteUtil.flashGfx.drawTriangles(_vertices, _indices, _uvtData);
+			FlxSpriteUtil.flashGfx.drawTriangles(_data.vertices, _data.indices, _data.uvs);
 			FlxSpriteUtil.flashGfx.endFill();
 			
 			meshPixels.draw(FlxSpriteUtil.flashGfxSprite);
 		}
+	}
+	
+	private function get_colors():DrawData<FlxColor>
+	{
+		return _data.colors;
+	}
+	
+	private function set_colors(value:DrawData<FlxColor>):DrawData<FlxColor>
+	{
+		return _data.colors = value;
 	}
 }
 
