@@ -81,6 +81,7 @@ class FlxSpine extends FlxSprite
 	
 	public var renderMeshes:Bool = false;
 	
+	// TODO: remove these 2 vars???
 	private var _tempVertices:Array<Float>;
 	private var _quadTriangles:Array<Int>;
 	
@@ -259,6 +260,7 @@ class FlxSpine extends FlxSprite
 					b = mesh.b;
 					a = mesh.a;
 				}
+				
 				if (wrapper != null)
 				{
 					wrapper.x = 0;
@@ -267,18 +269,13 @@ class FlxSpine extends FlxSprite
 					
 					#if flash
 					wrapper.vertices.length = verticesLength;
-					for (i in 0...verticesLength)
-					{
-						wrapper.vertices[i] = worldVertices[i];
-					}
 					#else
 					if (worldVertices.length - verticesLength > 0)
-					{
 						worldVertices.splice(verticesLength, worldVertices.length - verticesLength);
-					}
-					
-					wrapper.vertices = worldVertices;
 					#end
+					
+					for (i in 0...verticesLength)
+						wrapper.vertices[i] = worldVertices[i];
 					
 					wrapper.indices = triangles;
 					wrapper.uvtData = uvtData;
@@ -292,6 +289,7 @@ class FlxSpine extends FlxSprite
 					wrapper.alpha = skeleton.a * slot.a * a * alpha;
 					
 					wrapper.blend = (slot.data.blendMode == spinehaxe.BlendMode.additive) ? BlendMode.ADD : null;
+					wrapper.dirty = true;
 					wrapper.draw();
 				}
 			}
@@ -461,7 +459,6 @@ class FlxSpine extends FlxSprite
 				else
 					collider.y = skeleton.y - collider.offsetY;
 			}
-			
 		}
 		
 		return NewY;
