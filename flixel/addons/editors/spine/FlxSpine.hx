@@ -81,7 +81,6 @@ class FlxSpine extends FlxSprite
 	
 	public var renderMeshes:Bool = false;
 	
-	// TODO: remove these 2 vars???
 	private var _tempVertices:Array<Float>;
 	private var _quadTriangles:Array<Int>;
 	
@@ -269,16 +268,27 @@ class FlxSpine extends FlxSprite
 					
 					#if flash
 					wrapper.vertices.length = verticesLength;
+					wrapper.indices.length = triangles.length;
+					wrapper.uvtData.length = uvtData.length;
 					#else
 					if (worldVertices.length - verticesLength > 0)
 						worldVertices.splice(verticesLength, worldVertices.length - verticesLength);
+					
+					if (wrapper.indices.length > triangles.length)
+						wrapper.indices.splice(triangles.length, wrapper.indices.length - triangles.length);
+					
+					if (wrapper.uvtData.length > uvtData.length)
+						wrapper.uvtData.splice(uvtData.length, wrapper.uvtData.length - uvtData.length);
 					#end
 					
 					for (i in 0...verticesLength)
 						wrapper.vertices[i] = worldVertices[i];
 					
-					wrapper.indices = triangles;
-					wrapper.uvtData = uvtData;
+					for (i in 0...triangles.length)
+						wrapper.indices[i] = triangles[i];
+					
+					for (i in 0...uvtData.length)
+						wrapper.uvtData[i] = uvtData[i];
 					
 					wrapperColor = FlxColor.fromRGBFloat(	skeleton.r * slot.r * r * color.redFloat,
 														  skeleton.g * slot.g * g * color.greenFloat,
@@ -289,7 +299,7 @@ class FlxSpine extends FlxSprite
 					wrapper.alpha = skeleton.a * slot.a * a * alpha;
 					
 					wrapper.blend = (slot.data.blendMode == spinehaxe.BlendMode.additive) ? BlendMode.ADD : null;
-					wrapper.dirty = true;
+					wrapper.data.dirty = true;
 					wrapper.draw();
 				}
 			}
