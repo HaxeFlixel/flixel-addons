@@ -6,7 +6,7 @@ import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.graphics.frames.FlxFrame.FlxFrameType;
-import flixel.graphics.TrianglesData;
+import flixel.graphics.FlxTrianglesData;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.render.common.DrawItem.DrawData;
@@ -77,7 +77,7 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * Mesh arrays. Vertices, indices, uvtData and colors to drawTriangles().
 	 */
-	private var _data:TrianglesData;
+	private var _data:FlxTrianglesData;
 	
 	public var colors(get, set):DrawData<Int>;
 	
@@ -111,7 +111,7 @@ class FlxClothSprite extends FlxSprite
 		crossingConstraints = CrossingConstraints;
 		
 		_drawOffset = FlxPoint.get();
-		_data = new TrianglesData();
+		_data = new FlxTrianglesData();
 		setMesh(columns, rows);
 	}
 	
@@ -338,8 +338,6 @@ class FlxClothSprite extends FlxSprite
 			for (i in pinned) 
 				points[i].pinned = true;
 		}
-		
-		_data.dirty = true;
 	}
 	
 	/**
