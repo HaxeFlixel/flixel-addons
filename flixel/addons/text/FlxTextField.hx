@@ -132,12 +132,7 @@ class FlxTextField extends FlxText
 		
 		if (!_addedToDisplay)
 		{
-			if (FlxG.renderTile)
-				cast(_camera.view, FlxHardwareView).flashSprite.addChild(textField);
-			else
-				cast(_camera.view, FlxBlitView).flashSprite.addChild(textField);
-			
-			_addedToDisplay = true;
+			this.camera = _camera;
 			updateDefaultFormat();
 		}
 		
@@ -149,16 +144,11 @@ class FlxTextField extends FlxText
 		_point.x = x - (_camera.scroll.x * scrollFactor.x) - offset.x;
 		_point.y = y - (_camera.scroll.y * scrollFactor.y) - offset.y;
 		
-		if (FlxG.renderTile)
-		{
-			textField.x = _point.x;
-			textField.y = _point.y;
-		}
-		else
-		{
-			textField.x = (_point.x - 0.5 * _camera.width);
-			textField.y = (_point.y - 0.5 * _camera.height);
-		}
+		textField.x = (_point.x - 0.5 * _camera.width * FlxG.scaleMode.scale.x);
+		textField.y = (_point.y - 0.5 * _camera.height * FlxG.scaleMode.scale.y);
+		
+		textField.scaleX = FlxG.scaleMode.scale.x;
+		textField.scaleY = FlxG.scaleMode.scale.y;
 		
 		#if FLX_DEBUG
 		FlxBasic.visibleCount++;
@@ -172,23 +162,16 @@ class FlxTextField extends FlxText
 	
 	override private function set_camera(Value:FlxCamera):FlxCamera 
 	{
-		if (_camera != Value)
-			return Value;
+		if (textField != null && textField.parent != null)
+			textField.parent.removeChild(textField);
 		
 		if (Value != null)
 		{
-			if (FlxG.renderTile)
-				cast(Value.view, FlxHardwareView).flashSprite.addChild(textField);
-			else
-				cast(Value.view, FlxBlitView).flashSprite.addChild(textField);
-			
+			Value.view.display.addChild(textField);
 			_addedToDisplay = true;
 		}
 		else
 		{
-			if (_camera != null)
-				textField.parent.removeChild(textField);
-			
 			_addedToDisplay = false;
 		}	
 		
