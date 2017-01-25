@@ -4,10 +4,10 @@ import flixel.FlxSprite;
 import flixel.FlxStrip;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
-import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxMath;
 import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.system.render.common.DrawItem.DrawData;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxSpriteUtil;
@@ -223,7 +223,7 @@ class FlxSliceSprite extends FlxStrip
 		{
 			fillTileVerticesUVs(CENTER, stretchCenter, sliceRects[CENTER].x, sliceRects[CENTER].y, centerWidth, centerHeight);
 			fillTileVerticesUVs(TOP, stretchTop, sliceRects[TOP].x, 0, centerWidth, sliceRects[TOP].height);
-			fillTileVerticesUVs(BOTTOM, stretchBottom, sliceRects[TOP].x, _snappedHeight - sliceRects[BOTTOM].height, centerWidth, sliceRects[BOTTOM].height);
+			fillTileVerticesUVs(BOTTOM, stretchBottom, sliceRects[BOTTOM].x, _snappedHeight - sliceRects[BOTTOM].height, centerWidth, sliceRects[BOTTOM].height);
 			fillTileVerticesUVs(LEFT, stretchLeft, 0, sliceRects[LEFT].y, sliceRects[LEFT].width, centerHeight);
 			fillTileVerticesUVs(RIGHT, stretchRight, _snappedWidth - sliceRects[RIGHT].width, sliceRects[RIGHT].y, sliceRects[RIGHT].width, centerHeight);
 			fillTileVerticesUVs(TOP_LEFT, false, 0, 0, sliceRects[TOP_LEFT].width, sliceRects[TOP_LEFT].height);
@@ -351,7 +351,10 @@ class FlxSliceSprite extends FlxStrip
 	override public function draw():Void
 	{
 		if (regen)
+		{
 			regenGraphic();
+			dirty = true;
+		}
 		
 		if (FlxG.renderBlit)
 		{
@@ -370,6 +373,9 @@ class FlxSliceSprite extends FlxStrip
 				
 				getScreenPosition(_point, camera);
 				
+				_matrix.identity();
+				_matrix.translate(_point.x, _point.y);
+				
 				for (i in 0...9)
 					drawTileOnCamera(i, camera);
 			}
@@ -379,7 +385,7 @@ class FlxSliceSprite extends FlxStrip
 	private inline function drawTileOnCamera(TileIndex:Int, Camera:FlxCamera):Void
 	{
 		if (slices[TileIndex] != null)
-			Camera.drawTriangles(slices[TileIndex], sliceVertices[TileIndex], indices, sliceUVTs[TileIndex], colors, _point, blend, repeat, antialiasing);
+			Camera.drawTriangles(slices[TileIndex], sliceVertices[TileIndex], indices, sliceUVTs[TileIndex], _matrix, colorTransform, blend, repeat, antialiasing);
 	}
 	
 	override function set_alpha(Alpha:Float):Float
