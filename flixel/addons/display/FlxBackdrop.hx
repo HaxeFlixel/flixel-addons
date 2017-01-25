@@ -200,7 +200,7 @@ class FlxBackdrop extends FlxSprite
 					_matrix.tx = tx + (_ppoint.x + currTileX);
 					_matrix.ty = ty + (_ppoint.y + currTileY);
 					
-					camera.drawPixels(_tileFrame, _matrix, colorTransform, blend, antialiasing, shader);
+					camera.drawPixels(_tileFrame, _matrix, colorTransform, blend, smoothing, shader);
 				}
 			}
 		}

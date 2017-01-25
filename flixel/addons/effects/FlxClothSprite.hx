@@ -156,7 +156,7 @@ class FlxClothSprite extends FlxSprite
 			_point.floor();
 		
 		_point.addPoint(_drawOffset).copyToFlash(_flashPoint);
-		camera.copyPixels(_frame, meshPixels, meshPixels.rect, _flashPoint, colorTransform, blend, antialiasing);
+		camera.copyPixels(_frame, meshPixels, meshPixels.rect, _flashPoint, colorTransform, blend, smoothing);
 	}
 	
 	override function drawComplex(camera:FlxCamera):Void 
@@ -186,7 +186,7 @@ class FlxClothSprite extends FlxSprite
 		if (_frameGraphic == null)
 			_frameGraphic = FlxGraphic.fromBitmapData(framePixels, false, null, false);
 		
-		camera.drawTriangles(_frameGraphic, _data, _matrix, colorTransform, blend, true, antialiasing);
+		camera.drawTriangles(_frameGraphic, _data, _matrix, colorTransform, blend, true, smoothing);
 	}
 	
 	#if FLX_DEBUG	

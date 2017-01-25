@@ -32,13 +32,13 @@ class FlxSpriteAniRot extends FlxSprite
 	 * @param	AnimatedGraphic		The image you want to rotate and stamp.
 	 * @param	Rotations			The number of rotation frames the final sprite should have.  For small sprites this can be quite a large number (360 even) without any problems.
 	 * @param	AutoBuffer			Whether to automatically increase the image size to accomodate rotated corners.  Default is false.  Will create frames that are 150% larger on each axis than the original frame or graphic.	
-	 * @param	Antialiasing		Whether to use high quality rotations when creating the graphic.  Default is false.
+	 * @param	Smoothing			Whether to use high quality rotations when creating the graphic.  Default is false.
 	 * @param	Width				The width of frame in provided spritesheet.
 	 * @param	Height				The height of frame in provided spritesheet
 	 * @param	X					The x component of sprite's position.
 	 * @param	Y					The y component of sprite's position.
 	 */
-	public function new(AnimatedGraphic:FlxGraphicAsset, Rotations:Int = 16, AutoBuffer:Bool = false, Antialiasing:Bool = false, Width:Int = 0, Height:Int = 0, X:Float = 0, Y:Float = 0)
+	public function new(AnimatedGraphic:FlxGraphicAsset, Rotations:Int = 16, AutoBuffer:Bool = false, Smoothing:Bool = false, Width:Int = 0, Height:Int = 0, X:Float = 0, Y:Float = 0)
 	{
 		super(X, Y);
 		
@@ -59,7 +59,7 @@ class FlxSpriteAniRot extends FlxSprite
 			frameToLoad = frames.frames[i];
 			
 			// Create the rotation spritesheet for that frame
-			helperSprite.loadRotatedFrame(frameToLoad, Rotations, Antialiasing, AutoBuffer);
+			helperSprite.loadRotatedFrame(frameToLoad, Rotations, Smoothing, AutoBuffer);
 			helperSprite.graphic.destroyOnNoUse = false;
 			framesCache.push(helperSprite.frames);
 		}

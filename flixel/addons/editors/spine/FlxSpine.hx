@@ -374,7 +374,7 @@ class FlxSpine extends FlxSprite
 				wrapper.x = bone.worldX + _matrix.tx;
 				wrapper.y = bone.worldY + _matrix.ty;
 				
-				wrapper.antialiasing = antialiasing;
+				wrapper.smoothing = smoothing;
 				wrapper.visible = true;
 				wrapper.draw();
 				
@@ -409,7 +409,7 @@ class FlxSpine extends FlxSprite
 		
 		var wrapper:FlxSprite = new FlxSprite();
 		wrapper.frames = imageFrame;
-		wrapper.antialiasing = antialiasing;
+		wrapper.smoothing = smoothing;
 		
 		wrapper.angle = -regionAttachment.rotation;
 		wrapper.scale.x = regionAttachment.scaleX * (regionAttachment.width / region.width);

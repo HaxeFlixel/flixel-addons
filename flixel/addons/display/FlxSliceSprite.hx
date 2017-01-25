@@ -385,7 +385,7 @@ class FlxSliceSprite extends FlxStrip
 	private inline function drawTileOnCamera(TileIndex:Int, Camera:FlxCamera):Void
 	{
 		if (slices[TileIndex] != null)
-			Camera.drawTriangles(slices[TileIndex], sliceVertices[TileIndex], indices, sliceUVTs[TileIndex], _matrix, colorTransform, blend, repeat, antialiasing);
+			Camera.drawTriangles(slices[TileIndex], sliceVertices[TileIndex], indices, sliceUVTs[TileIndex], _matrix, colorTransform, blend, repeat, smoothing);
 	}
 	
 	override function set_alpha(Alpha:Float):Float
