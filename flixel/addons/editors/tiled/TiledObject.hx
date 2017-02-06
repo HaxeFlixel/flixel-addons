@@ -17,6 +17,7 @@ class TiledObject
 	 */
 	public static inline var FLIPPED_VERTICALLY_FLAG = 0x40000000;
 	public static inline var FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+	public static inline var FLIPPED_DIAGONALLY_FLAG = 0x20000000;
 	
 	public static inline var RECTANGLE = 0;
 	public static inline var ELLIPSE = 1;
@@ -59,11 +60,11 @@ class TiledObject
 	/**
 	 * Whether the object is flipped horizontally.
 	 */
-	public var flippedHorizontally(get, null):Bool;
+	public var flippedHorizontally:Bool;
 	/**
 	 * Whether the object is flipped vertically.
 	 */
-	public var flippedVertically(get, null):Bool;
+	public var flippedVertically:Bool;
 	/**
 	 * An array with points if the object is a POLYGON or POLYLINE
 	 */
@@ -93,6 +94,13 @@ class TiledObject
 		{
 			gid = Std.parseInt(source.att.gid);
 			
+			flippedHorizontally = (gid & FLIPPED_HORIZONTALLY_FLAG) < 0;
+			
+			flippedVertically = (gid & FLIPPED_VERTICALLY_FLAG) > 0;
+			
+			gid &= ~(FLIPPED_HORIZONTALLY_FLAG |
+                        FLIPPED_VERTICALLY_FLAG );
+						
 			for (set in layer.map.tilesets)
 			{
 				shared = set.getPropertiesByGid(gid);
@@ -142,15 +150,5 @@ class TiledObject
 			pair = p.split(",");
 			points.push(FlxPoint.get(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
 		}
-	}
-
-	private inline function get_flippedHorizontally():Bool
-	{
-		return (gid & FLIPPED_HORIZONTALLY_FLAG) > 0;
-	}
-
-	private inline function get_flippedVertically():Bool
-	{
-		return (gid & FLIPPED_VERTICALLY_FLAG) > 0;
 	}
 }
