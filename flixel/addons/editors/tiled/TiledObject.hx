@@ -17,7 +17,6 @@ class TiledObject
 	 */
 	public static inline var FLIPPED_VERTICALLY_FLAG = 0x40000000;
 	public static inline var FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
-	public static inline var FLIPPED_DIAGONALLY_FLAG = 0x20000000;
 	
 	public static inline var RECTANGLE = 0;
 	public static inline var ELLIPSE = 1;
