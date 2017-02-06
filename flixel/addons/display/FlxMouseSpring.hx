@@ -1,6 +1,6 @@
 package flixel.addons.display;
 
-#if !FLX_NO_MOUSE
+#if FLX_MOUSE
 import flixel.FlxG;
 
 class FlxMouseSpring 

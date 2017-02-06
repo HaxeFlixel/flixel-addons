@@ -12,7 +12,7 @@ class TiledObject
 	/**
 	 * Use these to determine whether a sprite should be flipped, for example:
 	 * 
-	 * var flipped:Bool = cast (oject.gid & TiledObject.FLIPPED_HORIZONTALLY_FLAG);
+	 * var flipped:Bool = (oject.gid & TiledObject.FLIPPED_HORIZONTALLY_FLAG) > 0;
 	 * sprite.facing = flipped ? FlxObject.LEFT : FlxObject.RIGHT;
 	 */
 	public static inline var FLIPPED_VERTICALLY_FLAG = 0x40000000;
@@ -73,7 +73,7 @@ class TiledObject
 	{
 		xmlData = source;
 		layer = parent;
-		name = (source.has.name) ? source.att.name : "[object]";
+		name = (source.has.name) ? source.att.name : "";
 		type = (source.has.type) ? source.att.type :
 		        (parent.properties.contains("defaultType") ? parent.properties.get("defaultType") : "");
 		x = Std.parseInt(source.att.x);
@@ -92,7 +92,6 @@ class TiledObject
 		if (source.has.gid && source.att.gid.length != 0) 
 		{
 			gid = Std.parseInt(source.att.gid);
-			var set:TiledTileSet;
 			
 			for (set in layer.map.tilesets)
 			{
@@ -108,7 +107,6 @@ class TiledObject
 		}
 		
 		// load properties
-		var node:Xml;
 		properties = new TiledPropertySet();
 		
 		for (node in source.nodes.properties)
@@ -145,17 +143,14 @@ class TiledObject
 			points.push(FlxPoint.get(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
 		}
 	}
-	
-	/**
-	 * Property accessors
-	 */
+
 	private inline function get_flippedHorizontally():Bool
 	{
-		return cast (gid & FLIPPED_HORIZONTALLY_FLAG);
+		return (gid & FLIPPED_HORIZONTALLY_FLAG) > 0;
 	}
-	
+
 	private inline function get_flippedVertically():Bool
 	{
-		return cast (gid & FLIPPED_VERTICALLY_FLAG);
+		return (gid & FLIPPED_VERTICALLY_FLAG) > 0;
 	}
 }

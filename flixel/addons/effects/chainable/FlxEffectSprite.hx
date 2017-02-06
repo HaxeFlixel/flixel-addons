@@ -30,6 +30,11 @@ class FlxEffectSprite extends FlxSprite
 	public var target(default, null):FlxSprite;
 	
 	/**
+	 * Whether to call target's FlxSprite#updateAnimation() every FlxEffectSprite#update(). Set this false if the target is also added to state.
+	 */
+	public var updateTargetAnimation:Bool = true;
+	
+	/**
 	 * Effects applied to frames
 	 */
 	public var effects:Array<IFlxEffect>;
@@ -64,7 +69,8 @@ class FlxEffectSprite extends FlxSprite
 	override public function destroy():Void
 	{
 		effects = FlxDestroyUtil.destroyArray(effects);
-		_effectOffset = FlxDestroyUtil.put(_point);
+		_effectOffset = FlxDestroyUtil.put(_effectOffset);
+		target = null;
 		
 		super.destroy();
 	}
@@ -130,7 +136,7 @@ class FlxEffectSprite extends FlxSprite
 	 */
 	override public function update(elapsed:Float):Void
 	{
-		if (target.animation.frames > 1)
+		if (updateTargetAnimation && target.animation.frames > 1)
 		{
 			target.updateAnimation(elapsed);
 		}

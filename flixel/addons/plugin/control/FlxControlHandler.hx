@@ -1,6 +1,6 @@
 package flixel.addons.plugin.control;
 
-#if !FLX_NO_KEYBOARD
+#if FLX_KEYBOARD
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -188,6 +188,11 @@ class FlxControlHandler
 	private var _clockwiseKey:String;
 	private var _thrustKey:String;
 	private var _reverseKey:String;
+	// Invert movement on horizontal/vetical axis eg. pressing left moves right etc.
+	/** @since 2.1.0 */
+	public var invertX:Bool;
+	/** @since 2.1.0 */
+	public var invertY:Bool;
 	
 	// Sounds
 	private var _jumpSound:FlxSound;
@@ -224,6 +229,8 @@ class FlxControlHandler
 		}
 		
 		enabled = true;
+		invertX = false;
+		invertY = false;
 	}
 	
 	/**
@@ -631,7 +638,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_upKey]))
+		if (FlxG.keys.anyPressed([invertY ? _downKey : _upKey]))
 		{
 			move = true;
 			isPressedUp = true;
@@ -663,7 +670,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_downKey]))
+		if (FlxG.keys.anyPressed([invertY ? _upKey : _downKey]))
 		{
 			move = true;
 			isPressedDown = true;
@@ -696,7 +703,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_leftKey]))
+		if (FlxG.keys.anyPressed([invertX ? _rightKey : _leftKey]))
 		{
 			move = true;
 			isPressedLeft = true;
@@ -728,7 +735,7 @@ class FlxControlHandler
 	{
 		var move:Bool = false;
 		
-		if (FlxG.keys.anyPressed([_rightKey]))
+		if (FlxG.keys.anyPressed([invertX ? _leftKey : _rightKey]))
 		{
 			move = true;
 			isPressedRight = true;
@@ -837,7 +844,7 @@ class FlxControlHandler
 			}
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (move && _thrustSound != null)
 		{
 			_thrustSound.play(false);
@@ -906,7 +913,7 @@ class FlxControlHandler
 			}
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (fired && _fireSound != null)
 		{
 			_fireSound.play(true);
@@ -984,7 +991,7 @@ class FlxControlHandler
 			jumped = true;
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (jumped && _jumpSound != null)
 		{
 			_jumpSound.play(true);
@@ -1108,22 +1115,22 @@ class FlxControlHandler
 			
 			if (_up)
 			{
-				movedY = moveUp();
+				movedY = invertY ? moveDown() : moveUp();
 			}
 			
 			if (_down && movedY == false)
 			{
-				movedY = moveDown();
+				movedY = invertY ? moveUp() : moveDown();
 			}
 			
 			if (_left)
 			{
-				movedX = moveLeft();
+				movedX = invertX ? moveRight() : moveLeft();
 			}
 			
 			if (_right && movedX == false)
 			{
-				movedX = moveRight();
+				movedX = invertX ? moveLeft() : moveRight();
 			}
 			
 			if (movedX && movedY)
@@ -1164,7 +1171,7 @@ class FlxControlHandler
 			}
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (_walkSound != null)
 		{
 			if ((_movement == MOVEMENT_INSTANT && _entity.velocity.x != 0) || (_movement == MOVEMENT_ACCELERATES && _entity.acceleration.x != 0))

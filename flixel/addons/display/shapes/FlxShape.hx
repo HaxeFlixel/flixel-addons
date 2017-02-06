@@ -141,9 +141,6 @@ class FlxShape extends FlxSprite
 	 */
 	private function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
 	{
-		var diffX = (pixels.width - trueWidth);
-		var diffY = (pixels.height - trueHeight);
-		
 		width = trueWidth;		//reset width/height to geometric reality 
 		height = trueHeight;
 		

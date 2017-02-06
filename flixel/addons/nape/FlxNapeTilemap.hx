@@ -101,6 +101,9 @@ class FlxNapeTilemap extends FlxTilemap
 		for (index in tileIndices)
 		{
 			var coords:Array<FlxPoint> = getTileCoords(index, false);
+			if (coords == null)
+				continue;
+
 			for (point in coords)
 			{
 				polygon = new Polygon(vertices, mat);
@@ -165,7 +168,7 @@ class FlxNapeTilemap extends FlxTilemap
 		constructCollider(mat);
 	}
 	
-	#if !FLX_NO_DEBUG
+	#if FLX_DEBUG
 	override public function drawDebug():Void 
 	{
 		if (!FlxNapeSpace.drawDebug)

@@ -1,16 +1,57 @@
-?.?.?
+2.2.0
+------------------------------
+* Compatibility with flixel 4.2.0
+* `FlxWeaponFireFrom`: added a `useParentAngle` argument to `PARENT` (#261)
+* `FlxPexParser`:
+ * added a `scale` argument to `new()` (#263)
+ * added support for blend modes (#270)
+* `FlxSpine`: fixed an issue with texture loading and state switches (#265)
+* `FlxTypeText`: added support for adding / removing more than one char per frame (#267)
+* `flixel.addons.editors.tiled`: added support for animated tiles (#268)
+* `FlxFSM`: fixed a runtime error on HTML5 (#271)
+* `FlxSliceSprite`: fixed incorrect vertex positions on the bottom part (#272)
+* `FlxNapeSpace`: fixed `drawDebug` positioning with scaling (00b2b37)
+
+2.1.0
+------------------------------
+* Compatibility with flixel 4.1.0
+* `FlxTrailEffect`: added `clear()` (#229) 
+* `FlxOutlineEffect`: added `mode` / `FlxOutlineMode` and `quality` (#230)
+* `FlxWaveEffect`: added `interlaceOffset` (#232) 
+* `FlxNapeTilemap`: added a null check to `placeCustomPolygon()` (#235)
+* `FlxEffectSprite`: added `updateTargetAnimation` (#236) 
+* `FlxControlHandler`: added `invertX` and `invertY` (#239) 
+* `FlxBackdrop`:
+ * added support for `alpha` (#244)
+ * added support for `offset`
+* `TiledMap`:
+ * added a `rootPath` argument to `new()` (#245)
+ * renamed `FlxTiledAsset` to `FlxTiledMapAsset` (#245)
+* `TiledTileLayer`:
+ * added support for CSV encoding to `tileArray` (#245)
+ * changed `new()`'s `data` argument from `Dynamic` to `FlxTiledTileAsset` (#245)
+* `TiledObject`:
+ * changed the default name from `"[object]"` to `""` (#247)
+ * [Neko] fixed the types of `flippedHorizontally` / `flippedVertically`
+* `TiledLayer`: added `offsetX` and `offsetY` (#251)
+* `FlxFSM`: [Neko] fixed an invalid field access error (#257)
+* Added `FlxTiledSprite`
+* Added `FlxSliceSprite`
+
+2.0.0
 ------------------------------
 * Compatibility with flixel 4.0.0
 * `flixel.addons.editors.tiled`:
  * `TiledLayer` and `TiledObjectGroup` have been replaced with `TiledTileLayer` and `TiledObjectLayer` with a common base class `TiledLayer`
  * `TiledMap` now stores object layers and tile layers in a single array, `layers`, to maintain the order of object and tile layers
  * `TileTileLayer`: added `encoding`
+ * `TiledTileSet`: added `"id"` to `tileProps`
+ * added `TiledImageLayer`
+ * added `TiledImageTile` and `TiledTileSet#tileImagesSources`
 * `FlxTileSpecial`:
  * fixed bugs related to rotation happening after flipping
  * `flipHorizontal` -> `flipX`
  * `flipVertical` -> `flipY`
-* `flixel.addons.effects.WaveMode` -> `flixel.addons.effects.FlxWaveMode`
-* `flixel.addons.effects.GlitchDirection` -> `flixel.addons.effects.FlxGlitchDirection`
 * added `flixel.addons.util.FlxFSM`
 * `FlxTrail`:
  * now extends `FlxSpriteGroup`
@@ -24,12 +65,11 @@
 * `FlxTypeText`:
  * changed `Dynamic` callbacks to `Void->Void`
  * replaced `sound` by a `sounds` array, from which one is randomnly picked
+ * fixed jumping between lines during typing
  * added `useDefaultSound` which is `false` by default
 * added `flixel.addons.editors.pex.FlxPexParser`
 * added `flixel.addons.transition`
 * added `flixel.addons.util.FlxScene`
-* added `flixel.addons.effects.FlxOutline`
-* added `flixel.addons.effects.FlxRainbowSprite`
 * `flixel.addons.nape`:
  * refactored `FlxNapeState` into a plugin called `FlxNapeSpace`, making it possible to use nape with other `FlxState` child classes like `FlxUIState`
  * `FlxNapeSpace`: added `napePhysicsEnabled`
@@ -39,12 +79,35 @@
 * `flixel.addons.plugin.taskManager`: 
  * `AntTaskManager` -> `FlxTaskManager`
  * `AntTask` -> `FlxTask`
-* `FlxBackdrop` now supports `scale`, `loadGraphic()` and `loadFrame()`
+* `FlxBackdrop`: added support for  `scale`, `loadGraphic()` and `loadFrame()`
 * `flixel.addons.editors.spine`:
  * now uses [spinehaxe](https://github.com/bendmorris/spinehaxe) instead of [spinehx](https://github.com/nitrobin/spinehx)
  * `FlxSpine#readSkeletonData()` now allows for different atlas and animation file names
-* `FlxOgmoLoader`: added `getProperty()`
-* `FlxScreenGrab`: fixed `defineHotkeys()` arguments overriding those in `grab()`
+* `FlxOgmoLoader`:
+ * added `getProperty()`
+ * the constructor no longer sets the camera bounds
+* `FlxScreenGrab`:
+ * fixed `defineHotkeys()` arguments overriding those in `grab()`
+ * now uses linc_dialogs instead of systools on native targets
+* `FlxTilemapExt`:
+ * added support for slopes with 22.5 and 67.5 degrees
+ * added `setGentle()` and `setSteep()`
+ * removed `setClouds()`
+* `FlxExtendedSprite`: `mouseStartDragCallback` and `mouseStopDragCallback` now work 
+* added `flixel.addons.display.FlxPieDial`
+* `FlxGridOverlay`: removed the non-functional `AddLegend` arguments
+* `FlxZoomCamera`: made `zoomSpeed` and `zoomMargin` public
+* added `flixel.addons.text.FlxTextField` (moved from core Flixel)
+* added `flixel.addons.effects.chainable`:
+ * `IFlxEffect`
+ * `FlxEffectSprite`
+ * `FlxGlitchEffect` (replaces `FlxGlitchSprite`)
+ * `FlxWaveEffect` (replaces `FlxWaveSprite`)
+ * `FlxRainbowEffect`
+ * `FlxOutlineEffect`
+ * `FlxTrailEffect`
+ * `FlxShakeEffect`
+* added `flixel.addons.effects.FlxClothSprite`
 
 1.1.1
 ------------------------------

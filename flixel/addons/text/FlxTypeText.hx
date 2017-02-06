@@ -350,7 +350,7 @@ class FlxTypeText extends FlxText
 	override public function update(elapsed:Float):Void
 	{
 		// If the skip key was pressed, complete the animation.
-		#if !FLX_NO_KEYBOARD
+		#if FLX_KEYBOARD
 		if (skipKeys != null && skipKeys.length > 0 && FlxG.keys.anyJustPressed(skipKeys))
 		{
 			skip();
@@ -388,12 +388,16 @@ class FlxTypeText extends FlxText
 		{
 			if (_typing && _timer >= delay)
 			{
-				_length ++;
+				_length += Std.int(_timer / delay);
+				if (_length > _finalText.length)
+					_length = _finalText.length;
 			}
 			
 			if (_erasing && _timer >= eraseDelay)
 			{
-				_length --;
+				_length -= Std.int(_timer / eraseDelay);
+				if (_length < 0)
+					_length = 0;
 			}
 			
 			if ((_typing && _timer >= delay) || (_erasing && _timer >= eraseDelay))
@@ -411,7 +415,7 @@ class FlxTypeText extends FlxText
 				}
 				else
 				{
-					_timer = 0;
+					_timer %= delay;
 				}
 				
 				if (sounds != null && !useDefaultSound)
@@ -495,7 +499,7 @@ class FlxTypeText extends FlxText
 	#if !bitfive
 	private function loadDefaultSound():Void
 	{
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		_sound = FlxG.sound.load(new TypeSound());
 		#else
 		_sound = new FlxSound();

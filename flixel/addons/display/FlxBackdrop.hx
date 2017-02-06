@@ -14,6 +14,8 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
+using flixel.util.FlxColorTransformUtil;
+
 /**
  * Used for showing infinitely scrolling backgrounds.
  * @author Chevy Ray
@@ -21,10 +23,10 @@ import flixel.util.FlxDestroyUtil;
 class FlxBackdrop extends FlxSprite
 {
 	private var _ppoint:Point;
-	private var _scrollW:Int;
-	private var _scrollH:Int;
-	private var _repeatX:Bool;
-	private var _repeatY:Bool;
+	private var _scrollW:Int = 0;
+	private var _scrollH:Int = 0;
+	private var _repeatX:Bool = false;
+	private var _repeatY:Bool = false;
 	
 	private var _spaceX:Int = 0;
 	private var _spaceY:Int = 0;
@@ -74,9 +76,7 @@ class FlxBackdrop extends FlxSprite
 		scrollFactor.y = ScrollY;
 		
 		if (Graphic != null)
-		{
 			loadGraphic(Graphic);
-		}
 		
 		FlxG.signals.gameResized.add(onGameResize);
 	}
@@ -126,6 +126,9 @@ class FlxBackdrop extends FlxSprite
 
 	override public function draw():Void
 	{
+		var isColored:Bool = (alpha != 1) || (color != 0xffffff);
+		var hasColorOffsets:Bool = (colorTransform != null && colorTransform.hasRGBAOffsets());
+		
 		for (camera in cameras)
 		{
 			if (!camera.visible || !camera.exists)
@@ -139,39 +142,45 @@ class FlxBackdrop extends FlxSprite
 			// Find x position
 			if (_repeatX)
 			{   
-				_ppoint.x = ((x - camera.scroll.x * scrollFactor.x) % ssw);
-				if (_ppoint.x > 0) _ppoint.x -= ssw;
+				_ppoint.x = ((x - offset.x - camera.scroll.x * scrollFactor.x) % ssw);
+				if (_ppoint.x > 0)
+					_ppoint.x -= ssw;
 			}
 			else 
 			{
-				_ppoint.x = (x - camera.scroll.x * scrollFactor.x);
+				_ppoint.x = (x - offset.x - camera.scroll.x * scrollFactor.x);
 			}
 			
 			// Find y position
 			if (_repeatY)
 			{
-				_ppoint.y = ((y - camera.scroll.y * scrollFactor.y) % ssh);
-				if (_ppoint.y > 0) _ppoint.y -= ssh;
+				_ppoint.y = ((y - offset.y - camera.scroll.y * scrollFactor.y) % ssh);
+				if (_ppoint.y > 0)
+					_ppoint.y -= ssh;
 			}
 			else 
 			{
-				_ppoint.y = (y - camera.scroll.y * scrollFactor.y);
+				_ppoint.y = (y - offset.y - camera.scroll.y * scrollFactor.y);
 			}
 			
 			// Draw to the screen
 			if (FlxG.renderBlit)
 			{
+				if (graphic == null)
+					return;
+				
+				if (dirty)
+					calcFrame(useFramePixels);
+				
 				_flashRect2.setTo(0, 0, graphic.width, graphic.height);
 				camera.copyPixels(frame, framePixels, _flashRect2, _ppoint);
 			}
 			else
 			{
 				if (_tileFrame == null)
-				{
 					return;
-				}
 				
-				var drawItem = camera.startQuadBatch(_tileFrame.parent, false);
+				var drawItem = camera.startQuadBatch(_tileFrame.parent, isColored, hasColorOffsets);
 				
 				_tileFrame.prepareMatrix(_matrix);
 				
@@ -197,7 +206,7 @@ class FlxBackdrop extends FlxSprite
 					_matrix.tx = tx + (_ppoint.x + currTileX);
 					_matrix.ty = ty + (_ppoint.y + currTileY);
 					
-					drawItem.addQuad(_tileFrame, _matrix);
+					drawItem.addQuad(_tileFrame, _matrix, colorTransform);
 				}
 			}
 		}

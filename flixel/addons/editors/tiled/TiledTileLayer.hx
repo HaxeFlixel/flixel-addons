@@ -173,18 +173,38 @@ class TiledTileLayer extends TiledLayer
 	{
 		if (tileArray == null)
 		{
-			var mapData:ByteArray = getByteArrayData();
-
-			if (mapData == null)
-			{
-				throw "Must use Base64 encoding (with or without zlip compression) in order to get 1D Array.";
-			}
-
 			tileArray = new Array<Int>();
-
-			while (Std.int(mapData.position) < Std.int(mapData.length))
+			
+			if (encoding == "csv")
 			{
-				tileArray.push(resolveTile(mapData.readUnsignedInt()));
+				var endline:String = csvData.indexOf("\r\n") != -1 ? "\r\n" : "\n";
+				var rows:Array<String> = csvData.split(endline);
+				
+				for (row in rows)
+				{
+					var cells:Array<String> = row.split(",");
+					for (cell in cells)
+					{
+						if (cell != "")
+						{
+							tileArray.push(Std.parseInt(cell));
+						}
+					}
+				}
+			}
+			else
+			{
+				var mapData:ByteArray = getByteArrayData();
+				
+				if (mapData == null)
+				{
+					throw "Must use Base64 encoding (with or without zlip compression) in order to get 1D Array.";
+				}
+				
+				while (Std.int(mapData.position) < Std.int(mapData.length))
+				{
+					tileArray.push(resolveTile(mapData.readUnsignedInt()));
+				}
 			}
 		}
 

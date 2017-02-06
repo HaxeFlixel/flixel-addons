@@ -116,7 +116,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public var rotateBulletTowardsTarget:Bool = false;
 	
-	
 	/**
 	 * A reference to the Bullet that was last fired
 	 */
@@ -129,8 +128,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	// Sounds
 	public var onPreFireSound:FlxSound;
 	public var onPostFireSound:FlxSound;
-	
-	
 	
 	/**
 	 * The factory function to create a bullet
@@ -183,7 +180,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 			onPreFireCallback();
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (onPreFireSound != null)
 		{
 			onPreFireSound.play();
@@ -206,9 +203,23 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		switch (fireFrom)
 		{
-			case PARENT(parent, offset):
-				currentBullet.last.x = currentBullet.x = parent.x + FlxG.random.float(offset.min.x, offset.max.x);
-				currentBullet.last.y = currentBullet.y = parent.y + FlxG.random.float(offset.min.y, offset.max.y);
+			case PARENT(parent, offset, useParentDirection):
+				
+				//stote new offset in a new variable
+				var actualOffset = new FlxPoint(
+					FlxG.random.float(offset.min.x, offset.max.x),
+					FlxG.random.float(offset.min.y, offset.max.y));
+				if (useParentDirection)
+				{
+					//rotate actual offset around parent origin using the parent angle
+					actualOffset = rotatePoints(actualOffset, parent.origin, parent.angle);
+
+					//reposition offset to have it's origin at the new returned point
+					actualOffset.subtract(currentBullet.width/2,currentBullet.height/2);
+				}
+
+				currentBullet.last.x = currentBullet.x = parent.x + actualOffset.x;
+				currentBullet.last.y = currentBullet.y = parent.y + actualOffset.y;
 				
 			case POSITION(position):
 				currentBullet.last.x = currentBullet.x = FlxG.random.float(position.min.x, position.max.x);
@@ -235,14 +246,14 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 				internalFireFromAngle(currentBullet, parent.angle + FlxG.random.float(angle.min, angle.max));
 				
 			case FIRE_FROM_PARENT_FACING(angle):
-				internalFireFromAngle(currentBullet, FlxAngle.angleFromFacing(parent.facing) + FlxG.random.float(angle.min, angle.max));
+				internalFireFromAngle(currentBullet, FlxAngle.angleFromFacing(parent.facing, true) + FlxG.random.float(angle.min, angle.max));
 				
-			#if !FLX_NO_TOUCH
+			#if FLX_TOUCH
 			case FIRE_AT_TOUCH(touch):
 				internalFireAtPoint(currentBullet, touch.getPosition(FlxPoint.weak()));
 			#end
 			
-			#if !FLX_NO_MOUSE
+			#if FLX_MOUSE
 			case FIRE_AT_MOUSE:
 				internalFireAtPoint(currentBullet, FlxG.mouse.getPosition(FlxPoint.weak()));
 			#end
@@ -259,7 +270,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 			onPostFireCallback();
 		}
 		
-		#if !FLX_NO_SOUND_SYSTEM
+		#if FLX_SOUND_SYSTEM
 		if (onPostFireSound != null)
 		{
 			onPostFireSound.play();
@@ -270,6 +281,27 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	}
 		
 	/**
+	 * Calculates the new position for a point rotated around another point 
+	 * 
+	 * @param	point	The to be rotated point
+	 * @param	origin	The to be rotated around point. usually the origin of the parent flxsprite
+	 * @param	point	the current angle from of the origin. usually the parent angle.
+	 * @return	The new rotated Point
+	 */
+	public function rotatePoints(point:FlxPoint, origin:FlxPoint, angle:Float):FlxPoint
+	{
+		var returnedPoint:FlxPoint = FlxPoint.weak();
+
+		var inBetweenAngle:Float = origin.angleBetween(point) - 90;
+		inBetweenAngle = angle + inBetweenAngle;
+		var inBetweenDistance : Float = origin.distanceTo(point);
+		
+		returnedPoint.x = Math.cos(inBetweenAngle * Math.PI / 180) * inBetweenDistance;
+		returnedPoint.y = Math.sin(inBetweenAngle * Math.PI / 180) * inBetweenDistance;
+		return returnedPoint.add(origin.x, origin.y);
+	}
+
+	/**
 	 * Fires a bullet (if one is available) based on the facing (UP/DOWN/LEFT/RIGHT) of the Weapons parent
 	 * 
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
@@ -279,7 +311,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		return runFire(FIRE_FROM_PARENT_FACING(angleNoise));
 	}
 	
-	#if !FLX_NO_MOUSE
+	#if FLX_MOUSE
 	/**
 	 * Fires a bullet (if one is available) at the mouse coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 	 * 
@@ -291,7 +323,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	}
 	#end
 	
-	#if !FLX_NO_TOUCH
+	#if FLX_TOUCH
 	/**
 	 * Fires a bullet (if one is available) at the FlxTouch coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 	 * 
@@ -468,7 +500,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	{
 		switch (v) 
 		{
-			case PARENT(p, o): 
+			case PARENT(p, o, u): 
 				parent = p;
 			default: 
 				parent = null;
@@ -479,7 +511,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 
 enum FlxWeaponFireFrom
 {
-	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>);
+	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>, ?useParentAngle:Bool);
 	POSITION(position:FlxBounds<FlxPoint>);
 }
 
@@ -491,11 +523,11 @@ enum FlxWeaponFireMode
 	FIRE_FROM_PARENT_ANGLE(angleNoise:FlxBounds<Float>);
 	FIRE_FROM_PARENT_FACING(angleNoise:FlxBounds<Float>);
 	
-#if !FLX_NO_TOUCH 
+#if FLX_TOUCH 
 	FIRE_AT_TOUCH(touch:FlxTouch);
 #end
 
-#if !FLX_NO_MOUSE
+#if FLX_MOUSE
 	FIRE_AT_MOUSE;
 #end
 }

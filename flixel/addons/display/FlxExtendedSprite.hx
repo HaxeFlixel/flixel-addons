@@ -90,7 +90,7 @@ class FlxExtendedSprite extends FlxSprite
 	 */
 	public var springOffsetY:Int;
 	
-	#if !FLX_NO_MOUSE
+	#if FLX_MOUSE
 	/**
 	 * Function called when the mouse is pressed down on this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
 	 */
@@ -138,7 +138,7 @@ class FlxExtendedSprite extends FlxSprite
 	 */
 	public var rect(get, never):FlxRect;
 	
-	#if !FLX_NO_MOUSE
+	#if FLX_MOUSE
 	/**
 	 * Return true if the mouse is over this Sprite, otherwise false. Only takes the Sprites bounding box into consideration and does not check if there 
 	 * are other sprites potentially on-top of this one. Check the value of this.isPressed if you need to know if the mouse is currently clicked on this sprite.
@@ -189,7 +189,7 @@ class FlxExtendedSprite extends FlxSprite
 		super(X, Y, SimpleGraphic);
 	}
 	
-	#if !FLX_NO_MOUSE
+	#if FLX_MOUSE
 	/**
 	 * Allow this Sprite to receive mouse clicks, the total number of times this sprite is clicked is stored in this.clicks
 	 * You can add callbacks via mousePressedCallback and mouseReleasedCallback
@@ -399,7 +399,7 @@ class FlxExtendedSprite extends FlxSprite
 	 */
 	override public function update(elapsed:Float):Void
 	{
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		if (draggable == true && isDragged == true)
 		{
 			updateDrag();
@@ -546,14 +546,14 @@ class FlxExtendedSprite extends FlxSprite
 		// TODO: touch drag
 		if (_allowHorizontalDrag == true)
 		{
-			#if !FLX_NO_MOUSE
+			#if FLX_MOUSE
 			x = Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX)) - _dragOffsetX;
 			#end
 		}
 		
 		if (_allowVerticalDrag == true)
 		{
-			#if !FLX_NO_MOUSE
+			#if FLX_MOUSE
 			y = Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY)) - _dragOffsetY;
 			#end
 		}
@@ -581,7 +581,7 @@ class FlxExtendedSprite extends FlxSprite
 	 */
 	private function checkForClick():Void
 	{
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		if (mouseOver && FlxG.mouse.justPressed)
 		{
 			//	If we don't need a pixel perfect check, then don't bother running one! By this point we know the mouse is over the sprite already
@@ -606,7 +606,7 @@ class FlxExtendedSprite extends FlxSprite
 		#end
 	}
 	
-	#if !FLX_NO_MOUSE
+	#if FLX_MOUSE
 	/**
 	 * Called by FlxMouseControl when this sprite is clicked. Should not usually be called directly.
 	 */
@@ -662,7 +662,7 @@ class FlxExtendedSprite extends FlxSprite
 	{
 		isDragged = true;
 		
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		if (_dragFromPoint == false)
 		{
 			_dragOffsetX = Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX) - x);
@@ -743,7 +743,7 @@ class FlxExtendedSprite extends FlxSprite
 			y = (Math.floor(y / _snapY) * _snapY);
 		}
 		
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		if (mouseStopDragCallback != null)
 		{
 			mouseStopDragCallback(this, mouseX, mouseY);
@@ -833,7 +833,7 @@ class FlxExtendedSprite extends FlxSprite
 		return _point = NewPoint;
 	}
 	
-	#if !FLX_NO_MOUSE
+	#if FLX_MOUSE
 	
 	
 	private function get_mouseOver():Bool

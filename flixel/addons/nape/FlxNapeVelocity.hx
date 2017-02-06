@@ -25,7 +25,7 @@ class FlxNapeVelocity
 		Source.body.applyImpulse(Vec2.fromPolar(Speed, direction));
 	}
 	
-	#if !FLX_NO_MOUSE
+	#if FLX_MOUSE
 	/**
 	 * Move the given FlxNapeSprite towards the mouse pointer coordinates at a steady velocity
 	 * Timings are approximate due to the way Flash timers work, and irrespective of SWF frame rate. Allow for a variance of +- 50ms.
@@ -40,7 +40,7 @@ class FlxNapeVelocity
 	}
 	#end
 	
-	#if !FLX_NO_TOUCH
+	#if FLX_TOUCH
 	/**
 	 * Move the given FlxNapeSprite towards a FlxTouch point at a steady velocity
 	 * Timings are approximate due to the way Flash timers work, and irrespective of SWF frame rate. Allow for a variance of +- 50ms.

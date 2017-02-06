@@ -1,6 +1,8 @@
 package flixel.addons.editors.tiled;
 
 import flash.geom.Rectangle;
+import flixel.util.typeLimit.OneOfTwo;
+import openfl.Assets;
 import openfl.utils.ByteArray;
 import haxe.xml.Fast;
 
@@ -26,13 +28,13 @@ class TiledTileSet
 	
 	public var properties:TiledPropertySet;
 	
-	public var tileProps:Array<TiledPropertySet>;
+	public var tileProps:Array<TiledTilePropertySet>;
 	
 	public var tileImagesSources:Array<TiledImageTile>;
 	
-	public function new(data:Dynamic)
+	public function new(data:FlxTiledTileAsset, rootPath:String="")
 	{
-		var node:Fast, source:Fast;
+		var source:Fast;
 		numTiles = 0xFFFFFF;
 		numRows = numCols = 1;
 		
@@ -41,11 +43,10 @@ class TiledTileSet
 		{
 			source = data;
 		}
-		else if (Std.is(data, 
-			#if (lime_legacy || openfl <= "3.4.0") ByteArray #else ByteArrayData #end
-		))
+		else if (Std.is(data, ValidByteArray))
 		{
-			source = new Fast(Xml.parse(data.toString()));
+			var bytes:ValidByteArray = cast data;
+			source = new Fast(Xml.parse(bytes.toString()));
 			source = source.node.tileset;
 		}
 		else 
@@ -54,6 +55,16 @@ class TiledTileSet
 		}
 		
 		firstGID = (source.has.firstgid) ? Std.parseInt(source.att.firstgid) : 1;
+		
+		if (source.has.source)
+		{
+			var sourcePath = rootPath + source.att.source;
+			if (Assets.exists(sourcePath))
+			{
+				source = new Fast(Xml.parse(Assets.getText(sourcePath)));
+				source = source.node.tileset;
+			}
+		}
 		
 		if (!source.has.source) 
 		{
@@ -122,7 +133,7 @@ class TiledTileSet
 				properties.extend(prop);
 			
 			// read tiles properties
-			tileProps = new Array<TiledPropertySet>();
+			tileProps = new Array<TiledTilePropertySet>();
 			
 			for (node in source.nodes.tile)
 			{
@@ -132,11 +143,21 @@ class TiledTileSet
 				}
 				
 				var id:Int = Std.parseInt(node.att.id);
-				tileProps[id] = new TiledPropertySet();
+				tileProps[id] = new TiledTilePropertySet(id);
 				tileProps[id].keys.set("id", Std.string(id));
 				for (prop in node.nodes.properties)
 				{
 					tileProps[id].extend(prop);
+				}
+				if (node.hasNode.animation)
+				{
+					for (frame in node.node.animation.nodes.frame)
+					{
+						tileProps[id].addAnimationFrame(
+							Std.parseInt(frame.att.tileid),
+							Std.parseFloat(frame.att.duration)
+						);
+					}
 				}
 			}
 			
@@ -200,3 +221,6 @@ class TiledTileSet
 		return new Rectangle((ID % numCols) * tileWidth, (ID / numCols) * tileHeight);
 	}
 }
+
+private typedef ValidByteArray = #if lime_legacy ByteArray #else ByteArrayData #end;
+typedef FlxTiledTileAsset = OneOfTwo<Fast, ValidByteArray>;

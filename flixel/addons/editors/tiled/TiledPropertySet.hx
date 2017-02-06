@@ -38,8 +38,6 @@ class TiledPropertySet implements Dynamic<String>
 	
 	public function extend(Source:Fast)
 	{
-		var prop:Fast;
-		
 		for (prop in Source.nodes.property)
 		{
 			keys.set(prop.att.name, prop.att.value);

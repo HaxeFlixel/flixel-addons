@@ -112,7 +112,7 @@ class FlxScreenGrab extends FlxBasic
 		
 		var m:Matrix = new Matrix(1, 0, 0, 1, -bounds.x, -bounds.y);
 		
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		if (HideMouse)
 		{
 			FlxG.mouse.visible = false;
@@ -121,7 +121,7 @@ class FlxScreenGrab extends FlxBasic
 		
 		theBitmap.bitmapData.draw(FlxG.stage, m);
 		
-		#if !FLX_NO_MOUSE
+		#if FLX_MOUSE
 		if (HideMouse)
 		{
 			FlxG.mouse.visible = true;
@@ -218,7 +218,7 @@ class FlxScreenGrab extends FlxBasic
 	
 	override public function update(elapsed:Float):Void
 	{
-		#if !FLX_NO_KEYBOARD
+		#if FLX_KEYBOARD
 		if (FlxG.keys.anyJustReleased(_hotkeys))
 		{
 			grab(null, _autoSave, _autoHideMouse);

@@ -135,7 +135,7 @@ class FlxTilemapExt extends FlxTilemap
 		var frame:FlxFrame;
 		var special:FlxTileSpecial;
 
-		#if !FLX_NO_DEBUG
+		#if FLX_DEBUG
 		var debugTile:BitmapData;
 		#end 
 		
@@ -170,7 +170,7 @@ class FlxTilemapExt extends FlxTilemap
 						tile.frame.paint(Buffer.pixels, _flashPoint, true);
 					}
 				
-			#if !FLX_NO_DEBUG
+			#if FLX_DEBUG
 				if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
 				{
 					if (tile != null)
@@ -342,7 +342,7 @@ class FlxTilemapExt extends FlxTilemap
 				drawTilemap(buffer, camera);
 			}
 			
-			#if !FLX_NO_DEBUG
+			#if FLX_DEBUG
 			FlxBasic.visibleCount++;
 			#end
 		}
