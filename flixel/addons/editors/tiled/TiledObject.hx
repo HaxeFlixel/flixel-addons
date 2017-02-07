@@ -1,5 +1,6 @@
 package flixel.addons.editors.tiled;
 
+import haxe.Int64;
 import haxe.xml.Fast;
 import flixel.math.FlxPoint;
 
@@ -12,7 +13,7 @@ class TiledObject
 	/**
 	 * Use these to determine whether a sprite should be flipped, for example:
 	 * 
-	 * var flipped:Bool = (oject.gid & TiledObject.FLIPPED_HORIZONTALLY_FLAG) > 0;
+	 * var flipped:Bool = (object.gid & TiledObject.FLIPPED_HORIZONTALLY_FLAG) > 0;
 	 * sprite.facing = flipped ? FlxObject.LEFT : FlxObject.RIGHT;
 	 */
 	public static inline var FLIPPED_VERTICALLY_FLAG = 0x40000000;
@@ -84,24 +85,20 @@ class TiledObject
 		// By default let's it be a rectangle object
 		objectType = RECTANGLE;
 		
-		// resolve inheritence
+		// resolve inheritance
 		shared = null;
 		gid = -1;
 		
 		// object with tile association?
-		if (source.has.gid && source.att.gid.length != 0) 
+		if (source.has.gid && source.att.gid.length != 0)
 		{
-			gid = Std.parseInt(source.att.gid);
+			var gid64 = Int64.parseString(source.att.gid);
 			
-			flippedHorizontally = (gid & FLIPPED_HORIZONTALLY_FLAG) < 0;
-			trace("hor flip " + flippedHorizontally);
-			flippedVertically = (gid & FLIPPED_VERTICALLY_FLAG) > 0;
-			trace("vert flip " + flippedVertically);
+			flippedHorizontally = (gid64 & FLIPPED_HORIZONTALLY_FLAG) < 0;
+			flippedVertically = (gid64 & FLIPPED_VERTICALLY_FLAG) > 0;
 
-			
-			gid &= ~(FLIPPED_HORIZONTALLY_FLAG |
-                        FLIPPED_VERTICALLY_FLAG );
-			trace("gid " + gid);
+			gid64 &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG);
+			gid = gid64.low;
 			
 			for (set in layer.map.tilesets)
 			{
