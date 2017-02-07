@@ -59,11 +59,11 @@ class TiledObject
 	/**
 	 * Whether the object is flipped horizontally.
 	 */
-	public var flippedHorizontally:Bool;
+	public var flippedHorizontally(default, null):Bool;
 	/**
 	 * Whether the object is flipped vertically.
 	 */
-	public var flippedVertically:Bool;
+	public var flippedVertically(default, null):Bool;
 	/**
 	 * An array with points if the object is a POLYGON or POLYLINE
 	 */
@@ -94,12 +94,15 @@ class TiledObject
 			gid = Std.parseInt(source.att.gid);
 			
 			flippedHorizontally = (gid & FLIPPED_HORIZONTALLY_FLAG) < 0;
-			
+			trace("hor flip " + flippedHorizontally);
 			flippedVertically = (gid & FLIPPED_VERTICALLY_FLAG) > 0;
+			trace("vert flip " + flippedVertically);
+
 			
 			gid &= ~(FLIPPED_HORIZONTALLY_FLAG |
                         FLIPPED_VERTICALLY_FLAG );
-						
+			trace("gid " + gid);
+			
 			for (set in layer.map.tilesets)
 			{
 				shared = set.getPropertiesByGid(gid);
