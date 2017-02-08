@@ -94,9 +94,8 @@ class TiledObject
 		{
 			var gid64 = Int64.parseString(source.att.gid);
 			
-			flippedHorizontally = (gid64 & FLIPPED_HORIZONTALLY_FLAG) < 0;
+			flippedHorizontally = (gid64 & FLIPPED_HORIZONTALLY_FLAG) > 0;
 			flippedVertically = (gid64 & FLIPPED_VERTICALLY_FLAG) > 0;
-
 			gid64 &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG);
 			gid = gid64.low;
 			
