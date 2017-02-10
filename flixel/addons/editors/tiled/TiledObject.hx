@@ -92,7 +92,7 @@ class TiledObject
 		// object with tile association?
 		if (source.has.gid && source.att.gid.length != 0)
 		{
-			var gid64 = Int64.parseString(source.att.gid);
+			var gid64 = parseString(source.att.gid);
 			
 			flippedHorizontally = (gid64 & FLIPPED_HORIZONTALLY_FLAG) > 0;
 			flippedVertically = (gid64 & FLIPPED_VERTICALLY_FLAG) > 0;
@@ -148,5 +148,48 @@ class TiledObject
 			pair = p.split(",");
 			points.push(FlxPoint.get(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
 		}
+	}
+
+	/**
+	 * This is a copy of Haxe 3.4's `IntHelper.parseString()`.
+	 * Copied for backwards-compatibility with Haxe 3.2.x.
+	 */
+	private function parseString(sParam:String):Int64
+	{
+		var base = Int64.ofInt(10);
+		var current = Int64.ofInt(0);
+		var multiplier = Int64.ofInt(1);
+		var sIsNegative = false;
+
+		var s = StringTools.trim(sParam);
+		if (s.charAt(0) == "-")
+		{
+			sIsNegative = true;
+			s = s.substring(1, s.length);
+		}
+		var len = s.length;
+
+		for (i in 0...len)
+		{
+			var digitInt = s.charCodeAt(len - 1 - i) - '0'.code;
+
+			if (digitInt < 0 || digitInt > 9)
+				throw "NumberFormatError";
+
+			var digit:Int64 = Int64.ofInt(digitInt);
+			if (sIsNegative) {
+				current = Int64.sub(current, Int64.mul(multiplier, digit));
+				if (!Int64.isNeg(current))
+					throw "NumberFormatError: Underflow";
+			}
+			else
+			{
+				current = Int64.add(current, Int64.mul(multiplier, digit));
+				if (Int64.isNeg(current))
+					throw "NumberFormatError: Overflow";
+			}
+			multiplier = Int64.mul(multiplier, base);
+		}
+		return current;
 	}
 }
