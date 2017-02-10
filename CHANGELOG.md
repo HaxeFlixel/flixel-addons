@@ -1,3 +1,13 @@
+2.3.0
+------------------------------
+* `FlxBackdrop`: fixed `color` not working with tilesheet rendering (#277) 
+* `FlxWeapon`: fixed `FIRE_FROM_PARENT_FACING` angles (#259)
+* `FlxSliceSprite`:
+  * added setters for `alpha` and `color` (#276)
+  * fixed a rendering issue on Flash (#275)
+* `flixel.editors.spine`: support for spinehaxe version 3.5.0 (#281)
+* `TiledObject`: fixed `gid` handling of flipped objects (#287)
+
 2.2.0
 ------------------------------
 * Compatibility with flixel 4.2.0
