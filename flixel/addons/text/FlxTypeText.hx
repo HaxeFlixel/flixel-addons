@@ -186,10 +186,7 @@ class FlxTypeText extends FlxText
 			skipKeys = SkipKeys;
 		}
 		
-		if (Callback != null)
-		{
-			completeCallback = Callback;
-		}
+		completeCallback = Callback;
 
 		insertBreakLines();
 		
@@ -269,10 +266,7 @@ class FlxTypeText extends FlxText
 			skipKeys = SkipKeys;
 		}
 		
-		if (Callback != null)
-		{
-			eraseCallback = Callback;
-		}
+		eraseCallback = Callback;
 		
 		#if !bitfive
 		if (useDefaultSound)
