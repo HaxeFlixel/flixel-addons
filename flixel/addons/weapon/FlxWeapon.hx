@@ -96,6 +96,11 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public var positionOffset(default, null):FlxPoint;
 	
+	/**
+	 * When the bullet is fired if you need to offset it's angle from the parent angle, for example if the bullet sprite is angle offsetted, only used when useParentAngle is true
+	 */
+	public var angleOffset:Float = 0;
+	
 	public var fireFrom(default, set):FlxWeaponFireFrom;
 	public var speedMode:FlxWeaponSpeedMode;
 	
@@ -464,7 +469,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		if (rotateBulletTowardsTarget)
 		{
-			bullet.angle = FlxAngle.angleBetweenPoint(bullet, point, true);
+			bullet.angle = angleOffset + FlxAngle.angleBetweenPoint(bullet, point, true);
 		}
 		
 		point.putWeak();
@@ -492,7 +497,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		if (rotateBulletTowardsTarget)
 		{
-			bullet.angle = FlxAngle.asDegrees(radians);
+			bullet.angle = angleOffset + FlxAngle.asDegrees(radians);
 		}
 	}
 	
