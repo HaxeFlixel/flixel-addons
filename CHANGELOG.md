@@ -1,3 +1,13 @@
+2.3.0
+------------------------------
+* `FlxBackdrop`: fixed `color` not working with tilesheet rendering (#277) 
+* `FlxWeapon`: fixed `FIRE_FROM_PARENT_FACING` angles (#259)
+* `FlxSliceSprite`:
+  * added setters for `alpha` and `color` (#276)
+  * fixed a rendering issue on Flash (#275)
+* `flixel.addons.editors.spine`: support for spinehaxe version 3.5.0 (#281)
+* `TiledObject`: fixed `gid` handling of flipped objects (#287)
+
 2.2.0
 ------------------------------
 * Compatibility with flixel 4.2.0
@@ -64,7 +74,7 @@
  * removed `onFireCallback` and `onFireSound`
 * `FlxTypeText`:
  * changed `Dynamic` callbacks to `Void->Void`
- * replaced `sound` by a `sounds` array, from which one is randomnly picked
+ * replaced `sound` by a `sounds` array, from which one is randomly picked
  * fixed jumping between lines during typing
  * added `useDefaultSound` which is `false` by default
 * added `flixel.addons.editors.pex.FlxPexParser`
@@ -74,7 +84,7 @@
  * refactored `FlxNapeState` into a plugin called `FlxNapeSpace`, making it possible to use nape with other `FlxState` child classes like `FlxUIState`
  * `FlxNapeSpace`: added `napePhysicsEnabled`
  * `FlxNapeSpace`: made `shapeDebug` public
- * `FlxNapeSprite`: `setPosition()` is now overriden and sets `body.position`
+ * `FlxNapeSprite`: `setPosition()` is now overridden and sets `body.position`
  * `FlxNapeSprite#new()`: the `EnablePhysics` argument is now no longer ignored if `CreateRectangularBody` is `false`
 * `flixel.addons.plugin.taskManager`: 
  * `AntTaskManager` -> `FlxTaskManager`
