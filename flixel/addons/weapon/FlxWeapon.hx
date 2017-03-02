@@ -149,8 +149,9 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * Then either use setDirection with fire() or one of the fireAt functions to launch them.
 	 * 
 	 * @param	Name		The name of your weapon (i.e. "lazer" or "shotgun"). For your internal reference really, but could be displayed in-game.
-	 * @param	ParentRef	If this weapon belongs to a parent sprite, specify it here (bullets will fire from the sprites x/y vars as defined below).
 	 * @param	BulletFactory	FlxWeapon uses this factory function to actually create a bullet
+	 * @param	fireFrom	enum that describes the weapon firing position, for Example Parent, Position.
+	 * @param	speedMode	enum that describes the bullets speed mode, for Example Velocity, Acceleration.
 	 */
 	public function new(name:String, bulletFactory:FlxTypedWeapon<TBullet>->TBullet, fireFrom:FlxWeaponFireFrom, speedMode:FlxWeaponSpeedMode)
 	{
