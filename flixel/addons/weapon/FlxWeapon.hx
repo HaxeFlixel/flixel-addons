@@ -1,10 +1,10 @@
 package flixel.addons.weapon;
 
-import flixel.addons.weapon.FlxWeapon.FlxTypedWeapon;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.weapon.FlxWeapon.FlxTypedWeapon;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.touch.FlxTouch;
 import flixel.math.FlxAngle;
@@ -212,7 +212,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		{
 			case PARENT(parent, offset, useParentDirection, angleOffset):
 				
-				//stote new offset in a new variable
+				//store new offset in a new variable
 				var actualOffset = new FlxPoint(
 					FlxG.random.float(offset.min.x, offset.max.x),
 					FlxG.random.float(offset.min.y, offset.max.y));
@@ -222,7 +222,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 					actualOffset = rotatePoints(actualOffset, parent.origin, parent.angle);
 
 					//reposition offset to have it's origin at the new returned point
-					actualOffset.subtract(currentBullet.width/2,currentBullet.height/2);
+					actualOffset.subtract(currentBullet.width / 2,currentBullet.height / 2);
 					actualOffset.subtract(parent.offset.x, parent.offset.y);
 				}
 
@@ -302,7 +302,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 
 		var inBetweenAngle:Float = origin.angleBetween(point) - 90;
 		inBetweenAngle = angle + inBetweenAngle;
-		var inBetweenDistance : Float = origin.distanceTo(point);
+		var inBetweenDistance:Float = origin.distanceTo(point);
 		
 		returnedPoint.x = Math.cos(inBetweenAngle * Math.PI / 180) * inBetweenDistance;
 		returnedPoint.y = Math.sin(inBetweenAngle * Math.PI / 180) * inBetweenDistance;
@@ -421,7 +421,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * 
 	 * @param  ObjectOrGroup  	The group or object to check if bullets collide
 	 * @param  NotifyCallBack  	A function that will get called if a bullet overlaps an object
-	 * @param  SkipParent    	Don't trigger colision notifies with the parent of this object
+	 * @param  SkipParent    	Don't trigger collision notifies with the parent of this object
 	*/
 	public inline function bulletsOverlap(ObjectOrGroup:FlxBasic, ?NotifyCallBack:FlxObject->FlxObject->Void, SkipParent:Bool = true):Void
 	{
@@ -508,9 +508,9 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	{
 		switch (v) 
 		{
-			case PARENT(parent, offset, useParentAngle, angleOffset): 
+			case PARENT(parent, _, _, angleOffset): 
 				this.parent = parent;
-				if(angleOffset != null)
+				if (angleOffset != null)
 					this.angleOffset = angleOffset;
 
 			default: 
