@@ -96,11 +96,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	public var positionOffset(default, null):FlxPoint;
 	
-	/**
-	 * When the bullet is fired if you need to offset it's angle from the parent angle, for example if the bullet sprite is angle offsetted, only used when useParentAngle is true
-	 */
-	public var angleOffset:Float = 0;
-	
 	public var fireFrom(default, set):FlxWeaponFireFrom;
 	public var speedMode:FlxWeaponSpeedMode;
 	
@@ -142,6 +137,12 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	private var lastFired:Int = 0;
 	
 	private var skipParentCollision:Bool;
+
+	/**
+	 * When the bullet is fired if you need to offset it's angle from the parent angle, for example if the bullet sprite is angle offsetted, only used when useParentAngle is true
+	 */
+	private var angleOffset:Float = 0;
+	
 	
 	/**
 	 * Creates the FlxWeapon class which will fire your bullets.
@@ -209,7 +210,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		switch (fireFrom)
 		{
-			case PARENT(parent, offset, useParentDirection):
+			case PARENT(parent, offset, useParentDirection, angleOffset):
 				
 				//stote new offset in a new variable
 				var actualOffset = new FlxPoint(
@@ -222,6 +223,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 
 					//reposition offset to have it's origin at the new returned point
 					actualOffset.subtract(currentBullet.width/2,currentBullet.height/2);
+					actualOffset.subtract(parent.offset.x, parent.offset.y);
 				}
 
 				currentBullet.last.x = currentBullet.x = parent.x + actualOffset.x;
@@ -506,8 +508,11 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	{
 		switch (v) 
 		{
-			case PARENT(p, o, u): 
-				parent = p;
+			case PARENT(parent, offset, useParentAngle, angleOffset): 
+				this.parent = parent;
+				if(angleOffset != null)
+					this.angleOffset = angleOffset;
+
 			default: 
 				parent = null;
 		}
@@ -517,7 +522,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 
 enum FlxWeaponFireFrom
 {
-	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>, ?useParentAngle:Bool);
+	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>, ?useParentAngle:Bool, ?angleOffset:Float);
 	POSITION(position:FlxBounds<FlxPoint>);
 }
 
