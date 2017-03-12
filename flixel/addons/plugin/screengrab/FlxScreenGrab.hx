@@ -36,6 +36,11 @@ class FlxScreenGrab extends FlxBasic
 	private static var _region:Rectangle;
 	
 	/**
+	 * Defines a preset path to use on non-flash lime legacy >= 2.9.0 (the current default), because no file dialog is available in this case.
+	 */
+	public static var presetPath:String = "";
+	
+	/**
 	 * Defines the region of the screen that should be captured. If you need it to be a fixed location then use this.
 	 * If you want to grab the whole SWF size, you don't need to set this as that is the default.
 	 * Remember that if your game is running in a zoom mode > 1 you need to account for this here.
@@ -172,47 +177,48 @@ class FlxScreenGrab extends FlxBasic
 	#else
 		png = screenshot.bitmapData.encode(screenshot.bitmapData.rect, new PNGEncoderOptions());
 	#end
-		
-	#if !sys
-		var file:FileReference = new FileReference();
-		file.save(png, Filename);
-	#elseif (!lime_legacy || lime < "2.9.0")
-		
-		var documentsDirectory = "";
-		#if lime_legacy
-			documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
-		#else
-			documentsDirectory = lime.system.System.documentsDirectory;
-		#end
-		
-		var fd:FileDialog = new FileDialog();
-		
-		var path = "";
-		
-		fd.onSelect.add(function(str:String) {
-			path = fixFilename(str);
+	#if sys
+		var writerFunc = function(str:String) {
+			var path = fixFilename(str);
 			var f = sys.io.File.write(path, true);
 			f.writeString(png.readUTFBytes(png.length));
 			f.close();
 			path = null;
-		});
-		
-		try
-		{
-			fd.browse(FileDialogType.SAVE, "*.png", documentsDirectory);
 		}
-		catch (msg:String)
-		{
-			path = Filename;			//if there was an error write out to default directory (game install directory)
-		}
-		
+	#end
+	#if !sys
+		var file:FileReference = new FileReference();
+		file.save(png, Filename);
+	#else
+		#if (!lime_legacy || lime < "2.9.0")
+			var documentsDirectory = "";
+			#if lime_legacy
+				documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+			#else
+				documentsDirectory = lime.system.System.documentsDirectory;
+			#end
+
+			var fd:FileDialog = new FileDialog();
+
+			var path = "";
+
+			fd.onSelect.add(writerFunc);
+
+			try
+			{
+				fd.browse(FileDialogType.SAVE, "*.png", documentsDirectory);
+			}
+			catch (msg:String)
+			{
+				path = Filename;			//if there was an error write out to default directory (game install directory)
+			}
+		#else
+			var path = presetPath;
+			if (path != "" && path != null)
+				path += Filename;
+		#end
 		if (path != "" && path != null)	//if path is empty, the user cancelled the save operation and we can safely do nothing
-		{
-			path = fixFilename(path);
-			var f = sys.io.File.write(path, true);
-			f.writeString(png.readUTFBytes(png.length));
-			f.close();
-		}
+			writerFunc(path);
 	#end
 	}
 	
