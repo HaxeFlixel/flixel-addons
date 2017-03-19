@@ -1,6 +1,7 @@
 package flixel.addons.display;
 
 import flixel.FlxStrip;
+import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.render.common.DrawItem.DrawData;
@@ -8,10 +9,18 @@ import flixel.util.FlxColor;
 
 class FlxRope extends FlxStrip
 {
-	// todo: texture set should set dirty to true as well...
-	
+	/**
+	 * Points of the rope.
+	 */
 	public var points(default, set):Array<FlxPoint>;
 	
+	/**
+	 * Rope sprite constructor.
+	 * @param	X				x position of the sprite.
+	 * @param	Y				y position of the sprite.
+	 * @param	SimpleGraphic	texture for this sprite.
+	 * @param	Points			points of the rope.
+	 */
 	public function new(?X:Float = 0, ?Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset, Points:Array<FlxPoint>) 
 	{
 		super(X, Y, SimpleGraphic);
@@ -30,7 +39,11 @@ class FlxRope extends FlxStrip
 		super.destroy();
 	}
 	
-	private function refresh():Void
+	/**
+	 * Updates indices and uv coordinates of the sprite.
+	 * You should call this method is you manually add new points to this rope by directly adding new point objects.
+	 */
+	public function refresh():Void
 	{
 		if (points.length < 1)
 			return;
@@ -86,12 +99,16 @@ class FlxRope extends FlxStrip
 		dirty = true;
 	}
 	
-	private function updateVertices():Void
+	/**
+	 * Updates positions of vertices of this sprite.
+	 * You should call this method after manually changing positons of `points` in this sprite.
+	 */
+	public function updateVertices():Void
 	{
-		var numPoints:Int = points.length;
-		
-		if (numPoints < 1)
+		if (points == null || points.length < 2)
 			return;
+		
+		var numPoints:Int = points.length;
 		
 		var lastPoint:FlxPoint = points[0];
 		var nextPoint:FlxPoint;
@@ -147,6 +164,16 @@ class FlxRope extends FlxStrip
 		}
 		
 		return value;
+	}
+	
+	override function set_graphic(Value:FlxGraphic):FlxGraphic 
+	{
+		super.set_graphic(Value);
+		
+		if (Value != null)
+			updateVertices();
+		
+		return Value;
 	}
 	
 }
