@@ -158,7 +158,7 @@ class FlxScene
 							addInstance(instance, container, element);
 
 						case "button":
-							var instance = new FlxButton();
+							var instance = new FlxButton(0, 0, "Label");
 							applySpriteProperties(instance, element);
 							applyTextProperties(instance.label, element);
 

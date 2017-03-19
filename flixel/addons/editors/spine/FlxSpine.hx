@@ -259,6 +259,7 @@ class FlxSpine extends FlxSprite
 					b = mesh.b;
 					a = mesh.a;
 				}
+				
 				if (wrapper != null)
 				{
 					wrapper.x = 0;
@@ -267,21 +268,27 @@ class FlxSpine extends FlxSprite
 					
 					#if flash
 					wrapper.vertices.length = verticesLength;
-					for (i in 0...verticesLength)
-					{
-						wrapper.vertices[i] = worldVertices[i];
-					}
+					wrapper.indices.length = triangles.length;
+					wrapper.uvtData.length = uvtData.length;
 					#else
 					if (worldVertices.length - verticesLength > 0)
-					{
 						worldVertices.splice(verticesLength, worldVertices.length - verticesLength);
-					}
 					
-					wrapper.vertices = worldVertices;
+					if (wrapper.indices.length > triangles.length)
+						wrapper.indices.splice(triangles.length, wrapper.indices.length - triangles.length);
+					
+					if (wrapper.uvtData.length > uvtData.length)
+						wrapper.uvtData.splice(uvtData.length, wrapper.uvtData.length - uvtData.length);
 					#end
 					
-					wrapper.indices = triangles;
-					wrapper.uvtData = uvtData;
+					for (i in 0...verticesLength)
+						wrapper.vertices[i] = worldVertices[i];
+					
+					for (i in 0...triangles.length)
+						wrapper.indices[i] = triangles[i];
+					
+					for (i in 0...uvtData.length)
+						wrapper.uvtData[i] = uvtData[i];
 					
 					wrapperColor = FlxColor.fromRGBFloat(	skeleton.r * slot.r * r * color.redFloat,
 														  skeleton.g * slot.g * g * color.greenFloat,
@@ -292,6 +299,7 @@ class FlxSpine extends FlxSprite
 					wrapper.alpha = skeleton.a * slot.a * a * alpha;
 					
 					wrapper.blend = (slot.data.blendMode == spinehaxe.BlendMode.additive) ? BlendMode.ADD : null;
+					wrapper.data.dirty = true;
 					wrapper.draw();
 				}
 			}
@@ -366,7 +374,7 @@ class FlxSpine extends FlxSprite
 				wrapper.x = bone.worldX + _matrix.tx;
 				wrapper.y = bone.worldY + _matrix.ty;
 				
-				wrapper.antialiasing = antialiasing;
+				wrapper.smoothing = smoothing;
 				wrapper.visible = true;
 				wrapper.draw();
 				
@@ -401,7 +409,7 @@ class FlxSpine extends FlxSprite
 		
 		var wrapper:FlxSprite = new FlxSprite();
 		wrapper.frames = imageFrame;
-		wrapper.antialiasing = antialiasing;
+		wrapper.smoothing = smoothing;
 		
 		wrapper.angle = -regionAttachment.rotation;
 		wrapper.scale.x = regionAttachment.scaleX * (regionAttachment.width / region.width);
@@ -461,7 +469,6 @@ class FlxSpine extends FlxSprite
 				else
 					collider.y = skeleton.y - collider.offsetY;
 			}
-			
 		}
 		
 		return NewY;

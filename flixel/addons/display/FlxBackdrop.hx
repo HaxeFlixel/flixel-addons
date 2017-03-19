@@ -7,7 +7,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
-import flixel.graphics.tile.FlxDrawTilesItem;
 import flixel.math.FlxPoint;
 import flixel.math.FlxPoint.FlxCallbackPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
@@ -126,15 +125,10 @@ class FlxBackdrop extends FlxSprite
 
 	override public function draw():Void
 	{
-		var isColored:Bool = (alpha != 1) || (color != 0xffffff);
-		var hasColorOffsets:Bool = (colorTransform != null && colorTransform.hasRGBAOffsets());
-		
 		for (camera in cameras)
 		{
 			if (!camera.visible || !camera.exists)
-			{
 				continue;
-			}
 			
 			var ssw:Float = _scrollW * Math.abs(scale.x);
 			var ssh:Float = _scrollH * Math.abs(scale.y);
@@ -143,6 +137,7 @@ class FlxBackdrop extends FlxSprite
 			if (_repeatX)
 			{   
 				_ppoint.x = ((x - offset.x - camera.scroll.x * scrollFactor.x) % ssw);
+				
 				if (_ppoint.x > 0)
 					_ppoint.x -= ssw;
 			}
@@ -155,6 +150,7 @@ class FlxBackdrop extends FlxSprite
 			if (_repeatY)
 			{
 				_ppoint.y = ((y - offset.y - camera.scroll.y * scrollFactor.y) % ssh);
+				
 				if (_ppoint.y > 0)
 					_ppoint.y -= ssh;
 			}
@@ -180,8 +176,6 @@ class FlxBackdrop extends FlxSprite
 				if (_tileFrame == null)
 					return;
 				
-				var drawItem = camera.startQuadBatch(_tileFrame.parent, isColored, hasColorOffsets);
-				
 				_tileFrame.prepareMatrix(_matrix);
 				
 				var scaleX:Float = scale.x;
@@ -206,7 +200,7 @@ class FlxBackdrop extends FlxSprite
 					_matrix.tx = tx + (_ppoint.x + currTileX);
 					_matrix.ty = ty + (_ppoint.y + currTileY);
 					
-					drawItem.addQuad(_tileFrame, _matrix, colorTransform);
+					camera.drawPixels(_tileFrame, _matrix, colorTransform, blend, smoothing, shader);
 				}
 			}
 		}
@@ -226,20 +220,15 @@ class FlxBackdrop extends FlxSprite
 		var frameBitmap:BitmapData = null;
 		
 		if (_repeatX) 
-		{
 			w += FlxG.width;
-		}
+		
 		if (_repeatY)
-		{
 			h += FlxG.height;
-		}
 		
 		if (FlxG.renderBlit)
 		{
 			if (graphic == null || (graphic.width != w || graphic.height != h))
-			{
 				makeGraphic(w, h, FlxColor.TRANSPARENT, true);
-			}
 		}
 		else
 		{
@@ -277,13 +266,16 @@ class FlxBackdrop extends FlxSprite
 					_tileInfo.push(_ppoint.y);
 					_numTiles++;
 				}
+				
 				_ppoint.x += ssw;
 			}
+			
 			if (FlxG.renderBlit)
 			{
 				_matrix.tx = 0;
 				_matrix.ty += ssh;
 			}
+			
 			_ppoint.x = 0;
 			_ppoint.y += ssh;
 		}
@@ -314,14 +306,10 @@ class FlxBackdrop extends FlxSprite
 		if (Frame != _tileFrame)
 		{
 			if (_tileFrame != null)
-			{
 				_tileFrame.parent.useCount--;
-			}
 			
 			if (Frame != null)
-			{
 				Frame.parent.useCount++;
-			}
 		}
 		
 		return _tileFrame = Frame;

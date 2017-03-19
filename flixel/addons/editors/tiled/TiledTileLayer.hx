@@ -62,7 +62,7 @@ class TiledTileLayer extends TiledLayer
 						throw "TiledLayer - data compression type not supported!";
 				}
 			}
-
+			
 			if (compressed)
 			{
 				#if (js && !format)
@@ -78,13 +78,14 @@ class TiledTileLayer extends TiledLayer
 		}
 		// Compressed or uncompressed, the endian must be little endian
 		result.endian = Endian.LITTLE_ENDIAN;
+		result.position = 0;
 		return result;
 	}
 
 	private function base64ToByteArray(data:String):ByteArray
 	{
 		var output:ByteArray = new ByteArray();
-
+		
 		// initialize lookup table
 		var lookup:Array<Int> = new Array<Int>();
 

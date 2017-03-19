@@ -7,6 +7,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.system.render.blit.FlxBlitView;
+import flixel.system.render.hardware.FlxHardwareView;
 import flixel.text.FlxText;
 
 /**
@@ -38,9 +40,7 @@ class FlxTextField extends FlxText
 		textField.wordWrap = false;
 		
 		if (Camera == null)
-		{
 			Camera = FlxG.camera;
-		}
 		
 		_camera = Camera;
 		dirty = false;
@@ -52,9 +52,7 @@ class FlxTextField extends FlxText
 	override public function destroy():Void
 	{
 		if (textField.parent != null)
-		{
 			textField.parent.removeChild(textField);
-		}
 		
 		_camera = null;
 		super.destroy();
@@ -99,8 +97,10 @@ class FlxTextField extends FlxText
 	override private function set_height(Height:Float):Float
 	{
 		Height = super.set_height(Height);
+		
 		if (textField != null)
 			textField.height = Height;
+		
 		return Height;
 	}
 	
@@ -128,47 +128,27 @@ class FlxTextField extends FlxText
 	override public function draw():Void
 	{
 		if (_camera == null)
-		{
 			return;
-		}
 		
 		if (!_addedToDisplay)
 		{
-			if (FlxG.renderTile)
-			{
-				_camera.canvas.addChild(textField);
-			}
-			else 
-			{
-				_camera.flashSprite.addChild(textField);
-			}
-			
-			_addedToDisplay = true;
+			this.camera = _camera;
 			updateDefaultFormat();
 		}
 		
 		if (!_camera.visible || !_camera.exists || !isOnScreen(_camera))
-		{
 			textField.visible = false;
-		}
 		else
-		{
 			textField.visible = true;
-		}
 		
 		_point.x = x - (_camera.scroll.x * scrollFactor.x) - offset.x;
 		_point.y = y - (_camera.scroll.y * scrollFactor.y) - offset.y;
 		
-		if (FlxG.renderTile)
-		{
-			textField.x = _point.x;
-			textField.y = _point.y;
-		}
-		else
-		{
-			textField.x = (_point.x - 0.5 * _camera.width);
-			textField.y = (_point.y - 0.5 * _camera.height);
-		}
+		textField.x = (_point.x - 0.5 * _camera.width * FlxG.scaleMode.scale.x);
+		textField.y = (_point.y - 0.5 * _camera.height * FlxG.scaleMode.scale.y);
+		
+		textField.scaleX = FlxG.scaleMode.scale.x;
+		textField.scaleY = FlxG.scaleMode.scale.y;
 		
 		#if FLX_DEBUG
 		FlxBasic.visibleCount++;
@@ -182,29 +162,16 @@ class FlxTextField extends FlxText
 	
 	override private function set_camera(Value:FlxCamera):FlxCamera 
 	{
-		if (_camera != Value)
-			return Value;
+		if (textField != null && textField.parent != null)
+			textField.parent.removeChild(textField);
 		
 		if (Value != null)
 		{
-			if (FlxG.renderTile)
-			{
-				Value.canvas.addChild(textField);
-			}
-			else
-			{
-				Value.flashSprite.addChild(textField);
-			}
-			
+			Value.view.display.addChild(textField);
 			_addedToDisplay = true;
 		}
 		else
 		{
-			if (_camera != null)
-			{
-				textField.parent.removeChild(textField);
-			}
-			
 			_addedToDisplay = false;
 		}	
 		
