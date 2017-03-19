@@ -49,6 +49,7 @@ class FlxRope extends FlxStrip
 			return;
 		
 		var uvs:DrawData<Float> = uvtData;
+		uvs.splice(0, uvs.length);
 		
 		uvs[0] = 0.0;
 		uvs[1] = 0.0;
@@ -56,6 +57,7 @@ class FlxRope extends FlxStrip
 		uvs[3] = 1.0;
 		
 		var indexes:DrawData<Int> = this.indices;
+		indexes.splice(0, indexes.length);
 		
 		indexes[0] = 0;
 		indexes[1] = 1;
@@ -116,6 +118,8 @@ class FlxRope extends FlxStrip
 		var perpY:Float = 0;
 		
 		var vertices:DrawData<Float> = data.vertices;
+		vertices.splice(0, vertices.length);
+		
 		var total:Int = points.length;
 		var point:FlxPoint;
 		var index:Int;
