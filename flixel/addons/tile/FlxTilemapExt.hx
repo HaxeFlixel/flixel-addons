@@ -170,28 +170,28 @@ class FlxTilemapExt extends FlxTilemap
 						tile.frame.paint(Buffer.pixels, _flashPoint, true);
 					}
 				
-			#if FLX_DEBUG
-				if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
-				{
-					if (tile != null)
+					#if FLX_DEBUG
+					if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
 					{
-						if (tile.allowCollisions <= FlxObject.NONE)
+						if (tile != null)
 						{
-							debugTile = _debugTileNotSolid; 
-						}
-						else if (tile.allowCollisions != FlxObject.ANY)
-						{
-							debugTile = _debugTilePartial; 
-						}
-						else
-						{
-							debugTile = _debugTileSolid; 
-						}
+							if (tile.allowCollisions <= FlxObject.NONE)
+							{
+								debugTile = _debugTileNotSolid; 
+							}
+							else if (tile.allowCollisions != FlxObject.ANY)
+							{
+								debugTile = _debugTilePartial; 
+							}
+							else
+							{
+								debugTile = _debugTileSolid; 
+							}
 						
-						Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
+							Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
+						}
 					}
-				}
-			#end
+					#end
 			
 				}
 				else

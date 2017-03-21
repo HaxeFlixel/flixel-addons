@@ -116,7 +116,7 @@ class FlxPexParser
 			 **/
 			
 			var src = Std.parseInt(config.node.blendFuncSource.att.value),
-				dst = Std.parseInt(config.node.blendFuncDestination.att.value);
+			dst = Std.parseInt(config.node.blendFuncDestination.att.value);
 			emitter.blend = switch ((src << 12) | dst)
 			{
 				case 0x306303:

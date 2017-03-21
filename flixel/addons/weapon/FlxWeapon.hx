@@ -534,13 +534,13 @@ enum FlxWeaponFireMode
 	FIRE_FROM_PARENT_ANGLE(angleNoise:FlxBounds<Float>);
 	FIRE_FROM_PARENT_FACING(angleNoise:FlxBounds<Float>);
 	
-#if FLX_TOUCH 
+	#if FLX_TOUCH 
 	FIRE_AT_TOUCH(touch:FlxTouch);
-#end
+	#end
 
-#if FLX_MOUSE
+	#if FLX_MOUSE
 	FIRE_AT_MOUSE;
-#end
+	#end
 }
 
 enum FlxWeaponSpeedMode

@@ -75,7 +75,7 @@ class FlxScene
 	public function new(?file:String)
 	{
 		if (file != null)
-		set(file);
+			set(file);
 	}
 
 	/**
@@ -96,25 +96,25 @@ class FlxScene
 		// <scene> attributes
 
 		if (_fastXml.has.width)
-		width = Std.parseInt(_fastXml.att.width);
+			width = Std.parseInt(_fastXml.att.width);
 
 		if (_fastXml.has.height)
-		height = Std.parseInt(_fastXml.att.height);
+			height = Std.parseInt(_fastXml.att.height);
 
 		if (_fastXml.has.name)
-		name = _fastXml.att.name;
+			name = _fastXml.att.name;
 
 		if (_fastXml.has.description)
-		description = _fastXml.att.description;
+			description = _fastXml.att.description;
 
 		if (_fastXml.has.version)
-		version = _fastXml.att.version;
+			version = _fastXml.att.version;
 
 		if (_fastXml.has.bgColor)
-		FlxG.cameras.bgColor = FlxColor.fromString(_fastXml.att.bgColor);
+			FlxG.cameras.bgColor = FlxColor.fromString(_fastXml.att.bgColor);
 
 		if (_fastXml.hasNode.constants)
-		loadConstants();
+			loadConstants();
 	}
 
 	/**
@@ -167,7 +167,7 @@ class FlxScene
 				}
 
 				if (layerId != null)
-				break;
+					break;
 			}
 		}
 	}
@@ -303,13 +303,13 @@ class FlxScene
 	private function addInstance(instance:Dynamic, container:FlxTypedGroup<Dynamic>, element:Fast):Void
 	{
 		if (container == null)
-		FlxG.state.add(instance);
+			FlxG.state.add(instance);
 
 		else
-		container.add(instance);
+			container.add(instance);
 
 		if (element.has.id)
-		_objects.arrayWrite(element.att.id, instance);
+			_objects.arrayWrite(element.att.id, instance);
 	}
 
 	/**
@@ -323,85 +323,85 @@ class FlxScene
 		// From FlxSprite
 
 		if (element.has.graphic)
-		instance.loadGraphic(assetsDirectory + element.att.graphic);
+			instance.loadGraphic(assetsDirectory + element.att.graphic);
 
 		if (element.has.alpha)
-		instance.alpha = Std.parseFloat(element.att.alpha);
+			instance.alpha = Std.parseFloat(element.att.alpha);
 
 		if (element.has.color)
-		instance.color = FlxColor.fromString(element.att.color);
+			instance.color = FlxColor.fromString(element.att.color);
 
 		if (element.has.flipX)
-		instance.flipX = parseBool(element.att.flipX);
+			instance.flipX = parseBool(element.att.flipX);
 
 		if (element.has.flipY)
-		instance.flipY = parseBool(element.att.flipY);
+			instance.flipY = parseBool(element.att.flipY);
 
 		if (element.has.originX)
-		instance.origin.x = Std.parseFloat(element.att.originX);
+			instance.origin.x = Std.parseFloat(element.att.originX);
 
 		if (element.has.originY)
-		instance.origin.y = Std.parseFloat(element.att.originY);
+			instance.origin.y = Std.parseFloat(element.att.originY);
 
 		if (element.has.offsetX)
-		instance.offset.x = Std.parseFloat(element.att.offsetX);
+			instance.offset.x = Std.parseFloat(element.att.offsetX);
 
 		if (element.has.offsetY)
-		instance.offset.y = Std.parseFloat(element.att.offsetY);
+			instance.offset.y = Std.parseFloat(element.att.offsetY);
 
 		if (element.has.scaleX)
-		instance.scale.x = Std.parseFloat(element.att.scaleX);
+			instance.scale.x = Std.parseFloat(element.att.scaleX);
 
 		if (element.has.scaleY)
-		instance.scale.y = Std.parseFloat(element.att.scaleY);
+			instance.scale.y = Std.parseFloat(element.att.scaleY);
 
 		// From FlxObject
 
 		if (element.has.x)
-		instance.x = Std.parseFloat(element.att.x);
+			instance.x = Std.parseFloat(element.att.x);
 
 		if (element.has.y)
-		instance.y = Std.parseFloat(element.att.y);
+			instance.y = Std.parseFloat(element.att.y);
 
 		if (element.has.width)
-		instance.width = Std.parseFloat(element.att.width);
+			instance.width = Std.parseFloat(element.att.width);
 
 		if (element.has.height)
-		instance.height = Std.parseFloat(element.att.height);
+			instance.height = Std.parseFloat(element.att.height);
 
 		if (element.has.angle)
-		instance.angle = Std.parseFloat(element.att.angle);
+			instance.angle = Std.parseFloat(element.att.angle);
 
 		if (element.has.immovable)
-		instance.immovable = parseBool(element.att.immovable);
+			instance.immovable = parseBool(element.att.immovable);
 
 		if (element.has.solid)
-		instance.solid = parseBool(element.att.solid);
+			instance.solid = parseBool(element.att.solid);
 
 		if (element.has.scrollFactorX)
-		instance.scrollFactor.x = Std.parseFloat(element.att.scrollFactorX);
+			instance.scrollFactor.x = Std.parseFloat(element.att.scrollFactorX);
 
 		if (element.has.scrollFactorY)
-		instance.scrollFactor.y = Std.parseFloat(element.att.scrollFactorY);
+			instance.scrollFactor.y = Std.parseFloat(element.att.scrollFactorY);
 
 		// Alignment properties
 
 		if (element.has.alignBottom)
-		instance.y = FlxG.height - instance.height - Std.parseInt(element.att.alignBottom);
+			instance.y = FlxG.height - instance.height - Std.parseInt(element.att.alignBottom);
 		
 		if (element.has.alignRight)
-		instance.x = FlxG.width - instance.width - Std.parseInt(element.att.alignRight);
+			instance.x = FlxG.width - instance.width - Std.parseInt(element.att.alignRight);
 
 		if (element.has.alignVertical)
-		instance.y = (FlxG.height / 2) - (instance.height / 2) + Std.parseInt(element.att.alignVertical);
+			instance.y = (FlxG.height / 2) - (instance.height / 2) + Std.parseInt(element.att.alignVertical);
 
 		if (element.has.alignHorizontal)
-		instance.x = (FlxG.width / 2) - (instance.width / 2) + Std.parseInt(element.att.alignHorizontal);
+			instance.x = (FlxG.width / 2) - (instance.width / 2) + Std.parseInt(element.att.alignHorizontal);
 
 		// From FlxBasic
 
 		if (element.has.visible)
-		instance.visible = parseBool(element.att.visible);
+			instance.visible = parseBool(element.att.visible);
 	}
 
 	/**
@@ -415,31 +415,31 @@ class FlxScene
 		if (instance == null || element == null) return;
 		
 		if (element.has.text)
-		instance.text = element.att.text;
+			instance.text = element.att.text;
 
 		if (element.has.size)
-		instance.size = Std.parseInt(element.att.size);
+			instance.size = Std.parseInt(element.att.size);
 
 		if (element.has.fieldWidth)
-		instance.fieldWidth = Std.parseInt(element.att.fieldWidth);
+			instance.fieldWidth = Std.parseInt(element.att.fieldWidth);
 
 		if (element.has.font)
-		instance.font = assetsDirectory + element.att.font;
+			instance.font = assetsDirectory + element.att.font;
 
 		if (element.has.alignment)
-		instance.alignment = element.att.alignment;
+			instance.alignment = element.att.alignment;
 
 		if (element.has.borderStyle)
-		instance.borderStyle = FlxTextBorderStyle.createByName(element.att.borderStyle.toUpperCase());
+			instance.borderStyle = FlxTextBorderStyle.createByName(element.att.borderStyle.toUpperCase());
 
 		if (element.has.borderColor)
-		instance.borderColor = FlxColor.fromString(element.att.borderColor);
+			instance.borderColor = FlxColor.fromString(element.att.borderColor);
 
 		if (element.has.borderSize)
-		instance.borderSize = Std.parseInt(element.att.borderSize);
+			instance.borderSize = Std.parseInt(element.att.borderSize);
 
 		if (element.has.wordWrap)
-		instance.wordWrap = parseBool(element.att.wordWrap);
+			instance.wordWrap = parseBool(element.att.wordWrap);
 	}
 
 	/**
@@ -482,9 +482,9 @@ class FlxScene
 	private function parseBool(value:String):Bool
 	{
 		if (value == "false" || Std.parseInt(value) == 0)
-		return false;
+			return false;
 
 		else
-		return true;
+			return true;
 	}
 }

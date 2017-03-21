@@ -104,19 +104,19 @@ class FlxTrailArea extends FlxSprite
 	 */
 	private var _areaPixels:BitmapData;
 	
-	 /**
-	  * Creates a new FlxTrailArea, in which all added sprites get a trail effect.
-	  * 
-	  * @param	X				x position of the trail area
-	  * @param	Y				y position of the trail area
-	  * @param	Width			The width of the area - defaults to FlxG.width
-	  * @param	Height			The height of the area - defaults to FlxG.height
-	  * @param	AlphaMultiplier By what the area's alpha is multiplied per update
-	  * @param	Delay			How often to update the trail. 1 updates every frame
-	  * @param	SimpleRender 	If simple rendering should be used. Ignores all sprite transformations
-	  * @param	Antialiasing	If sprites should be smoothed when drawn to the area. Ignored when simple rendering is on
-	  * @param	TrailBlendMode 	The blend mode used for the area. Only works in flash
-	  */
+	/**
+	 * Creates a new FlxTrailArea, in which all added sprites get a trail effect.
+	 * 
+	 * @param	X				x position of the trail area
+	 * @param	Y				y position of the trail area
+	 * @param	Width			The width of the area - defaults to FlxG.width
+	 * @param	Height			The height of the area - defaults to FlxG.height
+	 * @param	AlphaMultiplier By what the area's alpha is multiplied per update
+	 * @param	Delay			How often to update the trail. 1 updates every frame
+	 * @param	SimpleRender 	If simple rendering should be used. Ignores all sprite transformations
+	 * @param	Antialiasing	If sprites should be smoothed when drawn to the area. Ignored when simple rendering is on
+	 * @param	TrailBlendMode 	The blend mode used for the area. Only works in flash
+	 */
 	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, AlphaMultiplier:Float = 0.8, Delay:Int = 2, SimpleRender:Bool = false, Antialiasing:Bool = false, ?TrailBlendMode:BlendMode) 
 	{
 		super(X, Y);

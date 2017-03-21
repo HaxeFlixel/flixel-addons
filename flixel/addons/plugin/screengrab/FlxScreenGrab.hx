@@ -165,24 +165,24 @@ class FlxScreenGrab extends FlxBasic
 		Filename = fixFilename(Filename);
 		
 		var png:ByteArray;
-	#if flash
+		#if flash
 		png = PNGEncoder.encode(screenshot.bitmapData);
-	#elseif openfl_legacy
+		#elseif openfl_legacy
 		png = screenshot.bitmapData.encode(screenshot.bitmapData.rect, "png");
-	#else
+		#else
 		png = screenshot.bitmapData.encode(screenshot.bitmapData.rect, new PNGEncoderOptions());
-	#end
+		#end
 		
-	#if !sys
+		#if !sys
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
-	#elseif (!lime_legacy || lime < "2.9.0")
+		#elseif (!lime_legacy || lime < "2.9.0")
 		
 		var documentsDirectory = "";
 		#if lime_legacy
-			documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+		documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
 		#else
-			documentsDirectory = lime.system.System.documentsDirectory;
+		documentsDirectory = lime.system.System.documentsDirectory;
 		#end
 		
 		var fd:FileDialog = new FileDialog();
@@ -213,7 +213,7 @@ class FlxScreenGrab extends FlxBasic
 			f.writeString(png.readUTFBytes(png.length));
 			f.close();
 		}
-	#end
+		#end
 	}
 	
 	override public function update(elapsed:Float):Void

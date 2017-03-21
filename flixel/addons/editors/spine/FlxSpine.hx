@@ -283,10 +283,12 @@ class FlxSpine extends FlxSprite
 					wrapper.indices = triangles;
 					wrapper.uvtData = uvtData;
 					
-					wrapperColor = FlxColor.fromRGBFloat(	skeleton.r * slot.r * r * color.redFloat,
-														  skeleton.g * slot.g * g * color.greenFloat,
-														  skeleton.b * slot.b * b * color.blueFloat,
-														  1);
+					wrapperColor = FlxColor.fromRGBFloat(
+						skeleton.r * slot.r * r * color.redFloat,
+						skeleton.g * slot.g * g * color.greenFloat,
+						skeleton.b * slot.b * b * color.blueFloat,
+						1
+					);
 					
 					wrapper.color = wrapperColor;
 					wrapper.alpha = skeleton.a * slot.a * a * alpha;
@@ -325,9 +327,11 @@ class FlxSpine extends FlxSprite
 				var wrapper:FlxSprite = getSprite(regionAttachment);
 				wrapper.blend = (slot.data.blendMode == spinehaxe.BlendMode.additive) ? BlendMode.ADD : BlendMode.NORMAL;
 				
-				wrapper.color = FlxColor.fromRGBFloat(skeleton.r * slot.r * regionAttachment.r * color.redFloat,
-				                                      skeleton.g * slot.g * regionAttachment.g * color.greenFloat,
-												      skeleton.b * slot.b * regionAttachment.b * color.blueFloat);
+				wrapper.color = FlxColor.fromRGBFloat(
+					skeleton.r * slot.r * regionAttachment.r * color.redFloat,
+					skeleton.g * slot.g * regionAttachment.g * color.greenFloat,
+					skeleton.b * slot.b * regionAttachment.b * color.blueFloat
+				);
 				
 				wrapper.alpha = skeleton.a * slot.a * regionAttachment.a * this.alpha;
 				
