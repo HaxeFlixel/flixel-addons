@@ -5,11 +5,11 @@
 [![Haxelib Version](https://img.shields.io/github/tag/HaxeFlixel/flixel-addons.svg?style=flat-square&label=haxelib)](http://lib.haxe.org/p/flixel-addons)
 [![Build Status](https://img.shields.io/travis/HaxeFlixel/flixel-addons.svg?style=flat-square)](https://travis-ci.org/HaxeFlixel/flixel-addons)
 
-##About
+## About
 
 A set of useful, but optional classes for [HaxeFlixel](https://github.com/HaxeFlixel/flixel) created by the community. Includes some classes from the [Flixel Power Tools](https://github.com/photonstorm/Flixel-Power-Tools).
 
-##For Developers
+## For Developers
 
 If you are wanting to contribute code, please review the follwing documentation:
 
