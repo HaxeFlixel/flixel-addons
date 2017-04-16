@@ -146,7 +146,7 @@ class TiledObject
 		for (p in pointsStr)
 		{
 			pair = p.split(",");
-			points.push(FlxPoint.get(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
+			points.push(new FlxPoint(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
 		}
 	}
 
