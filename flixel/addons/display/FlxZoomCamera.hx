@@ -28,7 +28,7 @@ class FlxZoomCamera extends FlxCamera
 	 */
 	public var zoomMargin:Float = 0.25;
 	
-	public function new(X:Int, Y:Int, Width:Int, Height:Int, Zoom:Float = 0)
+	public function new(X:Int, Y:Int, Width:Int, Height:Int, Zoom:Float = 0, ZoomSpeed:Float = 25, ZoomMargin:Float = 0.25)
 	{
 		super(X, Y, Width, Height, FlxCamera.defaultZoom);
 		targetZoom = Zoom;
@@ -80,5 +80,19 @@ class FlxZoomCamera extends FlxCamera
 		// Example: a zoom of 2 offsets it half the screen at most
 		x = -(width / 2) * offsetX * (zoom - FlxCamera.defaultZoom);
 		y = -(height / 2) * offsetY * (zoom - FlxCamera.defaultZoom);
+	}
+	/**
+	 * Given a value passed in, updates the speed of zooming. Useful for real time changes.
+	 */
+	public function setZoomSpeed(Value:Float):Void
+	{
+		_zoomSpeed = Value;
+	}
+	/**
+	 * Given a value passed in, updates the margin of zooming. Useful for real time changes.
+	 */
+	public function setZoomMargin(Value:Float):Void
+	{
+		_zoomMargin = Value;
 	}
 }
