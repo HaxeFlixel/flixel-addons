@@ -307,6 +307,18 @@ class FlxTypeText extends FlxText
 		_timer = 0;
 		_typing = false;
 		
+		if (useDefaultSound)
+		{
+			_sound.stop();
+		}
+		else
+		{
+			for (sound in sounds)
+			{
+				sound.stop();
+			}
+		}
+		
 		if (completeCallback != null)
 		{
 			completeCallback();
