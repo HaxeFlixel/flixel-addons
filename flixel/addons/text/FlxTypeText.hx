@@ -74,6 +74,11 @@ class FlxTypeText extends FlxText
 	 */
 	public var skipKeys:Array<FlxKey> = [];
 	/**
+	 * Controls whether playing a typing sound should stop the current one and start a
+	 * new one from the beginning or not
+	 */
+	public var restartTypingSoundOnPlay = true;
+	/**
 	 * This function is called when the message is done typing.
 	 */
 	public var completeCallback:Void->Void;
@@ -407,16 +412,19 @@ class FlxTypeText extends FlxText
 				
 				if (sounds != null && !useDefaultSound)
 				{
-					for (sound in sounds)
+					if (restartTypingSoundOnPlay)
 					{
-						sound.stop();
+						for (sound in sounds)
+						{
+							sound.stop();
+						}
 					}
 					
-					FlxG.random.getObject(sounds).play(true);
+					FlxG.random.getObject(sounds).play(restartTypingSoundOnPlay);
 				}
 				else if (useDefaultSound)
 				{
-					_sound.play(true);
+					_sound.play(restartTypingSoundOnPlay);
 				}
 			}
 		}
