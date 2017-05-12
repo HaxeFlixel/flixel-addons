@@ -45,7 +45,7 @@ class FlxEffectSprite extends FlxSprite
 	private var _effectOffset:FlxPoint;
 	
 	/**
-	 * Creates an FlxEffectSprite for a specific FlxSprite.
+	 * Creates a FlxEffectSprite for a specific FlxSprite.
 	 * 
 	 * @param	Target		The target FlxSprite that is used to apply effects.
 	 * @param	Effects		Effects to be applied to frames.
