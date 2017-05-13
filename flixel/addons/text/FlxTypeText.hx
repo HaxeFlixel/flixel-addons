@@ -72,10 +72,11 @@ class FlxTypeText extends FlxText
 	/**
 	 * Whether typing sound effects should always be played in their entirety, or if it's ok to restart them on new letters.
 	 * For longer typing sounds, setting this to `true` usually makes more sense.
+	 * @since 2.4.0
 	 */
 	public var finishSounds = false;
 	/**
-	 * An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
+	 * An array of keys (e.g. `[FlxKey.SPACE, FlxKey.L]`) that will advance the text.
 	 */
 	public var skipKeys:Array<FlxKey> = [];
 	/**
@@ -159,7 +160,7 @@ class FlxTypeText extends FlxText
 	 * @param   ForceRestart   Whether or not to start this animation over if currently animating; false by default.
 	 * @param   AutoErase      Whether or not to begin the erase animation when the typing animation is complete.
 	 *                         Can also be set separately.
-	 * @param   SkipKeys       An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
+	 * @param   SkipKeys       An array of keys as string values (e.g. `[FlxKey.SPACE, FlxKey.L]`) that will advance the text.
 	 *                         Can also be set separately.
 	 * @param   Callback       An optional callback function, to be called when the typing animation is complete.
 	 */
@@ -239,7 +240,7 @@ class FlxTypeText extends FlxText
 	 * 
 	 * @param	Delay			Optionally, set the delay between characters. Can also be set separately.
 	 * @param	ForceRestart	Whether or not to start this animation over if currently animating; false by default.
-	 * @param	SkipKeys		An array of keys as string values (e.g. "SPACE", "L") that will advance the text. Can also be set separately.
+	 * @param	SkipKeys		An array of keys as string values (e.g. `[FlxKey.SPACE, FlxKey.L]`) that will advance the text. Can also be set separately.
 	 * @param	Callback		An optional callback function, to be called when the erasing animation is complete.
 	 * @param	Params			Optional parameters to pass to the callback function.
 	 */
