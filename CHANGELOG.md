@@ -1,4 +1,4 @@
-2.4.0 (to be released)
+2.4.0 (May 13, 2017)
 ------------------------------
 * `FlxWeapon`: added `angleOffset` to `FlxWeaponFireFrom.PARENT` (#292) 
 * `FlxTypeText`:
