@@ -2,7 +2,7 @@ language: haxe
 
 haxe:
   - 3.2.0
-  - development
+  - 3.4.2
 
 env:
   - TARGET=flash
@@ -32,8 +32,8 @@ install:
   - haxelib install nape > /dev/null
   - haxelib install task > /dev/null
   - haxelib install poly2trihx > /dev/null
+  - haxelib install spinehaxe > /dev/null
   - haxelib git hscript https://github.com/HaxeFoundation/hscript > /dev/null
-  - haxelib git spinehaxe https://github.com/bendmorris/spinehaxe > /dev/null
   - haxelib git firetongue https://github.com/larsiusprime/firetongue > /dev/null
   - haxelib git flixel https://github.com/HaxeFlixel/flixel > /dev/null
   - haxelib git flixel-tools https://github.com/HaxeFlixel/flixel-tools > /dev/null
@@ -46,6 +46,6 @@ script:
   - export HXCPP_COMPILE_CACHE=~/hxcache
   - cd $HOME/haxe/lib/flixel-tools/git
   - haxe build.hxml
-  - cd ~/haxe/lib/flixel/git/tests
+  - cd $TRAVIS_BUILD_DIR/tests
   - haxe RunTravis.hxml
   - neko RunTravis.n $TARGET
