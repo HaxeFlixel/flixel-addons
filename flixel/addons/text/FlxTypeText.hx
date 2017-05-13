@@ -70,14 +70,13 @@ class FlxTypeText extends FlxText
 	 */
 	public var useDefaultSound:Bool = false;
 	/**
+	 * Whether typing sound effects should always be played in their entirety, or if it's ok to restart them on new letters.
+	 */
+	public var finishSounds = false;
+	/**
 	 * An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
 	 */
 	public var skipKeys:Array<FlxKey> = [];
-	/**
-	 * Controls whether playing a typing sound should stop the current one and start a
-	 * new one from the beginning or not
-	 */
-	public var restartTypingSoundOnPlay = true;
 	/**
 	 * This function is called when the message is done typing.
 	 */
@@ -412,7 +411,7 @@ class FlxTypeText extends FlxText
 				
 				if (sounds != null && !useDefaultSound)
 				{
-					if (restartTypingSoundOnPlay)
+					if (!finishSounds)
 					{
 						for (sound in sounds)
 						{
@@ -420,11 +419,11 @@ class FlxTypeText extends FlxText
 						}
 					}
 					
-					FlxG.random.getObject(sounds).play(restartTypingSoundOnPlay);
+					FlxG.random.getObject(sounds).play(!finishSounds);
 				}
 				else if (useDefaultSound)
 				{
-					_sound.play(restartTypingSoundOnPlay);
+					_sound.play(!finishSounds);
 				}
 			}
 		}
