@@ -71,6 +71,7 @@ class FlxTypeText extends FlxText
 	public var useDefaultSound:Bool = false;
 	/**
 	 * Whether typing sound effects should always be played in their entirety, or if it's ok to restart them on new letters.
+	 * For longer typing sounds, setting this to `true` usually makes more sense.
 	 */
 	public var finishSounds = false;
 	/**
