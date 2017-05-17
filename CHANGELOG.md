@@ -1,3 +1,7 @@
+2.4.1 (May 17, 2017)
+------------------------------
+* `FlxTypeText`: fixed a crash caused by `sounds` being `null`
+
 2.4.0 (May 13, 2017)
 ------------------------------
 * `FlxWeapon`: added `angleOffset` to `FlxWeaponFireFrom.PARENT` (#292) 

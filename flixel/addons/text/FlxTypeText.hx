@@ -317,7 +317,7 @@ class FlxTypeText extends FlxText
 		{
 			_sound.stop();
 		}
-		else
+		else if (sounds != null)
 		{
 			for (sound in sounds)
 			{
