@@ -65,11 +65,7 @@ class TiledTileLayer extends TiledLayer
 
 			if (compressed)
 			{
-				#if (js && !format)
-				throw "HTML5 doesn't support compressed data! Use Base64 (uncompressed) when you save the map or install the library 'format' and use it";
-				#else
 				result.uncompress();
-				#end
 			}
 		}
 		else

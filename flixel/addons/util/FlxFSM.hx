@@ -493,7 +493,7 @@ class FlxFSMTransitionTable<T>
 			{
 				if (transition.evaluate(owner) == true)
 				{
-						return transition.to;
+					return transition.to;
 				}
 			}
 		}

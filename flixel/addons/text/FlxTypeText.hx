@@ -7,8 +7,6 @@ import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.system.FlxSound;
 import flixel.math.FlxRandom;
-
-#if !bitfive
 import flash.media.Sound;
 
 #if !flash
@@ -18,7 +16,6 @@ class TypeSound extends Sound { }
 // Flash uses a WAV instead of MP3 because the sound is so short that MP3's encoding mutes most of it
 @:sound("assets/sounds/type.wav")
 class TypeSound extends Sound { }
-#end
 #end
 
 /**
@@ -69,11 +66,17 @@ class FlxTypeText extends FlxText
 	 */
 	public var sounds:Array<FlxSound>;
 	/**
-	 * Whether or not to use the default typing sound. Not available for openfl-bitfive.
+	 * Whether or not to use the default typing sound.
 	 */
 	public var useDefaultSound:Bool = false;
 	/**
-	 * An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
+	 * Whether typing sound effects should always be played in their entirety, or if it's ok to restart them on new letters.
+	 * For longer typing sounds, setting this to `true` usually makes more sense.
+	 * @since 2.4.0
+	 */
+	public var finishSounds = false;
+	/**
+	 * An array of keys (e.g. `[FlxKey.SPACE, FlxKey.L]`) that will advance the text.
 	 */
 	public var skipKeys:Array<FlxKey> = [];
 	/**
@@ -157,7 +160,7 @@ class FlxTypeText extends FlxText
 	 * @param   ForceRestart   Whether or not to start this animation over if currently animating; false by default.
 	 * @param   AutoErase      Whether or not to begin the erase animation when the typing animation is complete.
 	 *                         Can also be set separately.
-	 * @param   SkipKeys       An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
+	 * @param   SkipKeys       An array of keys as string values (e.g. `[FlxKey.SPACE, FlxKey.L]`) that will advance the text.
 	 *                         Can also be set separately.
 	 * @param   Callback       An optional callback function, to be called when the typing animation is complete.
 	 */
@@ -186,19 +189,14 @@ class FlxTypeText extends FlxText
 			skipKeys = SkipKeys;
 		}
 		
-		if (Callback != null)
-		{
-			completeCallback = Callback;
-		}
+		completeCallback = Callback;
 
 		insertBreakLines();
 		
-		#if !bitfive
 		if (useDefaultSound)
 		{
 			loadDefaultSound();
 		}
-		#end
 	}
 	
 	/**
@@ -242,7 +240,7 @@ class FlxTypeText extends FlxText
 	 * 
 	 * @param	Delay			Optionally, set the delay between characters. Can also be set separately.
 	 * @param	ForceRestart	Whether or not to start this animation over if currently animating; false by default.
-	 * @param	SkipKeys		An array of keys as string values (e.g. "SPACE", "L") that will advance the text. Can also be set separately.
+	 * @param	SkipKeys		An array of keys as string values (e.g. `[FlxKey.SPACE, FlxKey.L]`) that will advance the text. Can also be set separately.
 	 * @param	Callback		An optional callback function, to be called when the erasing animation is complete.
 	 * @param	Params			Optional parameters to pass to the callback function.
 	 */
@@ -269,17 +267,12 @@ class FlxTypeText extends FlxText
 			skipKeys = SkipKeys;
 		}
 		
-		if (Callback != null)
-		{
-			eraseCallback = Callback;
-		}
+		eraseCallback = Callback;
 		
-		#if !bitfive
 		if (useDefaultSound)
 		{
 			loadDefaultSound();
 		}
-		#end
 	}
 	
 	/**
@@ -319,6 +312,18 @@ class FlxTypeText extends FlxText
 	{
 		_timer = 0;
 		_typing = false;
+		
+		if (useDefaultSound)
+		{
+			_sound.stop();
+		}
+		else if (sounds != null)
+		{
+			for (sound in sounds)
+			{
+				sound.stop();
+			}
+		}
 		
 		if (completeCallback != null)
 		{
@@ -420,18 +425,19 @@ class FlxTypeText extends FlxText
 				
 				if (sounds != null && !useDefaultSound)
 				{
-					for (sound in sounds)
+					if (!finishSounds)
 					{
-						sound.stop();
+						for (sound in sounds)
+						{
+							sound.stop();
+						}
 					}
 					
-					FlxG.random.getObject(sounds).play(true);
+					FlxG.random.getObject(sounds).play(!finishSounds);
 				}
 				else if (useDefaultSound)
 				{
-					#if !bitfive
-					_sound.play(true);
-					#end
+					_sound.play(!finishSounds);
 				}
 			}
 		}
@@ -496,7 +502,6 @@ class FlxTypeText extends FlxText
 		}
 	}
 	
-	#if !bitfive
 	private function loadDefaultSound():Void
 	{
 		#if FLX_SOUND_SYSTEM
@@ -506,5 +511,4 @@ class FlxTypeText extends FlxText
 		_sound.loadEmbedded(new TypeSound());
 		#end
 	}
-	#end
 }

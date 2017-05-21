@@ -45,12 +45,10 @@ class FlxEffectSprite extends FlxSprite
 	private var _effectOffset:FlxPoint;
 	
 	/**
-	 * Creates a FlxEffectSprite at a specified position with a specified one-frame graphic. 
-	 * If none is provided, a 16x16 image of the HaxeFlixel logo is used.
+	 * Creates a FlxEffectSprite for a specific FlxSprite.
 	 * 
-	 * @param	X				The initial X position of the sprite.
-	 * @param	Y				The initial Y position of the sprite.
-	 * @param	SimpleGraphic	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
+	 * @param	Target		The target FlxSprite that is used to apply effects.
+	 * @param	Effects		Effects to be applied to frames.
 	 */
 	public function new(Target:FlxSprite, ?Effects:Array<IFlxEffect>)
 	{

@@ -40,15 +40,15 @@ class FlxShapeDonut extends FlxShape
 		if (radius_in > 0)
 		{
 			#if (cpp || neko)
-				//Temporary work-around until OpenFL properly supports ERASE blend mode on CPP targets
-				var zpt = new Point();
-				var temp = new FlxSprite(0, 0, new BitmapData(cast pixels.width, cast pixels.height, false, 0xFFFFFF));
-				temp.pixels.copyChannel(this.pixels, this.pixels.rect, zpt, BitmapDataChannel.ALPHA, BitmapDataChannel.BLUE);
-				FlxSpriteUtil.drawCircle(temp, cx, cy, radius_in, FlxColor.BLACK, null, { matrix: matrix, smoothing: true } );
-				this.pixels.copyChannel(temp.pixels, temp.pixels.rect, zpt, BitmapDataChannel.BLUE, BitmapDataChannel.ALPHA);
-				temp.destroy();
+			//Temporary work-around until OpenFL properly supports ERASE blend mode on CPP targets
+			var zpt = new Point();
+			var temp = new FlxSprite(0, 0, new BitmapData(cast pixels.width, cast pixels.height, false, 0xFFFFFF));
+			temp.pixels.copyChannel(this.pixels, this.pixels.rect, zpt, BitmapDataChannel.ALPHA, BitmapDataChannel.BLUE);
+			FlxSpriteUtil.drawCircle(temp, cx, cy, radius_in, FlxColor.BLACK, null, { matrix: matrix, smoothing: true } );
+			this.pixels.copyChannel(temp.pixels, temp.pixels.rect, zpt, BitmapDataChannel.BLUE, BitmapDataChannel.ALPHA);
+			temp.destroy();
 			#else
-				FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.RED, null, { matrix: matrix, blendMode:BlendMode.ERASE, smoothing: true } );
+			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.RED, null, { matrix: matrix, blendMode:BlendMode.ERASE, smoothing: true } );
 			#end
 			
 			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.TRANSPARENT, lineStyle, { matrix: matrix } );

@@ -107,6 +107,9 @@ class FlxSliceSprite extends FlxStrip
 	{
 		super();
 		
+		if (renderSprite == null)
+			renderSprite = new FlxSprite();
+		
 		sliceRects = [];
 		sliceVertices = [];
 		sliceUVTs = [];
@@ -194,9 +197,6 @@ class FlxSliceSprite extends FlxStrip
 		
 		if (FlxG.renderBlit)
 		{
-			if (renderSprite == null)
-				renderSprite = new FlxSprite();
-			
 			if (renderSprite.width != _snappedWidth || renderSprite.height != _snappedHeight)
 			{
 				renderSprite.makeGraphic(Std.int(_snappedWidth), Std.int(_snappedHeight), FlxColor.TRANSPARENT, true);
@@ -242,17 +242,14 @@ class FlxSliceSprite extends FlxStrip
 		if (tile != null)
 		{
 			FlxSpriteUtil.flashGfx.clear();
+			
+			_matrix.identity();
+			
 			if (Stretch)
-			{
-				_matrix.identity();
 				_matrix.scale(Width / tile.width, Height / tile.height);
-				_matrix.translate(X, Y);
-				FlxSpriteUtil.flashGfx.beginBitmapFill(tile.bitmap, _matrix);
-			}
-			else
-			{
-				FlxSpriteUtil.flashGfx.beginBitmapFill(tile.bitmap);
-			}
+			
+			_matrix.translate(X, Y);
+			FlxSpriteUtil.flashGfx.beginBitmapFill(tile.bitmap, _matrix);
 			
 			FlxSpriteUtil.flashGfx.drawRect(X, Y, Width, Height);
 			renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
@@ -383,6 +380,40 @@ class FlxSliceSprite extends FlxStrip
 	{
 		if (slices[TileIndex] != null)
 			Camera.drawTriangles(slices[TileIndex], sliceVertices[TileIndex], indices, sliceUVTs[TileIndex], colors, _point, blend, repeat, antialiasing);
+	}
+	
+	override function set_alpha(Alpha:Float):Float
+	{
+		var newAlpha:Float = super.set_alpha(Alpha);
+		
+		if (FlxG.renderBlit && renderSprite != null)
+			renderSprite.alpha = newAlpha;
+		else if (FlxG.renderTile)
+		{
+			var c:FlxColor = color;
+			c.alphaFloat = newAlpha;
+			
+			for (i in 0...4)
+				colors[i] = c;
+		}
+		
+		return newAlpha;
+	}
+
+	override function set_color(Color:FlxColor):FlxColor
+	{
+		if (FlxG.renderBlit && renderSprite != null)
+			renderSprite.color = Color;
+		else if (FlxG.renderTile)
+		{
+			var newColor:FlxColor = Color;
+			newColor.alphaFloat = alpha;
+			
+			for (i in 0...4)
+				colors[i] = newColor;
+		}
+		
+		return super.set_color(Color);
 	}
 	
 	override function set_width(Width:Float):Float

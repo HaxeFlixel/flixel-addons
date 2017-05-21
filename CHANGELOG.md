@@ -1,4 +1,27 @@
-2.2.0
+2.4.1 (May 17, 2017)
+------------------------------
+* `FlxTypeText`: fixed a crash caused by `sounds` being `null`
+
+2.4.0 (May 13, 2017)
+------------------------------
+* `FlxWeapon`: added `angleOffset` to `FlxWeaponFireFrom.PARENT` (#292) 
+* `FlxTypeText`:
+  * changed `start()` and `erase()` to always set the callbacks (#293)
+  * stop sounds when typing is complete (#295)
+  * added `finishSounds` (#296)
+* `TiledTileLayer`: removed an unnecessary warning on HTML5 (3c79b46)
+
+2.3.0 (February 10, 2017)
+------------------------------
+* `FlxBackdrop`: fixed `color` not working with tilesheet rendering (#277) 
+* `FlxWeapon`: fixed `FIRE_FROM_PARENT_FACING` angles (#259)
+* `FlxSliceSprite`:
+  * added setters for `alpha` and `color` (#276)
+  * fixed a rendering issue on Flash (#275)
+* `flixel.addons.editors.spine`: support for spinehaxe version 3.5.0 (#281)
+* `TiledObject`: fixed `gid` handling of flipped objects (#287)
+
+2.2.0 (October 11, 2016)
 ------------------------------
 * Compatibility with flixel 4.2.0
 * `FlxWeaponFireFrom`: added a `useParentAngle` argument to `PARENT` (#261)
@@ -12,7 +35,7 @@
 * `FlxSliceSprite`: fixed incorrect vertex positions on the bottom part (#272)
 * `FlxNapeSpace`: fixed `drawDebug` positioning with scaling (00b2b37)
 
-2.1.0
+2.1.0 (July 10, 2016)
 ------------------------------
 * Compatibility with flixel 4.1.0
 * `FlxTrailEffect`: added `clear()` (#229) 
@@ -38,7 +61,7 @@
 * Added `FlxTiledSprite`
 * Added `FlxSliceSprite`
 
-2.0.0
+2.0.0 (February 16, 2016)
 ------------------------------
 * Compatibility with flixel 4.0.0
 * `flixel.addons.editors.tiled`:
@@ -64,7 +87,7 @@
  * removed `onFireCallback` and `onFireSound`
 * `FlxTypeText`:
  * changed `Dynamic` callbacks to `Void->Void`
- * replaced `sound` by a `sounds` array, from which one is randomnly picked
+ * replaced `sound` by a `sounds` array, from which one is randomly picked
  * fixed jumping between lines during typing
  * added `useDefaultSound` which is `false` by default
 * added `flixel.addons.editors.pex.FlxPexParser`
@@ -74,7 +97,7 @@
  * refactored `FlxNapeState` into a plugin called `FlxNapeSpace`, making it possible to use nape with other `FlxState` child classes like `FlxUIState`
  * `FlxNapeSpace`: added `napePhysicsEnabled`
  * `FlxNapeSpace`: made `shapeDebug` public
- * `FlxNapeSprite`: `setPosition()` is now overriden and sets `body.position`
+ * `FlxNapeSprite`: `setPosition()` is now overridden and sets `body.position`
  * `FlxNapeSprite#new()`: the `EnablePhysics` argument is now no longer ignored if `CreateRectangularBody` is `false`
 * `flixel.addons.plugin.taskManager`: 
  * `AntTaskManager` -> `FlxTaskManager`
@@ -109,11 +132,11 @@
  * `FlxShakeEffect`
 * added `flixel.addons.effects.FlxClothSprite`
 
-1.1.1
+1.1.1 (December 15, 2015)
 ------------------------------
 * Fix compilation with OpenFL 3.5 / Lime 2.8
 
-1.1.0
+1.1.0 (April 24, 2014)
 ------------------------------
 * Compatibility with flixel 3.3.0
 * FlxClickArea: use Void->Void callbacks instead of Dynamic ones
@@ -140,14 +163,14 @@
 * Added FlxWaveSprite
 * Added FlxGlitchSprite
 
-1.0.3
+1.0.3 (February 21, 2014)
 ------------------------------
 * Compatibility with flixel 3.2.0
 * FlxOgmoLoader: add loadRectangles()
 * FlxNapeSprite: fix crash without a body
 * FlxNestedSprite: compatibility with facing
 
-1.0.2
+1.0.2 (February 6, 2014)
 ------------------------------
 * Compatibility with flixel 3.1.0
 * FlxButtonPlus:
@@ -164,7 +187,7 @@
   * exposed the transformation matrix via transformMatrix and matrixExposed
 * Moved FlxTrail, FlxTrailArea and FlxSlider into flixel-addons
 
-1.0.1
+1.0.1 (December 28, 2013)
 ------------------------------
 * FlxWeapon: Now works with different bullet classes (that extend FlxBullet)
 * FlxBitmapFont.setFontGraphics() is now public
@@ -175,6 +198,6 @@
 * FlxNapeState: ShapeDebug works correctly with FlxCamera again, is now also drawn below the flixel debugger, added a button to toggle nape debugging to the debugger
 * ui.FlxClickArea added
 
-1.0.0
+1.0.0 (November 2, 2013)
 ------------------------------
 * Initial haxelib release
