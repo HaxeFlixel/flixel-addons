@@ -72,6 +72,7 @@ class FlxTilemapExt extends FlxTilemap
 	override public function update(elapsed:Float):Void 
 	{
 		super.update(elapsed);
+		var dirty:Bool = false;
 		
 		if (_specialTiles != null && _specialTiles.length > 0) 
 		{
@@ -80,9 +81,13 @@ class FlxTilemapExt extends FlxTilemap
 				if (tile != null && tile.hasAnimation()) 
 				{
 					tile.update(elapsed);
+					dirty = dirty || tile.dirty;
 				}
 			}
 		}
+		
+		if (dirty)
+			setDirty(true);
 	}
 	
 	/**
@@ -91,8 +96,19 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param	Buffer		The FlxTilemapBuffer you are rendering to.
 	 * @param	Camera		The related FlxCamera, mainly for scroll values.
 	 */
+	@:access(flixel.FlxCamera)
 	override private function drawTilemap(Buffer:FlxTilemapBuffer, Camera:FlxCamera):Void 
 	{
+		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
+		
+		var drawX:Float = 0;
+		var drawY:Float = 0;
+		var scaledWidth:Float = _tileWidth;
+		var scaledHeight:Float = _tileHeight;
+		
+		var _tileTransformMatrix:FlxMatrix = null;
+		var matrixToUse:FlxMatrix;
+		
 		if (FlxG.renderBlit)
 		{
 			Buffer.fill();
@@ -105,20 +121,10 @@ class FlxTilemapExt extends FlxTilemap
 			_helperPoint.y = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.y) : _helperPoint.y;
 		}
 		
-		var scaledWidth:Float = _tileWidth;
-		var scaledHeight:Float = _tileHeight;
-		
-		var drawX:Float;
-		var drawY:Float;
-		
-		var _tileTransformMatrix:FlxMatrix = null;
-		var matrixToUse:FlxMatrix;
-		
-		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
-		
 		// Copy tile images into the tile buffer
-		_point.x = (Camera.scroll.x * scrollFactor.x) - x; //modified from getScreenXY()
-		_point.y = (Camera.scroll.y * scrollFactor.y) - y;
+		_point.x = (Camera.scroll.x * scrollFactor.x) - x - offset.x + Camera.viewOffsetX; //modified from getScreenPosition()
+		_point.y = (Camera.scroll.y * scrollFactor.y) - y - offset.y + Camera.viewOffsetY;
+		
 		var screenXInTiles:Int = Math.floor(_point.x / _tileWidth);
 		var screenYInTiles:Int = Math.floor(_point.y / _tileHeight);
 		var screenRows:Int = Buffer.rows;
@@ -139,7 +145,7 @@ class FlxTilemapExt extends FlxTilemap
 		var debugTile:BitmapData;
 		#end 
 		
-		var isSpecial = false;
+		var isSpecial:Bool = false;
 		
 		for (row in 0...screenRows)
 		{
@@ -148,9 +154,9 @@ class FlxTilemapExt extends FlxTilemap
 			
 			for (column in 0...screenColumns)
 			{
-				isSpecial = false;
-				special = null;
 				tile = _tileObjects[_data[columnIndex]];
+				special = null;
+				isSpecial = false;
 				
 				if (_specialTiles != null && _specialTiles[columnIndex] != null) 
 				{
@@ -188,7 +194,9 @@ class FlxTilemapExt extends FlxTilemap
 								debugTile = _debugTileSolid; 
 							}
 						
+							offset.addToFlash(_flashPoint);
 							Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
+							offset.subtractFromFlash(_flashPoint);
 						}
 					}
 					#end
@@ -239,11 +247,11 @@ class FlxTilemapExt extends FlxTilemap
 		if (FlxG.renderBlit)
 		{
 			if (isColored)
-			{
 				Buffer.colorTransform(colorTransform);
-			}
 			Buffer.blend = blend;
 		}
+		
+		Buffer.dirty = false;
 	}
 	
 	/**
@@ -285,69 +293,6 @@ class FlxTilemapExt extends FlxTilemap
 		}
 	}
 	
-	/**
-	 * THIS IS A COPY FROM FlxTilemap
-	 * I've changed draw() to give a chance to set the buffer dirty
-	 * ---
-	 * Draws the tilemap buffers to the cameras.
-	 */
-	override public function draw():Void
-	{
-		var cameras = cameras;
-		var camera:FlxCamera;
-		var buffer:FlxTilemapBuffer;
-		var i:Int = 0;
-		var l:Int = cameras.length;
-		
-		while (i < l)
-		{
-			camera = cameras[i];
-			if (!camera.visible || !camera.exists)
-			{
-				continue;
-			}
-			
-			if (_buffers[i] == null)
-			{
-				_buffers[i] = new FlxTilemapBuffer(_tileWidth, _tileHeight, widthInTiles, heightInTiles, camera);
-				_buffers[i].pixelPerfectRender = pixelPerfectRender;
-			}
-			
-			buffer = _buffers[i++];
-			
-			if (FlxG.renderBlit)
-			{
-				if (!buffer.dirty)
-				{
-					// Copied from getScreenXY()
-					_point.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
-					_point.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
-					buffer.dirty = (_point.x > 0) || (_point.y > 0) || (_point.x + buffer.width < camera.width) || (_point.y + buffer.height < camera.height);
-				}
-				
-				if (buffer.dirty)
-				{
-					buffer.dirty = false;
-					drawTilemap(buffer, camera);
-				}
-				
-				// Copied from getScreenXY()
-				_flashPoint.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
-				_flashPoint.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
-				buffer.draw(camera, _flashPoint);
-				
-			}
-			else
-			{
-				drawTilemap(buffer, camera);
-			}
-			
-			#if FLX_DEBUG
-			FlxBasic.visibleCount++;
-			#end
-		}
-	}
-
 	/**
 	 * THIS IS A COPY FROM FlxTilemap BUT IT SOLVES SLOPE COLLISION TOO
 	 * Checks if the Object overlaps any tiles with any collision flags set,

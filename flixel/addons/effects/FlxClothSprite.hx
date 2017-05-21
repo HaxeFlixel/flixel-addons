@@ -1,5 +1,6 @@
 package flixel.addons.effects;
 
+import flash.geom.Rectangle;
 import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -141,10 +142,9 @@ class FlxClothSprite extends FlxSprite
 	override public function update(elapsed:Float):Void
 	{
 		updatePoints(elapsed);
+		
 		for (i in 0...iterations) 
-		{
 			updateConstraints(elapsed);
-		}
 		
 		super.update(elapsed);
 	}
@@ -182,20 +182,17 @@ class FlxClothSprite extends FlxSprite
 			_point.floor();
 		
 		if (_frameGraphic == null)
-		{
 			_frameGraphic = FlxGraphic.fromBitmapData(framePixels, false, null, false);
-		}
 		
 		camera.drawTriangles(_frameGraphic, _vertices, _indices, _uvtData, colors, _point.addPoint(_drawOffset), blend, antialiasing);
 	}
 	
-	#if FLX_DEBUG	
+	#if FLX_DEBUG
+	@:access(flixel.FlxCamera)
 	override public function drawDebugOnCamera(camera:FlxCamera):Void 
 	{
 		if (!camera.visible || !camera.exists || !isOnScreen(camera))
-		{
 			return;
-		}
 		
 		var rect = getBoundingBox(camera);
 		
@@ -204,13 +201,9 @@ class FlxClothSprite extends FlxSprite
 		if (color == null)
 		{
 			if (allowCollisions != FlxObject.NONE)
-			{
 				color = immovable ? FlxColor.GREEN : FlxColor.RED;
-			}
 			else
-			{
 				color = FlxColor.BLUE;
-			}
 		}
 		
 		//fill static graphics object with square shape
@@ -220,16 +213,33 @@ class FlxClothSprite extends FlxSprite
 		
 		//draw meshes and rect of pixels meshPixels
 		gfx.lineStyle(1, FlxColor.CYAN, 0.5);
-		gfx.drawRect(rect.x + _drawOffset.x, rect.y + _drawOffset.y, meshPixels.rect.width, meshPixels.rect.height);
+		
+		_drawOffset.copyTo(_point);
+		camera.transformVector(_point);
+		var px = _point.x;
+		var py = _point.y;
+		_point.set(meshPixels.rect.width, meshPixels.rect.height);
+		camera.transformVector(_point);
+		gfx.drawRect(rect.x + px, rect.y + py, _point.x, _point.y);
+		
 		for (p in points) 
 		{
-			gfx.drawCircle(rect.x + p.x, rect.y + p.y, 2);
+			_point.set(p.x, p.y);
+			camera.transformVector(_point);
+			gfx.drawCircle(rect.x + _point.x, rect.y + _point.y, 2);
 		}
+		
 		for (s in constraints) 
 		{
-			gfx.moveTo(rect.x + s.p0.x, rect.y + s.p0.y);
-			gfx.lineTo(rect.x + s.p1.x, rect.y + s.p1.y);
+			_point.set(s.p0.x,  s.p0.y);
+			camera.transformVector(_point);
+			gfx.moveTo(rect.x + _point.x, rect.y + _point.y);
+			
+			_point.set(s.p1.x,  s.p1.y);
+			camera.transformVector(_point);
+			gfx.lineTo(rect.x + _point.x, rect.y + _point.y);
 		}
+		
 		endDrawDebug(camera);
 	}
 	#end
@@ -251,9 +261,7 @@ class FlxClothSprite extends FlxSprite
 		meshPixelsHeight = Std.int(Math.max(meshPixelsHeight, frameHeight));
 		
 		if (meshPixelsWidth <= 0 || meshPixelsHeight <= 0)
-		{
 			return;
-		}
 		
 		meshPixels = new BitmapData(meshPixelsWidth, meshPixelsHeight, true, FlxColor.TRANSPARENT);
 		
@@ -387,6 +395,7 @@ class FlxClothSprite extends FlxSprite
 				s.p0.x -= offsetX;
 				s.p0.y -= offsetY;
 			}
+			
 			if (!s.p1.pinned)
 			{
 				s.p1.x += offsetX;
@@ -431,21 +440,16 @@ class FlxClothSprite extends FlxSprite
 		}
 		
 		if (meshPixels == null)
-		{
 			return;
-		}
 		
 		// Check if the bitmapData is smaller than the current image and create new one if needed
 		var w:Int = Std.int(Math.max(meshPixels.width, maxX - minX));
 		var h:Int = Std.int(Math.max(meshPixels.height, maxY - minY));
+		
 		if (meshPixels.width < w || meshPixels.height < h)
-		{
 			meshPixels = new BitmapData(w, h, true, FlxColor.TRANSPARENT);
-		}
 		else
-		{
 			meshPixels.fillRect(meshPixels.rect, FlxColor.TRANSPARENT);
-		}
 	}
 	
 	/**
