@@ -173,6 +173,7 @@ class FlxNapeSpace extends FlxBasic
 	/**
 	 * Draws debug graphics.
 	 */
+	@:access(flixel.FlxCamera)
 	override public function draw():Void
 	{
 		#if FLX_DEBUG

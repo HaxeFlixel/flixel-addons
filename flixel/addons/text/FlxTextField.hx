@@ -111,6 +111,7 @@ class FlxTextField extends FlxText
 	/**
 	 * Called by game loop, updates then blits or renders current frame of animation to the screen
 	 */
+	@:access(flixel.FlxCamera)
 	override public function draw():Void
 	{
 		textField.visible = (FlxG.camera.visible && FlxG.camera.exists && isOnScreen(FlxG.camera));
