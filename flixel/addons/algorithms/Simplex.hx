@@ -49,13 +49,38 @@ class Noise
 	static var A2_0:Int;
 	static var A2_1:Int;
 	
+	/**
+	 *  Generates repeating simplex noise at a given frequency, which can be used for tiling.
+	 *  
+	 *  @param   x 		The x coordinate at which the noise value should be obtained.
+	 *  @param   y 		The y coordinate at which the noise value should be obtained.
+	 *  @param   baseX 		How often the noise pattern repeats itself in the x direction, in pixels.
+	 *  @param   baseY 		How often the noise pattern repeats itself in the y direction, in pixels.
+	 *  @param   scale 		A multiplier that "zooms" into or out of the noise distribution. Smaller values zoom out.
+	 *  @param   persistence A multiplier that determines how much effect past octaves have. Typical values are 0 < x <= 1.
+	 *  @param   octaves 	The number of noise functions that get added together. Higher numbers provide more detail but take longer to run.
+	 *  @return  			The combined, repeating value of noise at the input coordinate, ranging from -1 to 1, inclusive.
+	 */
 	public static function simplexTiles(x:Float, y:Float, baseX:Float, baseY:Float, scale:Float = 1, persistence:Float = 1, octaves:Int = 1):Float
 	{
+		if (baseX <= 0 || baseY <= 0) throw("baseX and baseY must be greater than 0.");
 		return Math.cos(simplexOctaves(x % Std.int(baseX), y % Std.int(baseY), scale, persistence, octaves));
 	}
 	
+	/**
+	 *  Generates noise by combining multiple octaves of simplex noise at a given 2D coordinate.
+	 *  
+	 *  @param   x 		The x coordinate at which the noise value should be obtained.
+	 *  @param   y 		The y coordinate at which the noise value should be obtained.
+	 *  @param   scale 		A multiplier that "zooms" into or out of the noise distribution. Smaller values zoom out.
+	 *  @param   persistence A multiplier that determines how much effect past octaves have. Typical values are 0 < x <= 1.
+	 *  @param   octaves 	The number of noise functions that get added together. Higher numbers provide more detail but take longer to run.
+	 *  @return  			The combined value of noise at the input coordinate, ranging from -1 to 1, inclusive.
+	 */
 	public static function simplexOctaves(x:Float, y:Float, scale:Float = 1, persistence:Float = 1, octaves:Int = 1):Float
 	{
+		if (octaves < 1) throw("The number of octaves must be greater than 0.");
+		
 		var max:Float = 0, amp:Float = 1, n:Float = 0;
 		var freq = scale;
 		
@@ -69,6 +94,13 @@ class Noise
 		return n / max;
 	}
 	
+	/**
+	 *  Calculates the simplex noise at a given 2D coordinate.
+	 *  
+	 *  @param   x The x coordinate at which the noise value should be obtained.
+	 *  @param   y The y coordinate at which the noise value should be obtained.
+	 *  @return  	The value of noise at the input coordinate, ranging from -1 to 1, inclusive.
+	 */
 	public static inline function simplex(x:Float, y:Float):Float
 	{
 		var t = (x + y) * SKEW;
@@ -95,13 +127,19 @@ class Noise
 		i = i & 0xff;
 		j = j & 0xff;
 		
-		var out = 70 * (contr(lo) + contr(hi) + contr(0));
+		var out = 70 * (getCornerNoise(lo) + getCornerNoise(hi) + getCornerNoise(0));
 		if (out < -1) return -1;
 		if (out > 1) return 1;
 		return out;
 	}
 	
-	static inline function contr(a:Int):Float
+	/**
+	 *  Private helper that finds the noise contribution of a single corner of a simplex cell.
+	 *  
+	 *  @param   a Which corner to use
+	 *  @return	The noise value of the corner.
+	 */
+	static inline function getCornerNoise(a:Int):Float
 	{
 		var s = (A2_0 + A2_1) * UNSKEW;
 		var x = u - A2_0 + s;
