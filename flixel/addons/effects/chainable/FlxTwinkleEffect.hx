@@ -9,7 +9,7 @@ import openfl.geom.Point;
 
 /**
  * A twinkle effect. Handy for showing invincible state.
- * Mainly comes from FlxRainbowEffect.
+ * Partly comes from FlxRainbowEffect.
  * 
  * @author Wu Yu
  */
@@ -74,6 +74,18 @@ class FlxTwinkleEffect implements IFlxEffect
 		{
 			_pixels.fillRect(_pixels.rect, appliedColor);
 		}
+		
+		#if cpp
+		// copyPixels alphaBitmapData isn't supported on native
+		for (i in 0..._pixels.width) {
+			for (j in 0..._pixels.height) {
+				// set pixel to transparent if bitmapData's pixel is transparent
+				if ((bitmapData.getPixel32(i, j) & 0xff000000) == 0) {
+					_pixels.setPixel32(i, j, 0);
+				}
+			}
+		}
+		#end
 		
 		bitmapData.copyPixels(_pixels, _pixels.rect, _flashPoint, bitmapData, null, true);
 		
