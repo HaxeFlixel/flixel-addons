@@ -1,3 +1,7 @@
+2.5.0 (July 22, 2017)
+------------------------------
+* Compatibility with flixel 4.3.0
+
 2.4.1 (May 17, 2017)
 ------------------------------
 * `FlxTypeText`: fixed a crash caused by `sounds` being `null`
