@@ -199,6 +199,13 @@ class FlxTypeText extends FlxText
 		}
 	}
 	
+	override public function applyMarkup(input:String, rules:Array<FlxTextFormatMarkerPair>):FlxText
+	{
+		super.applyMarkup(input, rules);
+		resetText(text); //Stops applyMarkup from misaligning the colored section of text.
+		return this;
+	}
+	
 	/**
 	 * Internal function that replace last space in a line for a line break.
 	 * To prevent a word start typing in a line and jump to next.
