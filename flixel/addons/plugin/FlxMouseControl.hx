@@ -206,7 +206,7 @@ class FlxMouseControl extends FlxBasic
 		
 		clickTarget = _clickStack.pop();
 		
-		_clickCoords = clickTarget.point;
+		_clickCoords = new FlxPoint(FlxG.mouse.x, FlxG.mouse.y);
 		
 		_hasClickTarget = true;
 		
