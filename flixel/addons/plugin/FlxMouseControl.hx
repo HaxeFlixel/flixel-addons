@@ -7,6 +7,7 @@ import flixel.FlxG;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.util.FlxDestroyUtil;
 
 /**
  * FlxMouseControl
@@ -73,6 +74,13 @@ class FlxMouseControl extends FlxBasic
 	private static var _oldX:Int = 0;
 	private static var _oldY:Int = 0;
 	
+	public function new()
+	{
+		super();
+		
+		_clickCoords = FlxPoint.get();
+	}
+	
 	/**
 	 * Adds the given FlxExtendedSprite to the stack of potential sprites that were clicked, the stack is then sorted and the final sprite is selected from that
 	 * 
@@ -98,6 +106,7 @@ class FlxMouseControl extends FlxBasic
 	 */
 	public static function clear():Void
 	{
+		_clickCoords = FlxDestroyUtil.put(_clickCoords);
 		_hasClickTarget = false;
 		
 		if (clickTarget != null)
@@ -206,7 +215,7 @@ class FlxMouseControl extends FlxBasic
 		
 		clickTarget = _clickStack.pop();
 		
-		_clickCoords = new FlxPoint(FlxG.mouse.x, FlxG.mouse.y);
+		_clickCoords = FlxG.mouse.getWorldPosition(null, _clickCoords);
 		
 		_hasClickTarget = true;
 		
