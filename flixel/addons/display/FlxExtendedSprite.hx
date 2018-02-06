@@ -168,7 +168,7 @@ class FlxExtendedSprite extends FlxSprite
 	private var _throwXFactor:Int;
 	private var _throwYFactor:Int;
 	
-	private var _dragPixelPerfect:Bool;
+	private var _dragPixelPerfect:Bool = false;
 	private var _dragPixelPerfectAlpha:Int;
 	private var _dragOffsetX:Int;
 	private var _dragOffsetY:Int;
