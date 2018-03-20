@@ -97,7 +97,7 @@ class FlxKongregate
 	
 	private static function apiLoadComplete(E:Event):Void
 	{
-		api = E.target.content;
+		api = (cast E.target).content;
 		
 		hasLoaded = true;
 		
