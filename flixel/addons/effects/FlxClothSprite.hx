@@ -267,9 +267,9 @@ class FlxClothSprite extends FlxSprite
 		
 		points = [];
 		constraints = [];
-		_vertices = [];
-		_uvtData = [];
-		_indices = [];
+		_vertices = new DrawData();
+		_uvtData = new DrawData();
+		_indices = new DrawData();
 		
 		rows = Std.int(Math.max(2, rows));
 		columns = Std.int(Math.max(2, columns));
@@ -409,7 +409,7 @@ class FlxClothSprite extends FlxSprite
 	 */
 	private function calcImage():Void
 	{
-		_vertices = [];
+		_vertices = new DrawData();
 		
 		// Get the bounds of the mesh
 		var minX:Float = 0;
