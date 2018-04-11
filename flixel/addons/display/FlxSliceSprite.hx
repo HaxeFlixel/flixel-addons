@@ -80,7 +80,7 @@ class FlxSliceSprite extends FlxStrip
 	/**
 	 * Use this to get the rendered version of the graphic.
 	 */
-	public var renderedPixels(get, null):BitmapData;
+	public var renderedPixels(get, never):BitmapData;
 	
 	/**
 	 * Internal array of FlxGraphic objects for each element of slice grid.
