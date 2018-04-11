@@ -78,6 +78,11 @@ class FlxSliceSprite extends FlxStrip
 	public var snappedHeight(get, null):Float;
 	
 	/**
+	 * Use this to get the rendered version of the graphic.
+	 */
+	public var renderedPixels(get, null):BitmapData;
+	
+	/**
 	 * Internal array of FlxGraphic objects for each element of slice grid.
 	 */
 	private var slices:Array<FlxGraphic>;
@@ -514,5 +519,13 @@ class FlxSliceSprite extends FlxStrip
 			regenGraphic();
 		
 		return _snappedHeight;
+	}
+	
+	private function get_renderedPixels():BitmapData
+	{
+		if (regen)
+			regenGraphic();
+			
+		return renderSprite.pixels;
 	}
 }
