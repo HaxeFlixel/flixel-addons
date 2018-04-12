@@ -64,6 +64,10 @@ class TiledTileSet
 				source = new Fast(Xml.parse(Assets.getText(sourcePath)));
 				source = source.node.tileset;
 			}
+			else
+			{
+				throw "Invalid TSX tileset path";
+			}
 		}
 		
 		if (!source.has.source) 
@@ -167,6 +171,10 @@ class TiledTileSet
 				numCols = Std.int(imgHeight / tileHeight);
 				numTiles = numRows * numCols;
 			}
+		}
+		else
+		{
+			throw "TMX tileset misses source image or tiles";
 		}
 	}
 	
