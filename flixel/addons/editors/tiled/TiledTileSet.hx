@@ -59,7 +59,7 @@ class TiledTileSet
 		
 		if (source.has.source)
 		{
-			var sourcePath = haxe.io.Path.normalize(rootPath + source.att.source);
+			var sourcePath = Path.normalize(rootPath + source.att.source);
 			if (Assets.exists(sourcePath))
 			{
 				source = new Fast(Xml.parse(Assets.getText(sourcePath)));
@@ -67,7 +67,7 @@ class TiledTileSet
 			}
 			else
 			{
-				throw "Invalid TSX tileset path";
+				throw 'Invalid TSX tileset path: $sourcePath';
 			}
 		}
 		
