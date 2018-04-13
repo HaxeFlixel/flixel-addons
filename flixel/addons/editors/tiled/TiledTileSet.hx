@@ -5,6 +5,7 @@ import flixel.util.typeLimit.OneOfTwo;
 import openfl.Assets;
 import openfl.utils.ByteArray;
 import haxe.xml.Fast;
+import haxe.io.Path;
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -58,11 +59,15 @@ class TiledTileSet
 		
 		if (source.has.source)
 		{
-			var sourcePath = rootPath + source.att.source;
+			var sourcePath = Path.normalize(rootPath + source.att.source);
 			if (Assets.exists(sourcePath))
 			{
 				source = new Fast(Xml.parse(Assets.getText(sourcePath)));
 				source = source.node.tileset;
+			}
+			else
+			{
+				throw 'Invalid TSX tileset path: $sourcePath';
 			}
 		}
 		
@@ -167,6 +172,10 @@ class TiledTileSet
 				numCols = Std.int(imgHeight / tileHeight);
 				numTiles = numRows * numCols;
 			}
+		}
+		else
+		{
+			throw "TMX tileset misses source image or tiles";
 		}
 	}
 	
