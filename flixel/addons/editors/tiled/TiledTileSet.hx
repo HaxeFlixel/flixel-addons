@@ -33,14 +33,18 @@ class TiledTileSet
 	
 	public var tileImagesSources:Array<TiledImageTile>;
 	
-	public function new(data:FlxTiledTileAsset, rootPath:String="")
+	public function new(data:FlxTiledTileAsset, rootPath:String = "")
 	{
 		var source:Fast;
 		numTiles = 0xFFFFFF;
 		numRows = numCols = 1;
 		
 		// Use the correct data format
+		#if (haxe_ver < "4.0.0")
 		if (Std.is(data, Fast))
+		#else
+		if (Std.is(data, Xml))
+		#end
 		{
 			source = data;
 		}
