@@ -1,3 +1,13 @@
+2.6.0 (to be released)
+------------------------------
+* Compatibility with flixel 4.4.0
+* `FlxShapeCircle`: fixed some rounding issues (#304)
+* `FlxExtendedSprite`: fixed click callbacks not working without drag (#308)
+* `flixel.addons.editors.tiled`:
+  * fixed loading of external tile sets (#312)
+  * improved error messages for invalid paths (#312)
+  * fixed compatibility with Haxe 4
+
 2.5.0 (July 22, 2017)
 ------------------------------
 * Compatibility with flixel 4.3.0
@@ -8,7 +18,7 @@
 
 2.4.0 (May 13, 2017)
 ------------------------------
-* `FlxWeapon`: added `angleOffset` to `FlxWeaponFireFrom.PARENT` (#292) 
+* `FlxWeapon`: added `angleOffset` to `FlxWeaponFireFrom.PARENT` (#292)
 * `FlxTypeText`:
   * changed `start()` and `erase()` to always set the callbacks (#293)
   * stop sounds when typing is complete (#295)
