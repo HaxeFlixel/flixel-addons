@@ -709,7 +709,7 @@ class FlxGameJolt
 	{
 		_loader.removeEventListener(Event.COMPLETE, parseData);
 		
-		if (Std.string(e.currentTarget.data) == "")
+		if (Std.string((cast e.currentTarget).data) == "")
 		{
 			#if debug
 			FlxG.log.warn("FlxGameJolt received no data back. This is probably because one of the values it was passed is wrong.");
@@ -718,7 +718,7 @@ class FlxGameJolt
 		}
 		
 		var returnMap:Map<String,String> = new Map<String,String>();
-		var stringArray:Array<String> = Std.string(e.currentTarget.data).split("\r");
+		var stringArray:Array<String> = Std.string((cast e.currentTarget).data).split("\r");
 		
 		// this regex will remove line breaks and quotes down below
 		var r:EReg = ~/[\r\n\t"]+/g;
@@ -862,7 +862,7 @@ class FlxGameJolt
 	private static function returnImage(e:Event):Void
 	{
 		if (_callBack != null)
-			_callBack(e.currentTarget.content.bitmapData);
+			_callBack((cast e.currentTarget).content.bitmapData);
 		
 		_getImage = false;
 	}

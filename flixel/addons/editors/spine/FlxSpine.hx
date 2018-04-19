@@ -265,7 +265,7 @@ class FlxSpine extends FlxSprite
 					wrapper.y = 0;
 					wrapper.cameras = cameras;
 					
-					#if flash
+					#if (flash || openfl >= "4.0.0")
 					wrapper.vertices.length = verticesLength;
 					for (i in 0...verticesLength)
 					{
@@ -280,8 +280,8 @@ class FlxSpine extends FlxSprite
 					wrapper.vertices = worldVertices;
 					#end
 					
-					wrapper.indices = triangles;
-					wrapper.uvtData = uvtData;
+					wrapper.indices = Vector.ofArray(triangles);
+					wrapper.uvtData = Vector.ofArray(uvtData);
 					
 					wrapperColor = FlxColor.fromRGBFloat(
 						skeleton.r * slot.r * r * color.redFloat,
