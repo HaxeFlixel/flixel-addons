@@ -158,7 +158,7 @@ class FlxSlider extends FlxSpriteGroup
 	{
 		super();
 		
-		x = X; 
+		x = X;
 		y = Y;
 		
 		if (MinValue == MaxValue)
@@ -196,8 +196,8 @@ class FlxSlider extends FlxSpriteGroup
 	 */
 	private function createSlider():Void
 	{
-		offset.set(7, 18); 
-		_bounds = FlxRect.get(x + offset.x, y +offset.y, _width, _height);
+		offset.set(7, 18);
+		_bounds = FlxRect.get(x + offset.x, y + offset.y, _width, _height);
 		
 		// Creating the "body" of the slider
 		body = new FlxSprite(offset.x, offset.y);
@@ -442,13 +442,33 @@ class FlxSlider extends FlxSpriteGroup
 			Reflect.getProperty(_object, Value);
 			varString = Value;
 		}
-		catch (e:Dynamic) 
+		catch (e:Dynamic)
 		{
 			FlxG.log.error("Could not create FlxSlider - '" + Value + "' is not a valid field of '" + _object + "'");
 			varString = null;
 		}
 		
 		return Value;
+	}
+
+	override private function set_x(value:Float):Float
+	{
+		super.set_x(value);
+		updateBounds();
+		return x = value;
+	}
+
+	override private function set_y(value:Float):Float
+	{
+		super.set_y(value);
+		updateBounds();
+		return y = value;
+	}
+
+	private inline function updateBounds()
+	{
+		if (_bounds != null)
+			_bounds.set(x + offset.x, y + offset.y, _width, _height);
 	}
 }
 #end

@@ -7,6 +7,7 @@
   * fixed loading of external tile sets (#312)
   * improved error messages for invalid paths (#312)
   * fixed compatibility with Haxe 4
+* `FlxSlider`: fixed bounds not being updated after position changes (#306)
 
 2.5.0 (July 22, 2017)
 ------------------------------
