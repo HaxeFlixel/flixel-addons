@@ -67,6 +67,7 @@ class TiledMap
 		}
 		else if (Std.is(data, Xml)) 
 		{
+			this.rootPath = "";
 			source = new Fast(data);
 		}
 		
