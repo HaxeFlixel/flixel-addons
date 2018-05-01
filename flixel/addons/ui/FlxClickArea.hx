@@ -30,11 +30,11 @@ class FlxClickArea extends FlxObject
 	/**
 	 * Tracks whether or not the button is currently pressed.
 	 */
-	private var _pressed:Bool;
+	var _pressed:Bool;
 	/**
 	 * Whether or not the button has initialized itself yet.
 	 */
-	private var _initialized:Bool;
+	var _initialized:Bool;
 	
 	
 	/**
@@ -156,7 +156,7 @@ class FlxClickArea extends FlxObject
 	/**
 	 * Updates status and handles the onDown and onOver logic (callback function).
 	 */
-	private function updateButtonStatus(Point:FlxPoint, Camera:FlxCamera, JustPressed:Bool):Bool
+	function updateButtonStatus(Point:FlxPoint, Camera:FlxCamera, JustPressed:Bool):Bool
 	{
 		var offAll:Bool = true;
 		
@@ -180,7 +180,7 @@ class FlxClickArea extends FlxObject
 	/**
 	 * Internal function for handling the actual callback call (for UI thread dependent calls like FlxStringUtil.openURL()).
 	 */
-	private function onMouseUp(event:Event):Void
+	function onMouseUp(event:Event):Void
 	{
 		if (!exists || !visible || !active || (status != FlxButton.PRESSED))
 		{

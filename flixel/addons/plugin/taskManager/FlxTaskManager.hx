@@ -31,15 +31,15 @@ class FlxTaskManager extends FlxBasic
 	/**
 	 * The list of active tasks
 	 */
-	private var _taskList:FlxTask;
+	var _taskList:FlxTask;
 	/**
 	 * Determines whether tasks are performed in a loop
 	 */
-	private var _cycle:Bool = false;
+	var _cycle:Bool = false;
 	/**
 	 * Used to calculate the current pause between tasks
 	 */
-	private var _delay:Float = 0;
+	var _delay:Float = 0;
 	
 	public function new(Cycle:Bool = false, ?OnComplete:Void->Void)
 	{
@@ -168,7 +168,7 @@ class FlxTaskManager extends FlxBasic
 	 * @param	Delay	 Delay
 	 * @return	Returns true when the task is completed
 	 */
-	private function taskPause(Delay:Float):Bool
+	function taskPause(Delay:Float):Bool
 	{
 		_delay += Delay;
 		
@@ -187,7 +187,7 @@ class FlxTaskManager extends FlxBasic
 	 * @param	Task	The FlxTask to be added.
 	 * @return	Returns a pointer to the added FlxTask.
 	 */
-	private function push(Task:FlxTask):FlxTask
+	function push(Task:FlxTask):FlxTask
 	{
 		if (Task == null)
 		{
@@ -219,7 +219,7 @@ class FlxTaskManager extends FlxBasic
 	 * @param	Task	The FlxTask to be added.
 	 * @return	Returns a pointer to the added FlxTask
 	 */
-	private function unshift(Task:FlxTask):FlxTask
+	function unshift(Task:FlxTask):FlxTask
 	{
 		length++;
 		
@@ -240,7 +240,7 @@ class FlxTaskManager extends FlxBasic
 	 * 
 	 * @return	The task that has been removed
 	 */
-	private function shift():FlxTask
+	function shift():FlxTask
 	{
 		if (_taskList == null)
 		{

@@ -34,19 +34,19 @@ class FlxRainbowEffect implements IFlxEffect
 	/**
 	 * The current hue of the effect
 	 */
-	private var _hue:Int = 0;
+	var _hue:Int = 0;
 	/**
 	 * Used to adjust the hue using speed
 	 */
-	private var _time:Float = 0;
+	var _time:Float = 0;
 	/**
 	 * Internal, reused frequently during drawing and animating. Always contains (0,0).
 	 */
-	private var _flashPoint:Point = new Point();
+	var _flashPoint:Point = new Point();
 	/**
 	 * The actual Flash BitmapData object representing the current effect state.
 	 */
-	private var _pixels:BitmapData;
+	var _pixels:BitmapData;
 	
 	/**
 	 * Creates a new FlxEffectRainbow, which applies a color-cycling effect, using the target's bitmap as a mask.

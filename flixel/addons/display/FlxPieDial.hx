@@ -21,7 +21,7 @@ class FlxPieDial extends FlxSprite
 	 */
 	public var amount(default, set):Float;
 	
-	private var pieFrames:Int = 0;
+	var pieFrames:Int = 0;
 	
 	public function new(X:Float, Y:Float, Radius:Int, Color:FlxColor = FlxColor.WHITE,
 		Frames:Int = 36, ?Shape:FlxPieDialShape, Clockwise:Bool = true, InnerRadius:Int = 0) 
@@ -39,7 +39,7 @@ class FlxPieDial extends FlxSprite
 		super.draw();
 	}
 	
-	private function makePieDialGraphic(Radius:Int, Color:FlxColor, Frames:Int, Shape:FlxPieDialShape, Clockwise:Bool, InnerRadius:Int)
+	function makePieDialGraphic(Radius:Int, Color:FlxColor, Frames:Int, Shape:FlxPieDialShape, Clockwise:Bool, InnerRadius:Int)
 	{
 		pieFrames = Frames;
 		var key:String = "pie_dial_" + Color.toHexString() + "_" + Radius + "_" + Frames + "_" + Shape + "_" + Clockwise + "_" + InnerRadius;
@@ -54,7 +54,7 @@ class FlxPieDial extends FlxSprite
 		loadGraphic(key, true, W, H);
 	}
 	
-	private function makePieDialGraphicSub(Radius:Int, Color:Int, Frames:Int, Shape:FlxPieDialShape, Clockwise:Bool, InnerRadius):BitmapData
+	function makePieDialGraphicSub(Radius:Int, Color:Int, Frames:Int, Shape:FlxPieDialShape, Clockwise:Bool, InnerRadius):BitmapData
 	{
 		var W = Radius * 2;
 		var H = Radius * 2;
@@ -137,7 +137,7 @@ class FlxPieDial extends FlxSprite
 		return bmp2;
 	}
 	
-	private function makeFullFrame(Radius:Int, Color:Int, Frames:Int, Shape:FlxPieDialShape, Clockwise:Bool, InnerRadius):FlxSprite
+	function makeFullFrame(Radius:Int, Color:Int, Frames:Int, Shape:FlxPieDialShape, Clockwise:Bool, InnerRadius):FlxSprite
 	{
 		var W = Radius * 2;
 		var H = Radius * 2;
@@ -183,7 +183,7 @@ class FlxPieDial extends FlxSprite
 		return fullFrame;
 	}
 	
-	private function drawSweep(sweep:Float, v:FlxVector, nextFrame:FlxSprite, polygon:Array<FlxPoint>, W:Int, H:Int, back:FlxColor, fore:FlxColor)
+	function drawSweep(sweep:Float, v:FlxVector, nextFrame:FlxSprite, polygon:Array<FlxPoint>, W:Int, H:Int, back:FlxColor, fore:FlxColor)
 	{
 		var halfW = W / 2;
 		var halfH = H / 2;
@@ -267,7 +267,7 @@ class FlxPieDial extends FlxSprite
 		nextFrame.drawPolygon(polygon, fore);
 	}
 
-	private function set_amount(f:Float):Float
+	function set_amount(f:Float):Float
 	{
 		amount = FlxMath.bound(f, 0.0, 1.0);
 		var frame:Int = Std.int(f * pieFrames);

@@ -16,11 +16,11 @@ class TransitionEffect extends FlxSpriteGroup
 	public var finishCallback:Void->Void;
 	public var finished(default, null):Bool = false;
 	
-	private var _started:Bool = false;
-	private var _endStatus:TransitionStatus;
-	private var _finalDelayTime:Float = 0.0;
+	var _started:Bool = false;
+	var _endStatus:TransitionStatus;
+	var _finalDelayTime:Float = 0.0;
 	
-	private var _data:TransitionData;
+	var _data:TransitionData;
 
 	public function new(data:TransitionData) 
 	{
@@ -53,12 +53,12 @@ class TransitionEffect extends FlxSpriteGroup
 		//override per subclass
 	}
 	
-	private function delayThenFinish():Void
+	function delayThenFinish():Void
 	{
 		new FlxTimer().start(_finalDelayTime, onFinish);	//force one last render call before exiting
 	}
 	
-	private function onFinish(f:FlxTimer):Void
+	function onFinish(f:FlxTimer):Void
 	{
 		finished = true;
 		if (finishCallback != null)

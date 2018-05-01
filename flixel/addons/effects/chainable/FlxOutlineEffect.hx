@@ -52,17 +52,17 @@ class FlxOutlineEffect implements IFlxEffect
 	/**
 	 * The actual Flash BitmapData object representing the current effect state.
 	 */
-	private var _pixels:BitmapData;
+	var _pixels:BitmapData;
 	/**
 	 * The actual Flash BitmapData object representing the colored border.
 	 */
-	private var _borderPixels:BitmapData;
+	var _borderPixels:BitmapData;
 	/**
 	 * Internal, reused frequently during drawing and animating.
 	 */
-	private var _flashPoint:Point = new Point();
+	var _flashPoint:Point = new Point();
 	
-	private var _matrix:Matrix = new Matrix();
+	var _matrix:Matrix = new Matrix();
 	
 	/**
 	 * Creates an outline around the bitmapData with the specified color and thickness. To update, dirty need to be setted as true.
@@ -163,7 +163,7 @@ class FlxOutlineEffect implements IFlxEffect
 		return bitmapData;
 	}
 	
-	private function drawPixelByPixel(bitmapData:BitmapData):Void
+	function drawPixelByPixel(bitmapData:BitmapData):Void
 	{
 		_pixels.fillRect(_pixels.rect, FlxColor.TRANSPARENT);
 		
@@ -180,7 +180,7 @@ class FlxOutlineEffect implements IFlxEffect
 		}
 	}
 	
-	private function drawNormal(iterations:Int):Void
+	function drawNormal(iterations:Int):Void
 	{
 		var delta:Float = thickness / iterations;
 		var curDelta:Float = delta;
@@ -200,7 +200,7 @@ class FlxOutlineEffect implements IFlxEffect
 		}
 	}
 	
-	private function drawFast(iterations:Int):Void
+	function drawFast(iterations:Int):Void
 	{
 		var delta:Float = thickness / iterations;
 		var curDelta:Float = delta;
@@ -216,13 +216,13 @@ class FlxOutlineEffect implements IFlxEffect
 		}
 	}
 	
-	private inline function drawBorder(x:Float, y:Float):Void
+	inline function drawBorder(x:Float, y:Float):Void
 	{
 		_matrix.translate(x, y);
 		_pixels.draw(_borderPixels, _matrix);
 	}
 	
-	private function surroundPixel(x:Int, y:Int, brush:Float):BitmapData
+	function surroundPixel(x:Int, y:Int, brush:Float):BitmapData
 	{
 		_pixels.fillRect(new Rectangle(x, y, brush, brush), color);
 		return _pixels;

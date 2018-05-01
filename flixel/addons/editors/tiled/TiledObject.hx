@@ -137,7 +137,7 @@ class TiledObject
 		}
 	}
 	
-	private function getPoints(node:Fast):Void
+	function getPoints(node:Fast):Void
 	{
 		points = new Array<FlxPoint>();
 		
@@ -154,7 +154,7 @@ class TiledObject
 	 * This is a copy of Haxe 3.4's `IntHelper.parseString()`.
 	 * Copied for backwards-compatibility with Haxe 3.2.x.
 	 */
-	private function parseString(sParam:String):Int64
+	function parseString(sParam:String):Int64
 	{
 		var base = Int64.ofInt(10);
 		var current = Int64.ofInt(0);

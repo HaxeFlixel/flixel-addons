@@ -52,36 +52,36 @@ class FlxTrail extends FlxSpriteGroup
 	/**
 	 * Counts the frames passed.
 	 */
-	private var _counter:Int = 0;
+	var _counter:Int = 0;
 	/**
 	 * How long is the trail?
 	 */
-	private var _trailLength:Int = 0;
+	var _trailLength:Int = 0;
 	/**
 	 * Stores the trailsprite image.
 	 */
-	private var _graphic:FlxGraphicAsset;
+	var _graphic:FlxGraphicAsset;
 	/**
 	 * The alpha value for the next trailsprite.
 	 */
-	private var _transp:Float = 1;
+	var _transp:Float = 1;
 	/**
 	 * How much lower the alpha value of the next trailsprite is.
 	 */
-	private var _difference:Float;
+	var _difference:Float;
 
-	private var _recentPositions:Array<FlxPoint> = [];
-	private var _recentAngles:Array<Float> = [];
-	private var _recentScales:Array<FlxPoint> = [];
-	private var _recentFrames:Array<Int> = [];
-	private var _recentFlipX:Array<Bool> = [];
-	private var _recentFlipY:Array<Bool> = [];
-	private var _recentAnimations:Array<FlxAnimation> = [];
+	var _recentPositions:Array<FlxPoint> = [];
+	var _recentAngles:Array<Float> = [];
+	var _recentScales:Array<FlxPoint> = [];
+	var _recentFrames:Array<Int> = [];
+	var _recentFlipX:Array<Bool> = [];
+	var _recentFlipY:Array<Bool> = [];
+	var _recentAnimations:Array<FlxAnimation> = [];
 	
 	/**
 	 * Stores the sprite origin (rotation axis)
 	 */
-	private var _spriteOrigin:FlxPoint;
+	var _spriteOrigin:FlxPoint;
 	
 	/**
 	 * Creates a new FlxTrail effect for a specific FlxSprite.
@@ -233,7 +233,7 @@ class FlxTrail extends FlxSpriteGroup
 		super.update(elapsed);
 	}
 	
-	private function cacheValue<T>(array:Array<T>, value:T)
+	function cacheValue<T>(array:Array<T>, value:T)
 	{
 		array.unshift(value);
 		FlxArrayUtil.setLength(array, _trailLength);

@@ -30,10 +30,10 @@ class FlxScreenGrab extends FlxBasic
 {
 	public static var screenshot(default, null):Bitmap;
 	
-	private static var _hotkeys:Array<FlxKey>;
-	private static var _autoSave:Bool = false;
-	private static var _autoHideMouse:Bool = false;
-	private static var _region:Rectangle;
+	static var _hotkeys:Array<FlxKey>;
+	static var _autoSave:Bool = false;
+	static var _autoHideMouse:Bool = false;
+	static var _region:Rectangle;
 	
 	/**
 	 * Defines the region of the screen that should be captured. If you need it to be a fixed location then use this.
@@ -138,7 +138,7 @@ class FlxScreenGrab extends FlxBasic
 		return theBitmap;
 	}
 	
-	private static function fixFilename(Filename:String):String
+	static function fixFilename(Filename:String):String
 	{
 		if (Filename == "")
 		{
@@ -155,7 +155,7 @@ class FlxScreenGrab extends FlxBasic
 		return Filename;
 	}
 	
-	private static function save(Filename:String = ""):Void
+	static function save(Filename:String = ""):Void
 	{
 		if (screenshot.bitmapData == null)
 		{

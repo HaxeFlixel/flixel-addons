@@ -63,26 +63,26 @@ class FlxTextField extends FlxText
 		return true;
 	}
 	
-	override private function get_pixels():BitmapData
+	override function get_pixels():BitmapData
 	{
 		calcFrame(true);
 		return graphic.bitmap;
 	}
 	
-	override private function set_pixels(Pixels:BitmapData):BitmapData
+	override function set_pixels(Pixels:BitmapData):BitmapData
 	{
 		// This class doesn't support this operation
 		return Pixels;
 	}
 	
-	override private function set_alpha(Alpha:Float):Float
+	override function set_alpha(Alpha:Float):Float
 	{
 		alpha = FlxMath.bound(Alpha, 0, 1);
 		textField.alpha = alpha;
 		return Alpha;
 	}
 	
-	override private function set_height(Height:Float):Float
+	override function set_height(Height:Float):Float
 	{
 		Height = super.set_height(Height);
 		if (textField != null)
@@ -90,7 +90,7 @@ class FlxTextField extends FlxText
 		return Height;
 	}
 	
-	override private function set_visible(Value:Bool):Bool
+	override function set_visible(Value:Bool):Bool
 	{
 		textField.visible = Value;
 		return super.set_visible(Value);
@@ -132,12 +132,12 @@ class FlxTextField extends FlxText
 		#end
 	}
 	
-	override private function get_camera():FlxCamera 
+	override function get_camera():FlxCamera 
 	{
 		return FlxG.camera;
 	}
 	
-	override private function set_camera(Value:FlxCamera):FlxCamera 
+	override function set_camera(Value:FlxCamera):FlxCamera 
 	{	
 		return FlxG.camera;
 	}

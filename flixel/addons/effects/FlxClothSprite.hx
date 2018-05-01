@@ -77,15 +77,15 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * Mesh arrays. Vertices, indices, uvtData and colors to drawTriangles().
 	 */
-	private var _vertices:DrawData<Float>;
-	private var _indices:DrawData<Int>;
-	private var _uvtData:DrawData<Float>;
+	var _vertices:DrawData<Float>;
+	var _indices:DrawData<Int>;
+	var _uvtData:DrawData<Float>;
 	public var colors:DrawData<Int>;
 	
 	/**
 	 * Use to offset the drawing position of the mesh.
 	 */
-	private var _drawOffset:FlxPoint;
+	var _drawOffset:FlxPoint;
 	/**
 	 * The actual Flash BitmapData object representing the current display state of the modified framePixels.
 	 */
@@ -354,7 +354,7 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * Called by update, applies meshVelocity, meshFriction and velocity for each point.
 	 */
-	private function updatePoints(elapsed:Float) 
+	function updatePoints(elapsed:Float) 
 	{
 		for (p in points) 
 		{
@@ -379,7 +379,7 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * Called by update, applies velocity for each constraints points.
 	 */
-	private function updateConstraints(elapsed:Float) 
+	function updateConstraints(elapsed:Float) 
 	{
 		for (s in constraints) 
 		{
@@ -407,7 +407,7 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * Called by draw, calculate triangles, drawOffset and bitmapData dimensions.
 	 */
-	private function calcImage():Void
+	function calcImage():Void
 	{
 		_vertices = new DrawData();
 		
@@ -455,7 +455,7 @@ class FlxClothSprite extends FlxSprite
 	/**
 	 * Called by draw, draw calculated triangles to meshPixels bitmapData.
 	 */
-	private function drawImage():Void
+	function drawImage():Void
 	{
 		if (meshPixels != null)
 		{

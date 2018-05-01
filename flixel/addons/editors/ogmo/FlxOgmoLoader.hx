@@ -13,8 +13,8 @@ class FlxOgmoLoader
 	public var height:Int;
 
 	// Helper variables to read level data
-	private var _xml:Xml;
-	private var _fastXml:Fast;
+	var _xml:Xml;
+	var _fastXml:Fast;
 
 	/**
 	 * Creates a new instance of `FlxOgmoLoader` and prepares the XML level data to be loaded.

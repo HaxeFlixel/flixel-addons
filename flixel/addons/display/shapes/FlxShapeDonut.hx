@@ -55,9 +55,9 @@ class FlxShapeDonut extends FlxShape
 		}
 	}
 	
-	private static var helperSprite:FlxSprite;
+	static var helperSprite:FlxSprite;
 	
-	private inline function set_radius_out(r:Float):Float
+	inline function set_radius_out(r:Float):Float
 	{
 		radius_out = r;
 		shapeWidth = radius_out * 2;
@@ -66,24 +66,24 @@ class FlxShapeDonut extends FlxShape
 		return radius_out;
 	}
 
-	private inline function set_radius_in(r:Float):Float
+	inline function set_radius_in(r:Float):Float
 	{
 		radius_in = r;
 		shapeDirty = true;
 		return radius_in;
 	}
 	
-	private override function getStrokeOffsetX():Float
+	override function getStrokeOffsetX():Float
 	{
 		return strokeBuffer / 2;
 	}
 	
-	private override function getStrokeOffsetY():Float
+	override function getStrokeOffsetY():Float
 	{
 		return strokeBuffer / 2;
 	}
 	
-	private override function get_strokeBuffer():Float
+	override function get_strokeBuffer():Float
 	{
 		return lineStyle.thickness * 1.0;
 	}

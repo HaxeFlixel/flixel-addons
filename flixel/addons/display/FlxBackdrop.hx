@@ -22,22 +22,22 @@ using flixel.util.FlxColorTransformUtil;
  */
 class FlxBackdrop extends FlxSprite
 {
-	private var _ppoint:Point;
-	private var _scrollW:Int = 0;
-	private var _scrollH:Int = 0;
-	private var _repeatX:Bool = false;
-	private var _repeatY:Bool = false;
+	var _ppoint:Point;
+	var _scrollW:Int = 0;
+	var _scrollH:Int = 0;
+	var _repeatX:Bool = false;
+	var _repeatY:Bool = false;
 	
-	private var _spaceX:Int = 0;
-	private var _spaceY:Int = 0;
+	var _spaceX:Int = 0;
+	var _spaceY:Int = 0;
 	
 	/**
 	 * Frame used for tiling
 	 */
-	private var _tileFrame:FlxFrame;
+	var _tileFrame:FlxFrame;
 	
-	private var _tileInfo:Array<Float>;
-	private var _numTiles:Int = 0;
+	var _tileInfo:Array<Float>;
+	var _numTiles:Int = 0;
 	
 	// TODO: remove this hack and add docs about how to avoid tearing problem by preparing assets and some code...
 	/**
@@ -212,7 +212,7 @@ class FlxBackdrop extends FlxSprite
 		}
 	}
 	
-	private function regenGraphic():Void
+	function regenGraphic():Void
 	{
 		var sx:Float = Math.abs(scale.x);
 		var sy:Float = Math.abs(scale.y);
@@ -294,19 +294,19 @@ class FlxBackdrop extends FlxSprite
 		}
 	}
 	
-	private function onGameResize(_,_):Void
+	function onGameResize(_,_):Void
 	{
 		if (_tileFrame != null)
 			regenGraphic();
 	}
 	
-	private inline function scaleCallback(Scale:FlxPoint)
+	inline function scaleCallback(Scale:FlxPoint)
 	{ 
 		if (_tileFrame != null)
 			regenGraphic();
 	}
 	
-	private function setTileFrame(Frame:FlxFrame):FlxFrame
+	function setTileFrame(Frame:FlxFrame):FlxFrame
 	{
 		if (Frame != _tileFrame)
 		{

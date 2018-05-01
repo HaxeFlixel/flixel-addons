@@ -107,10 +107,10 @@ private class FlxStarField extends FlxSprite
 {
 	public var bgColor:Int = FlxColor.BLACK;
 	
-	private var _stars:Array<FlxStar>;
-	private var _depthColors:Array<Int>;
-	private var _minSpeed:Float;
-	private var _maxSpeed:Float;
+	var _stars:Array<FlxStar>;
+	var _depthColors:Array<Int>;
+	var _minSpeed:Float;
+	var _maxSpeed:Float;
 	
 	public function new(X:Int, Y:Int, Width:Int, Height:Int, StarAmount:Int) 
 	{

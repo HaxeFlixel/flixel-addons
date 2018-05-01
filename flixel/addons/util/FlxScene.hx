@@ -53,19 +53,19 @@ class FlxScene
 	/**
 	 * Contains all constants declared in <constants>.
 	 */
-	private var _constants:Map<String, Dynamic>;
+	var _constants:Map<String, Dynamic>;
 	/**
 	 * Contains all objects with an "id" attribute.
 	 */
-	private var _objects:Map<String, Dynamic>;
+	var _objects:Map<String, Dynamic>;
 	/**
 	 * Internal XML.
 	 */
-	private var _xml:Xml;
+	var _xml:Xml;
 	/**
 	 * Internal xml.Fast.
 	 */
-	private var _fastXml:Fast;
+	var _fastXml:Fast;
 
 	/**
 	 * Optionally set the scene file already.
@@ -259,7 +259,7 @@ class FlxScene
 	/**
 	 * Make constants accesible through function FlxScene.constants("id").
 	 */
-	private function loadConstants():Void
+	function loadConstants():Void
 	{
 		// <constants>
 		var constantsNode = _fastXml.node.resolve("constants");
@@ -300,7 +300,7 @@ class FlxScene
 	 * @param 	container 	FlxTypedGroup.
 	 * @param 	element 	XML attributes.
 	 */
-	private function addInstance(instance:Dynamic, container:FlxTypedGroup<Dynamic>, element:Fast):Void
+	function addInstance(instance:Dynamic, container:FlxTypedGroup<Dynamic>, element:Fast):Void
 	{
 		if (container == null)
 			FlxG.state.add(instance);
@@ -318,7 +318,7 @@ class FlxScene
 	 * @param 	instance 	Instance to set properties.
 	 * @param 	element 	XML attributes.
 	 */
-	private function applySpriteProperties(instance:FlxSprite, element:Fast):Void
+	function applySpriteProperties(instance:FlxSprite, element:Fast):Void
 	{
 		// From FlxSprite
 
@@ -410,7 +410,7 @@ class FlxScene
 	 * @param 	instance 	Instance to set properties.
 	 * @param 	element 	XML attributes.
 	 */
-	private function applyTextProperties(instance:FlxText, element:Fast):Void
+	function applyTextProperties(instance:FlxText, element:Fast):Void
 	{
 		if (instance == null || element == null) return;
 		
@@ -479,7 +479,7 @@ class FlxScene
 	 *
 	 * @param Value 	String value
 	 */
-	private function parseBool(value:String):Bool
+	function parseBool(value:String):Bool
 	{
 		if (value == "false" || Std.parseInt(value) == 0)
 			return false;

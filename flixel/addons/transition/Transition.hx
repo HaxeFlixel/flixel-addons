@@ -24,7 +24,7 @@ class Transition extends FlxSubState
 {
 	public var finishCallback(get, set):Void->Void;
 	
-	private var _effect:TransitionEffect;
+	var _effect:TransitionEffect;
 	
 	public function new(data:TransitionData) 
 	{
@@ -57,7 +57,7 @@ class Transition extends FlxSubState
 		_effect.setStatus(NewStatus);
 	}
 	
-	private function createEffect(Data:TransitionData):TransitionEffect
+	function createEffect(Data:TransitionData):TransitionEffect
 	{
 		switch (Data.type)
 		{
@@ -67,7 +67,7 @@ class Transition extends FlxSubState
 		}
 	}
 	
-	private function get_finishCallback():Void->Void
+	function get_finishCallback():Void->Void
 	{
 		if (_effect != null)
 		{
@@ -76,7 +76,7 @@ class Transition extends FlxSubState
 		return null;
 	}
 	
-	private function set_finishCallback(f:Void->Void):Void->Void
+	function set_finishCallback(f:Void->Void):Void->Void
 	{
 		if (_effect != null)
 		{

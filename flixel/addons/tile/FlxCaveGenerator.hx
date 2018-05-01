@@ -94,7 +94,7 @@ class FlxCaveGenerator
 	 * @param	Rows		Number of rows for the matrix
 	 * @return 	Spits out a matrix that is columns * rows big, initiated with zeros
 	 */
-	private static function generateInitialMatrix(Columns:Int, Rows:Int):Array<Array<Int>>
+	static function generateInitialMatrix(Columns:Int, Rows:Int):Array<Array<Int>>
 	{
 		var matrix:Array<Array<Int>> = new Array<Array<Int>>();
 		
@@ -118,7 +118,7 @@ class FlxCaveGenerator
 	 * @param	Distance	Radius of how far to check for neighbors
 	 * @return	Number of walls around the target, including itself
 	 */
-	private static function countNumWallsNeighbors(Matrix:Array<Array<Int>>, PosX:Int, PosY:Int, Distance:Int = 1):Int
+	static function countNumWallsNeighbors(Matrix:Array<Array<Int>>, PosX:Int, PosY:Int, Distance:Int = 1):Int
 	{
 		var count:Int = 0;
 		var rows:Int = Matrix.length;
@@ -148,7 +148,7 @@ class FlxCaveGenerator
 	/**
 	 * Use the 4-5 rule to smooth cells
 	 */
-	private static function runCelluarAutomata(InMatrix:Array<Array<Int>>, OutMatrix:Array<Array<Int>>):Void
+	static function runCelluarAutomata(InMatrix:Array<Array<Int>>, OutMatrix:Array<Array<Int>>):Void
 	{
 		var rows:Int = InMatrix.length;
 		var columns:Int = InMatrix[0].length;

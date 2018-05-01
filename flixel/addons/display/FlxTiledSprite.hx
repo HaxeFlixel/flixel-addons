@@ -38,11 +38,11 @@ class FlxTiledSprite extends FlxStrip
 	/**
 	 * Helper sprite, which does actual rendering in blit render mode.
 	 */
-	private var renderSprite:FlxSprite;
+	var renderSprite:FlxSprite;
 	
-	private var regen:Bool = true;
+	var regen:Bool = true;
 	
-	private var graphicVisible:Bool = true;
+	var graphicVisible:Bool = true;
 	
 	public function new(?Graphic:FlxGraphicAsset, Width:Float, Height:Float, RepeatX:Bool = true, RepeatY:Bool = true) 
 	{
@@ -111,7 +111,7 @@ class FlxTiledSprite extends FlxStrip
 		return super.set_graphic(Value);
 	}
 	
-	private function regenGraphic():Void
+	function regenGraphic():Void
 	{
 		if (!regen || graphic == null)
 			return;
@@ -150,7 +150,7 @@ class FlxTiledSprite extends FlxStrip
 		}
 	}
 	
-	private function updateRenderSprite():Void
+	function updateRenderSprite():Void
 	{
 		graphicVisible = true;
 		
@@ -205,7 +205,7 @@ class FlxTiledSprite extends FlxStrip
 		renderSprite.dirty = true;
 	}
 	
-	private function updateVerticesData():Void
+	function updateVerticesData():Void
 	{
 		if (graphic == null)
 			return;
@@ -282,7 +282,7 @@ class FlxTiledSprite extends FlxStrip
 		return super.set_height(Height);
 	}
 	
-	private function set_scrollX(Value:Float):Float
+	function set_scrollX(Value:Float):Float
 	{
 		if (Value != scrollX)
 			regen = true;
@@ -290,7 +290,7 @@ class FlxTiledSprite extends FlxStrip
 		return scrollX = Value;
 	}
 	
-	private function set_scrollY(Value:Float):Float
+	function set_scrollY(Value:Float):Float
 	{
 		if (Value != scrollY)
 			regen = true;
@@ -298,7 +298,7 @@ class FlxTiledSprite extends FlxStrip
 		return scrollY = Value;
 	}
 	
-	private function set_repeatX(Value:Bool):Bool
+	function set_repeatX(Value:Bool):Bool
 	{
 		if (Value != repeatX)
 			regen = true;
@@ -306,7 +306,7 @@ class FlxTiledSprite extends FlxStrip
 		return repeatX = Value;
 	}
 	
-	private function set_repeatY(Value:Bool):Bool
+	function set_repeatY(Value:Bool):Bool
 	{
 		if (Value != repeatY)
 			regen = true;
