@@ -1,5 +1,6 @@
 package flixel.addons.nape;
 
+import haxe.ds.Vector;
 import flixel.addons.nape.FlxNapeSpace;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
@@ -21,9 +22,9 @@ class FlxNapeTilemap extends FlxTilemap
 {
 	public var body:Body;
 	
-	private var _binaryData:Array<Int>;
 	
-	public function new() 
+	private var _binaryData:Vector<Int>;
+	public function new()
 	{
 		super();
 		body = new Body(BodyType.STATIC);
@@ -41,8 +42,7 @@ class FlxNapeTilemap extends FlxTilemap
 		?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
 	{
 		super.loadMapFromCSV(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
-		_binaryData = new Array<Int>();
-		FlxArrayUtil.setLength(_binaryData, _data.length);
+		_binaryData = new Vector(_data.length);
 		return this;
 	}
 	
@@ -50,8 +50,7 @@ class FlxNapeTilemap extends FlxTilemap
 		TileWidth:Int = 0, TileHeight:Int = 0, ?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
 	{
 		super.loadMapFromArray(MapData, WidthInTiles, HeightInTiles, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
-		_binaryData = new Array<Int>();
-		FlxArrayUtil.setLength(_binaryData, _data.length);
+		_binaryData = new Vector(_data.length);
 		return this;
 	}
 	
@@ -59,8 +58,7 @@ class FlxNapeTilemap extends FlxTilemap
 		?AutoTile:FlxTilemapAutoTiling, StartingIndex:Int = 0, DrawIndex:Int = 1, CollideIndex:Int = 1):FlxTilemap 
 	{
 		super.loadMapFrom2DArray(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
-		_binaryData = new Array<Int>();
-		FlxArrayUtil.setLength(_binaryData, _data.length);
+		_binaryData = new Vector(_data.length);
 		return this;
 	}
 	

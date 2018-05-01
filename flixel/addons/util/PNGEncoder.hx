@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package flixel.addons.util;
 
 #if !js
+import haxe.ds.Vector;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.utils.ByteArray;
@@ -41,8 +42,7 @@ import flash.utils.ByteArray;
  */	
 class PNGEncoder
 {
-	private static var crcTable:Array<Int>;
-	private static var crcTableComputed:Bool;
+	private static var crcTable:Vector<Int>;
 	
 	/**
 	 * Created a PNG image from the specified BitmapData
@@ -55,6 +55,8 @@ class PNGEncoder
 	 */			
 	public static function encode(img:BitmapData):ByteArray 
 	{
+		initCrcTable();
+
 		// Create output byte array
 		var png:ByteArray = new ByteArray();
 		// Write PNG signature
@@ -101,30 +103,6 @@ class PNGEncoder
 	
 	private static function writeChunk(png:ByteArray, type:Int, data:ByteArray):Void 
 	{
-		var c:Int;
-		
-		if (!crcTableComputed) 
-		{
-			crcTableComputed = true;
-			crcTable = [];
-			
-			for (n in 0...256) 
-			{
-				c = n;
-				for (k in 0...8) 
-				{
-					if ((c & 1) != 0)
-					{
-						c = 0xedb88320 ^ (c >>> 1);
-					} 
-					else 
-					{
-						c = c >>> 1;
-					}
-				}
-				crcTable[n] = c;
-			}
-		}
 		var len:Int = 0;
 		if (data != null) 
 		{
@@ -139,7 +117,7 @@ class PNGEncoder
 		}
 		var e:Int = png.position;
 		png.position = p;
-		c = 0xffffffff;
+		var c = 0xffffffff;
 		for (i in 0...(e-p)) 
 		{
 			c = crcTable[(c ^ png.readUnsignedByte()) & 0xff] ^ c >>> 8;
@@ -147,6 +125,31 @@ class PNGEncoder
 		c = c ^ 0xffffffff;
 		png.position = e;
 		png.writeUnsignedInt(c);
+	}
+
+	private static inline function initCrcTable()
+	{
+		if (crcTable == null)
+		{
+			crcTable = new Vector(256);
+
+			for (n in 0...256)
+			{
+				var c = n;
+				for (k in 0...8)
+				{
+					if ((c & 1) != 0)
+					{
+						c = 0xedb88320 ^ (c >>> 1);
+					}
+					else
+					{
+						c = c >>> 1;
+					}
+				}
+				crcTable[n] = c;
+			}
+		}
 	}
 }
 #end

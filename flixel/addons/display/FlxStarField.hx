@@ -4,6 +4,7 @@
  */
 package flixel.addons.display;
 
+import haxe.ds.Vector;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
@@ -32,28 +33,28 @@ class FlxStarField2D extends FlxStarField
 	
 	override public function update(elapsed:Float):Void
 	{
-		for (star in _stars)
+		for (s in 0..._starsX.length)
 		{
-			star.x += (starVelocityOffset.x * star.speed) * elapsed;
-			star.y += (starVelocityOffset.y * star.speed) * elapsed;
+			_starsX[s] += (starVelocityOffset.x * _starsSpeed[s]) * elapsed;
+			_starsY[s] += (starVelocityOffset.y * _starsSpeed[s]) * elapsed;
 			
 			// wrap the star
-			if (star.x > width)
+			if (_starsX[s] > width)
 			{
-				star.x = 0;
+				_starsX[s] = 0;
 			}
-			else if (star.x < 0)
+			else if (_starsX[s] < 0)
 			{
-				star.x = width;
+				_starsX[s] = width;
 			}
 			
-			if (star.y > height)
+			if (_starsY[s] > height)
 			{
-				star.y = 0;
+				_starsY[s] = 0;
 			}
-			else if (star.y < 0)
+			else if (_starsY[s] < 0)
 			{
-				star.y = height;
+				_starsY[s] = height;
 			}
 		}
 		
@@ -81,21 +82,19 @@ class FlxStarField3D extends FlxStarField
 	
 	override public function update(elapsed:Float):Void
 	{
-		for (star in _stars)
+		for (s in 0..._starsX.length)
 		{
-			star.d *= 1.1;
-			star.x = center.x + ((Math.cos(star.r) * star.d) * star.speed) * elapsed;
-			star.y = center.y + ((Math.sin(star.r) * star.d) * star.speed) * elapsed;
-			
-			if ((star.x < 0) || (star.x > width) || (star.y < 0) || (star.y > height))
+			_starsD[s] *= 1.1;
+			_starsX[s] = center.x + ((Math.cos(_starsR[s]) * _starsD[s]) * _starsSpeed[s]) * elapsed;
+			_starsY[s] = center.y + ((Math.sin(_starsR[s]) * _starsD[s]) * _starsSpeed[s]) * elapsed;
+
+			if ((_starsX[s] < 0) || (_starsX[s] > width) || (_starsY[s] < 0) || (_starsY[s] > height))
 			{
-				star.d = 1;
-				star.r = FlxG.random.float() * Math.PI * 2;
-				star.x = 0;
-				star.y = 0;
-				star.speed = FlxG.random.float(_minSpeed, _maxSpeed);
-				
-				_stars[star.index] = star;
+				_starsD[s] = 1;
+				_starsR[s] = FlxG.random.float() * Math.PI * 2;
+				_starsX[s] = 0;
+				_starsY[s] = 0;
+				_starsSpeed[s] = FlxG.random.float(_minSpeed, _maxSpeed);
 			}
 		}
 		
@@ -106,8 +105,17 @@ class FlxStarField3D extends FlxStarField
 private class FlxStarField extends FlxSprite
 {
 	public var bgColor:Int = FlxColor.BLACK;
-	
-	private var _stars:Array<FlxStar>;
+
+	// Why five Vectors instead of one that has an FlxStar class?  This is better
+	// for the cache, as all the data is being accessed sequentially so it'll be a
+	// little faster.
+	private var _starsX:Vector<Float>;
+	private var _starsY:Vector<Float>;
+	private var _starsD:Vector<Float>;
+	private var _starsR:Vector<Float>;
+	private var _starsSpeed:Vector<Float>;
+	// TODO: Can we speed this up more by just using one big Vector that's five times as long as StarAmount?
+
 	private var _depthColors:Array<Int>;
 	private var _minSpeed:Float;
 	private var _maxSpeed:Float;
@@ -118,27 +126,28 @@ private class FlxStarField extends FlxSprite
 		Width = (Width <= 0) ? FlxG.width : Width;
 		Height = (Height <= 0) ? FlxG.height : Height;
 		makeGraphic(Width, Height, bgColor, true);
-		_stars = [];
-		
+		_starsX = new Vector(StarAmount);
+		_starsY = new Vector(StarAmount);
+		_starsD = new Vector(StarAmount);
+		_starsR = new Vector(StarAmount);
+		_starsSpeed = new Vector(StarAmount);
+
 		for (i in 0...StarAmount)
 		{
-			var star = new FlxStar();
-			star.index = i;
-			star.x = FlxG.random.int(0, Width);
-			star.y = FlxG.random.int(0, Height);
-			star.d = 1;
-			star.r = FlxG.random.float() * Math.PI * 2;
-			_stars.push(star);
+			_starsX[i] = FlxG.random.int(0, Width);
+			_starsY[i] = FlxG.random.int(0, Height);
+			_starsD[i] = 1;
+			_starsR[i] = FlxG.random.float() * Math.PI * 2;
 		}
 	}
 	
 	override public function destroy():Void
 	{
-		for (star in _stars)
-		{
-			star = null;
-		}
-		_stars = null;
+		_starsX = null;
+		_starsY = null;
+		_starsD = null;
+		_starsR = null;
+		_starsSpeed = null;
 		_depthColors = null;
 		super.destroy();
 	}
@@ -148,10 +157,10 @@ private class FlxStarField extends FlxSprite
 		pixels.lock();
 		pixels.fillRect(_flashRect, bgColor);
 		
-		for (star in _stars)
+		for (s in 0..._starsX.length)
 		{
-			var colorIndex:Int = Std.int(((star.speed - _minSpeed) / (_maxSpeed - _minSpeed)) * _depthColors.length);
-			pixels.setPixel32(Std.int(star.x), Std.int(star.y), _depthColors[colorIndex]);
+			var colorIndex:Int = Std.int(((_starsSpeed[s] - _minSpeed) / (_maxSpeed - _minSpeed)) * _depthColors.length);
+			pixels.setPixel32(Std.int(_starsX[s]), Std.int(_starsY[s]), _depthColors[colorIndex]);
 		}
 		
 		pixels.unlock();
@@ -177,21 +186,9 @@ private class FlxStarField extends FlxSprite
 		_minSpeed = Min;
 		_maxSpeed = Max;
 		
-		for (star in _stars)
+		for (s in 0..._starsX.length)
 		{
-			star.speed = FlxG.random.float(Min, Max);
+			_starsSpeed[s] = FlxG.random.float(Min, Max);
 		}
 	}
-}
-
-private class FlxStar
-{
-	public var index:Int;
-	public var x:Float;
-	public var y:Float;
-	public var d:Float;
-	public var r:Float;
-	public var speed:Float;
-	
-	public function new() {}
 }
