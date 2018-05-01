@@ -56,12 +56,12 @@ class TiledMap
 	{
 		var source:Fast = null;
 		
-		if(rootPath != null)
+		if (rootPath != null)
 			this.rootPath = rootPath;
 		
 		if (Std.is(data, String)) 
 		{
-			if(this.rootPath == null)
+			if (this.rootPath == null)
 				this.rootPath = Path.directory(data) + "/";
 			source = new Fast(Xml.parse(Assets.getText(data)));
 		}
