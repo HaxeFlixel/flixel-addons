@@ -29,6 +29,10 @@ class TiledTileSet
 	
 	public var properties:TiledPropertySet;
 	
+	public var tileTypes:Array<String>;
+
+	public var tileProbabilities:Array<Float>;
+
 	public var tileProps:Array<TiledTilePropertySet>;
 	
 	public var tileImagesSources:Array<TiledImageTile>;
@@ -141,8 +145,10 @@ class TiledTileSet
 			for (prop in source.nodes.properties)
 				properties.extend(prop);
 			
-			// read tiles properties
+			// read tiles properties, type, probability
 			tileProps = new Array<TiledTilePropertySet>();
+			tileTypes = new Array<String>();
+			tileProbabilities = new Array<Float>();
 			
 			for (node in source.nodes.tile)
 			{
@@ -152,6 +158,19 @@ class TiledTileSet
 				}
 				
 				var id:Int = Std.parseInt(node.att.id);
+
+				if(node.has.type)
+				{
+					var type:String = node.att.type;
+					tileTypes[id] = type;
+				}
+
+				if(node.has.probability)
+				{
+					var probability = Std.parseFloat(node.att.probability);
+					tileProbabilities[id] = probability;
+				}
+				
 				tileProps[id] = new TiledTilePropertySet(id);
 				tileProps[id].keys.set("id", Std.string(id));
 				for (prop in node.nodes.properties)
