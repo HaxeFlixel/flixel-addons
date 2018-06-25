@@ -21,13 +21,13 @@ private class GraphicDiagonalGradient extends BitmapData {}
  */
 class TransitionFade extends TransitionEffect
 {
-	private var back:FlxSprite;
-	private var tweenStr:String = "";
-	private var tweenStr2:String = "";
-	private var tweenValStart:Float = 0;
-	private var tweenValStart2:Float = 0;
-	private var tweenValEnd:Float = 0;
-	private var tweenValEnd2:Float = 0;
+	var back:FlxSprite;
+	var tweenStr:String = "";
+	var tweenStr2:String = "";
+	var tweenValStart:Float = 0;
+	var tweenValStart2:Float = 0;
+	var tweenValEnd:Float = 0;
+	var tweenValEnd2:Float = 0;
 	
 	public function new(data:TransitionData) 
 	{
@@ -72,7 +72,7 @@ class TransitionFade extends TransitionEffect
 		FlxTween.tween(back, Values, _data.duration, _data.tweenOptions);
 	}
 	
-	private function setTweenValues(NewStatus:TransitionStatus, DirX:Float, DirY:Float):Void
+	function setTweenValues(NewStatus:TransitionStatus, DirX:Float, DirY:Float):Void
 	{
 		if (DirX == 0 && DirY == 0)
 		{
@@ -139,7 +139,7 @@ class TransitionFade extends TransitionEffect
 		}
 	}
 	
-	private function makeSprite(DirX:Float, DirY:Float):FlxSprite
+	function makeSprite(DirX:Float, DirY:Float):FlxSprite
 	{
 		var s = new FlxSprite(0, 0);
 		var locX:Float = 0;
@@ -188,7 +188,7 @@ class TransitionFade extends TransitionEffect
 		return s;
 	}
 	
-	private function getGradient():BitmapData
+	function getGradient():BitmapData
 	{
 		//TODO: this could perhaps be optimized a lot by creating a single-pixel wide sprite, rotating it, scaling it super big, and positioning it properly
 		var rawBmp = new GraphicDiagonalGradient(0,0);
@@ -205,7 +205,7 @@ class TransitionFade extends TransitionEffect
 		return final_pixels;
 	}
 	
-	private function finishTween(f:FlxTween):Void
+	function finishTween(f:FlxTween):Void
 	{
 		delayThenFinish();
 	}

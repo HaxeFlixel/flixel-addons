@@ -32,7 +32,7 @@ class FlxSkewedSprite extends FlxSprite
 	/**
 	 * Internal helper matrix object. Used for rendering calculations when matrixExposed is set to false
 	 */
-	private var _skewMatrix:Matrix = new Matrix();
+	var _skewMatrix:Matrix = new Matrix();
 	
 	/**
 	 * WARNING: This will remove this sprite entirely. Use kill() if you 
@@ -80,7 +80,7 @@ class FlxSkewedSprite extends FlxSprite
 		camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing);
 	}
 	
-	private function updateSkewMatrix():Void
+	function updateSkewMatrix():Void
 	{
 		_skewMatrix.identity();
 		

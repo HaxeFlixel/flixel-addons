@@ -23,10 +23,10 @@ class FlxShapeCircle extends FlxShape
 	
 	override public inline function drawSpecificShape(?matrix:Matrix):Void 
 	{
-		FlxSpriteUtil.drawCircle(this, Math.ceil(width / 2), Math.ceil(height / 2), radius, fillColor, lineStyle, { matrix: matrix });
+		FlxSpriteUtil.drawCircle(this, radius, radius, radius, fillColor, lineStyle, { matrix: matrix });
 	}
 	
-	private inline function set_radius(r:Float):Float
+	inline function set_radius(r:Float):Float
 	{
 		radius = r;
 		shapeWidth = r * 2;
@@ -35,17 +35,17 @@ class FlxShapeCircle extends FlxShape
 		return radius;
 	}
 	
-	private override function getStrokeOffsetX():Float
+	override function getStrokeOffsetX():Float
 	{
 		return strokeBuffer / 2;
 	}
 	
-	private override function getStrokeOffsetY():Float
+	override function getStrokeOffsetY():Float
 	{
 		return strokeBuffer / 2;
 	}
 	
-	private override function get_strokeBuffer():Float
+	override function get_strokeBuffer():Float
 	{
 		return lineStyle.thickness * 1.0;
 	}

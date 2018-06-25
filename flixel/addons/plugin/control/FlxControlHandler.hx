@@ -92,102 +92,102 @@ class FlxControlHandler
 	// Used by the FlxControl plugin
 	public var enabled:Bool = false;
 	
-	private static inline var DIAGONAL_COMPENSATION_FACTOR:Float = FlxMath.SQUARE_ROOT_OF_TWO * 0.5;
+	static inline var DIAGONAL_COMPENSATION_FACTOR:Float = FlxMath.SQUARE_ROOT_OF_TWO * 0.5;
 	
-	private var _entity:FlxSprite;
+	var _entity:FlxSprite;
 	
-	private var _bounds:Rectangle;
+	var _bounds:Rectangle;
 	
-	private var _up:Bool = false;
-	private var _down:Bool = false;
-	private var _left:Bool = false;
-	private var _right:Bool = false;
+	var _up:Bool = false;
+	var _down:Bool = false;
+	var _left:Bool = false;
+	var _right:Bool = false;
 
-	private var _fire:Bool;
-	private var _altFire:Bool;
-	private var _jump:Bool;
-	private var _altJump:Bool;
-	private var _xFacing:Bool;
-	private var _yFacing:Bool;
-	private var _rotateAntiClockwise:Bool;
-	private var _rotateClockwise:Bool;
+	var _fire:Bool;
+	var _altFire:Bool;
+	var _jump:Bool;
+	var _altJump:Bool;
+	var _xFacing:Bool;
+	var _yFacing:Bool;
+	var _rotateAntiClockwise:Bool;
+	var _rotateClockwise:Bool;
 	
-	private var _upMoveSpeed:Int;
-	private var _downMoveSpeed:Int;
-	private var _leftMoveSpeed:Int;
-	private var _rightMoveSpeed:Int;
-	private var _thrustSpeed:Int;
-	private var _reverseSpeed:Int;
+	var _upMoveSpeed:Int;
+	var _downMoveSpeed:Int;
+	var _leftMoveSpeed:Int;
+	var _rightMoveSpeed:Int;
+	var _thrustSpeed:Int;
+	var _reverseSpeed:Int;
 	
 	// Rotation
-	private var _thrustEnabled:Bool = false;
-	private var _reverseEnabled:Bool;
-	private var _isRotating:Bool = false;
-	private var _antiClockwiseRotationSpeed:Float;
-	private var _clockwiseRotationSpeed:Float;
-	private var _enforceAngleLimits:Bool = false;
-	private var _minAngle:Int;
-	private var _maxAngle:Int;
-	private var _capAngularVelocity:Bool;
+	var _thrustEnabled:Bool = false;
+	var _reverseEnabled:Bool;
+	var _isRotating:Bool = false;
+	var _antiClockwiseRotationSpeed:Float;
+	var _clockwiseRotationSpeed:Float;
+	var _enforceAngleLimits:Bool = false;
+	var _minAngle:Int;
+	var _maxAngle:Int;
+	var _capAngularVelocity:Bool;
 	
-	private var _xSpeedAdjust:Float = 0;
-	private var _ySpeedAdjust:Float = 0;
+	var _xSpeedAdjust:Float = 0;
+	var _ySpeedAdjust:Float = 0;
 	
-	private var _gravityX:Int = 0;
-	private var _gravityY:Int = 0;
+	var _gravityX:Int = 0;
+	var _gravityY:Int = 0;
 	
 	// The ms delay between firing when the key is held down
-	private var _fireRate:Int; 			
+	var _fireRate:Int; 			
 	// The internal time when they can next fire
-	private var _nextFireTime:Int = 0; 		
+	var _nextFireTime:Int = 0; 		
 	// The internal time of when when they last fired
-	private var _lastFiredTime:Int; 		
+	var _lastFiredTime:Int; 		
 	// The fire key mode
-	private var _fireKeyMode:Int;		
+	var _fireKeyMode:Int;		
 	// A function to call every time they fire
-	private var _fireCallback:Void->Void;	
+	var _fireCallback:Void->Void;	
 	
 	// The pixel height amount they jump (drag and gravity also both influence this)
-	private var _jumpHeight:Int; 	
+	var _jumpHeight:Int; 	
 	// The ms delay between jumping when the key is held down
-	private var _jumpRate:Int; 	
+	var _jumpRate:Int; 	
 	// The jump key mode
-	private var _jumpKeyMode:Int;
+	var _jumpKeyMode:Int;
 	// The internal time when they can next jump
-	private var _nextJumpTime:Int; 		
+	var _nextJumpTime:Int; 		
 	// The internal time of when when they last jumped
-	private var _lastJumpTime:Int; 		
+	var _lastJumpTime:Int; 		
 	// A short window of opportunity for them to jump having just fallen off the edge of a surface
-	private var _jumpFromFallTime:Int; 	
+	var _jumpFromFallTime:Int; 	
 	// Internal time of when they last collided with a valid jumpSurface
-	private var _extraSurfaceTime:Int; 	
+	var _extraSurfaceTime:Int; 	
 	// The surfaces from FlxObject they can jump from (i.e. FlxObject.FLOOR)
-	private var _jumpSurface:Int; 		
+	var _jumpSurface:Int; 		
 	// A function to call every time they jump
-	private var _jumpCallback:Void->Void;	
+	var _jumpCallback:Void->Void;	
 	
-	private var _movement:Int;
-	private var _stopping:Int;
-	private var _rotation:Int;
-	private var _rotationStopping:Int;
-	private var _capVelocity:Bool;
+	var _movement:Int;
+	var _stopping:Int;
+	var _rotation:Int;
+	var _rotationStopping:Int;
+	var _capVelocity:Bool;
 	// TODO
-	private var _hotkeys:Array<String>;			
+	var _hotkeys:Array<String>;			
 	
-	private var _upKey:String;
-	private var _downKey:String;
-	private var _leftKey:String;
-	private var _rightKey:String;
-	private var _fireKey:String;
+	var _upKey:String;
+	var _downKey:String;
+	var _leftKey:String;
+	var _rightKey:String;
+	var _fireKey:String;
 	// TODO
-	private var _altFireKey:String;		
-	private var _jumpKey:String;
+	var _altFireKey:String;		
+	var _jumpKey:String;
 	// TODO
-	private var _altJumpKey:String;		
-	private var _antiClockwiseKey:String;
-	private var _clockwiseKey:String;
-	private var _thrustKey:String;
-	private var _reverseKey:String;
+	var _altJumpKey:String;		
+	var _antiClockwiseKey:String;
+	var _clockwiseKey:String;
+	var _thrustKey:String;
+	var _reverseKey:String;
 	// Invert movement on horizontal/vetical axis eg. pressing left moves right etc.
 	/** @since 2.1.0 */
 	public var invertX:Bool;
@@ -195,10 +195,10 @@ class FlxControlHandler
 	public var invertY:Bool;
 	
 	// Sounds
-	private var _jumpSound:FlxSound;
-	private var _fireSound:FlxSound;
-	private var _walkSound:FlxSound;
-	private var _thrustSound:FlxSound;
+	var _jumpSound:FlxSound;
+	var _fireSound:FlxSound;
+	var _walkSound:FlxSound;
+	var _thrustSound:FlxSound;
 	
 	/**
 	 * Sets the FlxSprite to be controlled by this class, and defines the initial movement and stopping types.
@@ -634,7 +634,7 @@ class FlxControlHandler
 		_bounds = null;
 	}
 	
-	private function moveUp():Bool
+	function moveUp():Bool
 	{
 		var move:Bool = false;
 		
@@ -666,7 +666,7 @@ class FlxControlHandler
 		return move;
 	}
 	
-	private function moveDown():Bool
+	function moveDown():Bool
 	{
 		var move:Bool = false;
 		
@@ -699,7 +699,7 @@ class FlxControlHandler
 		return move;
 	}
 	
-	private function moveLeft():Bool
+	function moveLeft():Bool
 	{
 		var move:Bool = false;
 		
@@ -731,7 +731,7 @@ class FlxControlHandler
 		return move;
 	}
 	
-	private function moveRight():Bool
+	function moveRight():Bool
 	{
 		var move:Bool = false;
 		
@@ -763,7 +763,7 @@ class FlxControlHandler
 		return move;
 	}
 	
-	private function moveAntiClockwise():Bool
+	function moveAntiClockwise():Bool
 	{
 		var move:Bool = false;
 		
@@ -790,7 +790,7 @@ class FlxControlHandler
 		return move;
 	}
 	
-	private function moveClockwise():Bool
+	function moveClockwise():Bool
 	{
 		var move:Bool = false;
 		
@@ -817,7 +817,7 @@ class FlxControlHandler
 		return move;
 	}
 	
-	private function moveThrust():Bool
+	function moveThrust():Bool
 	{
 		var move:Bool = false;
 		
@@ -854,7 +854,7 @@ class FlxControlHandler
 		return move;
 	}
 	
-	private function moveReverse():Bool
+	function moveReverse():Bool
 	{
 		var move:Bool = false;
 		
@@ -884,7 +884,7 @@ class FlxControlHandler
 		return move;
 	}
 	
-	private function runFire():Bool
+	function runFire():Bool
 	{
 		var fired:Bool = false;
 		
@@ -923,7 +923,7 @@ class FlxControlHandler
 		return fired;
 	}
 	
-	private function runJump():Bool
+	function runJump():Bool
 	{
 		var jumped:Bool = false;
 		

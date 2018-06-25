@@ -97,47 +97,47 @@ class FlxSlider extends FlxSpriteGroup
 	/**
 	 * The dragable area for the handle. Is configured automatically.
 	 */
-	private var _bounds:FlxRect;
+	var _bounds:FlxRect;
 	/**
 	 * The width of the slider.
 	 */
-	private var _width:Int;
+	var _width:Int;
 	/**
 	 * The height of the slider - make sure to call createSlider() if you
 	 * want to change this.
 	 */
-	private var _height:Int;
+	var _height:Int;
 	/**
 	 * The thickness of the slider - make sure to call createSlider() if you
 	 * want to change this.
 	 */
-	private var _thickness:Int;
+	var _thickness:Int;
 	/**
 	 * The color of the slider - make sure to call createSlider() if you
 	 * want to change this.
 	 */
-	private var _color:FlxColor;
+	var _color:FlxColor;
 	/**
 	 * The color of the handle - make sure to call createSlider() if you
 	 * want to change this.
 	 */
-	private var _handleColor:FlxColor;
+	var _handleColor:FlxColor;
 	/**
 	 * Stores a reference to parent object.
 	 */
-	private var _object:Dynamic;
+	var _object:Dynamic;
 	/**
 	 * Helper var for callbacks.
 	 */
-	private var _lastPos:Float;
+	var _lastPos:Float;
 	/**
 	 * Helper variable to avoid the clickSound playing every frame.
 	 */
-	private var _justClicked:Bool = false;
+	var _justClicked:Bool = false;
 	/**
 	 * Helper variable to avoid the hoverSound playing every frame.
 	 */
-	private var _justHovered:Bool = false;
+	var _justHovered:Bool = false;
 	
 	/**
 	 * Creates a new FlxSlider.
@@ -158,7 +158,7 @@ class FlxSlider extends FlxSpriteGroup
 	{
 		super();
 		
-		x = X; 
+		x = X;
 		y = Y;
 		
 		if (MinValue == MaxValue)
@@ -194,10 +194,10 @@ class FlxSlider extends FlxSpriteGroup
 	/**
 	 * Initially creates the slider with all its objects.
 	 */
-	private function createSlider():Void
+	function createSlider():Void
 	{
-		offset.set(7, 18); 
-		_bounds = FlxRect.get(x + offset.x, y +offset.y, _width, _height);
+		offset.set(7, 18);
+		_bounds = FlxRect.get(x + offset.x, y + offset.y, _width, _height);
 		
 		// Creating the "body" of the slider
 		body = new FlxSprite(offset.x, offset.y);
@@ -316,7 +316,7 @@ class FlxSlider extends FlxSpriteGroup
 	/**
 	 * Function that is called whenever the slider is used to either update the variable tracked or call the Callback function.
 	 */
-	private function updateValue():Void
+	function updateValue():Void
 	{
 		if (_lastPos != relativePos) 
 		{
@@ -405,7 +405,7 @@ class FlxSlider extends FlxSpriteGroup
 		super.destroy();
 	}
 	
-	private function get_expectedPos():Float 
+	function get_expectedPos():Float 
 	{ 
 		var pos:Float = x + offset.x + ((_width - handle.width) * ((value - minValue) / (maxValue - minValue)));
 		
@@ -422,7 +422,7 @@ class FlxSlider extends FlxSpriteGroup
 		return pos; 
 	}
 	
-	private function get_relativePos():Float 
+	function get_relativePos():Float 
 	{ 
 		var pos:Float = (handle.x - x - offset.x) / (_width - handle.width); 
 		
@@ -435,20 +435,40 @@ class FlxSlider extends FlxSpriteGroup
 		return pos;
 	}
 	
-	private function set_varString(Value:String):String
+	function set_varString(Value:String):String
 	{
 		try 
 		{
 			Reflect.getProperty(_object, Value);
 			varString = Value;
 		}
-		catch (e:Dynamic) 
+		catch (e:Dynamic)
 		{
 			FlxG.log.error("Could not create FlxSlider - '" + Value + "' is not a valid field of '" + _object + "'");
 			varString = null;
 		}
 		
 		return Value;
+	}
+
+	override function set_x(value:Float):Float
+	{
+		super.set_x(value);
+		updateBounds();
+		return x = value;
+	}
+
+	override function set_y(value:Float):Float
+	{
+		super.set_y(value);
+		updateBounds();
+		return y = value;
+	}
+
+	inline function updateBounds()
+	{
+		if (_bounds != null)
+			_bounds.set(x + offset.x, y + offset.y, _width, _height);
 	}
 }
 #end

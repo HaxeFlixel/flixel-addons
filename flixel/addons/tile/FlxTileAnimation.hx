@@ -54,7 +54,7 @@ class FlxTileAnimation implements IFlxDestroyable
 		framesData = null;
 	}
 	
-	private function set_frameRate(value:Float):Float
+	function set_frameRate(value:Float):Float
 	{
 		delay = 0;
 		frameRate = value;

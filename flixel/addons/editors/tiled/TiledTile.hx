@@ -46,7 +46,7 @@ class TiledTile
 		resolveFlipAndRotation();
 	}
 	
-	private function resolveFlipAndRotation():Void
+	function resolveFlipAndRotation():Void
 	{
 		var flipHorizontal:Bool = (tileID & FLIPPED_HORIZONTAL) != 0;
 		var flipVertical:Bool = (tileID & FLIPPED_VERTICAL) != 0;
@@ -80,7 +80,7 @@ class TiledTile
 		
 	}
 	
-	private inline function resolveTilesetID():Int
+	inline function resolveTilesetID():Int
 	{
 		return tileID & ~(FLIPPED_HORIZONTAL | FLIPPED_VERTICAL | FLIPPED_DIAGONAL);
 	}

@@ -35,9 +35,9 @@ class FlxKongregate
 	 */
 	public static var isLocal:Bool = false;
 	
-	private static inline var SHADOW_API:String = "http://www.kongregate.com/flash/API_AS3_Local.swf";
-	private static var _apiLoader:Loader;
-	private static var _loadCallback:Dynamic;
+	static inline var SHADOW_API:String = "http://www.kongregate.com/flash/API_AS3_Local.swf";
+	static var _apiLoader:Loader;
+	static var _loadCallback:Dynamic;
 	
 	/**
 	 * Loads the Kongregate API and if successful connects to the service.
@@ -95,9 +95,9 @@ class FlxKongregate
 		FlxG.stage.removeChild(_apiLoader);
 	}
 	
-	private static function apiLoadComplete(E:Event):Void
+	static function apiLoadComplete(E:Event):Void
 	{
-		api = E.target.content;
+		api = (cast E.target).content;
 		
 		hasLoaded = true;
 		
@@ -109,7 +109,7 @@ class FlxKongregate
 		}
 	}
 	
-	private static function apiLoadError(E:IOError):Void
+	static function apiLoadError(E:IOError):Void
 	{
 		FlxG.log.add("Error loading Kongregate API:" + E);
 	}

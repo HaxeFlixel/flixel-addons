@@ -21,15 +21,15 @@ import flixel.util.FlxSpriteUtil;
  */
 class FlxSliceSprite extends FlxStrip
 {
-	private static inline var TOP_LEFT:Int = 0;
-	private static inline var TOP:Int = 1;
-	private static inline var TOP_RIGHT:Int = 2;
-	private static inline var LEFT:Int = 3;
-	private static inline var CENTER:Int = 4;
-	private static inline var RIGHT:Int = 5;
-	private static inline var BOTTOM_LEFT:Int = 6;
-	private static inline var BOTTOM:Int = 7;
-	private static inline var BOTTOM_RIGHT:Int = 8;
+	static inline var TOP_LEFT:Int = 0;
+	static inline var TOP:Int = 1;
+	static inline var TOP_RIGHT:Int = 2;
+	static inline var LEFT:Int = 3;
+	static inline var CENTER:Int = 4;
+	static inline var RIGHT:Int = 5;
+	static inline var BOTTOM_LEFT:Int = 6;
+	static inline var BOTTOM:Int = 7;
+	static inline var BOTTOM_RIGHT:Int = 8;
 	
 	/**
 	 * Whether to adjust sprite's width to slice grid or not.
@@ -80,32 +80,35 @@ class FlxSliceSprite extends FlxStrip
 	/**
 	 * Internal array of FlxGraphic objects for each element of slice grid.
 	 */
-	private var slices:Array<FlxGraphic>;
+	var slices:Array<FlxGraphic>;
 	/**
 	 * Internal array of FlxRect objects for each element of slice grid.
 	 */
-	private var sliceRects:Array<FlxRect>;
+	var sliceRects:Array<FlxRect>;
 	
-	private var sliceVertices:Array<DrawData<Float>>;
-	private var sliceUVTs:Array<DrawData<Float>>;
+	var sliceVertices:Array<DrawData<Float>>;
+	var sliceUVTs:Array<DrawData<Float>>;
 	
 	/**
 	 * Helper sprite, which does actual rendering in blit render mode.
 	 */
-	private var renderSprite:FlxSprite;
+	var renderSprite:FlxSprite;
 	
-	private var regen:Bool = true;
+	var regen:Bool = true;
 	
-	private var regenSlices:Bool = true;
+	var regenSlices:Bool = true;
 	
-	private var helperFrame:FlxFrame;
+	var helperFrame:FlxFrame;
 	
-	private var _snappedWidth:Float = -1;
-	private var _snappedHeight:Float = -1;
+	var _snappedWidth:Float = -1;
+	var _snappedHeight:Float = -1;
 	
 	public function new(Graphic:FlxGraphicAsset, SliceRect:FlxRect, Width:Float, Height:Float)
 	{
 		super();
+		
+		if (renderSprite == null)
+			renderSprite = new FlxSprite();
 		
 		sliceRects = [];
 		sliceVertices = [];
@@ -166,7 +169,7 @@ class FlxSliceSprite extends FlxStrip
 		return super.set_graphic(Value);
 	}
 	
-	private function regenGraphic():Void
+	function regenGraphic():Void
 	{
 		if (!regen || graphic == null)
 			return;
@@ -194,9 +197,6 @@ class FlxSliceSprite extends FlxStrip
 		
 		if (FlxG.renderBlit)
 		{
-			if (renderSprite == null)
-				renderSprite = new FlxSprite();
-			
 			if (renderSprite.width != _snappedWidth || renderSprite.height != _snappedHeight)
 			{
 				renderSprite.makeGraphic(Std.int(_snappedWidth), Std.int(_snappedHeight), FlxColor.TRANSPARENT, true);
@@ -235,24 +235,21 @@ class FlxSliceSprite extends FlxStrip
 		regen = false;
 	}
 	
-	private function blitTileOnCanvas(TileIndex:Int, Stretch:Bool, X:Float, Y:Float, Width:Float, Height:Float):Void
+	function blitTileOnCanvas(TileIndex:Int, Stretch:Bool, X:Float, Y:Float, Width:Float, Height:Float):Void
 	{
 		var tile:FlxGraphic = slices[TileIndex];
 		
 		if (tile != null)
 		{
 			FlxSpriteUtil.flashGfx.clear();
+			
+			_matrix.identity();
+			
 			if (Stretch)
-			{
-				_matrix.identity();
 				_matrix.scale(Width / tile.width, Height / tile.height);
-				_matrix.translate(X, Y);
-				FlxSpriteUtil.flashGfx.beginBitmapFill(tile.bitmap, _matrix);
-			}
-			else
-			{
-				FlxSpriteUtil.flashGfx.beginBitmapFill(tile.bitmap);
-			}
+			
+			_matrix.translate(X, Y);
+			FlxSpriteUtil.flashGfx.beginBitmapFill(tile.bitmap, _matrix);
 			
 			FlxSpriteUtil.flashGfx.drawRect(X, Y, Width, Height);
 			renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
@@ -260,7 +257,7 @@ class FlxSliceSprite extends FlxStrip
 		}
 	}
 	
-	private function fillTileVerticesUVs(TileIndex:Int, Stretch:Bool, X:Float, Y:Float, Width:Float, Height:Float):Void
+	function fillTileVerticesUVs(TileIndex:Int, Stretch:Bool, X:Float, Y:Float, Width:Float, Height:Float):Void
 	{
 		var tile:FlxGraphic = slices[TileIndex];
 		
@@ -303,11 +300,11 @@ class FlxSliceSprite extends FlxStrip
 		}
 	}
 	
-	private function regenSliceFrames():Void
+	function regenSliceFrames():Void
 	{
 		if (!regenSlices || graphic == null || sliceRect == null)
 			return;
-			
+		
 		var sourceWidth:Int = graphic.width;
 		var sourceHeight:Int = graphic.height;
 		
@@ -360,6 +357,7 @@ class FlxSliceSprite extends FlxStrip
 		{
 			renderSprite.x = x;
 			renderSprite.y = y;
+			renderSprite.scale.copyFrom(scale);
 			renderSprite.scrollFactor.set(scrollFactor.x, scrollFactor.y);
 			renderSprite.cameras = cameras;
 			renderSprite.draw();
@@ -369,26 +367,54 @@ class FlxSliceSprite extends FlxStrip
 			for (camera in cameras)
 			{
 				if (!camera.visible || !camera.exists)
-				{
 					continue;
-				}
 				
 				getScreenPosition(_point, camera);
 				
 				for (i in 0...9)
-				{
 					drawTileOnCamera(i, camera);
-				}
 			}
 		}
 	}
 	
-	private inline function drawTileOnCamera(TileIndex:Int, Camera:FlxCamera):Void
+	inline function drawTileOnCamera(TileIndex:Int, Camera:FlxCamera):Void
 	{
 		if (slices[TileIndex] != null)
-		{
 			Camera.drawTriangles(slices[TileIndex], sliceVertices[TileIndex], indices, sliceUVTs[TileIndex], colors, _point, blend, repeat, antialiasing);
+	}
+	
+	override function set_alpha(Alpha:Float):Float
+	{
+		var newAlpha:Float = super.set_alpha(Alpha);
+		
+		if (FlxG.renderBlit && renderSprite != null)
+			renderSprite.alpha = newAlpha;
+		else if (FlxG.renderTile)
+		{
+			var c:FlxColor = color;
+			c.alphaFloat = newAlpha;
+			
+			for (i in 0...4)
+				colors[i] = c;
 		}
+		
+		return newAlpha;
+	}
+
+	override function set_color(Color:FlxColor):FlxColor
+	{
+		if (FlxG.renderBlit && renderSprite != null)
+			renderSprite.color = Color;
+		else if (FlxG.renderTile)
+		{
+			var newColor:FlxColor = Color;
+			newColor.alphaFloat = alpha;
+			
+			for (i in 0...4)
+				colors[i] = newColor;
+		}
+		
+		return super.set_color(Color);
 	}
 	
 	override function set_width(Width:Float):Float
@@ -413,7 +439,7 @@ class FlxSliceSprite extends FlxStrip
 		return super.set_height(Height);
 	}
 	
-	private function set_snapWidth(Value:Bool):Bool
+	function set_snapWidth(Value:Bool):Bool
 	{
 		if (Value != snapWidth)
 			regen = true;
@@ -421,7 +447,7 @@ class FlxSliceSprite extends FlxStrip
 		return snapWidth = Value;
 	}
 	
-	private function set_snapHeight(Value:Bool):Bool
+	function set_snapHeight(Value:Bool):Bool
 	{
 		if (Value != snapHeight)
 			regen = true;
@@ -429,7 +455,7 @@ class FlxSliceSprite extends FlxStrip
 		return snapHeight = Value;
 	}
 	
-	private function set_stretchLeft(Value:Bool):Bool
+	function set_stretchLeft(Value:Bool):Bool
 	{
 		if (Value != stretchLeft)
 			regen = true;
@@ -437,7 +463,7 @@ class FlxSliceSprite extends FlxStrip
 		return stretchLeft = Value;
 	}
 	
-	private function set_stretchTop(Value:Bool):Bool
+	function set_stretchTop(Value:Bool):Bool
 	{
 		if (Value != stretchTop)
 			regen = true;
@@ -445,7 +471,7 @@ class FlxSliceSprite extends FlxStrip
 		return stretchTop = Value;
 	}
 	
-	private function set_stretchRight(Value:Bool):Bool
+	function set_stretchRight(Value:Bool):Bool
 	{
 		if (Value != stretchRight)
 			regen = true;
@@ -453,7 +479,7 @@ class FlxSliceSprite extends FlxStrip
 		return stretchRight = Value;
 	}
 	
-	private function set_stretchBottom(Value:Bool):Bool
+	function set_stretchBottom(Value:Bool):Bool
 	{
 		if (Value != stretchBottom)
 			regen = true;
@@ -461,7 +487,7 @@ class FlxSliceSprite extends FlxStrip
 		return stretchBottom = Value;
 	}
 	
-	private function set_stretchCenter(Value:Bool):Bool
+	function set_stretchCenter(Value:Bool):Bool
 	{
 		if (Value != stretchCenter)
 			regen = true;
@@ -469,13 +495,13 @@ class FlxSliceSprite extends FlxStrip
 		return stretchCenter = Value;
 	}
 	
-	private function set_sliceRect(Value:FlxRect):FlxRect
+	function set_sliceRect(Value:FlxRect):FlxRect
 	{
 		regen = regenSlices = true;
 		return sliceRect = Value;
 	}
 	
-	private function get_snappedWidth():Float
+	function get_snappedWidth():Float
 	{
 		if (regen)
 			regenGraphic();
@@ -483,7 +509,7 @@ class FlxSliceSprite extends FlxStrip
 		return _snappedWidth;
 	}
 	
-	private function get_snappedHeight():Float
+	function get_snappedHeight():Float
 	{
 		if (regen)
 			regenGraphic();

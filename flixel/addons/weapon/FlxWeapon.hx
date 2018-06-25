@@ -1,10 +1,10 @@
 package flixel.addons.weapon;
 
-import flixel.addons.weapon.FlxWeapon.FlxTypedWeapon;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.weapon.FlxWeapon.FlxTypedWeapon;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.touch.FlxTouch;
 import flixel.math.FlxAngle;
@@ -132,11 +132,17 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	/**
 	 * The factory function to create a bullet
 	 */
-	private var bulletFactory:FlxTypedWeapon<TBullet>->TBullet;
+	var bulletFactory:FlxTypedWeapon<TBullet>->TBullet;
 	
-	private var lastFired:Int = 0;
+	var lastFired:Int = 0;
 	
-	private var skipParentCollision:Bool;
+	var skipParentCollision:Bool;
+
+	/**
+	 * When the bullet is fired if you need to offset it's angle from the parent angle, for example if the bullet sprite is angle offsetted, only used when useParentAngle is true
+	 */
+	var angleOffset:Float = 0;
+	
 	
 	/**
 	 * Creates the FlxWeapon class which will fire your bullets.
@@ -144,8 +150,9 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * Then either use setDirection with fire() or one of the fireAt functions to launch them.
 	 * 
 	 * @param	Name		The name of your weapon (i.e. "lazer" or "shotgun"). For your internal reference really, but could be displayed in-game.
-	 * @param	ParentRef	If this weapon belongs to a parent sprite, specify it here (bullets will fire from the sprites x/y vars as defined below).
 	 * @param	BulletFactory	FlxWeapon uses this factory function to actually create a bullet
+	 * @param	fireFrom	enum that describes the weapon firing position, for Example Parent, Position.
+	 * @param	speedMode	enum that describes the bullets speed mode, for Example Velocity, Acceleration.
 	 */
 	public function new(name:String, bulletFactory:FlxTypedWeapon<TBullet>->TBullet, fireFrom:FlxWeaponFireFrom, speedMode:FlxWeaponSpeedMode)
 	{
@@ -168,7 +175,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * @param	Target
 	 * @return	True if a bullet was fired or false if one wasn't available. The bullet last fired is stored in FlxWeapon.prevBullet
 	 */
-	private function runFire(Mode:FlxWeaponFireMode):Bool
+	function runFire(Mode:FlxWeaponFireMode):Bool
 	{
 		if (fireRate > 0 && FlxG.game.ticks < nextFire)
 		{
@@ -203,9 +210,9 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		switch (fireFrom)
 		{
-			case PARENT(parent, offset, useParentDirection):
+			case PARENT(parent, offset, useParentDirection, angleOffset):
 				
-				//stote new offset in a new variable
+				//store new offset in a new variable
 				var actualOffset = new FlxPoint(
 					FlxG.random.float(offset.min.x, offset.max.x),
 					FlxG.random.float(offset.min.y, offset.max.y));
@@ -215,7 +222,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 					actualOffset = rotatePoints(actualOffset, parent.origin, parent.angle);
 
 					//reposition offset to have it's origin at the new returned point
-					actualOffset.subtract(currentBullet.width/2,currentBullet.height/2);
+					actualOffset.subtract(currentBullet.width / 2,currentBullet.height / 2);
+					actualOffset.subtract(parent.offset.x, parent.offset.y);
 				}
 
 				currentBullet.last.x = currentBullet.x = parent.x + actualOffset.x;
@@ -294,7 +302,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 
 		var inBetweenAngle:Float = origin.angleBetween(point) - 90;
 		inBetweenAngle = angle + inBetweenAngle;
-		var inBetweenDistance : Float = origin.distanceTo(point);
+		var inBetweenDistance:Float = origin.distanceTo(point);
 		
 		returnedPoint.x = Math.cos(inBetweenAngle * Math.PI / 180) * inBetweenDistance;
 		returnedPoint.y = Math.sin(inBetweenAngle * Math.PI / 180) * inBetweenDistance;
@@ -413,7 +421,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * 
 	 * @param  ObjectOrGroup  	The group or object to check if bullets collide
 	 * @param  NotifyCallBack  	A function that will get called if a bullet overlaps an object
-	 * @param  SkipParent    	Don't trigger colision notifies with the parent of this object
+	 * @param  SkipParent    	Don't trigger collision notifies with the parent of this object
 	*/
 	public inline function bulletsOverlap(ObjectOrGroup:FlxBasic, ?NotifyCallBack:FlxObject->FlxObject->Void, SkipParent:Bool = true):Void
 	{
@@ -424,7 +432,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-	private function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
+	function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
 	{
 		if (parent == Object && skipParentCollision)
 		{
@@ -441,12 +449,12 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-	private function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
+	function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
 	{
 		Bullet.kill();
 	}
 	
-	private function internalFireAtPoint(bullet:TBullet, point:FlxPoint):Void
+	function internalFireAtPoint(bullet:TBullet, point:FlxPoint):Void
 	{
 		switch (speedMode)
 		{
@@ -464,13 +472,13 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		if (rotateBulletTowardsTarget)
 		{
-			bullet.angle = FlxAngle.angleBetweenPoint(bullet, point, true);
+			bullet.angle = angleOffset + FlxAngle.angleBetweenPoint(bullet, point, true);
 		}
 		
 		point.putWeak();
 	}
 	
-	private function internalFireFromAngle(bullet:TBullet, degrees:Float):Void
+	function internalFireFromAngle(bullet:TBullet, degrees:Float):Void
 	{
 		var radians = FlxAngle.asRadians(degrees);
 		switch (speedMode)
@@ -492,16 +500,19 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		
 		if (rotateBulletTowardsTarget)
 		{
-			bullet.angle = FlxAngle.asDegrees(radians);
+			bullet.angle = angleOffset + FlxAngle.asDegrees(radians);
 		}
 	}
 	
-	private inline function set_fireFrom(v:FlxWeaponFireFrom):FlxWeaponFireFrom
+	inline function set_fireFrom(v:FlxWeaponFireFrom):FlxWeaponFireFrom
 	{
 		switch (v) 
 		{
-			case PARENT(p, o, u): 
-				parent = p;
+			case PARENT(parent, _, _, angleOffset): 
+				this.parent = parent;
+				if (angleOffset != null)
+					this.angleOffset = angleOffset;
+
 			default: 
 				parent = null;
 		}
@@ -511,7 +522,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 
 enum FlxWeaponFireFrom
 {
-	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>, ?useParentAngle:Bool);
+	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>, ?useParentAngle:Bool, ?angleOffset:Float);
 	POSITION(position:FlxBounds<FlxPoint>);
 }
 
@@ -523,13 +534,13 @@ enum FlxWeaponFireMode
 	FIRE_FROM_PARENT_ANGLE(angleNoise:FlxBounds<Float>);
 	FIRE_FROM_PARENT_FACING(angleNoise:FlxBounds<Float>);
 	
-#if FLX_TOUCH 
+	#if FLX_TOUCH 
 	FIRE_AT_TOUCH(touch:FlxTouch);
-#end
+	#end
 
-#if FLX_MOUSE
+	#if FLX_MOUSE
 	FIRE_AT_MOUSE;
-#end
+	#end
 }
 
 enum FlxWeaponSpeedMode

@@ -156,7 +156,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		pools = null;
 	}
 	
-	private function set_owner(owner:T):T
+	function set_owner(owner:T):T
 	{
 		if (this.owner != owner)
 		{
@@ -174,7 +174,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		return this.owner;
 	}
 	
-	private function set_state(state:FlxFSMState<T>):FlxFSMState<T>
+	function set_state(state:FlxFSMState<T>):FlxFSMState<T>
 	{
 		var newClass = Type.getClass(state);
 		if (this.stateClass != newClass)
@@ -207,17 +207,17 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 	 */
 	public var isEmpty(get, never):Bool;
 	
-	private var _stack:Array<FlxFSM<T>>;
+	var _stack:Array<FlxFSM<T>>;
 	
-	private var _alteredStack:Array<FlxFSM<T>>;
+	var _alteredStack:Array<FlxFSM<T>>;
 	
-	private var _hasLocks:Bool;
+	var _hasLocks:Bool;
 	
-	private var _lockedNames:Array<String>;
+	var _lockedNames:Array<String>;
 	
-	private var _lockedTypes:Int;
+	var _lockedTypes:Int;
 	
-	private var _lockRemaining:Bool;
+	var _lockRemaining:Bool;
 	
 	public function new()
 	{
@@ -400,7 +400,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 		FlxFSMStackSignal._lockSignal.remove(lockType);
 	}
 	
-	private function get_isEmpty():Bool
+	function get_isEmpty():Bool
 	{
 		return (_stack.length == 0);
 	}
@@ -415,7 +415,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 private class FlxFSMStackSignal
 {
 	
-	private static var _lockSignal:FlxTypedSignal< Int->Void >;
+	static var _lockSignal:FlxTypedSignal< Int->Void >;
 	
 	public function new()
 	{
@@ -442,9 +442,9 @@ private class FlxFSMStackSignal
 class FlxFSMTransitionTable<T>
 {
 	
-	private var _table:Array<Transition<T>>;
-	private var _startState:Class<FlxFSMState<T>>;
-	private var _garbagecollect:Bool = false;
+	var _table:Array<Transition<T>>;
+	var _startState:Class<FlxFSMState<T>>;
+	var _garbagecollect:Bool = false;
 	
 	public function new()
 	{
@@ -493,7 +493,7 @@ class FlxFSMTransitionTable<T>
 			{
 				if (transition.evaluate(owner) == true)
 				{
-						return transition.to;
+					return transition.to;
 				}
 			}
 		}

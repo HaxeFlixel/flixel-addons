@@ -2,14 +2,14 @@
 
 [flixel](https://github.com/HaxeFlixel/flixel) | [addons](https://github.com/HaxeFlixel/flixel-addons) | [ui](https://github.com/HaxeFlixel/flixel-ui) | [demos](https://github.com/HaxeFlixel/flixel-demos) | [tools](https://github.com/HaxeFlixel/flixel-tools) | [templates](https://github.com/HaxeFlixel/flixel-templates) | [docs](https://github.com/HaxeFlixel/flixel-docs) | [haxeflixel.com](https://github.com/HaxeFlixel/haxeflixel.com)
 
-[![Haxelib Version](https://img.shields.io/github/tag/HaxeFlixel/flixel-addons.svg?style=flat-square&label=haxelib)](http://lib.haxe.org/p/flixel-addons)
-[![Build Status](https://img.shields.io/travis/HaxeFlixel/flixel-addons.svg?style=flat-square)](https://travis-ci.org/HaxeFlixel/flixel-addons)
+[![Haxelib Version](https://img.shields.io/github/tag/HaxeFlixel/flixel-addons.svg?label=haxelib)](http://lib.haxe.org/p/flixel-addons)
+[![Build Status](https://img.shields.io/travis/HaxeFlixel/flixel-addons.svg)](https://travis-ci.org/HaxeFlixel/flixel-addons)
 
-##About
+## About
 
 A set of useful, but optional classes for [HaxeFlixel](https://github.com/HaxeFlixel/flixel) created by the community. Includes some classes from the [Flixel Power Tools](https://github.com/photonstorm/Flixel-Power-Tools).
 
-##For Developers
+## For Developers
 
 If you are wanting to contribute code, please review the follwing documentation:
 

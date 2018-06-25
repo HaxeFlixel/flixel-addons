@@ -17,9 +17,9 @@ class TiledTileLayer extends TiledLayer
 	public var csvData(get, null):String;
 	public var tileArray(get, null):Array<Int>;
 	
-	private var xmlData:Fast;
+	var xmlData:Fast;
 
-	private static inline var BASE64_CHARS:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	static inline var BASE64_CHARS:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 	
 	public function new(source:Fast, parent:TiledMap)
 	{
@@ -40,7 +40,7 @@ class TiledTileLayer extends TiledLayer
 		}
 	}
 	
-	private function getByteArrayData():ByteArray
+	function getByteArrayData():ByteArray
 	{
 		var result:ByteArray = null;
 
@@ -65,11 +65,7 @@ class TiledTileLayer extends TiledLayer
 
 			if (compressed)
 			{
-				#if (js && !format)
-				throw "HTML5 doesn't support compressed data! Use Base64 (uncompressed) when you save the map or install the library 'format' and use it";
-				#else
 				result.uncompress();
-				#end
 			}
 		}
 		else
@@ -81,7 +77,7 @@ class TiledTileLayer extends TiledLayer
 		return result;
 	}
 
-	private function base64ToByteArray(data:String):ByteArray
+	function base64ToByteArray(data:String):ByteArray
 	{
 		var output:ByteArray = new ByteArray();
 
@@ -131,7 +127,7 @@ class TiledTileLayer extends TiledLayer
 		return output;
 	}
 
-	private function resolveTile(globalTileId:Int):Int
+	function resolveTile(globalTileId:Int):Int
 	{
 		var tile:TiledTile = new TiledTile(globalTileId);
 
@@ -148,12 +144,12 @@ class TiledTileLayer extends TiledLayer
 		return 0;
 	}
 	
-	private function get_encoding():String
+	function get_encoding():String
 	{
 		return encoding != null ? encoding : xmlData.att.encoding;
 	}
 	
-	private function get_csvData():String
+	function get_csvData():String
 	{
 		if (csvData == null)
 		{
@@ -169,7 +165,7 @@ class TiledTileLayer extends TiledLayer
 		return csvData;
 	}
 
-	private function get_tileArray():Array<Int>
+	function get_tileArray():Array<Int>
 	{
 		if (tileArray == null)
 		{

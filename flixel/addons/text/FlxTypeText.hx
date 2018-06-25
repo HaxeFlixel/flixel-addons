@@ -7,8 +7,6 @@ import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.system.FlxSound;
 import flixel.math.FlxRandom;
-
-#if !bitfive
 import flash.media.Sound;
 
 #if !flash
@@ -18,7 +16,6 @@ class TypeSound extends Sound { }
 // Flash uses a WAV instead of MP3 because the sound is so short that MP3's encoding mutes most of it
 @:sound("assets/sounds/type.wav")
 class TypeSound extends Sound { }
-#end
 #end
 
 /**
@@ -69,11 +66,17 @@ class FlxTypeText extends FlxText
 	 */
 	public var sounds:Array<FlxSound>;
 	/**
-	 * Whether or not to use the default typing sound. Not available for openfl-bitfive.
+	 * Whether or not to use the default typing sound.
 	 */
 	public var useDefaultSound:Bool = false;
 	/**
-	 * An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
+	 * Whether typing sound effects should always be played in their entirety, or if it's ok to restart them on new letters.
+	 * For longer typing sounds, setting this to `true` usually makes more sense.
+	 * @since 2.4.0
+	 */
+	public var finishSounds = false;
+	/**
+	 * An array of keys (e.g. `[FlxKey.SPACE, FlxKey.L]`) that will advance the text.
 	 */
 	public var skipKeys:Array<FlxKey> = [];
 	/**
@@ -87,51 +90,51 @@ class FlxTypeText extends FlxText
 	/**
 	 * The text that will ultimately be displayed.
 	 */
-	private var _finalText:String = "";
+	var _finalText:String = "";
 	/**
 	 * This is incremented every frame by elapsed, and when greater than delay, adds the next letter.
 	 */
-	private var _timer:Float = 0.0;
+	var _timer:Float = 0.0;
 	/**
 	 * A timer that is used while waiting between typing and erasing.
 	 */
-	private var _waitTimer:Float = 0.0;
+	var _waitTimer:Float = 0.0;
 	/**
 	 * Internal tracker for current string length, not counting the prefix.
 	 */
-	private var _length:Int = 0;
+	var _length:Int = 0;
 	/**
 	 * Whether or not to type the text. Set to true by start() and false by pause().
 	 */
-	private var _typing:Bool = false;
+	var _typing:Bool = false;
 	/**
 	 * Whether or not to erase the text. Set to true by erase() and false by pause().
 	 */
-	private var _erasing:Bool = false;
+	var _erasing:Bool = false;
 	/**
 	 * Whether or not we're waiting between the type and erase phases.
 	 */
-	private var _waiting:Bool = false;
+	var _waiting:Bool = false;
 	/**
 	 * Internal tracker for cursor blink time.
 	 */
-	private var _cursorTimer:Float = 0.0;
+	var _cursorTimer:Float = 0.0;
 	/**
 	 * Whether or not to add a "natural" uneven rhythm to the typing speed.
 	 */
-	private var _typingVariation:Bool = false;
+	var _typingVariation:Bool = false;
 	/**
 	 * How much to vary typing speed, as a percent. So, at 0.5, each letter will be "typed" up to 50% sooner or later than the delay variable is set.
 	 */
-	private var _typeVarPercent:Float = 0.5;
+	var _typeVarPercent:Float = 0.5;
 	/**
 	 * Helper string to reduce garbage generation.
 	 */
-	private static var helperString:String = "";
+	static var helperString:String = "";
 	/**
 	 * Internal reference to the default sound object.
 	 */
-	private var _sound:FlxSound;
+	var _sound:FlxSound;
 	
 	/**
 	 * Create a FlxTypeText object, which is very similar to FlxText except that the text is initially hidden and can be
@@ -157,7 +160,7 @@ class FlxTypeText extends FlxText
 	 * @param   ForceRestart   Whether or not to start this animation over if currently animating; false by default.
 	 * @param   AutoErase      Whether or not to begin the erase animation when the typing animation is complete.
 	 *                         Can also be set separately.
-	 * @param   SkipKeys       An array of keys as string values (e.g. "SPACE", "L") that will advance the text.
+	 * @param   SkipKeys       An array of keys as string values (e.g. `[FlxKey.SPACE, FlxKey.L]`) that will advance the text.
 	 *                         Can also be set separately.
 	 * @param   Callback       An optional callback function, to be called when the typing animation is complete.
 	 */
@@ -186,26 +189,21 @@ class FlxTypeText extends FlxText
 			skipKeys = SkipKeys;
 		}
 		
-		if (Callback != null)
-		{
-			completeCallback = Callback;
-		}
+		completeCallback = Callback;
 
 		insertBreakLines();
 		
-		#if !bitfive
 		if (useDefaultSound)
 		{
 			loadDefaultSound();
 		}
-		#end
 	}
 	
 	/**
 	 * Internal function that replace last space in a line for a line break.
 	 * To prevent a word start typing in a line and jump to next.
 	 */
-	private function insertBreakLines() 
+	function insertBreakLines() 
 	{
 		var saveText = text;
 		
@@ -242,7 +240,7 @@ class FlxTypeText extends FlxText
 	 * 
 	 * @param	Delay			Optionally, set the delay between characters. Can also be set separately.
 	 * @param	ForceRestart	Whether or not to start this animation over if currently animating; false by default.
-	 * @param	SkipKeys		An array of keys as string values (e.g. "SPACE", "L") that will advance the text. Can also be set separately.
+	 * @param	SkipKeys		An array of keys as string values (e.g. `[FlxKey.SPACE, FlxKey.L]`) that will advance the text. Can also be set separately.
 	 * @param	Callback		An optional callback function, to be called when the erasing animation is complete.
 	 * @param	Params			Optional parameters to pass to the callback function.
 	 */
@@ -269,17 +267,12 @@ class FlxTypeText extends FlxText
 			skipKeys = SkipKeys;
 		}
 		
-		if (Callback != null)
-		{
-			eraseCallback = Callback;
-		}
+		eraseCallback = Callback;
 		
-		#if !bitfive
 		if (useDefaultSound)
 		{
 			loadDefaultSound();
 		}
-		#end
 	}
 	
 	/**
@@ -315,10 +308,22 @@ class FlxTypeText extends FlxText
 	/**
 	 * Internal function that is called when typing is complete.
 	 */
-	private function onComplete():Void
+	function onComplete():Void
 	{
 		_timer = 0;
 		_typing = false;
+		
+		if (useDefaultSound)
+		{
+			_sound.stop();
+		}
+		else if (sounds != null)
+		{
+			for (sound in sounds)
+			{
+				sound.stop();
+			}
+		}
 		
 		if (completeCallback != null)
 		{
@@ -336,7 +341,7 @@ class FlxTypeText extends FlxText
 		}
 	}
 	
-	private function onErased():Void
+	function onErased():Void
 	{
 		_timer = 0;
 		_erasing = false;
@@ -420,18 +425,19 @@ class FlxTypeText extends FlxText
 				
 				if (sounds != null && !useDefaultSound)
 				{
-					for (sound in sounds)
+					if (!finishSounds)
 					{
-						sound.stop();
+						for (sound in sounds)
+						{
+							sound.stop();
+						}
 					}
 					
-					FlxG.random.getObject(sounds).play(true);
+					FlxG.random.getObject(sounds).play(!finishSounds);
 				}
 				else if (useDefaultSound)
 				{
-					#if !bitfive
-					_sound.play(true);
-					#end
+					_sound.play(!finishSounds);
 				}
 			}
 		}
@@ -496,8 +502,7 @@ class FlxTypeText extends FlxText
 		}
 	}
 	
-	#if !bitfive
-	private function loadDefaultSound():Void
+	function loadDefaultSound():Void
 	{
 		#if FLX_SOUND_SYSTEM
 		_sound = FlxG.sound.load(new TypeSound());
@@ -506,5 +511,4 @@ class FlxTypeText extends FlxText
 		_sound.loadEmbedded(new TypeSound());
 		#end
 	}
-	#end
 }

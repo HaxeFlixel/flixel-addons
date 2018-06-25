@@ -23,7 +23,7 @@ class TiledLayer
 	/** @since 2.1.0 */
 	public var offsetY:Float;
 
-	private function new(source:Fast, parent:TiledMap)
+	function new(source:Fast, parent:TiledMap)
 	{
 		properties = new TiledPropertySet();
 		map = parent;
@@ -36,7 +36,7 @@ class TiledLayer
 		loadProperties(source);
 	}
 
-	private function loadProperties(source:Fast):Void
+	function loadProperties(source:Fast):Void
 	{
 		for (node in source.nodes.properties)
 		{

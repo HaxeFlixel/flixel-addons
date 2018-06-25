@@ -31,11 +31,11 @@ class FlxShakeEffect implements IFlxEffect
 	/**
 	 * The length in seconds that the shaking effect should last.
 	 */
-	private var _duration:Float = 0;
+	var _duration:Float = 0;
 	/**
 	 * Current time of the effect.
 	 */
-	private var _time:Float = 0;
+	var _time:Float = 0;
 	
 	/**
 	 * A shake effect.

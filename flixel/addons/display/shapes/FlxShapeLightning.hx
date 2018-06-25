@@ -22,12 +22,12 @@ class FlxShapeLightning extends FlxShapeLine
 	public var lightningStyle(default, set):LightningStyle;
 	
 	//low number = higher detail
-	private var detail:Float;
+	var detail:Float;
 	
-	private var magnitude:Float;
+	var magnitude:Float;
 	
-	private var list_segs:Array<LineSegment>;
-	private var list_branch:Array<LineSegment>;
+	var list_segs:Array<LineSegment>;
+	var list_branch:Array<LineSegment>;
 	
 	/**
 	 * Creates a lightning bolt!
@@ -73,12 +73,12 @@ class FlxShapeLightning extends FlxShapeLine
 		shape_id = FlxShapeType.LIGHTNING;
 	}
 	
-	private inline function addSegment(Ax:Float,Ay:Float,Bx:Float,By:Float):Void 
+	inline function addSegment(Ax:Float,Ay:Float,Bx:Float,By:Float):Void 
 	{
 		list_segs.push(new LineSegment(Ax, Ay, Bx, By));
 	}
 	
-	private function calculate(A:FlxPoint, B:FlxPoint, Displacement:Float, Iteration:Int):Void 
+	function calculate(A:FlxPoint, B:FlxPoint, Displacement:Float, Iteration:Int):Void 
 	{
 		if (Displacement < lightningStyle.detail)
 		{
@@ -99,14 +99,14 @@ class FlxShapeLightning extends FlxShapeLine
 		shapeDirty = true;
 	}
 	
-	private inline function set_lightningStyle(Style:LightningStyle):LightningStyle 
+	inline function set_lightningStyle(Style:LightningStyle):LightningStyle 
 	{
 		lightningStyle = Style;
 		shapeDirty = true;
 		return lightningStyle;
 	}
 	
-	private function copyLineStyle(ls:LineStyle):LineStyle 
+	function copyLineStyle(ls:LineStyle):LineStyle 
 	{
 		var ls2:LineStyle = 
 		{
@@ -198,7 +198,7 @@ class FlxShapeLightning extends FlxShapeLine
 		shapeDirty = true;
 	}
 	
-	private function redrawFilter():Void
+	function redrawFilter():Void
 	{
 		var skip = false;
 		if (lightningStyle.halo_colors == null) 
@@ -246,7 +246,7 @@ class FlxShapeLightning extends FlxShapeLine
 		super.update(elapsed);
 	}
 
-	override private inline function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
+	override inline function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
 	{
 		width = shapeWidth;
 		height = shapeHeight;
@@ -255,22 +255,22 @@ class FlxShapeLightning extends FlxShapeLine
 		updateMotion(0);
 	}
 	
-	override public function get_strokeBuffer():Float
+	override function get_strokeBuffer():Float
 	{
 		return lightningStyle.thickness * 2;
 	}
 	
-	private var expandLeft:Float = 0;
-	private var expandRight:Float = 0;
-	private var expandUp:Float = 0;
-	private var expandDown:Float = 0;
+	var expandLeft:Float = 0;
+	var expandRight:Float = 0;
+	var expandUp:Float = 0;
+	var expandDown:Float = 0;
 	
-	private override function getStrokeOffsetX():Float
+	override function getStrokeOffsetX():Float
 	{
 		return strokeBuffer / 2;
 	}
 	
-	private override function getStrokeOffsetY():Float
+	override function getStrokeOffsetY():Float
 	{
 		return strokeBuffer / 2;
 	}

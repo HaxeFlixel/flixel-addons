@@ -7,6 +7,7 @@ import flixel.FlxG;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.util.FlxDestroyUtil;
 
 /**
  * FlxMouseControl
@@ -66,12 +67,19 @@ class FlxMouseControl extends FlxBasic
 	/**
 	 * The FlxExtendedSprite that currently has the mouse button pressed on it
 	 */
-	private static var _clickStack:Array<FlxExtendedSprite> = new Array<FlxExtendedSprite>();
-	private static var _clickCoords:FlxPoint;
-	private static var _hasClickTarget:Bool = false;
+	static var _clickStack:Array<FlxExtendedSprite> = new Array<FlxExtendedSprite>();
+	static var _clickCoords:FlxPoint;
+	static var _hasClickTarget:Bool = false;
 	
-	private static var _oldX:Int = 0;
-	private static var _oldY:Int = 0;
+	static var _oldX:Int = 0;
+	static var _oldY:Int = 0;
+	
+	public function new()
+	{
+		super();
+		
+		_clickCoords = FlxPoint.get();
+	}
 	
 	/**
 	 * Adds the given FlxExtendedSprite to the stack of potential sprites that were clicked, the stack is then sorted and the final sprite is selected from that
@@ -98,6 +106,7 @@ class FlxMouseControl extends FlxBasic
 	 */
 	public static function clear():Void
 	{
+		_clickCoords = FlxDestroyUtil.put(_clickCoords);
 		_hasClickTarget = false;
 		
 		if (clickTarget != null)
@@ -181,7 +190,7 @@ class FlxMouseControl extends FlxBasic
 	/**
 	 * Internal function used to release the click / drag targets and reset the mouse state
 	 */
-	private function releaseMouse():Void
+	function releaseMouse():Void
 	{
 		//	Mouse is no longer down, so tell the click target it's free - this will also stop dragging if happening
 		clickTarget.mouseReleasedHandler();
@@ -196,7 +205,7 @@ class FlxMouseControl extends FlxBasic
 	/**
 	 * Once the clickStack is created this sorts it and then picks the sprite with the highest priority (based on sortIndex and sortOrder)
 	 */
-	private function assignClickedSprite():Void
+	function assignClickedSprite():Void
 	{
 		//	If there is more than one potential target then sort them
 		if (_clickStack.length > 1)
@@ -206,7 +215,7 @@ class FlxMouseControl extends FlxBasic
 		
 		clickTarget = _clickStack.pop();
 		
-		_clickCoords = clickTarget.point;
+		_clickCoords = FlxG.mouse.getWorldPosition(null, _clickCoords);
 		
 		_hasClickTarget = true;
 		
@@ -223,7 +232,7 @@ class FlxMouseControl extends FlxBasic
 	 * 
 	 * @return	An integer value: -1 (item1 before item2), 0 (same), or 1 (item1 after item2)
 	 */
-	private function sortHandler(Item1:FlxExtendedSprite, Item2:FlxExtendedSprite):Int
+	function sortHandler(Item1:FlxExtendedSprite, Item2:FlxExtendedSprite):Int
 	{
 		var prop1 = Reflect.getProperty(Item1, sortIndex);
 		var prop2 = Reflect.getProperty(Item2, sortIndex);

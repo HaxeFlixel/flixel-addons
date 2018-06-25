@@ -32,22 +32,22 @@ import flixel.util.FlxDestroyUtil;
 class FlxTilemapExt extends FlxTilemap
 {
 	// Slope related variables
-	private var _snapping:Int = 2;
-	private var _slopePoint:FlxPoint = FlxPoint.get();
-	private var _objPoint:FlxPoint = FlxPoint.get();
+	var _snapping:Int = 2;
+	var _slopePoint:FlxPoint = FlxPoint.get();
+	var _objPoint:FlxPoint = FlxPoint.get();
 	
-	private var _slopeNorthwest:Array<Int> = [];
-	private var _slopeNortheast:Array<Int> = [];
-	private var _slopeSouthwest:Array<Int> = [];
-	private var _slopeSoutheast:Array<Int> = [];
+	var _slopeNorthwest:Array<Int> = [];
+	var _slopeNortheast:Array<Int> = [];
+	var _slopeSouthwest:Array<Int> = [];
+	var _slopeSoutheast:Array<Int> = [];
 	
-	private var _slopeThickGentle:Array<Int> = [];
-	private var _slopeThinGentle:Array<Int> = [];
-	private var _slopeThickSteep:Array<Int> = [];
-	private var _slopeThinSteep:Array<Int> = [];
+	var _slopeThickGentle:Array<Int> = [];
+	var _slopeThinGentle:Array<Int> = [];
+	var _slopeThickSteep:Array<Int> = [];
+	var _slopeThinSteep:Array<Int> = [];
 	
 	// Animated and flipped tiles related variables
-	private var _specialTiles:Array<FlxTileSpecial>;
+	var _specialTiles:Array<FlxTileSpecial>;
 	
 	override public function destroy():Void 
 	{
@@ -72,6 +72,7 @@ class FlxTilemapExt extends FlxTilemap
 	override public function update(elapsed:Float):Void 
 	{
 		super.update(elapsed);
+		var dirty:Bool = false;
 		
 		if (_specialTiles != null && _specialTiles.length > 0) 
 		{
@@ -80,9 +81,13 @@ class FlxTilemapExt extends FlxTilemap
 				if (tile != null && tile.hasAnimation()) 
 				{
 					tile.update(elapsed);
+					dirty = dirty || tile.dirty;
 				}
 			}
 		}
+		
+		if (dirty)
+			setDirty(true);
 	}
 	
 	/**
@@ -91,8 +96,19 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param	Buffer		The FlxTilemapBuffer you are rendering to.
 	 * @param	Camera		The related FlxCamera, mainly for scroll values.
 	 */
-	override private function drawTilemap(Buffer:FlxTilemapBuffer, Camera:FlxCamera):Void 
+	@:access(flixel.FlxCamera)
+	override function drawTilemap(Buffer:FlxTilemapBuffer, Camera:FlxCamera):Void 
 	{
+		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
+		
+		var drawX:Float = 0;
+		var drawY:Float = 0;
+		var scaledWidth:Float = _tileWidth;
+		var scaledHeight:Float = _tileHeight;
+		
+		var _tileTransformMatrix:FlxMatrix = null;
+		var matrixToUse:FlxMatrix;
+		
 		if (FlxG.renderBlit)
 		{
 			Buffer.fill();
@@ -105,20 +121,10 @@ class FlxTilemapExt extends FlxTilemap
 			_helperPoint.y = isPixelPerfectRender(Camera) ? Math.floor(_helperPoint.y) : _helperPoint.y;
 		}
 		
-		var scaledWidth:Float = _tileWidth;
-		var scaledHeight:Float = _tileHeight;
-		
-		var drawX:Float;
-		var drawY:Float;
-		
-		var _tileTransformMatrix:FlxMatrix = null;
-		var matrixToUse:FlxMatrix;
-		
-		var isColored:Bool = ((alpha != 1) || (color != 0xffffff));
-		
 		// Copy tile images into the tile buffer
-		_point.x = (Camera.scroll.x * scrollFactor.x) - x; //modified from getScreenXY()
-		_point.y = (Camera.scroll.y * scrollFactor.y) - y;
+		_point.x = (Camera.scroll.x * scrollFactor.x) - x - offset.x + Camera.viewOffsetX; //modified from getScreenPosition()
+		_point.y = (Camera.scroll.y * scrollFactor.y) - y - offset.y + Camera.viewOffsetY;
+		
 		var screenXInTiles:Int = Math.floor(_point.x / _tileWidth);
 		var screenYInTiles:Int = Math.floor(_point.y / _tileHeight);
 		var screenRows:Int = Buffer.rows;
@@ -139,7 +145,7 @@ class FlxTilemapExt extends FlxTilemap
 		var debugTile:BitmapData;
 		#end 
 		
-		var isSpecial = false;
+		var isSpecial:Bool = false;
 		
 		for (row in 0...screenRows)
 		{
@@ -148,9 +154,9 @@ class FlxTilemapExt extends FlxTilemap
 			
 			for (column in 0...screenColumns)
 			{
-				isSpecial = false;
-				special = null;
 				tile = _tileObjects[_data[columnIndex]];
+				special = null;
+				isSpecial = false;
 				
 				if (_specialTiles != null && _specialTiles[columnIndex] != null) 
 				{
@@ -170,28 +176,30 @@ class FlxTilemapExt extends FlxTilemap
 						tile.frame.paint(Buffer.pixels, _flashPoint, true);
 					}
 				
-			#if FLX_DEBUG
-				if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
-				{
-					if (tile != null)
+					#if FLX_DEBUG
+					if (FlxG.debugger.drawDebug && !ignoreDrawDebug) 
 					{
-						if (tile.allowCollisions <= FlxObject.NONE)
+						if (tile != null)
 						{
-							debugTile = _debugTileNotSolid; 
-						}
-						else if (tile.allowCollisions != FlxObject.ANY)
-						{
-							debugTile = _debugTilePartial; 
-						}
-						else
-						{
-							debugTile = _debugTileSolid; 
-						}
+							if (tile.allowCollisions <= FlxObject.NONE)
+							{
+								debugTile = _debugTileNotSolid; 
+							}
+							else if (tile.allowCollisions != FlxObject.ANY)
+							{
+								debugTile = _debugTilePartial; 
+							}
+							else
+							{
+								debugTile = _debugTileSolid; 
+							}
 						
-						Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
+							offset.addToFlash(_flashPoint);
+							Buffer.pixels.copyPixels(debugTile, _debugRect, _flashPoint, null, null, true);
+							offset.subtractFromFlash(_flashPoint);
+						}
 					}
-				}
-			#end
+					#end
 			
 				}
 				else
@@ -239,11 +247,11 @@ class FlxTilemapExt extends FlxTilemap
 		if (FlxG.renderBlit)
 		{
 			if (isColored)
-			{
 				Buffer.colorTransform(colorTransform);
-			}
 			Buffer.blend = blend;
 		}
+		
+		Buffer.dirty = false;
 	}
 	
 	/**
@@ -285,69 +293,6 @@ class FlxTilemapExt extends FlxTilemap
 		}
 	}
 	
-	/**
-	 * THIS IS A COPY FROM FlxTilemap
-	 * I've changed draw() to give a chance to set the buffer dirty
-	 * ---
-	 * Draws the tilemap buffers to the cameras.
-	 */
-	override public function draw():Void
-	{
-		var cameras = cameras;
-		var camera:FlxCamera;
-		var buffer:FlxTilemapBuffer;
-		var i:Int = 0;
-		var l:Int = cameras.length;
-		
-		while (i < l)
-		{
-			camera = cameras[i];
-			if (!camera.visible || !camera.exists)
-			{
-				continue;
-			}
-			
-			if (_buffers[i] == null)
-			{
-				_buffers[i] = new FlxTilemapBuffer(_tileWidth, _tileHeight, widthInTiles, heightInTiles, camera);
-				_buffers[i].pixelPerfectRender = pixelPerfectRender;
-			}
-			
-			buffer = _buffers[i++];
-			
-			if (FlxG.renderBlit)
-			{
-				if (!buffer.dirty)
-				{
-					// Copied from getScreenXY()
-					_point.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
-					_point.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
-					buffer.dirty = (_point.x > 0) || (_point.y > 0) || (_point.x + buffer.width < camera.width) || (_point.y + buffer.height < camera.height);
-				}
-				
-				if (buffer.dirty)
-				{
-					buffer.dirty = false;
-					drawTilemap(buffer, camera);
-				}
-				
-				// Copied from getScreenXY()
-				_flashPoint.x = x - (camera.scroll.x * scrollFactor.x) + buffer.x; 
-				_flashPoint.y = y - (camera.scroll.y * scrollFactor.y) + buffer.y;
-				buffer.draw(camera, _flashPoint);
-				
-			}
-			else
-			{
-				drawTilemap(buffer, camera);
-			}
-			
-			#if FLX_DEBUG
-			FlxBasic.visibleCount++;
-			#end
-		}
-	}
-
 	/**
 	 * THIS IS A COPY FROM FlxTilemap BUT IT SOLVES SLOPE COLLISION TOO
 	 * Checks if the Object overlaps any tiles with any collision flags set,
@@ -535,22 +480,22 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	TileIndex	The Tile Index number of the Tile you want to check.
 	 * @return	Returns true if the tile is listed in one of the slope arrays. Otherwise returns false.
 	 */
-	private function checkThickGentle(TileIndex:Int):Bool
+	function checkThickGentle(TileIndex:Int):Bool
 	{
 		return _slopeThickGentle.indexOf(TileIndex) >= 0;
 	}
 	
-	private function checkThinGentle(TileIndex:Int):Bool
+	function checkThinGentle(TileIndex:Int):Bool
 	{
 		return _slopeThinGentle.indexOf(TileIndex) >= 0;
 	}
 	
-	private function checkThickSteep(TileIndex:Int):Bool
+	function checkThickSteep(TileIndex:Int):Bool
 	{
 		return _slopeThickSteep.indexOf(TileIndex) >= 0;
 	}
 	
-	private function checkThinSteep(TileIndex:Int):Bool
+	function checkThinSteep(TileIndex:Int):Bool
 	{
 		return _slopeThinSteep.indexOf(TileIndex) >= 0;
 	}
@@ -560,7 +505,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * 
 	 * @param 	Slope 	The slope to fix the slopePoint for
 	 */
-	private function fixSlopePoint(Slope:FlxTile):Void
+	function fixSlopePoint(Slope:FlxTile):Void
 	{
 		_slopePoint.x = FlxMath.bound(_slopePoint.x, Slope.x, Slope.x + _tileWidth);
 		_slopePoint.y = FlxMath.bound(_slopePoint.y, Slope.y, Slope.y + _tileHeight);
@@ -572,7 +517,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope	The floor slope
 	 * @param	Object 	The object that collides with that slope
 	 */
-	private function onCollideFloorSlope(Slope:FlxObject, Object:FlxObject):Void
+	function onCollideFloorSlope(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Set the object's touching flag
 		Object.touching = FlxObject.FLOOR;
@@ -595,7 +540,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The ceiling slope
 	 * @param 	Object 	The object that collides with that slope
 	 */
-	private function onCollideCeilSlope(Slope:FlxObject, Object:FlxObject):Void
+	function onCollideCeilSlope(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Set the object's touching flag
 		Object.touching = FlxObject.CEILING;
@@ -618,7 +563,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Object 	The object that collides with the slope
 	 */
-	private function solveCollisionSlopeNorthwest(Slope:FlxObject, Object:FlxObject):Void
+	function solveCollisionSlopeNorthwest(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x + Object.width + _snapping);
@@ -671,7 +616,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Object 	The object that collides with the slope
 	 */
-	private function solveCollisionSlopeNortheast(Slope:FlxObject, Object:FlxObject):Void
+	function solveCollisionSlopeNortheast(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x - _snapping);
@@ -724,7 +669,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Object 	The object that collides with the slope
 	 */
-	private function solveCollisionSlopeSouthwest(Slope:FlxObject, Object:FlxObject):Void
+	function solveCollisionSlopeSouthwest(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x + Object.width + _snapping);
@@ -777,7 +722,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	Slope 	The slope to check against
 	 * @param 	Object 	The object that collides with the slope
 	 */
-	private function solveCollisionSlopeSoutheast(Slope:FlxObject, Object:FlxObject):Void
+	function solveCollisionSlopeSoutheast(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x - _snapping);
@@ -828,7 +773,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * Internal helper function for setting the tiles currently held in the slope arrays to use slope collision.
 	 * Note that if you remove items from a slope, this function will not unset the slope property.
 	 */
-	private function setSlopeProperties():Void
+	function setSlopeProperties():Void
 	{
 		for (tile in _slopeNorthwest)
 		{
@@ -854,12 +799,12 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param 	TileIndex	The Tile Index number of the Tile you want to check.
 	 * @return	Returns true if the tile is listed in one of the slope arrays. Otherwise returns false.
 	 */
-	private function checkArrays(TileIndex:Int):Bool
+	function checkArrays(TileIndex:Int):Bool
 	{
 		return _slopeNorthwest.indexOf(TileIndex) >= 0 || _slopeNortheast.indexOf(TileIndex) >= 0 || _slopeSouthwest.indexOf(TileIndex) >= 0 || _slopeSoutheast.indexOf(TileIndex) >= 0;
 	}
 	
-	override private function set_frames(value:FlxFramesCollection):FlxFramesCollection
+	override function set_frames(value:FlxFramesCollection):FlxFramesCollection
 	{
 		super.set_frames(value);
 		

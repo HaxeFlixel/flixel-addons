@@ -78,14 +78,14 @@ class FlxGameJolt
 	 * 
 	 * @return	True if game ID is set, false otherwise.
 	 */
-	private static var gameInit(get, null):Bool;
+	static var gameInit(get, null):Bool;
 	
 	/**
 	 * Internal method to verify that this user (and game) have been authenticated. Called before running functions which require authentication.
 	 * 
 	 * @return 	True if authenticated, false otherwise.
 	 */
-	private static var authenticated(get, null):Bool;
+	static var authenticated(get, null):Bool;
 	
 	/**
 	 * The user's GameJolt user name. Only works if you've called authUser() and/or init(), otherwise will return "No user".
@@ -115,12 +115,12 @@ class FlxGameJolt
 	/**
 	 * Internal storage for a callback function, used when the URLLoader is complete.
 	 */
-	private static var _callBack:Dynamic;
+	static var _callBack:Dynamic;
 	
 	/**
 	 * Internal storage for this game's ID.
 	 */
-	private static var _gameID:Int = 0;
+	static var _gameID:Int = 0;
 	
 	/**
 	 * Internal storage for this game's private key.
@@ -128,51 +128,51 @@ class FlxGameJolt
 	 * This can be found at http://gamejolt.com/dashboard/developer/games/achievements/GAME_ID/ where GAME_ID is your unique game ID number.
 	 * Each game has a unique private key; you cannot use one key for all of your games.
 	 */
-	private static var _privateKey:String = "";
+	static var _privateKey:String = "";
 	
 	/**
 	 * Internal storage for this user's username. Can be retrieved automatically if Flash or QuickPlay.
 	 */
-	private static var _userName:String;
+	static var _userName:String;
 	
 	/**
 	 * Internal storage for this user's token. Can be retrieved automatically if Flash or QuickPlay.
 	 */
-	private static var _userToken:String;
+	static var _userToken:String;
 	
 	/**
 	 * Internal storage for the most common URL elements: the gameID, user name, and user token.
 	 */
-	private static var _idURL:String;
+	static var _idURL:String;
 	
 	/**
 	 * Set to true once game ID, user name, user token have been set and user name and token have been verified.
 	 */
-	private static var _initialized:Bool = false;
+	static var _initialized:Bool = false;
 	
 	/**
 	 * Internal tracker for authenticating user data.
 	 */
-	private static var _verifyAuth:Bool = false;
+	static var _verifyAuth:Bool = false;
 	
 	/**
 	 * Internal tracker for getting bitmapdata for a trophy image.
 	 */
-	private static var _getImage:Bool = false;
+	static var _getImage:Bool = false;
 	
 	/**
 	 * URLLoader object for sending URL requests.
 	 */
-	private static var _loader:URLLoader;
+	static var _loader:URLLoader;
 	
 	/**
 	 * Various common strings required by the API's HTTP values.
 	 */
-	private static inline var URL_API:String = "http://gamejolt.com/api/game/v1/";
-	private static inline var RETURN_TYPE:String = "?format=keypair";
-	private static inline var URL_GAME_ID:String = "&game_id=";
-	private static inline var URL_USER_NAME:String = "&username=";
-	private static inline var URL_USER_TOKEN:String = "&user_token=";
+	static inline var URL_API:String = "http://gamejolt.com/api/game/v1/";
+	static inline var RETURN_TYPE:String = "?format=keypair";
+	static inline var URL_GAME_ID:String = "&game_id=";
+	static inline var URL_USER_NAME:String = "&username=";
+	static inline var URL_USER_TOKEN:String = "&user_token=";
 	
 	/**
 	 * Initialize this class by storing the GameID and private key.
@@ -678,7 +678,7 @@ class FlxGameJolt
 	 * @param	URLString	The URL to send to. Usually formatted as the API url, section of the API (e.g. "trophies/") and then variables to pass (e.g. user name, trophy ID).
 	 * @param	Callback	A function to call when loading is done and data is parsed.
 	 */
-	private static function sendLoaderRequest(URLString:String, ?Callback:Dynamic):Void
+	static function sendLoaderRequest(URLString:String, ?Callback:Dynamic):Void
 	{
 		var request:URLRequest = new URLRequest(URLString + "&signature=" + encryptURL(URLString));
 		request.method = URLRequestMethod.POST;
@@ -705,11 +705,11 @@ class FlxGameJolt
 	 * 
 	 * @param	The URLLoader complete event.
 	 */
-	private static function parseData(e:Event):Void
+	static function parseData(e:Event):Void
 	{
 		_loader.removeEventListener(Event.COMPLETE, parseData);
 		
-		if (Std.string(e.currentTarget.data) == "")
+		if (Std.string((cast e.currentTarget).data) == "")
 		{
 			#if debug
 			FlxG.log.warn("FlxGameJolt received no data back. This is probably because one of the values it was passed is wrong.");
@@ -718,7 +718,7 @@ class FlxGameJolt
 		}
 		
 		var returnMap:Map<String,String> = new Map<String,String>();
-		var stringArray:Array<String> = Std.string(e.currentTarget.data).split("\r");
+		var stringArray:Array<String> = Std.string((cast e.currentTarget).data).split("\r");
 		
 		// this regex will remove line breaks and quotes down below
 		var r:EReg = ~/[\r\n\t"]+/g;
@@ -763,7 +763,7 @@ class FlxGameJolt
 	 * 
 	 * @param	ReturnMap	The data received back from GameJolt. This should be {"success"="true"} if authenticated, or {"success"="false"} otherwise.
 	 */
-	private static function verifyAuthentication(ReturnMap:Map<String,String>):Void
+	static function verifyAuthentication(ReturnMap:Map<String,String>):Void
 	{
 		if (ReturnMap.exists("success") && ReturnMap.get("success") == "true")
 		{
@@ -832,7 +832,7 @@ class FlxGameJolt
 	/**
 	 * Internal function that uses the image_url or avatar_url element from GameJolt to start a Loader that will retrieve the desired image.
 	 */
-	private static function retrieveImage(ImageMap:Map<String,String>):Void
+	static function retrieveImage(ImageMap:Map<String,String>):Void
 	{
 		if (ImageMap.exists("image_url"))
 		{
@@ -859,10 +859,10 @@ class FlxGameJolt
 	/**
 	 * Internal function to send the image_url or avatar_url content to the callback function as BitmapData.
 	 */
-	private static function returnImage(e:Event):Void
+	static function returnImage(e:Event):Void
 	{
 		if (_callBack != null)
-			_callBack(e.currentTarget.content.bitmapData);
+			_callBack((cast e.currentTarget).content.bitmapData);
 		
 		_getImage = false;
 	}
@@ -874,7 +874,7 @@ class FlxGameJolt
 	 * @param	Url		The URL to encrypt. This and the private key form the string which is encoded.
 	 * @return	An encoded MD5 or SHA1 hash. By default, will be MD5; set FlxGameJolt.hashType = FlxGameJolt.HASH_SHA1 to use SHA1 encoding.
 	 */
-	private static function encryptURL(Url:String):String
+	static function encryptURL(Url:String):String
 	{
 		if (hashType == HASH_SHA1)
 		{
@@ -886,12 +886,12 @@ class FlxGameJolt
 		}
 	}
 	
-	private static function get_initialized():Bool
+	static function get_initialized():Bool
 	{
 		return _initialized;
 	}
 	
-	private static function get_gameInit():Bool
+	static function get_gameInit():Bool
 	{
 		if (_gameID == 0 || _privateKey == "")
 		{
@@ -904,7 +904,7 @@ class FlxGameJolt
 		return true;
 	}
 	
-	private static function get_authenticated():Bool
+	static function get_authenticated():Bool
 	{
 		if (!gameInit)
 			return false;
@@ -920,7 +920,7 @@ class FlxGameJolt
 		return true;
 	}
 	
-	private static function get_username():String
+	static function get_username():String
 	{
 		if (!_initialized || _userName == null || _userName == "")
 		{
@@ -930,7 +930,7 @@ class FlxGameJolt
 		return _userName;
 	}
 	
-	private static function get_usertoken():String
+	static function get_usertoken():String
 	{
 		if (!_initialized || _userToken == null || _userToken == "")
 		{
@@ -940,7 +940,7 @@ class FlxGameJolt
 		return _userToken;
 	}
 	
-	private static function get_isQuickPlay():Bool
+	static function get_isQuickPlay():Bool
 	{
 		#if !desktop
 		return false;
@@ -961,7 +961,7 @@ class FlxGameJolt
 		#end
 	}
 	
-	private static function get_isEmbeddedFlash():Bool
+	static function get_isEmbeddedFlash():Bool
 	{
 		#if flash
 		var parameters = Lib.current.loaderInfo.parameters;

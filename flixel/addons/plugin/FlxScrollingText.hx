@@ -23,8 +23,8 @@ import flixel.util.FlxColor;
  */
 class FlxScrollingText extends FlxBasic
 {
-	private static var members:Map<FlxSprite, ScrollingTextData> = new Map<FlxSprite, ScrollingTextData>();
-	private static var zeroPoint:Point = new Point(0,0);
+	static var members:Map<FlxSprite, ScrollingTextData> = new Map<FlxSprite, ScrollingTextData>();
+	static var zeroPoint:Point = new Point(0,0);
 	
 	/**
 	 * Adds an FlxBitmapTextField to the Scrolling Text Manager and returns an FlxSprite which contains the text scroller in it.
@@ -109,7 +109,7 @@ class FlxScrollingText extends FlxBasic
 		data.bitmapText.drawFrame(true);
 	}
 	
-	private static function scroll(data:ScrollingTextData):Void
+	static function scroll(data:ScrollingTextData):Void
 	{
 		//	Have we reached enough steps?
 		if (data.maxStep > 0 && (data.step < data.maxStep))

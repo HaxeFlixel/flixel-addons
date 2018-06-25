@@ -5,6 +5,7 @@ import flixel.util.typeLimit.OneOfTwo;
 import openfl.Assets;
 import openfl.utils.ByteArray;
 import haxe.xml.Fast;
+import haxe.io.Path;
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -28,18 +29,26 @@ class TiledTileSet
 	
 	public var properties:TiledPropertySet;
 	
+	public var tileTypes:Array<String>;
+
+	public var tileProbabilities:Array<Float>;
+
 	public var tileProps:Array<TiledTilePropertySet>;
 	
 	public var tileImagesSources:Array<TiledImageTile>;
 	
-	public function new(data:FlxTiledTileAsset, rootPath:String="")
+	public function new(data:FlxTiledTileAsset, rootPath:String = "")
 	{
 		var source:Fast;
 		numTiles = 0xFFFFFF;
 		numRows = numCols = 1;
 		
 		// Use the correct data format
+		#if (haxe_ver < "4.0.0")
 		if (Std.is(data, Fast))
+		#else
+		if (Std.is(data, Xml))
+		#end
 		{
 			source = data;
 		}
@@ -58,11 +67,15 @@ class TiledTileSet
 		
 		if (source.has.source)
 		{
-			var sourcePath = rootPath + source.att.source;
+			var sourcePath = Path.normalize(rootPath + source.att.source);
 			if (Assets.exists(sourcePath))
 			{
 				source = new Fast(Xml.parse(Assets.getText(sourcePath)));
 				source = source.node.tileset;
+			}
+			else
+			{
+				throw 'Invalid TSX tileset path: $sourcePath';
 			}
 		}
 		
@@ -132,8 +145,10 @@ class TiledTileSet
 			for (prop in source.nodes.properties)
 				properties.extend(prop);
 			
-			// read tiles properties
+			// read tiles properties, type, probability
 			tileProps = new Array<TiledTilePropertySet>();
+			tileTypes = new Array<String>();
+			tileProbabilities = new Array<Float>();
 			
 			for (node in source.nodes.tile)
 			{
@@ -143,6 +158,19 @@ class TiledTileSet
 				}
 				
 				var id:Int = Std.parseInt(node.att.id);
+
+				if (node.has.type)
+				{
+					var type:String = node.att.type;
+					tileTypes[id] = type;
+				}
+
+				if (node.has.probability)
+				{
+					var probability = Std.parseFloat(node.att.probability);
+					tileProbabilities[id] = probability;
+				}
+				
 				tileProps[id] = new TiledTilePropertySet(id);
 				tileProps[id].keys.set("id", Std.string(id));
 				for (prop in node.nodes.properties)
@@ -167,6 +195,10 @@ class TiledTileSet
 				numCols = Std.int(imgHeight / tileHeight);
 				numTiles = numRows * numCols;
 			}
+		}
+		else
+		{
+			throw "TMX tileset misses source image or tiles";
 		}
 	}
 	

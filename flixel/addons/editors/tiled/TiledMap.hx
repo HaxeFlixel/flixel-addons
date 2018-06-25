@@ -42,10 +42,10 @@ class TiledMap
 	// Add a "noload" property to your Map Properties.
 	// Add comma separated values of tilesets, layers, or object names.
 	// These will not be loaded.
-	private var noLoadHash:Map<String, Bool> = new Map<String, Bool>();
-	private var layerMap:Map<String, TiledLayer> = new Map<String, TiledLayer>();
+	var noLoadHash:Map<String, Bool> = new Map<String, Bool>();
+	var layerMap:Map<String, TiledLayer> = new Map<String, TiledLayer>();
 	
-	private var rootPath:String="";
+	var rootPath:String="";
 	
 	/**
 	 * @param data Either a string or XML object containing the Tiled map data
@@ -74,7 +74,7 @@ class TiledMap
 		loadLayers(source);
 	}
 	
-	private function loadAttributes(source:Fast):Void
+	function loadAttributes(source:Fast):Void
 	{
 		version = (source.att.version != null) ? source.att.version : "unknown";
 		orientation = (source.att.orientation != null) ? source.att.orientation : "orthogonal";
@@ -91,7 +91,7 @@ class TiledMap
 		fullHeight = height * tileHeight;
 	}
 	
-	private function loadProperties(source:Fast):Void
+	function loadProperties(source:Fast):Void
 	{
 		for (node in source.nodes.properties)
 		{
@@ -110,7 +110,7 @@ class TiledMap
 		}
 	}
 	
-	private function loadTilesets(source:Fast):Void
+	function loadTilesets(source:Fast):Void
 	{
 		for (node in source.nodes.tileset)
 		{
@@ -125,7 +125,7 @@ class TiledMap
 		}
 	}
 	
-	private function loadLayers(source:Fast):Void
+	function loadLayers(source:Fast):Void
 	{
 		for (el in source.elements)
 		{	

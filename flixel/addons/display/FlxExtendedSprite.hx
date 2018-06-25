@@ -155,26 +155,26 @@ class FlxExtendedSprite extends FlxSprite
 	public var mouseY(get, never):Int;
 	#end
 	
-	private var _snapOnDrag:Bool = false;
-	private var _snapOnRelease:Bool = false;
-	private var _snapX:Int;
-	private var _snapY:Int;
+	var _snapOnDrag:Bool = false;
+	var _snapOnRelease:Bool = false;
+	var _snapX:Int;
+	var _snapY:Int;
 	
-	private var _clickOnRelease:Bool = false;
-	private var _clickPixelPerfect:Bool = false;
-	private var _clickPixelPerfectAlpha:Int;
-	private var _clickCounter:Int = 0;
+	var _clickOnRelease:Bool = false;
+	var _clickPixelPerfect:Bool = false;
+	var _clickPixelPerfectAlpha:Int;
+	var _clickCounter:Int = 0;
 	
-	private var _throwXFactor:Int;
-	private var _throwYFactor:Int;
+	var _throwXFactor:Int;
+	var _throwYFactor:Int;
 	
-	private var _dragPixelPerfect:Bool;
-	private var _dragPixelPerfectAlpha:Int;
-	private var _dragOffsetX:Int;
-	private var _dragOffsetY:Int;
-	private var _dragFromPoint:Bool;
-	private var _allowHorizontalDrag:Bool = true;
-	private var _allowVerticalDrag:Bool = true;
+	var _dragPixelPerfect:Bool = false;
+	var _dragPixelPerfectAlpha:Int;
+	var _dragOffsetX:Int;
+	var _dragOffsetY:Int;
+	var _dragFromPoint:Bool;
+	var _allowHorizontalDrag:Bool = true;
+	var _allowVerticalDrag:Bool = true;
 	
 	/**
 	 * Creates a white 8x8 square FlxExtendedSprite at the specified position.
@@ -441,7 +441,7 @@ class FlxExtendedSprite extends FlxSprite
 	/**
 	 * Called by update, applies friction if the sprite has gravity to stop jittery motion when slowing down
 	 */
-	private function updateGravity():Void
+	function updateGravity():Void
 	{
 		//	A sprite can have horizontal and/or vertical gravity in each direction (positiive / negative)
 		
@@ -541,7 +541,7 @@ class FlxExtendedSprite extends FlxSprite
 	/**
 	 * Updates the Mouse Drag on this Sprite.
 	 */
-	private function updateDrag():Void
+	function updateDrag():Void
 	{
 		// TODO: touch drag
 		if (_allowHorizontalDrag == true)
@@ -579,7 +579,7 @@ class FlxExtendedSprite extends FlxSprite
 	 * Checks if the mouse is over this sprite and pressed, then does a pixel 
 	 * perfect check if needed and adds it to the FlxMouseControl check stack.
 	 */
-	private function checkForClick():Void
+	function checkForClick():Void
 	{
 		#if FLX_MOUSE
 		if (mouseOver && FlxG.mouse.justPressed)
@@ -685,7 +685,7 @@ class FlxExtendedSprite extends FlxSprite
 	/**
 	 * Bounds Rect check for the sprite drag
 	 */
-	private function checkBoundsRect():Void
+	function checkBoundsRect():Void
 	{
 		if (x < boundsRect.left)
 		{
@@ -709,7 +709,7 @@ class FlxExtendedSprite extends FlxSprite
 	/**
 	 * Parent Sprite Bounds check for the sprite drag
 	 */
-	private function checkBoundsSprite():Void
+	function checkBoundsSprite():Void
 	{
 		if (x < boundsSprite.x)
 		{
@@ -803,32 +803,32 @@ class FlxExtendedSprite extends FlxSprite
 		}
 	}
 	
-	private inline function get_clicks():Int
+	inline function get_clicks():Int
 	{
 		return _clickCounter;
 	}
 	
-	private inline function set_clicks(NewValue:Int):Int
+	inline function set_clicks(NewValue:Int):Int
 	{
 		return _clickCounter = NewValue;
 	}
 	
-	private inline function get_springX():Int
+	inline function get_springX():Int
 	{
 		return Math.floor(x + springOffsetX);
 	}
 	
-	private inline function get_springY():Int
+	inline function get_springY():Int
 	{
 		return Math.floor(y + springOffsetY);
 	}
 	
-	private inline function get_point():FlxPoint
+	inline function get_point():FlxPoint
 	{
 		return _point;
 	}
 	
-	private inline function set_point(NewPoint:FlxPoint):FlxPoint
+	inline function set_point(NewPoint:FlxPoint):FlxPoint
 	{
 		return _point = NewPoint;
 	}
@@ -836,18 +836,19 @@ class FlxExtendedSprite extends FlxSprite
 	#if FLX_MOUSE
 	
 	
-	private function get_mouseOver():Bool
+	function get_mouseOver():Bool
 	{
-		return FlxMath.pointInCoordinates(	Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX)),
-											Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY)),
-											Math.floor(x),
-											Math.floor(y),
-											Math.floor(width),
-											Math.floor(height)
-											);
+		return FlxMath.pointInCoordinates(
+			Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX)),
+			Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY)),
+			Math.floor(x),
+			Math.floor(y),
+			Math.floor(width),
+			Math.floor(height)
+		);
 	}
 	
-	private function get_mouseX():Int
+	function get_mouseX():Int
 	{
 		if (mouseOver)
 		{
@@ -857,7 +858,7 @@ class FlxExtendedSprite extends FlxSprite
 		return -1;
 	}
 	
-	private function get_mouseY():Int
+	function get_mouseY():Int
 	{
 		if (mouseOver)
 		{
@@ -868,7 +869,7 @@ class FlxExtendedSprite extends FlxSprite
 	}
 	#end
 	
-	private inline function get_rect():FlxRect
+	inline function get_rect():FlxRect
 	{
 		_rect.x = x;
 		_rect.y = y;

@@ -1,32 +1,27 @@
 package flixel.addons.editors.spine.texture;
 
+import flixel.graphics.FlxGraphic;
+import openfl.Assets;
 import openfl.display.BitmapData;
-import flixel.system.FlxAssets;
 import spinehaxe.atlas.AtlasPage;
 import spinehaxe.atlas.AtlasRegion;
-import spinehaxe.atlas.Texture;
 import spinehaxe.atlas.TextureLoader;
 
 class FlixelTextureLoader implements TextureLoader
 {
-	private var path:String;
+	var prefix:String;
 	
-	public function new(path:String) 
+	public function new(prefix:String) 
 	{
-		this.path = path;
-	}
-	
-	public function loadTexture(textureFile:String, format, useMipMaps):Texture 
-	{
-		return new FlixelTexture(path + textureFile);
+		this.prefix = prefix;
 	}
 	
 	public function loadPage(page:AtlasPage, path:String):Void 
 	{
-		var bitmapData:BitmapData = FlxAssets.getBitmapData(this.path + path);
+		var bitmapData:BitmapData = Assets.getBitmapData(prefix + path);
 		if (bitmapData == null)
-			throw ("BitmapData not found with name: " + this.path + path);
-		page.rendererObject = bitmapData;
+			throw ("BitmapData not found with name: " + this.prefix + path);
+		page.rendererObject = FlxG.bitmap.add(bitmapData);
 		page.width = bitmapData.width;
 		page.height = bitmapData.height;
 	}
@@ -35,6 +30,6 @@ class FlixelTextureLoader implements TextureLoader
 
 	public function unloadPage(page:AtlasPage):Void 
 	{
-		cast(page.rendererObject, BitmapData).dispose();
+		FlxG.bitmap.remove(cast page.rendererObject);
 	}
 }

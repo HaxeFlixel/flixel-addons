@@ -85,38 +85,38 @@ class FlxTrailArea extends FlxSprite
 	/**
 	 * Counts the frames passed.
 	 */
-	private var _counter:Int = 0;
+	var _counter:Int = 0;
 	
 	/**
 	 * Internal width variable
 	 * Initialized to 1 to prevent invalid bitmapData during construction
 	 */
-	private var _width:Float = 1;
+	var _width:Float = 1;
 	
 	/**
 	 * Internal height variable
 	 * Initialized to 1 to prevent invalid bitmapData during construction
 	 */
-	private var _height:Float = 1;
+	var _height:Float = 1;
 	
 	/**
 	 * Internal helper var, linking to area's pixels
 	 */
-	private var _areaPixels:BitmapData;
+	var _areaPixels:BitmapData;
 	
-	 /**
-	  * Creates a new FlxTrailArea, in which all added sprites get a trail effect.
-	  * 
-	  * @param	X				x position of the trail area
-	  * @param	Y				y position of the trail area
-	  * @param	Width			The width of the area - defaults to FlxG.width
-	  * @param	Height			The height of the area - defaults to FlxG.height
-	  * @param	AlphaMultiplier By what the area's alpha is multiplied per update
-	  * @param	Delay			How often to update the trail. 1 updates every frame
-	  * @param	SimpleRender 	If simple rendering should be used. Ignores all sprite transformations
-	  * @param	Antialiasing	If sprites should be smoothed when drawn to the area. Ignored when simple rendering is on
-	  * @param	TrailBlendMode 	The blend mode used for the area. Only works in flash
-	  */
+	/**
+	 * Creates a new FlxTrailArea, in which all added sprites get a trail effect.
+	 * 
+	 * @param	X				x position of the trail area
+	 * @param	Y				y position of the trail area
+	 * @param	Width			The width of the area - defaults to FlxG.width
+	 * @param	Height			The height of the area - defaults to FlxG.height
+	 * @param	AlphaMultiplier By what the area's alpha is multiplied per update
+	 * @param	Delay			How often to update the trail. 1 updates every frame
+	 * @param	SimpleRender 	If simple rendering should be used. Ignores all sprite transformations
+	 * @param	Antialiasing	If sprites should be smoothed when drawn to the area. Ignored when simple rendering is on
+	 * @param	TrailBlendMode 	The blend mode used for the area. Only works in flash
+	 */
 	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, AlphaMultiplier:Float = 0.8, Delay:Int = 2, SimpleRender:Bool = false, Antialiasing:Bool = false, ?TrailBlendMode:BlendMode) 
 	{
 		super(X, Y);
@@ -248,7 +248,7 @@ class FlxTrailArea extends FlxSprite
 	/**
 	 * Redirects width to _width
 	 */
-	override private inline function get_width():Float
+	override inline function get_width():Float
 	{
 		return _width;
 	}
@@ -256,7 +256,7 @@ class FlxTrailArea extends FlxSprite
 	/**
 	 * Setter for width, defaults to FlxG.width, creates new _rendeBitmap if neccessary
 	 */
-	override private function set_width(Width:Float):Float 
+	override function set_width(Width:Float):Float 
 	{
 		Width = (Width <= 0) ? FlxG.width : Width;
 		
@@ -271,7 +271,7 @@ class FlxTrailArea extends FlxSprite
 	/**
 	 * Redirects height to _height
 	 */
-	override private inline function get_height():Float
+	override inline function get_height():Float
 	{
 		return _height;
 	}
@@ -279,7 +279,7 @@ class FlxTrailArea extends FlxSprite
 	/**
 	 * Setter for height, defaults to FlxG.height, creates new _rendeBitmap if neccessary
 	 */
-	override private function set_height(Height:Float):Float
+	override function set_height(Height:Float):Float
 	{
 		Height = (Height <= 0) ? FlxG.height : Height;
 		

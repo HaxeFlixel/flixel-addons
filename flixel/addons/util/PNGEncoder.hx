@@ -41,8 +41,8 @@ import flash.utils.ByteArray;
  */	
 class PNGEncoder
 {
-	private static var crcTable:Array<Int>;
-	private static var crcTableComputed:Bool;
+	static var crcTable:Array<Int>;
+	static var crcTableComputed:Bool;
 	
 	/**
 	 * Created a PNG image from the specified BitmapData
@@ -99,7 +99,7 @@ class PNGEncoder
 		return png;
 	}
 	
-	private static function writeChunk(png:ByteArray, type:Int, data:ByteArray):Void 
+	static function writeChunk(png:ByteArray, type:Int, data:ByteArray):Void 
 	{
 		var c:Int;
 		

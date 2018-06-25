@@ -30,10 +30,10 @@ class FlxScreenGrab extends FlxBasic
 {
 	public static var screenshot(default, null):Bitmap;
 	
-	private static var _hotkeys:Array<FlxKey>;
-	private static var _autoSave:Bool = false;
-	private static var _autoHideMouse:Bool = false;
-	private static var _region:Rectangle;
+	static var _hotkeys:Array<FlxKey>;
+	static var _autoSave:Bool = false;
+	static var _autoHideMouse:Bool = false;
+	static var _region:Rectangle;
 	
 	/**
 	 * Defines the region of the screen that should be captured. If you need it to be a fixed location then use this.
@@ -138,7 +138,7 @@ class FlxScreenGrab extends FlxBasic
 		return theBitmap;
 	}
 	
-	private static function fixFilename(Filename:String):String
+	static function fixFilename(Filename:String):String
 	{
 		if (Filename == "")
 		{
@@ -155,7 +155,7 @@ class FlxScreenGrab extends FlxBasic
 		return Filename;
 	}
 	
-	private static function save(Filename:String = ""):Void
+	static function save(Filename:String = ""):Void
 	{
 		if (screenshot.bitmapData == null)
 		{
@@ -165,24 +165,24 @@ class FlxScreenGrab extends FlxBasic
 		Filename = fixFilename(Filename);
 		
 		var png:ByteArray;
-	#if flash
+		#if flash
 		png = PNGEncoder.encode(screenshot.bitmapData);
-	#elseif openfl_legacy
+		#elseif openfl_legacy
 		png = screenshot.bitmapData.encode(screenshot.bitmapData.rect, "png");
-	#else
+		#else
 		png = screenshot.bitmapData.encode(screenshot.bitmapData.rect, new PNGEncoderOptions());
-	#end
+		#end
 		
-	#if !sys
+		#if !sys
 		var file:FileReference = new FileReference();
 		file.save(png, Filename);
-	#elseif (!lime_legacy || lime < "2.9.0")
+		#elseif (!lime_legacy || lime < "2.9.0")
 		
 		var documentsDirectory = "";
 		#if lime_legacy
-			documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+		documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
 		#else
-			documentsDirectory = lime.system.System.documentsDirectory;
+		documentsDirectory = lime.system.System.documentsDirectory;
 		#end
 		
 		var fd:FileDialog = new FileDialog();
@@ -213,7 +213,7 @@ class FlxScreenGrab extends FlxBasic
 			f.writeString(png.readUTFBytes(png.length));
 			f.close();
 		}
-	#end
+		#end
 	}
 	
 	override public function update(elapsed:Float):Void

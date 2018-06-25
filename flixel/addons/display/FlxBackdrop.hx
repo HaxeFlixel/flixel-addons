@@ -22,22 +22,22 @@ using flixel.util.FlxColorTransformUtil;
  */
 class FlxBackdrop extends FlxSprite
 {
-	private var _ppoint:Point;
-	private var _scrollW:Int = 0;
-	private var _scrollH:Int = 0;
-	private var _repeatX:Bool = false;
-	private var _repeatY:Bool = false;
+	var _ppoint:Point;
+	var _scrollW:Int = 0;
+	var _scrollH:Int = 0;
+	var _repeatX:Bool = false;
+	var _repeatY:Bool = false;
 	
-	private var _spaceX:Int = 0;
-	private var _spaceY:Int = 0;
+	var _spaceX:Int = 0;
+	var _spaceY:Int = 0;
 	
 	/**
 	 * Frame used for tiling
 	 */
-	private var _tileFrame:FlxFrame;
+	var _tileFrame:FlxFrame;
 	
-	private var _tileInfo:Array<Float>;
-	private var _numTiles:Int = 0;
+	var _tileInfo:Array<Float>;
+	var _numTiles:Int = 0;
 	
 	// TODO: remove this hack and add docs about how to avoid tearing problem by preparing assets and some code...
 	/**
@@ -132,9 +132,7 @@ class FlxBackdrop extends FlxSprite
 		for (camera in cameras)
 		{
 			if (!camera.visible || !camera.exists)
-			{
 				continue;
-			}
 			
 			var ssw:Float = _scrollW * Math.abs(scale.x);
 			var ssh:Float = _scrollH * Math.abs(scale.y);
@@ -143,6 +141,7 @@ class FlxBackdrop extends FlxSprite
 			if (_repeatX)
 			{   
 				_ppoint.x = ((x - offset.x - camera.scroll.x * scrollFactor.x) % ssw);
+				
 				if (_ppoint.x > 0)
 					_ppoint.x -= ssw;
 			}
@@ -155,6 +154,7 @@ class FlxBackdrop extends FlxSprite
 			if (_repeatY)
 			{
 				_ppoint.y = ((y - offset.y - camera.scroll.y * scrollFactor.y) % ssh);
+				
 				if (_ppoint.y > 0)
 					_ppoint.y -= ssh;
 			}
@@ -212,7 +212,7 @@ class FlxBackdrop extends FlxSprite
 		}
 	}
 	
-	private function regenGraphic():Void
+	function regenGraphic():Void
 	{
 		var sx:Float = Math.abs(scale.x);
 		var sy:Float = Math.abs(scale.y);
@@ -226,13 +226,9 @@ class FlxBackdrop extends FlxSprite
 		var frameBitmap:BitmapData = null;
 		
 		if (_repeatX) 
-		{
 			w += FlxG.width;
-		}
 		if (_repeatY)
-		{
 			h += FlxG.height;
-		}
 		
 		if (FlxG.renderBlit)
 		{
@@ -284,6 +280,7 @@ class FlxBackdrop extends FlxSprite
 				_matrix.tx = 0;
 				_matrix.ty += ssh;
 			}
+			
 			_ppoint.x = 0;
 			_ppoint.y += ssh;
 		}
@@ -297,31 +294,27 @@ class FlxBackdrop extends FlxSprite
 		}
 	}
 	
-	private function onGameResize(_,_):Void
+	function onGameResize(_,_):Void
 	{
 		if (_tileFrame != null)
 			regenGraphic();
 	}
 	
-	private inline function scaleCallback(Scale:FlxPoint)
+	inline function scaleCallback(Scale:FlxPoint)
 	{ 
 		if (_tileFrame != null)
 			regenGraphic();
 	}
 	
-	private function setTileFrame(Frame:FlxFrame):FlxFrame
+	function setTileFrame(Frame:FlxFrame):FlxFrame
 	{
 		if (Frame != _tileFrame)
 		{
 			if (_tileFrame != null)
-			{
 				_tileFrame.parent.useCount--;
-			}
 			
 			if (Frame != null)
-			{
 				Frame.parent.useCount++;
-			}
 		}
 		
 		return _tileFrame = Frame;

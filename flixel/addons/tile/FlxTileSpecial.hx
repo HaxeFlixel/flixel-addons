@@ -29,18 +29,18 @@ class FlxTileSpecial extends FlxBasic
 	public var currTileId(default, set):Int = 0;
 	public var currFrame(default, null):FlxFrame;
 	
-	private var _tmp_flipH:Bool;
-	private var _tmp_flipV:Bool;
-	private var _tmp_rot:Int;
+	var _tmp_flipH:Bool;
+	var _tmp_flipV:Bool;
+	var _tmp_rot:Int;
 	
-	private var _matrix:FlxMatrix;
+	var _matrix:FlxMatrix;
 	
 	// Animation stuff
 	public var animation:FlxTileAnimation;
-	private var _currIndex:Int = 0;
-	private var _lastIndex:Int = -1;
-	private var _currAnimParam:AnimParams;
-	private var _frameTimer:Float = 0.0;
+	var _currIndex:Int = 0;
+	var _lastIndex:Int = -1;
+	var _currAnimParam:AnimParams;
+	var _frameTimer:Float = 0.0;
 	
 	public var dirty:Bool = true;
 	
@@ -206,7 +206,7 @@ class FlxTileSpecial extends FlxBasic
 		return _matrix;
 	}
 	
-	private function set_frames(value:FlxFramesCollection):FlxFramesCollection
+	function set_frames(value:FlxFramesCollection):FlxFramesCollection
 	{
 		frames = value;
 		
@@ -218,7 +218,7 @@ class FlxTileSpecial extends FlxBasic
 		return frames;
 	}
 	
-	private function set_currTileId(value:Int):Int
+	function set_currTileId(value:Int):Int
 	{
 		if (frames != null)
 		{

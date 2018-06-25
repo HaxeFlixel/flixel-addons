@@ -11,10 +11,10 @@ class FlxAsyncLoop extends FlxBasic
 {
 	public var started(default, null):Bool = false;
 	public var finished(default, null):Bool = false;
-	private var _curIndex:Int = 0;
-	private var _iterationsPerUpdate:Int;
-	private var _iterations:Int;
-	private var _callback:Void->Void;
+	var _curIndex:Int = 0;
+	var _iterationsPerUpdate:Int;
+	var _iterations:Int;
+	var _callback:Void->Void;
 	
 	/**
 	 * Creates an instance of the FlxAsyncLoop class, used to do a loop while still allowing update() to get called and the screen to refresh.

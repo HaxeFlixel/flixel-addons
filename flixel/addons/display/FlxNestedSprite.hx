@@ -72,9 +72,9 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public var count(get, never):Int;
 	
-	private var _parentRed:Float = 1;
-	private var _parentGreen:Float = 1;
-	private var _parentBlue:Float = 1;
+	var _parentRed:Float = 1;
+	var _parentGreen:Float = 1;
+	var _parentBlue:Float = 1;
 	
 	/**
 	 * WARNING: This will remove this sprite entirely. Use kill() if you 
@@ -127,9 +127,7 @@ class FlxNestedSprite extends FlxSprite
 		var index:Int = children.indexOf(Child);
 		
 		if (index >= 0)
-		{
 			children.splice(index, 1);
-		}
 		
 		return Child;
 	}
@@ -142,9 +140,7 @@ class FlxNestedSprite extends FlxSprite
 	public function removeAt(Index:Int = 0):FlxNestedSprite
 	{
 		if (children.length < Index || Index < 0)
-		{
 			return null;
-		}
 		
 		return remove(children[Index]);
 	}
@@ -155,9 +151,7 @@ class FlxNestedSprite extends FlxSprite
 	public function removeAll():Void
 	{
 		for (child in children)
-		{
 			remove(child);
-		}
 	}
 	
 	public function preUpdate(elapsed:Float):Void 
@@ -171,9 +165,7 @@ class FlxNestedSprite extends FlxSprite
 		for (child in children)
 		{
 			if (child.active && child.exists)
-			{
 				child.preUpdate(elapsed);
-			}
 		}
 	}
 	
@@ -184,9 +176,7 @@ class FlxNestedSprite extends FlxSprite
 		for (child in children)
 		{
 			if (child.active && child.exists)
-			{
 				child.update(elapsed);
-			}
 		}
 		
 		postUpdate(elapsed);
@@ -195,9 +185,7 @@ class FlxNestedSprite extends FlxSprite
 	public function postUpdate(elapsed:Float):Void 
 	{
 		if (moves)
-		{
 			updateMotion(elapsed);
-		}
 		
 		wasTouching = touching;
 		touching = FlxObject.NONE;
@@ -274,9 +262,7 @@ class FlxNestedSprite extends FlxSprite
 		for (child in children)
 		{
 			if (child.exists && child.visible)
-			{
 				child.draw();
-			}
 		}
 	}
 	
@@ -288,20 +274,17 @@ class FlxNestedSprite extends FlxSprite
 		for (child in children)
 		{
 			if (child.exists && child.visible)
-			{
 				child.drawDebug();
-			}
 		}
 	}
 	#end
 	
-	override private function set_alpha(Alpha:Float):Float
+	override function set_alpha(Alpha:Float):Float
 	{
 		Alpha = FlxMath.bound(Alpha, 0, 1);
 		if (Alpha == alpha)
-		{
 			return alpha;
-		}
+		
 		alpha = Alpha * relativeAlpha;
 		
 		if ((alpha != 1) || (color != 0x00ffffff))
@@ -335,20 +318,17 @@ class FlxNestedSprite extends FlxSprite
 			useColorTransform = false;
 		}
 		dirty = true;
-
 		
 		if (children != null)
 		{
 			for (child in children)
-			{
 				child.alpha = alpha;
-			}
 		}
 		
 		return alpha;
 	}
 	
-	override private function set_color(Color:FlxColor):FlxColor
+	override function set_color(Color:FlxColor):FlxColor
 	{
 		Color = Color.to24Bit();
 		
@@ -359,9 +339,8 @@ class FlxNestedSprite extends FlxSprite
 		var combinedColor:Int = FlxColor.fromRGBFloat(combinedRed, combinedGreen, combinedBlue, 0);
 		
 		if (color == combinedColor)
-		{
 			return color;
-		}
+		
 		color = combinedColor;
 		if ((alpha != 1) || (color != 0x00ffffff))
 		{
@@ -419,7 +398,7 @@ class FlxNestedSprite extends FlxSprite
 		return color;
 	}
 	
-	override private function set_facing(Direction:Int):Int
+	override function set_facing(Direction:Int):Int
 	{
 		super.set_facing(Direction);
 		if (children != null)
@@ -427,15 +406,14 @@ class FlxNestedSprite extends FlxSprite
 			for (child in children)
 			{
 				if (child.exists && child.active)
-				{
 					child.facing = Direction;
-				}
 			}
 		}
+		
 		return Direction;
 	}
 	
-	private inline function get_count():Int 
+	inline function get_count():Int 
 	{ 
 		return children.length; 
 	}

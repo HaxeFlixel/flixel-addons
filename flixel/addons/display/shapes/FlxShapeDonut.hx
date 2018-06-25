@@ -40,24 +40,24 @@ class FlxShapeDonut extends FlxShape
 		if (radius_in > 0)
 		{
 			#if (cpp || neko)
-				//Temporary work-around until OpenFL properly supports ERASE blend mode on CPP targets
-				var zpt = new Point();
-				var temp = new FlxSprite(0, 0, new BitmapData(cast pixels.width, cast pixels.height, false, 0xFFFFFF));
-				temp.pixels.copyChannel(this.pixels, this.pixels.rect, zpt, BitmapDataChannel.ALPHA, BitmapDataChannel.BLUE);
-				FlxSpriteUtil.drawCircle(temp, cx, cy, radius_in, FlxColor.BLACK, null, { matrix: matrix, smoothing: true } );
-				this.pixels.copyChannel(temp.pixels, temp.pixels.rect, zpt, BitmapDataChannel.BLUE, BitmapDataChannel.ALPHA);
-				temp.destroy();
+			//Temporary work-around until OpenFL properly supports ERASE blend mode on CPP targets
+			var zpt = new Point();
+			var temp = new FlxSprite(0, 0, new BitmapData(cast pixels.width, cast pixels.height, false, 0xFFFFFF));
+			temp.pixels.copyChannel(this.pixels, this.pixels.rect, zpt, BitmapDataChannel.ALPHA, BitmapDataChannel.BLUE);
+			FlxSpriteUtil.drawCircle(temp, cx, cy, radius_in, FlxColor.BLACK, null, { matrix: matrix, smoothing: true } );
+			this.pixels.copyChannel(temp.pixels, temp.pixels.rect, zpt, BitmapDataChannel.BLUE, BitmapDataChannel.ALPHA);
+			temp.destroy();
 			#else
-				FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.RED, null, { matrix: matrix, blendMode:BlendMode.ERASE, smoothing: true } );
+			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.RED, null, { matrix: matrix, blendMode:BlendMode.ERASE, smoothing: true } );
 			#end
 			
 			FlxSpriteUtil.drawCircle(this, cx, cy, radius_in, FlxColor.TRANSPARENT, lineStyle, { matrix: matrix } );
 		}
 	}
 	
-	private static var helperSprite:FlxSprite;
+	static var helperSprite:FlxSprite;
 	
-	private inline function set_radius_out(r:Float):Float
+	inline function set_radius_out(r:Float):Float
 	{
 		radius_out = r;
 		shapeWidth = radius_out * 2;
@@ -66,24 +66,24 @@ class FlxShapeDonut extends FlxShape
 		return radius_out;
 	}
 
-	private inline function set_radius_in(r:Float):Float
+	inline function set_radius_in(r:Float):Float
 	{
 		radius_in = r;
 		shapeDirty = true;
 		return radius_in;
 	}
 	
-	private override function getStrokeOffsetX():Float
+	override function getStrokeOffsetX():Float
 	{
 		return strokeBuffer / 2;
 	}
 	
-	private override function getStrokeOffsetY():Float
+	override function getStrokeOffsetY():Float
 	{
 		return strokeBuffer / 2;
 	}
 	
-	private override function get_strokeBuffer():Float
+	override function get_strokeBuffer():Float
 	{
 		return lineStyle.thickness * 1.0;
 	}

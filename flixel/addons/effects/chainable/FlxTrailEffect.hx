@@ -43,22 +43,22 @@ class FlxTrailEffect implements IFlxEffect
 	/**
 	 * An array containing the 'length' last differences of the target positions.
 	 */
-	private var _recentPositions:Array<FlxPoint> = [];
+	var _recentPositions:Array<FlxPoint> = [];
 	/**
 	 * An array containing the 'length' last pixels bitmapData of the target. Only used if cachePixels is enabled.
 	 */
-	private var _recentPixels:Array<BitmapData> = [];
+	var _recentPixels:Array<BitmapData> = [];
 	/**
 	 * Current number of frames passed.
 	 */
-	private var _currentFrames:Int = 0;
+	var _currentFrames:Int = 0;
 	/**
 	 * The actual Flash BitmapData object representing the current effect state.
 	 */
-	private var _pixels:BitmapData;
+	var _pixels:BitmapData;
 	
-	private var _matrix:Matrix = new Matrix();
-	private var _colorTransform:ColorTransform = new ColorTransform();
+	var _matrix:Matrix = new Matrix();
+	var _colorTransform:ColorTransform = new ColorTransform();
 	
 	/**
 	 * Creates a trail effect.
@@ -221,7 +221,7 @@ class FlxTrailEffect implements IFlxEffect
 		}
 	}
 	
-	private function disposeCachedPixels()
+	function disposeCachedPixels()
 	{
 		while (_recentPixels.length > 0)
 		{
@@ -229,7 +229,7 @@ class FlxTrailEffect implements IFlxEffect
 		}
 	}
 	
-	private function set_length(Value:Int):Int 
+	function set_length(Value:Int):Int 
 	{
 		Value = FlxMath.maxInt(1, Value);
 		while (Value < _recentPositions.length)
@@ -244,7 +244,7 @@ class FlxTrailEffect implements IFlxEffect
 		return length = Value;
 	}
 	
-	private function set_cachePixels(Value:Bool):Bool 
+	function set_cachePixels(Value:Bool):Bool 
 	{
 		if (!Value)
 		{

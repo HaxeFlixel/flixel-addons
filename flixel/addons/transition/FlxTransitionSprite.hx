@@ -24,12 +24,12 @@ class GraphicTransTileSquare extends BitmapData {}
  */
 class FlxTransitionSprite extends FlxSprite
 {
-	private var _delay:Float;
-	private var _count:Float;
-	private var _starting:Bool = true;
-	private var _finished:Bool = false;
+	var _delay:Float;
+	var _count:Float;
+	var _starting:Bool = true;
+	var _finished:Bool = false;
 	public var status:TransitionStatus = IN;
-	private var _newStatus:TransitionStatus = NULL;
+	var _newStatus:TransitionStatus = NULL;
 	
 	public function new(X:Float=0, Y:Float=0, Delay:Float, Graphic:FlxGraphicAsset=null, GraphicWidth:Int=32, GraphicHeight:Int=32, FrameRate:Int=40) 
 	{
@@ -71,7 +71,7 @@ class FlxTransitionSprite extends FlxSprite
 		_newStatus = NewStatus;
 	}
 	
-	private function startStatus(NewStatus:TransitionStatus):Void
+	function startStatus(NewStatus:TransitionStatus):Void
 	{
 		setStatus(NewStatus);
 	}
@@ -91,7 +91,7 @@ class FlxTransitionSprite extends FlxSprite
 		status = Status;
 	}
 	
-	private function onFinishAnim(str:String):Void
+	function onFinishAnim(str:String):Void
 	{
 		if (!_finished)
 		{
@@ -118,7 +118,7 @@ class FlxTransitionSprite extends FlxSprite
 		}
 	}
 	
-	private function onTime():Void
+	function onTime():Void
 	{
 		_starting = false;
 		_count = 0;
