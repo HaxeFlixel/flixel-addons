@@ -3,6 +3,7 @@ package flixel.addons.nape;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets;
 import flixel.math.FlxAngle;
+import nape.constraint.Constraint;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -93,7 +94,7 @@ class FlxNapeSprite extends FlxSprite
 			updatePhysObjects();
 		}
 	}
-
+	
 	/**
 	 * Handy function for "killing" game objects.
 	 * Default behavior is to flag them as nonexistent AND dead.
@@ -104,10 +105,15 @@ class FlxNapeSprite extends FlxSprite
 		
 		if (body != null)
 		{
-			body.space = null;
+			if (body.compound == null)
+				body.space = null;
+			else
+				body.compound.bodies.remove(body);
 		}
+		
+		
 	}
-
+	
 	/**
 	 * Handy function for bringing game objects "back to life". Just sets alive and exists back to true.
 	 * In practice, this function is most often called by FlxObject.reset().
@@ -118,7 +124,10 @@ class FlxNapeSprite extends FlxSprite
 		
 		if (body != null)
 		{
-			body.space = FlxNapeSpace.space;
+			if (body.compound == null)
+				body.space = FlxNapeSpace.space;
+			else
+				body.compound.bodies.add(body);
 		}
 	}
 	
@@ -217,8 +226,23 @@ class FlxNapeSprite extends FlxSprite
 	{
 		if (body != null) 
 		{
-			if (FlxNapeSpace.space != null)
-				FlxNapeSpace.space.bodies.remove(body);
+			
+			body.constraints.foreach(function(c:Constraint)
+			{
+				c.active = false;
+			});
+			
+			if (body.compound == null)
+			{
+				body.space = null;
+			}
+			else
+			{
+				body.compound.bodies.remove(body);
+			}
+			
+			
+				
 			body = null;
 		}
 	}
