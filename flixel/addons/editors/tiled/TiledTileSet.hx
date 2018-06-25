@@ -159,13 +159,13 @@ class TiledTileSet
 				
 				var id:Int = Std.parseInt(node.att.id);
 
-				if(node.has.type)
+				if (node.has.type)
 				{
 					var type:String = node.att.type;
 					tileTypes[id] = type;
 				}
 
-				if(node.has.probability)
+				if (node.has.probability)
 				{
 					var probability = Std.parseFloat(node.att.probability);
 					tileProbabilities[id] = probability;
