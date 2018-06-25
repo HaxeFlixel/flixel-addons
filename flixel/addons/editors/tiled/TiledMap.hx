@@ -2,6 +2,7 @@ package flixel.addons.editors.tiled;
 
 import flixel.util.FlxColor;
 import flixel.util.typeLimit.OneOfTwo;
+import haxe.io.Path;
 import haxe.xml.Fast;
 import openfl.Assets;
 using StringTools;
@@ -45,24 +46,29 @@ class TiledMap
 	var noLoadHash:Map<String, Bool> = new Map<String, Bool>();
 	var layerMap:Map<String, TiledLayer> = new Map<String, TiledLayer>();
 	
-	var rootPath:String="";
+	var rootPath:String;
 	
 	/**
 	 * @param data Either a string or XML object containing the Tiled map data
 	 * @param rootPath Path to use as root to resolve any internal file references
 	 */
-	public function new(data:FlxTiledMapAsset, rootPath:String="")
+	public function new(data:FlxTiledMapAsset, ?rootPath:String)
 	{
 		var source:Fast = null;
 		
-		this.rootPath = rootPath;
+		if (rootPath != null)
+			this.rootPath = rootPath;
 		
-		if (Std.is(data, String)) 
+		if (Std.is(data, String))
 		{
+			if (this.rootPath == null)
+				this.rootPath = Path.directory(data) + "/";
 			source = new Fast(Xml.parse(Assets.getText(data)));
 		}
-		else if (Std.is(data, Xml)) 
+		else if (Std.is(data, Xml))
 		{
+			if (this.rootPath == null)
+				this.rootPath = "";
 			source = new Fast(data);
 		}
 		
