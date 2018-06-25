@@ -46,7 +46,7 @@ class TiledMap
 	var noLoadHash:Map<String, Bool> = new Map<String, Bool>();
 	var layerMap:Map<String, TiledLayer> = new Map<String, TiledLayer>();
 	
-	var rootPath:String="";
+	var rootPath:String;
 	
 	/**
 	 * @param data Either a string or XML object containing the Tiled map data
@@ -59,15 +59,16 @@ class TiledMap
 		if (rootPath != null)
 			this.rootPath = rootPath;
 		
-		if (Std.is(data, String)) 
+		if (Std.is(data, String))
 		{
 			if (this.rootPath == null)
 				this.rootPath = Path.directory(data) + "/";
 			source = new Fast(Xml.parse(Assets.getText(data)));
 		}
-		else if (Std.is(data, Xml)) 
+		else if (Std.is(data, Xml))
 		{
-			this.rootPath = "";
+			if (this.rootPath == null)
+				this.rootPath = "";
 			source = new Fast(data);
 		}
 		
