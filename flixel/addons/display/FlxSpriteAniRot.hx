@@ -22,9 +22,9 @@ import flixel.util.FlxSpriteUtil;
  */
 class FlxSpriteAniRot extends FlxSprite
 {
-	private var framesCache:Array<FlxFramesCollection>;
-	private var rotations:Float = 0;
-	private var angleIndex:Int = -1;
+	var framesCache:Array<FlxFramesCollection>;
+	var rotations:Float = 0;
+	var angleIndex:Int = -1;
 	
 	/**
 	 * Constructor, which creates array of prerotated spritesheets for each frame in provided AnimatedGraphic.
@@ -106,7 +106,7 @@ class FlxSpriteAniRot extends FlxSprite
 		}
 	}
 
-	override private function calcFrame(RunOnCpp:Bool = false):Void
+	override function calcFrame(RunOnCpp:Bool = false):Void
 	{
 		if (bakedRotationAngle != 0)
 		{

@@ -42,7 +42,7 @@ class FlxEffectSprite extends FlxSprite
 	/**
 	 * Use to offset the drawing position of the bitmap.
 	 */
-	private var _effectOffset:FlxPoint;
+	var _effectOffset:FlxPoint;
 	
 	/**
 	 * Creates a FlxEffectSprite for a specific FlxSprite.

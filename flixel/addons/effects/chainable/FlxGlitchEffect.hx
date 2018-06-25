@@ -38,19 +38,19 @@ class FlxGlitchEffect implements IFlxEffect
 	/**
 	 * Current time of the effect.
 	 */
-	private var _time:Float = 0;
+	var _time:Float = 0;
 	/**
 	 * Internal, reused frequently during drawing and animating.
 	 */
-	private var _flashPoint:Point = new Point();
+	var _flashPoint:Point = new Point();
 	/**
 	 * Internal, reused frequently during drawing and animating.
 	 */
-	private var _flashRect:Rectangle = new Rectangle();
+	var _flashRect:Rectangle = new Rectangle();
 	/**
 	 * The actual Flash BitmapData object representing the current effect state.
 	 */
-	private var _pixels:BitmapData;
+	var _pixels:BitmapData;
 	
 	/**
 	 * Creates a new FlxGlitchSprite, which applies a Glitch-distortion effect.

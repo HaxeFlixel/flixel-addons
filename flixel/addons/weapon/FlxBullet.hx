@@ -20,7 +20,7 @@ class FlxBullet extends FlxSprite
 	public var lifespan:Float;	
 	
 	@:allow(flixel.addons.weapon)
-	private var bounds:FlxRect;
+	var bounds:FlxRect;
 	
 	public function new()
 	{

@@ -22,16 +22,16 @@ class FlxMouseSpring
 	 */
 	public var gravity:Float;
 	
-	private var _retainVelocity:Bool;
+	var _retainVelocity:Bool;
 	
-	private var _vx:Float = 0;
-	private var _vy:Float = 0;
+	var _vx:Float = 0;
+	var _vy:Float = 0;
 
-	private var _dx:Float = 0;
-	private var _dy:Float = 0;
+	var _dx:Float = 0;
+	var _dy:Float = 0;
 	
-	private var _ax:Float = 0;
-	private var _ay:Float = 0;
+	var _ax:Float = 0;
+	var _ay:Float = 0;
 	
 	/**
 	 * Adds a spring between the mouse and a FlxExtendedSprite.

@@ -90,7 +90,7 @@ class FlxTransitionableState extends FlxState
 		return transOutFinished;
 	}
 	
-	private function transitionToState(nextState:FlxState):Void
+	function transitionToState(nextState:FlxState):Void
 	{
 		//play the exit transition, and when it's done call FlxG.switchState
 		_exiting = true;
@@ -155,22 +155,22 @@ class FlxTransitionableState extends FlxState
 		}
 	}
 	
-	private var transOutFinished:Bool = false;
+	var transOutFinished:Bool = false;
 	
-	private var _exiting:Bool = false;
-	private var _onExit:Void->Void;
+	var _exiting:Bool = false;
+	var _onExit:Void->Void;
 	
-	private function get_hasTransIn():Bool
+	function get_hasTransIn():Bool
 	{
 		return transIn != null && transIn.type != NONE;
 	}
 	
-	private function get_hasTransOut():Bool
+	function get_hasTransOut():Bool
 	{
 		return transOut != null && transOut.type != NONE;
 	}
 	
-	private function createTransition(data:TransitionData):Transition
+	function createTransition(data:TransitionData):Transition
 	{
 		return switch (data.type)
 		{
@@ -180,12 +180,12 @@ class FlxTransitionableState extends FlxState
 		}
 	}
 	
-	private function finishTransIn()
+	function finishTransIn()
 	{
 		closeSubState();
 	}
 	
-	private function finishTransOut()
+	function finishTransOut()
 	{
 		transOutFinished = true;
 		

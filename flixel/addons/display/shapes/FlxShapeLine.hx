@@ -53,12 +53,12 @@ class FlxShapeLine extends FlxShape
 		FlxSpriteUtil.drawLine(this, point.x, point.y, point2.x, point2.y, lineStyle, { matrix: matrix });
 	}
 	
-	private inline function onSetPoint(p:FlxPoint):Void 
+	inline function onSetPoint(p:FlxPoint):Void 
 	{
 		updatePoint();
 	}
 	
-	private function updatePoint():Void
+	function updatePoint():Void
 	{
 		shapeWidth = Math.abs(point.x - point2.x);
 		shapeHeight = Math.abs(point.y - point2.y);
@@ -67,17 +67,17 @@ class FlxShapeLine extends FlxShape
 		shapeDirty = true;
 	}
 	
-	override private function get_strokeBuffer():Float
+	override function get_strokeBuffer():Float
 	{
 		return lineStyle.thickness * 2.0;
 	}
 	
-	override private function getStrokeOffsetX():Float
+	override function getStrokeOffsetX():Float
 	{
 		return strokeBuffer / 2;
 	}
 	
-	override private function getStrokeOffsetY():Float
+	override function getStrokeOffsetY():Float
 	{
 		return strokeBuffer / 2;
 	}

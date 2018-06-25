@@ -28,7 +28,7 @@ class FlxShapeCross extends FlxShape
 	 */
 	public var intersectionH(default, set):Float;
 	
-	private var vertices:Array<FlxPoint>;
+	var vertices:Array<FlxPoint>;
 	
 	public function new(X:Float, Y:Float, HLength:Float, HThickness:Float, VLength:Float, VThickness:Float, IntersectionH:Float, IntersectionV:Float, LineStyle_:LineStyle, FillColor:FlxColor) 
 	{
@@ -127,7 +127,7 @@ class FlxShapeCross extends FlxShape
 		fixBoundaries(horizontalLength, verticalLength);
 	}
 	
-	private inline function set_horizontalLength(f:Float):Float 
+	inline function set_horizontalLength(f:Float):Float 
 	{
 		horizontalLength = f;
 		shapeWidth = Math.max(horizontalLength, verticalThickness);
@@ -135,7 +135,7 @@ class FlxShapeCross extends FlxShape
 		return horizontalLength;
 	}
 	
-	private inline function set_horizontalThickness(f:Float):Float 
+	inline function set_horizontalThickness(f:Float):Float 
 	{
 		horizontalThickness = f;
 		shapeHeight = Math.max(verticalLength, horizontalThickness);
@@ -143,7 +143,7 @@ class FlxShapeCross extends FlxShape
 		return horizontalThickness;
 	}
 	
-	private inline function set_verticalLength(f:Float):Float 
+	inline function set_verticalLength(f:Float):Float 
 	{
 		verticalLength = f;
 		shapeHeight = Math.max(verticalLength, horizontalThickness);
@@ -151,7 +151,7 @@ class FlxShapeCross extends FlxShape
 		return verticalLength;
 	}
 	
-	private inline function set_verticalThickness(f:Float):Float 
+	inline function set_verticalThickness(f:Float):Float 
 	{
 		verticalThickness = f;
 		shapeWidth = Math.max(horizontalLength, verticalThickness);
@@ -159,7 +159,7 @@ class FlxShapeCross extends FlxShape
 		return verticalThickness;
 	}
 	
-	private function set_intersectionV(f:Float):Float 
+	function set_intersectionV(f:Float):Float 
 	{
 		if (f > 1) { f = 1; }
 		if (f < 0) { f = 0; }
@@ -168,7 +168,7 @@ class FlxShapeCross extends FlxShape
 		return intersectionV;
 	}
 	
-	private function set_intersectionH(f:Float):Float 
+	function set_intersectionH(f:Float):Float 
 	{
 		if (f > 1) { f = 1; }
 		if (f < 0) { f = 0; }

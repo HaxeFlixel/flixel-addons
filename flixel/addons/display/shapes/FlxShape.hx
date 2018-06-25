@@ -130,8 +130,8 @@ class FlxShape extends FlxSprite
 	
 	/********PRIVATE*********/
 	
-	private var strokeBuffer(get, null):Float;
-	private var _drawStyle:DrawStyle;
+	var strokeBuffer(get, null):Float;
+	var _drawStyle:DrawStyle;
 	
 	/**
 	 * Fixes boundaries so that the sprite's bbox & origin line up with the underlying geometric object's
@@ -139,7 +139,7 @@ class FlxShape extends FlxSprite
 	 * @param	trueWidth	width of geometric object (ignoring strokes, etc)
 	 * @param	trueHeight	height of geometric object (ignoring strokes, etc)
 	 */
-	private function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
+	function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
 	{
 		width = trueWidth;		//reset width/height to geometric reality 
 		height = trueHeight;
@@ -150,22 +150,22 @@ class FlxShape extends FlxSprite
 		shapeDirty = true;		//redraw the shape next draw() command
 	}
 	
-	private function getStrokeOffsetX():Float
+	function getStrokeOffsetX():Float
 	{
 		return strokeBuffer / 4;
 	}
 	
-	private function getStrokeOffsetY():Float
+	function getStrokeOffsetY():Float
 	{
 		return strokeBuffer / 4;
 	}
 	
-	private function get_strokeBuffer():Float
+	function get_strokeBuffer():Float
 	{
 		return lineStyle.thickness * 2.0;
 	}
 	
-	private function getStrokeOffsetMatrix(matrix:Matrix):Matrix
+	function getStrokeOffsetMatrix(matrix:Matrix):Matrix
 	{
 		var buffer:Float = strokeBuffer / 2;
 		matrix.identity();
@@ -173,28 +173,28 @@ class FlxShape extends FlxSprite
 		return matrix;
 	}
 	
-	private inline function set_fillColor(fc:FlxColor):FlxColor 
+	inline function set_fillColor(fc:FlxColor):FlxColor 
 	{
 		fillColor = fc;
 		shapeDirty = true;
 		return fillColor;
 	}
 	
-	private inline function set_lineStyle(ls:LineStyle):LineStyle 
+	inline function set_lineStyle(ls:LineStyle):LineStyle 
 	{
 		lineStyle = ls;
 		shapeDirty = true;
 		return lineStyle;
 	}
 	
-	private inline function set_shapeWidth(f:Float):Float
+	inline function set_shapeWidth(f:Float):Float
 	{
 		shapeWidth = f;
 		shapeDirty = true;
 		return shapeWidth;
 	}
 
-	private inline function set_shapeHeight(f:Float):Float
+	inline function set_shapeHeight(f:Float):Float
 	{
 		shapeHeight = f;
 		shapeDirty = true;

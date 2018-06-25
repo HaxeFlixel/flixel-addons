@@ -90,51 +90,51 @@ class FlxTypeText extends FlxText
 	/**
 	 * The text that will ultimately be displayed.
 	 */
-	private var _finalText:String = "";
+	var _finalText:String = "";
 	/**
 	 * This is incremented every frame by elapsed, and when greater than delay, adds the next letter.
 	 */
-	private var _timer:Float = 0.0;
+	var _timer:Float = 0.0;
 	/**
 	 * A timer that is used while waiting between typing and erasing.
 	 */
-	private var _waitTimer:Float = 0.0;
+	var _waitTimer:Float = 0.0;
 	/**
 	 * Internal tracker for current string length, not counting the prefix.
 	 */
-	private var _length:Int = 0;
+	var _length:Int = 0;
 	/**
 	 * Whether or not to type the text. Set to true by start() and false by pause().
 	 */
-	private var _typing:Bool = false;
+	var _typing:Bool = false;
 	/**
 	 * Whether or not to erase the text. Set to true by erase() and false by pause().
 	 */
-	private var _erasing:Bool = false;
+	var _erasing:Bool = false;
 	/**
 	 * Whether or not we're waiting between the type and erase phases.
 	 */
-	private var _waiting:Bool = false;
+	var _waiting:Bool = false;
 	/**
 	 * Internal tracker for cursor blink time.
 	 */
-	private var _cursorTimer:Float = 0.0;
+	var _cursorTimer:Float = 0.0;
 	/**
 	 * Whether or not to add a "natural" uneven rhythm to the typing speed.
 	 */
-	private var _typingVariation:Bool = false;
+	var _typingVariation:Bool = false;
 	/**
 	 * How much to vary typing speed, as a percent. So, at 0.5, each letter will be "typed" up to 50% sooner or later than the delay variable is set.
 	 */
-	private var _typeVarPercent:Float = 0.5;
+	var _typeVarPercent:Float = 0.5;
 	/**
 	 * Helper string to reduce garbage generation.
 	 */
-	private static var helperString:String = "";
+	static var helperString:String = "";
 	/**
 	 * Internal reference to the default sound object.
 	 */
-	private var _sound:FlxSound;
+	var _sound:FlxSound;
 	
 	/**
 	 * Create a FlxTypeText object, which is very similar to FlxText except that the text is initially hidden and can be
@@ -199,11 +199,18 @@ class FlxTypeText extends FlxText
 		}
 	}
 	
+	override public function applyMarkup(input:String, rules:Array<FlxTextFormatMarkerPair>):FlxText
+	{
+		super.applyMarkup(input, rules);
+		resetText(text); //Stops applyMarkup from misaligning the colored section of text.
+		return this;
+	}
+	
 	/**
 	 * Internal function that replace last space in a line for a line break.
 	 * To prevent a word start typing in a line and jump to next.
 	 */
-	private function insertBreakLines() 
+	function insertBreakLines() 
 	{
 		var saveText = text;
 		
@@ -308,7 +315,7 @@ class FlxTypeText extends FlxText
 	/**
 	 * Internal function that is called when typing is complete.
 	 */
-	private function onComplete():Void
+	function onComplete():Void
 	{
 		_timer = 0;
 		_typing = false;
@@ -341,7 +348,7 @@ class FlxTypeText extends FlxText
 		}
 	}
 	
-	private function onErased():Void
+	function onErased():Void
 	{
 		_timer = 0;
 		_erasing = false;
@@ -502,7 +509,7 @@ class FlxTypeText extends FlxText
 		}
 	}
 	
-	private function loadDefaultSound():Void
+	function loadDefaultSound():Void
 	{
 		#if FLX_SOUND_SYSTEM
 		_sound = FlxG.sound.load(new TypeSound());

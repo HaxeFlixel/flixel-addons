@@ -132,16 +132,16 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	/**
 	 * The factory function to create a bullet
 	 */
-	private var bulletFactory:FlxTypedWeapon<TBullet>->TBullet;
+	var bulletFactory:FlxTypedWeapon<TBullet>->TBullet;
 	
-	private var lastFired:Int = 0;
+	var lastFired:Int = 0;
 	
-	private var skipParentCollision:Bool;
+	var skipParentCollision:Bool;
 
 	/**
 	 * When the bullet is fired if you need to offset it's angle from the parent angle, for example if the bullet sprite is angle offsetted, only used when useParentAngle is true
 	 */
-	private var angleOffset:Float = 0;
+	var angleOffset:Float = 0;
 	
 	
 	/**
@@ -175,7 +175,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * @param	Target
 	 * @return	True if a bullet was fired or false if one wasn't available. The bullet last fired is stored in FlxWeapon.prevBullet
 	 */
-	private function runFire(Mode:FlxWeaponFireMode):Bool
+	function runFire(Mode:FlxWeaponFireMode):Bool
 	{
 		if (fireRate > 0 && FlxG.game.ticks < nextFire)
 		{
@@ -432,7 +432,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-	private function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
+	function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
 	{
 		if (parent == Object && skipParentCollision)
 		{
@@ -449,12 +449,12 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-	private function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
+	function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
 	{
 		Bullet.kill();
 	}
 	
-	private function internalFireAtPoint(bullet:TBullet, point:FlxPoint):Void
+	function internalFireAtPoint(bullet:TBullet, point:FlxPoint):Void
 	{
 		switch (speedMode)
 		{
@@ -478,7 +478,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		point.putWeak();
 	}
 	
-	private function internalFireFromAngle(bullet:TBullet, degrees:Float):Void
+	function internalFireFromAngle(bullet:TBullet, degrees:Float):Void
 	{
 		var radians = FlxAngle.asRadians(degrees);
 		switch (speedMode)
@@ -504,7 +504,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 	
-	private inline function set_fireFrom(v:FlxWeaponFireFrom):FlxWeaponFireFrom
+	inline function set_fireFrom(v:FlxWeaponFireFrom):FlxWeaponFireFrom
 	{
 		switch (v) 
 		{

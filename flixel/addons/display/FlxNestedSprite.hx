@@ -72,9 +72,9 @@ class FlxNestedSprite extends FlxSprite
 	 */
 	public var count(get, never):Int;
 	
-	private var _parentRed:Float = 1;
-	private var _parentGreen:Float = 1;
-	private var _parentBlue:Float = 1;
+	var _parentRed:Float = 1;
+	var _parentGreen:Float = 1;
+	var _parentBlue:Float = 1;
 	
 	/**
 	 * WARNING: This will remove this sprite entirely. Use kill() if you 
@@ -279,7 +279,7 @@ class FlxNestedSprite extends FlxSprite
 	}
 	#end
 	
-	override private function set_alpha(Alpha:Float):Float
+	override function set_alpha(Alpha:Float):Float
 	{
 		Alpha = FlxMath.bound(Alpha, 0, 1);
 		if (Alpha == alpha)
@@ -328,7 +328,7 @@ class FlxNestedSprite extends FlxSprite
 		return alpha;
 	}
 	
-	override private function set_color(Color:FlxColor):FlxColor
+	override function set_color(Color:FlxColor):FlxColor
 	{
 		Color = Color.to24Bit();
 		
@@ -398,7 +398,7 @@ class FlxNestedSprite extends FlxSprite
 		return color;
 	}
 	
-	override private function set_facing(Direction:Int):Int
+	override function set_facing(Direction:Int):Int
 	{
 		super.set_facing(Direction);
 		if (children != null)
@@ -413,7 +413,7 @@ class FlxNestedSprite extends FlxSprite
 		return Direction;
 	}
 	
-	private inline function get_count():Int 
+	inline function get_count():Int 
 	{ 
 		return children.length; 
 	}

@@ -137,7 +137,7 @@ class FlxPexParser
 		return emitter;
 	}
 	
-	private static function minMax(property:String, ?propertyVariance:String, config:Fast): { min:Float, max:Float } 
+	static function minMax(property:String, ?propertyVariance:String, config:Fast): { min:Float, max:Float } 
 	{
 		if (propertyVariance == null) 
 		{
@@ -157,7 +157,7 @@ class FlxPexParser
 		};
 	}
 	
-	private static function xy(property:String, config:Fast): { x:Float, y:Float }
+	static function xy(property:String, config:Fast): { x:Float, y:Float }
 	{
 		var node = config.node.resolve(getNodeName(property, config));
 		
@@ -168,7 +168,7 @@ class FlxPexParser
 		};
 	}
 	
-	private static function color(property:String, config:Fast): { minColor:FlxColor, maxColor:FlxColor }
+	static function color(property:String, config:Fast): { minColor:FlxColor, maxColor:FlxColor }
 	{
 		var node = config.node.resolve(getNodeName(property, config));
 		var varianceNode = config.node.resolve(getNodeName(property + "Variance", config));
@@ -190,14 +190,14 @@ class FlxPexParser
 		};
 	}
 
-	private static inline function getNodeName(property:String, config:Fast):String
+	static inline function getNodeName(property:String, config:Fast):String
 	{
 		// for backwards compatibility, check for versions of properties that
 		// start with either lower or upper case
 		return config.hasNode.resolve(property) ? property : (property.substr(0, 1).toUpperCase() + property.substr(1));
 	}
 
-	private static function getFastNode(data:Dynamic):Fast
+	static function getFastNode(data:Dynamic):Fast
 	{
 		var str:String = "";
 		var firstElement:Xml = null;

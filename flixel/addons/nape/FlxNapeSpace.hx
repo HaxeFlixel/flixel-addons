@@ -54,7 +54,7 @@ class FlxNapeSpace extends FlxBasic
 	 * Note that shapeDebug is null if drawDebug is false.
 	 */
 	public static var shapeDebug(default, null):ShapeDebug;
-	private static var drawDebugButton:FlxSystemButton;
+	static var drawDebugButton:FlxSystemButton;
 	#end
 	
 	/**
@@ -118,7 +118,7 @@ class FlxNapeSpace extends FlxBasic
 		return walls;
 	}
 	
-	private static function set_drawDebug(drawDebug:Bool):Bool
+	static function set_drawDebug(drawDebug:Bool):Bool
 	{
 		#if FLX_DEBUG
 		if (drawDebugButton != null)
@@ -145,7 +145,7 @@ class FlxNapeSpace extends FlxBasic
 		return FlxNapeSpace.drawDebug = drawDebug;
 	}
 	
-	private static function onStateSwitch():Void
+	static function onStateSwitch():Void
 	{
 		if (space != null)
 		{

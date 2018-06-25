@@ -59,7 +59,7 @@ class FlxZoomCamera extends FlxCamera
 	 * 
 	 * This took many guesses! 
 	 */
-	private function alignCamera():Void
+	function alignCamera():Void
 	{	
 		// Target position in screen space
 		var targetScreenX:Float = target.x - scroll.x;

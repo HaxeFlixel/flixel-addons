@@ -21,7 +21,7 @@ class FlxNapeTilemap extends FlxTilemap
 {
 	public var body:Body;
 	
-	private var _binaryData:Array<Int>;
+	var _binaryData:Array<Int>;
 	
 	public function new() 
 	{
@@ -176,7 +176,7 @@ class FlxNapeTilemap extends FlxTilemap
 	}
 	#end
 	
-	private function constructCollider(?mat:Material) 
+	function constructCollider(?mat:Material) 
 	{
 		if (mat == null) 
 		{
@@ -260,7 +260,7 @@ class FlxNapeTilemap extends FlxTilemap
 	 * @param	EndY	The row in which the rectangle ends
 	 * @return			The rectangle covering solid tiles. CAUTION: Width is used as bottom-right x coordinate, height is used as bottom-right y coordinate
 	 */
-	private function constructRectangle(StartX:Int, StartY:Int, EndY:Int):FlxRect
+	function constructRectangle(StartX:Int, StartY:Int, EndY:Int):FlxRect
 	{
 		//Increase StartX by one to skip the first column, we checked that one already
 		StartX++;

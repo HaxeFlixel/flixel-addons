@@ -85,24 +85,24 @@ class FlxTrailArea extends FlxSprite
 	/**
 	 * Counts the frames passed.
 	 */
-	private var _counter:Int = 0;
+	var _counter:Int = 0;
 	
 	/**
 	 * Internal width variable
 	 * Initialized to 1 to prevent invalid bitmapData during construction
 	 */
-	private var _width:Float = 1;
+	var _width:Float = 1;
 	
 	/**
 	 * Internal height variable
 	 * Initialized to 1 to prevent invalid bitmapData during construction
 	 */
-	private var _height:Float = 1;
+	var _height:Float = 1;
 	
 	/**
 	 * Internal helper var, linking to area's pixels
 	 */
-	private var _areaPixels:BitmapData;
+	var _areaPixels:BitmapData;
 	
 	/**
 	 * Creates a new FlxTrailArea, in which all added sprites get a trail effect.
@@ -248,7 +248,7 @@ class FlxTrailArea extends FlxSprite
 	/**
 	 * Redirects width to _width
 	 */
-	override private inline function get_width():Float
+	override inline function get_width():Float
 	{
 		return _width;
 	}
@@ -256,7 +256,7 @@ class FlxTrailArea extends FlxSprite
 	/**
 	 * Setter for width, defaults to FlxG.width, creates new _rendeBitmap if neccessary
 	 */
-	override private function set_width(Width:Float):Float 
+	override function set_width(Width:Float):Float 
 	{
 		Width = (Width <= 0) ? FlxG.width : Width;
 		
@@ -271,7 +271,7 @@ class FlxTrailArea extends FlxSprite
 	/**
 	 * Redirects height to _height
 	 */
-	override private inline function get_height():Float
+	override inline function get_height():Float
 	{
 		return _height;
 	}
@@ -279,7 +279,7 @@ class FlxTrailArea extends FlxSprite
 	/**
 	 * Setter for height, defaults to FlxG.height, creates new _rendeBitmap if neccessary
 	 */
-	override private function set_height(Height:Float):Float
+	override function set_height(Height:Float):Float
 	{
 		Height = (Height <= 0) ? FlxG.height : Height;
 		

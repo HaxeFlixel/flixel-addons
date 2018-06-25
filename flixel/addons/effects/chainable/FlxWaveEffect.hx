@@ -52,19 +52,19 @@ class FlxWaveEffect implements IFlxEffect
 	/**
 	 * Current time of the effect.
 	 */
-	private var _time:Float = 0;
+	var _time:Float = 0;
 	/**
 	 * Internal, reused frequently during drawing and animating.
 	 */
-	private var _flashPoint:Point = new Point();
+	var _flashPoint:Point = new Point();
 	/**
 	 * Internal, reused frequently during drawing and animating.
 	 */
-	private var _flashRect:Rectangle = new Rectangle();
+	var _flashRect:Rectangle = new Rectangle();
 	/**
 	 * The actual Flash BitmapData object representing the current effect state.
 	 */
-	private var _pixels:BitmapData;
+	var _pixels:BitmapData;
 	
 	/**
 	 * Creates a new FlxEffectWave, which applies a wave-distortion effect.
@@ -174,7 +174,7 @@ class FlxWaveEffect implements IFlxEffect
 		return _pixels.clone();
 	}
 	
-	private inline function calculateOffset(p:Float, length:Int):Float
+	inline function calculateOffset(p:Float, length:Int):Float
 	{
 		var waveOffset:Float = 0;
 		if (interlaceOffset != 0 && interlaceOffset != 1 && FlxMath.isOdd(p))
@@ -185,7 +185,7 @@ class FlxWaveEffect implements IFlxEffect
 		return FlxMath.fastSin((p / wavelength) + _time + waveOffset);
 	}
 
-	private function set_interlaceOffset(InterlaceOffset:Float):Float
+	function set_interlaceOffset(InterlaceOffset:Float):Float
 	{
 		return interlaceOffset = FlxMath.bound(InterlaceOffset, 0, 1);
 	}

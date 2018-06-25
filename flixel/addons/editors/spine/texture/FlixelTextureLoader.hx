@@ -9,7 +9,7 @@ import spinehaxe.atlas.TextureLoader;
 
 class FlixelTextureLoader implements TextureLoader
 {
-	private var prefix:String;
+	var prefix:String;
 	
 	public function new(prefix:String) 
 	{

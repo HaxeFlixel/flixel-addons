@@ -36,12 +36,12 @@ class FlxNapeSprite extends FlxSprite
 	 * Internal var to update body.velocity.x and body.velocity.y. 
 	 * Default is 1, which menas no drag.
 	 */
-	private var _linearDrag:Float = 1;
+	var _linearDrag:Float = 1;
 	/**
 	 * Internal var to update body.angularVel
 	 * Default is 1, which menas no drag.
 	 */
-	private var _angularDrag:Float = 1;
+	var _angularDrag:Float = 1;
 
 	/**
 	 * Creates a FlxNapeSprite with an optional physics body.
@@ -248,7 +248,7 @@ class FlxNapeSprite extends FlxSprite
 	}
 	#end
 	
-	private function setBody(body:Body):Void
+	function setBody(body:Body):Void
 	{
 		this.body = body;
 		set_physicsEnabled(physicsEnabled);
@@ -258,7 +258,7 @@ class FlxNapeSprite extends FlxSprite
 	 * Updates physics FlxSprite graphics to follow this sprite physics object, called at the end of update().
 	 * Things that are updated: Position, angle, angular and linear drag.
 	 */	
-	private function updatePhysObjects():Void 
+	function updatePhysObjects():Void 
 	{
 		updatePosition();
 		
@@ -274,13 +274,13 @@ class FlxNapeSprite extends FlxSprite
 		}
 	}
 	
-	private function updatePosition():Void
+	function updatePosition():Void
 	{
 		x = body.position.x - origin.x;
 		y = body.position.y - origin.y;
 	}
 	
-	private inline function set_physicsEnabled(Value:Bool):Bool
+	inline function set_physicsEnabled(Value:Bool):Bool
 	{
 		if (body != null)
 			body.space = Value ? FlxNapeSpace.space : null;

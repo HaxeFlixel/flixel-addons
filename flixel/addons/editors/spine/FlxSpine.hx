@@ -81,8 +81,8 @@ class FlxSpine extends FlxSprite
 	
 	public var renderMeshes:Bool = false;
 	
-	private var _tempVertices:Array<Float>;
-	private var _quadTriangles:Array<Int>;
+	var _tempVertices:Array<Float>;
+	var _quadTriangles:Array<Int>;
 	
 	/**
 	 * Instantiate a new Spine Sprite.
@@ -187,7 +187,7 @@ class FlxSpine extends FlxSprite
 		collider.draw();
 	}
 	
-	private function renderWithTriangles():Void
+	function renderWithTriangles():Void
 	{
 		var drawOrder:Array<Slot> = skeleton.drawOrder;
 		var n:Int = drawOrder.length;
@@ -300,7 +300,7 @@ class FlxSpine extends FlxSprite
 		}
 	}
 	
-	private function renderWithQuads():Void
+	function renderWithQuads():Void
 	{
 		var flipX:Int = skeleton.flipX ? -1 : 1;
 		var flipY:Int = skeleton.flipY ? -1 : 1;
@@ -383,7 +383,7 @@ class FlxSpine extends FlxSprite
 		}
 	}
 	
-	private function getSprite(regionAttachment:RegionAttachment):FlxSprite 
+	function getSprite(regionAttachment:RegionAttachment):FlxSprite 
 	{
 		if (regionAttachment.wrapperSprite != null && Std.is(regionAttachment.wrapperSprite, FlxSprite))
 			return cast(regionAttachment.wrapperSprite, FlxSprite);
@@ -491,14 +491,14 @@ class FlxSpine extends FlxSprite
 		return Height;
 	}
 	
-	override private function set_flipX(value:Bool):Bool
+	override function set_flipX(value:Bool):Bool
 	{
 		skeleton.flipX = value;
 		set_x(x);
 		return flipX = value;
 	}
 	
-	override private function set_flipY(value:Bool):Bool
+	override function set_flipY(value:Bool):Bool
 	{
 		skeleton.flipY = value;
 		set_y(y);
@@ -595,7 +595,7 @@ class FlxSpineCollider extends FlxObject
 		return Height;
 	}
 	
-	private function set_offsetX(value:Float):Float
+	function set_offsetX(value:Float):Float
 	{
 		if (parent != null && offsetX != value)
 		{
@@ -610,7 +610,7 @@ class FlxSpineCollider extends FlxObject
 		return value;
 	}
 	
-	private function set_offsetY(value:Float):Float
+	function set_offsetY(value:Float):Float
 	{
 		if (parent != null && offsetY != value)
 		{

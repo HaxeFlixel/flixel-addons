@@ -47,28 +47,28 @@ class FlxShapeGrid extends FlxShapeBox
 			FlxSpriteUtil.drawLine(this, ox, oy + (cellHeight * ih), ox + shapeWidth, oy + (cellHeight * ih), lineStyle);
 	}
 	
-	private inline function set_cellWidth(f:Float):Float 
+	inline function set_cellWidth(f:Float):Float 
 	{
 		cellWidth = f;
 		shapeDirty = true;
 		return cellWidth;
 	}
 	
-	private inline function set_cellHeight(f:Float):Float 
+	inline function set_cellHeight(f:Float):Float 
 	{
 		cellHeight = f;
 		shapeDirty = true;
 		return cellHeight;
 	}
 	
-	private inline function set_cellsWide(i:Int):Int 
+	inline function set_cellsWide(i:Int):Int 
 	{
 		cellsWide = i;
 		shapeDirty = true;
 		return cellsWide;
 	}
 	
-	private inline function set_cellsTall(i:Int):Int 
+	inline function set_cellsTall(i:Int):Int 
 	{
 		cellsTall = i;
 		shapeDirty = true;

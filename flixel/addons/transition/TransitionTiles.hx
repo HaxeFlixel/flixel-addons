@@ -12,8 +12,8 @@ import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
  */
 class TransitionTiles extends TransitionEffect
 {
-	private var _grpSprites:FlxTypedSpriteGroup<FlxTransitionSprite>;
-	private var _isCenter:Bool = false;
+	var _grpSprites:FlxTypedSpriteGroup<FlxTransitionSprite>;
+	var _isCenter:Bool = false;
 	
 	public function new(data:TransitionData) 
 	{

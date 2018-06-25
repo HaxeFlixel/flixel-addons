@@ -70,11 +70,11 @@ class FlxButtonPlus extends FlxSpriteGroup
 	/**
 	 * Shows the current state of the button.
 	 */
-	private var _status:Int = NORMAL;
+	var _status:Int = NORMAL;
 	/**
 	 * Whether or not the button has initialized itself yet.
 	 */
-	private var _initialized:Bool = false;
+	var _initialized:Bool = false;
 	
 	/**
 	 * Creates a new FlxButton object with a gray background
@@ -367,7 +367,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		#end
 	}
 	
-	private function set_text(NewText:String):String
+	function set_text(NewText:String):String
 	{
 		if ((textNormal != null) && (textNormal.text != NewText))
 		{
@@ -378,7 +378,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		return NewText;
 	}
 	
-	private inline function set_buttonNormal(Value:FlxExtendedSprite):FlxExtendedSprite
+	inline function set_buttonNormal(Value:FlxExtendedSprite):FlxExtendedSprite
 	{
 		if (Value == null)
 		{
@@ -397,7 +397,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		return buttonNormal = Value;
 	}
 	
-	private inline function set_buttonHighlight(Value:FlxExtendedSprite):FlxExtendedSprite
+	inline function set_buttonHighlight(Value:FlxExtendedSprite):FlxExtendedSprite
 	{
 		if (Value == null)
 		{
@@ -416,7 +416,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		return buttonHighlight = Value;
 	}
 	
-	private inline function set_textNormal(Value:FlxText):FlxText
+	inline function set_textNormal(Value:FlxText):FlxText
 	{
 		if (Value == null)
 		{
@@ -435,7 +435,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		return textNormal = Value;
 	}
 	
-	private inline function set_textHighlight(Value:FlxText):FlxText
+	inline function set_textHighlight(Value:FlxText):FlxText
 	{
 		if (Value == null)
 		{

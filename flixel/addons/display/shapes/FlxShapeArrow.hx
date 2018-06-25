@@ -16,8 +16,8 @@ class FlxShapeArrow extends FlxShape
 	public var point(default, null):FlxPoint;
 	public var point2(default, null):FlxPoint;
 	
-	private var _matrix2:Matrix;
-	private var _vertices:Array<FlxPoint>;
+	var _matrix2:Matrix;
+	var _vertices:Array<FlxPoint>;
 	
 	/**
 	 * Creates a line with an arrowhead on the end point
@@ -54,22 +54,22 @@ class FlxShapeArrow extends FlxShape
 		shape_id = FlxShapeType.ARROW;
 	}
 	
-	override private function getStrokeOffsetX():Float
+	override function getStrokeOffsetX():Float
 	{
 		return strokeBuffer / 6;
 	}
 	
-	override private function getStrokeOffsetY():Float
+	override function getStrokeOffsetY():Float
 	{
 		return strokeBuffer / 6;
 	}
 	
-	override private function get_strokeBuffer():Float
+	override function get_strokeBuffer():Float
 	{
 		return lineStyle.thickness * 3.0;
 	}
 	
-	override private function getStrokeOffsetMatrix(matrix:Matrix):Matrix
+	override function getStrokeOffsetMatrix(matrix:Matrix):Matrix
 	{
 		var buffer:Float = strokeBuffer / 3;
 		matrix.identity();
@@ -155,12 +155,12 @@ class FlxShapeArrow extends FlxShape
 		fixBoundaries(Math.abs(point.x - point2.x), Math.abs(point.y - point2.y));
 	}
 	
-	private inline function onSetPoint(p:FlxPoint):Void 
+	inline function onSetPoint(p:FlxPoint):Void 
 	{
 		updatePoint();
 	}
 	
-	private function updatePoint():Void
+	function updatePoint():Void
 	{
 		shapeWidth = Math.abs(point.x - point2.x);
 		shapeHeight = Math.abs(point.y - point2.y);
@@ -169,21 +169,21 @@ class FlxShapeArrow extends FlxShape
 		shapeDirty = true;
 	}
 	
-	private inline function set_arrowSize(f:Float):Float 
+	inline function set_arrowSize(f:Float):Float 
 	{
 		arrowSize = f;
 		shapeDirty = true;
 		return arrowSize;
 	}
 	
-	private inline function set_outlineStyle(ls:LineStyle):LineStyle 
+	inline function set_outlineStyle(ls:LineStyle):LineStyle 
 	{
 		outlineStyle = ls;
 		shapeDirty = true;
 		return outlineStyle;
 	}
 	
-	private override function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
+	override function fixBoundaries(trueWidth:Float, trueHeight:Float):Void 
 	{
 		var diffX = (pixels.width - trueWidth);
 		var diffY = (pixels.height - trueHeight);
