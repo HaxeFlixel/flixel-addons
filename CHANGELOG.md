@@ -1,3 +1,12 @@
+2.7.0 (to be released)
+------------------------------
+* `FlxSliceSprite`: added `scale` support (#318)
+* `TiledTileSet`: added tile `type` and `probability` attributes (#320)
+* `FlxMouseControl`: fixed down not being distinguishable from drag (#307)
+* Added `flixel.addons.util.FlxSimplex` (#280)
+* `FlxTypeText`: fixed `applyMarkup` (#305)
+* `TiledMap`: guess `rootPath` based on the data asset path (#315)
+
 2.6.0 (May 4, 2018)
 ------------------------------
 * Compatibility with flixel 4.4.0
