@@ -386,9 +386,8 @@ class FlxSliceSprite extends FlxStrip
 	override function set_alpha(Alpha:Float):Float
 	{
 		if (alpha == Alpha)
-		{
 			return Alpha;
-		}
+		
 		var newAlpha:Float = super.set_alpha(Alpha);
 		
 		if (FlxG.renderBlit && renderSprite != null)
