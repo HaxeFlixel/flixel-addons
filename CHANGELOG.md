@@ -1,4 +1,4 @@
-2.7.0 (to be released)
+2.7.0 (July 5, 2018)
 ------------------------------
 * `FlxSliceSprite`: added `scale` support (#318)
 * `TiledTileSet`: added tile `type` and `probability` attributes (#320)
