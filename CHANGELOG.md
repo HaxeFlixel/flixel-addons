@@ -1,3 +1,8 @@
+2.7.1 (November 10, 2018)
+------------------------------
+* `FlxSimplex`: improved `simplexTiles()` by basing it on 4D noise generation (#324)
+* `TiledPropertySet`: fixed compilation with Haxe 4 preview 5
+
 2.7.0 (July 5, 2018)
 ------------------------------
 * `FlxSliceSprite`: added `scale` support (#318)
