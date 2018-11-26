@@ -191,8 +191,8 @@ class TiledTileSet
 			
 			if (tileWidth > 0 && tileHeight > 0)
 			{
-				numRows = Std.int(imgWidth / tileWidth);
-				numCols = Std.int(imgHeight / tileHeight);
+				numRows = Std.int(imgHeight / tileHeight);
+				numCols = Std.int(imgWidth / tileWidth);
 				numTiles = numRows * numCols;
 			}
 		}
