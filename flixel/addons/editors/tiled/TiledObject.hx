@@ -70,13 +70,13 @@ class TiledObject
 	 */
 	public var points:Array<FlxPoint>;
 	
-	public function new(source:Fast, parent:TiledObjectLayer)
+	public function new(source:Fast, parent:TiledObjectLayer = null)
 	{
 		xmlData = source;
 		layer = parent;
 		name = (source.has.name) ? source.att.name : "";
 		type = (source.has.type) ? source.att.type :
-		        (parent.properties.contains("defaultType") ? parent.properties.get("defaultType") : "");
+		        (parent != null && parent.properties.contains("defaultType") ? parent.properties.get("defaultType") : "");
 		x = Std.parseInt(source.att.x);
 		y = Std.parseInt(source.att.y);
 		width = (source.has.width) ? Std.parseInt(source.att.width) : 0;
@@ -89,7 +89,7 @@ class TiledObject
 		shared = null;
 		gid = -1;
 		
-		// object with tile association?
+		// Object was added from the Map Editor as a Tile Object
 		if (source.has.gid && source.att.gid.length != 0)
 		{
 			var gid64 = parseString(source.att.gid);
@@ -108,7 +108,8 @@ class TiledObject
 					break;
 				}
 			}
-			// If there is a gid it means that it's a tile object
+			// If there is a gid it means that it's a tile object added from the Map Editor
+			// Objects added to tiles from the Collision Editor are processed normally
 			objectType = TILE;
 		}
 		

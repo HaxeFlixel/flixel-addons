@@ -187,6 +187,14 @@ class TiledTileSet
 						);
 					}
 				}
+				if (node.hasNode.objectgroup)
+				{
+					for (object in node.node.objectgroup.nodes.object)
+					{
+						var tiledObject:TiledObject = new TiledObject(object);
+						tileProps[id].addTileObject(tiledObject);
+					}
+				}
 			}
 			
 			if (tileWidth > 0 && tileHeight > 0)
