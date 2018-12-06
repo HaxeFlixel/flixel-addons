@@ -2,8 +2,13 @@ package flixel.addons.editors.tiled;
 
 import flash.utils.Endian;
 import flixel.addons.editors.tiled.TiledLayer.TiledLayerType;
-import haxe.xml.Fast;
 import openfl.utils.ByteArray;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 class TiledTileLayer extends TiledLayer
 {
@@ -17,11 +22,11 @@ class TiledTileLayer extends TiledLayer
 	public var csvData(get, null):String;
 	public var tileArray(get, null):Array<Int>;
 	
-	var xmlData:Fast;
+	var xmlData:Access;
 
 	static inline var BASE64_CHARS:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 	
-	public function new(source:Fast, parent:TiledMap)
+	public function new(source:Access, parent:TiledMap)
 	{
 		super(source, parent);
 		type = TiledLayerType.TILE;

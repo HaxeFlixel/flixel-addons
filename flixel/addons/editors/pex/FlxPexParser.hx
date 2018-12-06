@@ -5,10 +5,15 @@ import flixel.effects.particles.FlxParticle;
 import flixel.FlxG;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
-import haxe.xml.Fast;
 import haxe.xml.Parser;
 import openfl.Assets;
 import openfl.display.BlendMode;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * Parser for particle files created with "Starling Particle Editor" or "Particle Designer".
@@ -43,7 +48,7 @@ class FlxPexParser
 			emitter = cast new FlxEmitter();
 		}
 		
-		var config:Fast = getFastNode(data);
+		var config:Access = getAccessNode(data);
 
 		// Need to extract the particle graphic information
 		var particle:FlxParticle = new FlxParticle();
@@ -137,7 +142,7 @@ class FlxPexParser
 		return emitter;
 	}
 	
-	static function minMax(property:String, ?propertyVariance:String, config:Fast): { min:Float, max:Float } 
+	static function minMax(property:String, ?propertyVariance:String, config:Access): { min:Float, max:Float } 
 	{
 		if (propertyVariance == null) 
 		{
@@ -157,7 +162,7 @@ class FlxPexParser
 		};
 	}
 	
-	static function xy(property:String, config:Fast): { x:Float, y:Float }
+	static function xy(property:String, config:Access): { x:Float, y:Float }
 	{
 		var node = config.node.resolve(getNodeName(property, config));
 		
@@ -168,7 +173,7 @@ class FlxPexParser
 		};
 	}
 	
-	static function color(property:String, config:Fast): { minColor:FlxColor, maxColor:FlxColor }
+	static function color(property:String, config:Access): { minColor:FlxColor, maxColor:FlxColor }
 	{
 		var node = config.node.resolve(getNodeName(property, config));
 		var varianceNode = config.node.resolve(getNodeName(property + "Variance", config));
@@ -190,14 +195,14 @@ class FlxPexParser
 		};
 	}
 
-	static inline function getNodeName(property:String, config:Fast):String
+	static inline function getNodeName(property:String, config:Access):String
 	{
 		// for backwards compatibility, check for versions of properties that
 		// start with either lower or upper case
 		return config.hasNode.resolve(property) ? property : (property.substr(0, 1).toUpperCase() + property.substr(1));
 	}
 
-	static function getFastNode(data:Dynamic):Fast
+	static function getAccessNode(data:Dynamic):Access
 	{
 		var str:String = "";
 		var firstElement:Xml = null;
@@ -241,7 +246,7 @@ class FlxPexParser
 			throw 'The input data is incorrect.';
 		}
 		
-		return new Fast(firstElement);
+		return new Access(firstElement);
 	}
 }
 

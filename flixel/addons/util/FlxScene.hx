@@ -11,8 +11,13 @@ import flixel.util.FlxColor;
 import flixel.addons.display.FlxBackdrop;
 import openfl.Assets;
 import haxe.xml.Parser;
-import haxe.xml.Fast;
 using haxe.EnumTools;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * Loads a scene from XML file. Scenes contain layers of entities (custom FlxSprite),
@@ -63,9 +68,9 @@ class FlxScene
 	 */
 	var _xml:Xml;
 	/**
-	 * Internal xml.Fast.
+	 * Internal xml.Access.
 	 */
-	var _fastXml:Fast;
+	var _fastXml:Access;
 
 	/**
 	 * Optionally set the scene file already.
@@ -91,7 +96,7 @@ class FlxScene
 		var data:String = Assets.getText(file);
 
 		_xml = Parser.parse(data);
-		_fastXml = new Fast(_xml.firstElement());
+		_fastXml = new Access(_xml.firstElement());
 
 		// <scene> attributes
 
@@ -300,7 +305,7 @@ class FlxScene
 	 * @param 	container 	FlxTypedGroup.
 	 * @param 	element 	XML attributes.
 	 */
-	function addInstance(instance:Dynamic, container:FlxTypedGroup<Dynamic>, element:Fast):Void
+	function addInstance(instance:Dynamic, container:FlxTypedGroup<Dynamic>, element:Access):Void
 	{
 		if (container == null)
 			FlxG.state.add(instance);
@@ -318,7 +323,7 @@ class FlxScene
 	 * @param 	instance 	Instance to set properties.
 	 * @param 	element 	XML attributes.
 	 */
-	function applySpriteProperties(instance:FlxSprite, element:Fast):Void
+	function applySpriteProperties(instance:FlxSprite, element:Access):Void
 	{
 		// From FlxSprite
 
@@ -410,7 +415,7 @@ class FlxScene
 	 * @param 	instance 	Instance to set properties.
 	 * @param 	element 	XML attributes.
 	 */
-	function applyTextProperties(instance:FlxText, element:Fast):Void
+	function applyTextProperties(instance:FlxText, element:Access):Void
 	{
 		if (instance == null || element == null) return;
 		

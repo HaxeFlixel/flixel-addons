@@ -1,8 +1,12 @@
 package flixel.addons.editors.tiled;
 
 import flash.utils.ByteArray;
-import flash.utils.Endian;
-import haxe.xml.Fast;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * Base class for Tiled object and tile layers
@@ -23,7 +27,7 @@ class TiledLayer
 	/** @since 2.1.0 */
 	public var offsetY:Float;
 
-	function new(source:Fast, parent:TiledMap)
+	function new(source:Access, parent:TiledMap)
 	{
 		properties = new TiledPropertySet();
 		map = parent;
@@ -36,7 +40,7 @@ class TiledLayer
 		loadProperties(source);
 	}
 
-	function loadProperties(source:Fast):Void
+	function loadProperties(source:Access):Void
 	{
 		for (node in source.nodes.properties)
 		{

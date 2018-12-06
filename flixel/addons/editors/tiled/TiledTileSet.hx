@@ -4,8 +4,13 @@ import flash.geom.Rectangle;
 import flixel.util.typeLimit.OneOfTwo;
 import openfl.Assets;
 import openfl.utils.ByteArray;
-import haxe.xml.Fast;
 import haxe.io.Path;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -39,13 +44,13 @@ class TiledTileSet
 	
 	public function new(data:FlxTiledTileAsset, rootPath:String = "")
 	{
-		var source:Fast;
+		var source:Access;
 		numTiles = 0xFFFFFF;
 		numRows = numCols = 1;
 		
 		// Use the correct data format
 		#if (haxe_ver < "4.0.0")
-		if (Std.is(data, Fast))
+		if (Std.is(data, Access))
 		#else
 		if (Std.is(data, Xml))
 		#end
@@ -55,7 +60,7 @@ class TiledTileSet
 		else if (Std.is(data, ValidByteArray))
 		{
 			var bytes:ValidByteArray = cast data;
-			source = new Fast(Xml.parse(bytes.toString()));
+			source = new Access(Xml.parse(bytes.toString()));
 			source = source.node.tileset;
 		}
 		else 
@@ -70,7 +75,7 @@ class TiledTileSet
 			var sourcePath = Path.normalize(rootPath + source.att.source);
 			if (Assets.exists(sourcePath))
 			{
-				source = new Fast(Xml.parse(Assets.getText(sourcePath)));
+				source = new Access(Xml.parse(Assets.getText(sourcePath)));
 				source = source.node.tileset;
 			}
 			else
@@ -81,7 +86,7 @@ class TiledTileSet
 		
 		if (!source.has.source) 
 		{
-			var node:Fast;
+			var node:Access;
 			
 			if (source.hasNode.image)
 			{
@@ -255,4 +260,4 @@ class TiledTileSet
 }
 
 private typedef ValidByteArray = #if lime_legacy ByteArray #else ByteArrayData #end;
-typedef FlxTiledTileAsset = OneOfTwo<Fast, ValidByteArray>;
+typedef FlxTiledTileAsset = OneOfTwo<Access, ValidByteArray>;

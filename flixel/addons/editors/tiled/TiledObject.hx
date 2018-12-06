@@ -1,8 +1,13 @@
 package flixel.addons.editors.tiled;
 
 import haxe.Int64;
-import haxe.xml.Fast;
 import flixel.math.FlxPoint;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
@@ -31,7 +36,7 @@ class TiledObject
 	public var height:Int;
 	public var name:String;
 	public var type:String;
-	public var xmlData:Fast;
+	public var xmlData:Access;
 	/** 
 	 * In degrees
 	 */
@@ -70,7 +75,7 @@ class TiledObject
 	 */
 	public var points:Array<FlxPoint>;
 	
-	public function new(source:Fast, parent:TiledObjectLayer)
+	public function new(source:Access, parent:TiledObjectLayer)
 	{
 		xmlData = source;
 		layer = parent;
@@ -137,7 +142,7 @@ class TiledObject
 		}
 	}
 	
-	function getPoints(node:Fast):Void
+	function getPoints(node:Access):Void
 	{
 		points = new Array<FlxPoint>();
 		
