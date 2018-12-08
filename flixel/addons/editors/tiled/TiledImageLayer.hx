@@ -1,6 +1,10 @@
 package flixel.addons.editors.tiled;
 
-import haxe.xml.Fast;
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 class TiledImageLayer extends TiledLayer
 {
@@ -8,7 +12,7 @@ class TiledImageLayer extends TiledLayer
 	public var x:Int;
 	public var y:Int;
 
-	public function new(source:Fast, parent:TiledMap)
+	public function new(source:Access, parent:TiledMap)
 	{
 		super(source, parent);
 		type = IMAGE;

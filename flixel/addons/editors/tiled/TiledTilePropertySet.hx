@@ -1,7 +1,6 @@
 package flixel.addons.editors.tiled;
 
 import flixel.addons.editors.tiled.TiledObject;
-import haxe.xml.Fast;
 
 /** @since 2.2.0 */
 typedef TileAnimationData = {

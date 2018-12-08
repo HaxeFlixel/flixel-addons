@@ -3,9 +3,14 @@ package flixel.addons.editors.ogmo;
 import flixel.FlxG;
 import flixel.tile.FlxTilemap;
 import flixel.math.FlxRect;
-import haxe.xml.Fast;
 import haxe.xml.Parser;
 import openfl.Assets;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 class FlxOgmoLoader
 {
@@ -14,7 +19,7 @@ class FlxOgmoLoader
 
 	// Helper variables to read level data
 	var _xml:Xml;
-	var _fastXml:Fast;
+	var _fastXml:Access;
 
 	/**
 	 * Creates a new instance of `FlxOgmoLoader` and prepares the XML level data to be loaded.
@@ -44,7 +49,7 @@ class FlxOgmoLoader
 		}
 
 		_xml = Parser.parse(str);
-		_fastXml = new Fast(_xml.firstElement());
+		_fastXml = new Access(_xml.firstElement());
 
 		width = Std.parseInt(_fastXml.att.width);
 		height = Std.parseInt(_fastXml.att.height);

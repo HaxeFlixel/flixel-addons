@@ -1,6 +1,10 @@
 package flixel.addons.editors.tiled;
 
-import haxe.xml.Fast;
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -36,7 +40,7 @@ class TiledPropertySet #if (haxe_ver < 4) implements Dynamic<String> #end
 		return keys.keys();
 	}
 	
-	public function extend(Source:Fast)
+	public function extend(Source:Access)
 	{
 		for (prop in Source.nodes.property)
 		{
