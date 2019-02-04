@@ -1,3 +1,11 @@
+2.7.2 (February 4, 2019)
+------------------------------
+* Compatibility with flixel 4.6.0 and Haxe 4.0.0-rc.1
+* `flixel.addons.editors.tiled`:
+    * `TiledTileSet`: fixed `numRows` and `numCols` being flipped (#326)
+    * added support for Tiled Collision Editor (#327)
+    * `TiledImageLayer`: improved documentation (#329)
+
 2.7.1 (November 10, 2018)
 ------------------------------
 * `FlxSimplex`: improved `simplexTiles()` by basing it on 4D noise generation (#324)

@@ -13,6 +13,7 @@ class TiledTilePropertySet extends TiledPropertySet
 {
 	public var tileID:Int;
 	public var animationFrames:Array<TileAnimationData>;
+	/** @since 2.8.0 */
 	public var tileObjects:Array<TiledObject>;
 
 	public function new(tileID:Int)
@@ -28,6 +29,7 @@ class TiledTilePropertySet extends TiledPropertySet
 		animationFrames.push({ tileID: tileID, duration: duration });
 	}
 
+	/** @since 2.8.0 */
 	public function addTileObject(tileObject:TiledObject):Void
 	{
 		tileObjects.push(tileObject);
