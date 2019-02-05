@@ -15,7 +15,7 @@ import nape.space.Space;
 import nape.util.ShapeDebug;
 
 @:bitmap("assets/images/napeDebug.png")
-class GraphicNapeDebug extends BitmapData {}
+private class GraphicNapeDebug extends BitmapData {}
 #end
 
 /**
