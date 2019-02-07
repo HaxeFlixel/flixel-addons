@@ -1,3 +1,7 @@
+2.7.3 (February 8, 2019)
+------------------------------
+* `FlxSpine`: fixed compatibility with Haxe 4.0.0-rc.1
+
 2.7.2 (February 4, 2019)
 ------------------------------
 * Compatibility with flixel 4.6.0 and Haxe 4.0.0-rc.1
