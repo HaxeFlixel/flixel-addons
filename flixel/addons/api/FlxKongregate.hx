@@ -3,7 +3,6 @@ package flixel.addons.api;
 #if flash
 import flash.display.DisplayObject;
 import flash.display.Loader;
-import flash.errors.IOError;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.net.URLRequest;
@@ -109,7 +108,7 @@ class FlxKongregate
 		}
 	}
 	
-	static function apiLoadError(E:IOError):Void
+	static function apiLoadError(E:IOErrorEvent):Void
 	{
 		FlxG.log.add("Error loading Kongregate API:" + E);
 	}
