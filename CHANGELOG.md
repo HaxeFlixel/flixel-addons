@@ -1,3 +1,7 @@
+2.7.4 (April 2, 2019)
+------------------------------
+* `FlxKongregate`: fixed compatibility with OpenFL 8.9.0
+
 2.7.3 (February 8, 2019)
 ------------------------------
 * `FlxSpine`: fixed compatibility with Haxe 4.0.0-rc.1
