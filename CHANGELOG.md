@@ -1,3 +1,7 @@
+2.7.5 (April 3, 2019)
+------------------------------
+* `TiledMap`: fixed a crash on HashLink
+
 2.7.4 (April 2, 2019)
 ------------------------------
 * `FlxKongregate`: fixed compatibility with OpenFL 8.9.0
