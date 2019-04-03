@@ -74,7 +74,8 @@ class TiledMap
 		{
 			if (this.rootPath == null)
 				this.rootPath = "";
-			source = new Access(data);
+			var xml:Xml = cast data;
+			source = new Access(xml);
 		}
 		
 		source = source.node.map;
