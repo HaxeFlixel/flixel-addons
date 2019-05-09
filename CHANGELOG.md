@@ -1,3 +1,37 @@
+2.7.5 (April 3, 2019)
+------------------------------
+* `TiledMap`: fixed a crash on HashLink
+
+2.7.4 (April 2, 2019)
+------------------------------
+* `FlxKongregate`: fixed compatibility with OpenFL 8.9.0
+
+2.7.3 (February 8, 2019)
+------------------------------
+* `FlxSpine`: fixed compatibility with Haxe 4.0.0-rc.1
+
+2.7.2 (February 4, 2019)
+------------------------------
+* Compatibility with flixel 4.6.0 and Haxe 4.0.0-rc.1
+* `flixel.addons.editors.tiled`:
+    * `TiledTileSet`: fixed `numRows` and `numCols` being flipped (#326)
+    * added support for Tiled Collision Editor (#327)
+    * `TiledImageLayer`: improved documentation (#329)
+
+2.7.1 (November 10, 2018)
+------------------------------
+* `FlxSimplex`: improved `simplexTiles()` by basing it on 4D noise generation (#324)
+* `TiledPropertySet`: fixed compilation with Haxe 4 preview 5
+
+2.7.0 (July 5, 2018)
+------------------------------
+* `FlxSliceSprite`: added `scale` support (#318)
+* `TiledTileSet`: added tile `type` and `probability` attributes (#320)
+* `FlxMouseControl`: fixed down not being distinguishable from drag (#307)
+* Added `flixel.addons.util.FlxSimplex` (#280)
+* `FlxTypeText`: fixed `applyMarkup` (#305)
+* `TiledMap`: guess `rootPath` based on the data asset path (#315)
+
 2.6.0 (May 4, 2018)
 ------------------------------
 * Compatibility with flixel 4.4.0

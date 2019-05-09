@@ -1,6 +1,10 @@
 package flixel.addons.editors.tiled;
 
-import haxe.xml.Fast;
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -14,11 +18,11 @@ class TiledImageTile
 	public var height:Float;
 	public var source:String;
 	
-	public function new(Source:Fast)
+	public function new(Source:Access)
 	{
 		for (img in Source.nodes.image)
 		{
-			width = Std.parseFloat( img.att.width);
+			width = Std.parseFloat(img.att.width);
 			height = Std.parseFloat(img.att.height);
 			source = img.att.source;
 		}

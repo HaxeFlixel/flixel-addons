@@ -15,7 +15,7 @@ import nape.space.Space;
 import nape.util.ShapeDebug;
 
 @:bitmap("assets/images/napeDebug.png")
-class GraphicNapeDebug extends BitmapData {}
+private class GraphicNapeDebug extends BitmapData {}
 #end
 
 /**
@@ -68,7 +68,7 @@ class FlxNapeSpace extends FlxBasic
 		if (space == null)
 			space = new Space(new Vec2());
 		
-		FlxG.signals.stateSwitched.add(onStateSwitch);
+		FlxG.signals.preStateSwitch.add(onStateSwitch);
 		
 		#if FLX_DEBUG
 		// Add a button to toggle Nape debug shapes to the debugger

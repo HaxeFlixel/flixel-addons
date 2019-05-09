@@ -2,7 +2,12 @@ package flixel.addons.editors.tiled;
 
 import flixel.addons.editors.tiled.TiledLayer.TiledLayerType;
 import flixel.util.FlxColor;
-import haxe.xml.Fast;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -14,7 +19,7 @@ class TiledObjectLayer extends TiledLayer
 	public var objects:Array<TiledObject>;
 	public var color:FlxColor;
 	
-	public function new(source:Fast, parent:TiledMap)
+	public function new(source:Access, parent:TiledMap)
 	{
 		super(source, parent);
 		type = TiledLayerType.OBJECT;
@@ -23,7 +28,7 @@ class TiledObjectLayer extends TiledLayer
 		loadObjects(source);
 	}
 	
-	function loadObjects(source:Fast):Void
+	function loadObjects(source:Access):Void
 	{
 		for (node in source.nodes.object)
 		{

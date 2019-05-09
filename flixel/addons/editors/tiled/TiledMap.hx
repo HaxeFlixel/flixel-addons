@@ -2,9 +2,15 @@ package flixel.addons.editors.tiled;
 
 import flixel.util.FlxColor;
 import flixel.util.typeLimit.OneOfTwo;
-import haxe.xml.Fast;
+import haxe.io.Path;
 import openfl.Assets;
 using StringTools;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -45,25 +51,31 @@ class TiledMap
 	var noLoadHash:Map<String, Bool> = new Map<String, Bool>();
 	var layerMap:Map<String, TiledLayer> = new Map<String, TiledLayer>();
 	
-	var rootPath:String="";
+	var rootPath:String;
 	
 	/**
 	 * @param data Either a string or XML object containing the Tiled map data
 	 * @param rootPath Path to use as root to resolve any internal file references
 	 */
-	public function new(data:FlxTiledMapAsset, rootPath:String="")
+	public function new(data:FlxTiledMapAsset, ?rootPath:String)
 	{
-		var source:Fast = null;
+		var source:Access = null;
 		
-		this.rootPath = rootPath;
+		if (rootPath != null)
+			this.rootPath = rootPath;
 		
-		if (Std.is(data, String)) 
+		if (Std.is(data, String))
 		{
-			source = new Fast(Xml.parse(Assets.getText(data)));
+			if (this.rootPath == null)
+				this.rootPath = Path.directory(data) + "/";
+			source = new Access(Xml.parse(Assets.getText(data)));
 		}
-		else if (Std.is(data, Xml)) 
+		else if (Std.is(data, Xml))
 		{
-			source = new Fast(data);
+			if (this.rootPath == null)
+				this.rootPath = "";
+			var xml:Xml = cast data;
+			source = new Access(xml);
 		}
 		
 		source = source.node.map;
@@ -74,7 +86,7 @@ class TiledMap
 		loadLayers(source);
 	}
 	
-	function loadAttributes(source:Fast):Void
+	function loadAttributes(source:Access):Void
 	{
 		version = (source.att.version != null) ? source.att.version : "unknown";
 		orientation = (source.att.orientation != null) ? source.att.orientation : "orthogonal";
@@ -91,7 +103,7 @@ class TiledMap
 		fullHeight = height * tileHeight;
 	}
 	
-	function loadProperties(source:Fast):Void
+	function loadProperties(source:Access):Void
 	{
 		for (node in source.nodes.properties)
 		{
@@ -110,7 +122,7 @@ class TiledMap
 		}
 	}
 	
-	function loadTilesets(source:Fast):Void
+	function loadTilesets(source:Access):Void
 	{
 		for (node in source.nodes.tileset)
 		{
@@ -125,7 +137,7 @@ class TiledMap
 		}
 	}
 	
-	function loadLayers(source:Fast):Void
+	function loadLayers(source:Access):Void
 	{
 		for (el in source.elements)
 		{	

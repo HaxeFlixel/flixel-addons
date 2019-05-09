@@ -1,8 +1,13 @@
 package flixel.addons.editors.tiled;
 
 import haxe.Int64;
-import haxe.xml.Fast;
 import flixel.math.FlxPoint;
+
+#if haxe4
+import haxe.xml.Access;
+#else
+import haxe.xml.Fast as Access;
+#end
 
 /**
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
@@ -13,8 +18,10 @@ class TiledObject
 	/**
 	 * Use these to determine whether a sprite should be flipped, for example:
 	 * 
+	 * ```haxe
 	 * var flipped:Bool = (object.gid & TiledObject.FLIPPED_HORIZONTALLY_FLAG) > 0;
 	 * sprite.facing = flipped ? FlxObject.LEFT : FlxObject.RIGHT;
+	 * ```
 	 */
 	public static inline var FLIPPED_VERTICALLY_FLAG = 0x40000000;
 	public static inline var FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
@@ -31,7 +38,7 @@ class TiledObject
 	public var height:Int;
 	public var name:String;
 	public var type:String;
-	public var xmlData:Fast;
+	public var xmlData:Access;
 	/** 
 	 * In degrees
 	 */
@@ -70,13 +77,13 @@ class TiledObject
 	 */
 	public var points:Array<FlxPoint>;
 	
-	public function new(source:Fast, parent:TiledObjectLayer)
+	public function new(source:Access, parent:TiledObjectLayer = null)
 	{
 		xmlData = source;
 		layer = parent;
 		name = (source.has.name) ? source.att.name : "";
 		type = (source.has.type) ? source.att.type :
-		        (parent.properties.contains("defaultType") ? parent.properties.get("defaultType") : "");
+		        (parent != null && parent.properties.contains("defaultType") ? parent.properties.get("defaultType") : "");
 		x = Std.parseInt(source.att.x);
 		y = Std.parseInt(source.att.y);
 		width = (source.has.width) ? Std.parseInt(source.att.width) : 0;
@@ -89,10 +96,10 @@ class TiledObject
 		shared = null;
 		gid = -1;
 		
-		// object with tile association?
+		// Object was added from the Map Editor as a Tile Object
 		if (source.has.gid && source.att.gid.length != 0)
 		{
-			var gid64 = parseString(source.att.gid);
+			var gid64 = Int64.parseString(source.att.gid);
 			
 			flippedHorizontally = (gid64 & FLIPPED_HORIZONTALLY_FLAG) > 0;
 			flippedVertically = (gid64 & FLIPPED_VERTICALLY_FLAG) > 0;
@@ -108,7 +115,8 @@ class TiledObject
 					break;
 				}
 			}
-			// If there is a gid it means that it's a tile object
+			// If there is a gid it means that it's a tile object added from the Map Editor
+			// Objects added to tiles from the Collision Editor are processed normally
 			objectType = TILE;
 		}
 		
@@ -137,7 +145,7 @@ class TiledObject
 		}
 	}
 	
-	function getPoints(node:Fast):Void
+	function getPoints(node:Access):Void
 	{
 		points = new Array<FlxPoint>();
 		
@@ -148,48 +156,5 @@ class TiledObject
 			pair = p.split(",");
 			points.push(FlxPoint.get(Std.parseFloat(pair[0]), Std.parseFloat(pair[1])));
 		}
-	}
-
-	/**
-	 * This is a copy of Haxe 3.4's `IntHelper.parseString()`.
-	 * Copied for backwards-compatibility with Haxe 3.2.x.
-	 */
-	function parseString(sParam:String):Int64
-	{
-		var base = Int64.ofInt(10);
-		var current = Int64.ofInt(0);
-		var multiplier = Int64.ofInt(1);
-		var sIsNegative = false;
-
-		var s = StringTools.trim(sParam);
-		if (s.charAt(0) == "-")
-		{
-			sIsNegative = true;
-			s = s.substring(1, s.length);
-		}
-		var len = s.length;
-
-		for (i in 0...len)
-		{
-			var digitInt = s.charCodeAt(len - 1 - i) - '0'.code;
-
-			if (digitInt < 0 || digitInt > 9)
-				throw "NumberFormatError";
-
-			var digit:Int64 = Int64.ofInt(digitInt);
-			if (sIsNegative) {
-				current = Int64.sub(current, Int64.mul(multiplier, digit));
-				if (!Int64.isNeg(current))
-					throw "NumberFormatError: Underflow";
-			}
-			else
-			{
-				current = Int64.add(current, Int64.mul(multiplier, digit));
-				if (Int64.isNeg(current))
-					throw "NumberFormatError: Overflow";
-			}
-			multiplier = Int64.mul(multiplier, base);
-		}
-		return current;
 	}
 }
