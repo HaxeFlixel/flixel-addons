@@ -54,4 +54,5 @@ enum TiledLayerType
 	TILE;
 	OBJECT;
 	IMAGE;
+	GROUP;
 }
