@@ -1,10 +1,9 @@
 package flixel.addons.display.shapes;
 
 /**
- * 
+ *
  * @author larsiusprime
  */
-
 enum FlxShapeType
 {
 	ARROW;

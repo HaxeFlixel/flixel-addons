@@ -11,6 +11,7 @@ import flixel.util.FlxColor;
 import flixel.addons.display.FlxBackdrop;
 import openfl.Assets;
 import haxe.xml.Parser;
+
 using haxe.EnumTools;
 
 #if haxe4
@@ -22,7 +23,7 @@ import haxe.xml.Fast as Access;
 /**
  * Loads a scene from XML file. Scenes contain layers of entities (custom FlxSprite),
  * backgrounds, tilemaps, constants, UI and more.
- * 
+ *
  * Any questions tweet me @AndreiRegiani
  */
 class FlxScene
@@ -31,42 +32,52 @@ class FlxScene
 	 * <scene width=""> attribute.
 	 */
 	public var width(default, null):Int;
+
 	/**
 	 * <scene height=""> attribute.
 	 */
 	public var height(default, null):Int;
+
 	/**
 	 * <scene name=""> attribute.
 	 */
 	public var name(default, null):String;
+
 	/**
 	 * <scene description=""> attribute.
 	 */
 	public var description(default, null):String;
+
 	/**
 	 * <scene version=""> attribute.
 	 */
 	public var version(default, null):String;
+
 	/**
 	 * Base directory for all assets loaded inside FlxScene.
 	 */
 	public var assetsDirectory:String = "assets/";
+
 	/**
 	 * Tilemap reference.
 	 */
 	public var tilemap:FlxTilemap;
+
 	/**
 	 * Contains all constants declared in <constants>.
 	 */
 	var _constants:Map<String, Dynamic>;
+
 	/**
 	 * Contains all objects with an "id" attribute.
 	 */
 	var _objects:Map<String, Dynamic>;
+
 	/**
 	 * Internal XML.
 	 */
 	var _xml:Xml;
+
 	/**
 	 * Internal xml.Access.
 	 */
@@ -284,7 +295,7 @@ class FlxScene
 					case "Int":
 						var const:Int = Std.parseInt(element.att.value);
 						_constants.arrayWrite(element.att.id, const);
-					
+
 					case "Float":
 						var const:Float = Std.parseFloat(element.att.value);
 						_constants.arrayWrite(element.att.id, const);
@@ -309,7 +320,6 @@ class FlxScene
 	{
 		if (container == null)
 			FlxG.state.add(instance);
-
 		else
 			container.add(instance);
 
@@ -393,7 +403,7 @@ class FlxScene
 
 		if (element.has.alignBottom)
 			instance.y = FlxG.height - instance.height - Std.parseInt(element.att.alignBottom);
-		
+
 		if (element.has.alignRight)
 			instance.x = FlxG.width - instance.width - Std.parseInt(element.att.alignRight);
 
@@ -417,8 +427,9 @@ class FlxScene
 	 */
 	function applyTextProperties(instance:FlxText, element:Access):Void
 	{
-		if (instance == null || element == null) return;
-		
+		if (instance == null || element == null)
+			return;
+
 		if (element.has.text)
 			instance.text = element.att.text;
 
@@ -467,7 +478,7 @@ class FlxScene
 	 * Gets a specific object by id.
 	 *
 	 * @param 	Id 	Constant name.
-	 * @return 	
+	 * @return
 	 */
 	public function object(id:String):Dynamic
 	{
@@ -488,7 +499,6 @@ class FlxScene
 	{
 		if (value == "false" || Std.parseInt(value) == 0)
 			return false;
-
 		else
 			return true;
 	}

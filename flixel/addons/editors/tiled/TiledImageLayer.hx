@@ -9,8 +9,10 @@ import haxe.xml.Fast as Access;
 class TiledImageLayer extends TiledLayer
 {
 	public var imagePath:String;
+
 	/** Tiled version >= 0.15 uses offsetX */
 	public var x:Int;
+
 	/** Tiled version >= 0.15 uses offsetY */
 	public var y:Int;
 

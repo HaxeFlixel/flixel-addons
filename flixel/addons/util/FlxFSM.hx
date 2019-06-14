@@ -11,32 +11,32 @@ import flixel.util.FlxSignal.FlxTypedSignal;
  */
 class FlxFSMState<T> implements IFlxDestroyable
 {
-	public function new() { }
-	
+	public function new() {}
+
 	/**
 	 * Called when state becomes active.
-	 * 
+	 *
 	 * @param	Owner	The object the state controls
 	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
-	public function enter(owner:T, fsm:FlxFSM<T>):Void { }
-	
+	public function enter(owner:T, fsm:FlxFSM<T>):Void {}
+
 	/**
 	 * Called every update loop.
-	 * 
+	 *
 	 * @param	Owner	The object the state controls
 	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
-	public function update(elapsed:Float, owner:T, fsm:FlxFSM<T>):Void { }
-	
+	public function update(elapsed:Float, owner:T, fsm:FlxFSM<T>):Void {}
+
 	/**
 	 * Called when the state becomes inactive.
-	 * 
+	 *
 	 * @param	Owner	The object the state controls
 	 */
-	public function exit(owner:T):Void { }
-	
-	public function destroy():Void { }
+	public function exit(owner:T):Void {}
+
+	public function destroy():Void {}
 }
 
 /**
@@ -53,47 +53,47 @@ class FlxFSM<T> implements IFlxDestroyable
 	 * The owner of this FSM instance. Gets passed to each state.
 	 */
 	public var owner(default, set):T;
-	
+
 	/**
 	 * Current state
 	 */
 	public var state(default, set):FlxFSMState<T>;
-	
+
 	/**
 	 * Class of current state
 	 */
 	public var stateClass:Class<FlxFSMState<T>>;
-	
+
 	/**
 	 * The age of the active state
 	 */
 	public var age:Float;
-	
+
 	/**
 	 * Name of this FSM. Used for locking/unlocking when in a stack.
 	 */
 	public var name:String;
-	
+
 	/**
 	 * Binary flag. Used for locking/unlocking when in a stack.
 	 */
 	public var type:Int;
-	
+
 	/**
 	 * The stack this FSM belongs to or null
 	 */
 	public var stack:FlxFSMStack<T>;
-	
+
 	/**
 	 * Optional transition table for this FSM
 	 */
 	public var transitions:FlxFSMTransitionTable<T>;
-	
+
 	/**
 	 * Optional map object containing FlxPools for FlxFSMStates
 	 */
 	public var pools:StatePool<T>;
-	
+
 	public function new(?owner:T, ?state:FlxFSMState<T>)
 	{
 		this.age = 0;
@@ -103,7 +103,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		this.transitions = new FlxFSMTransitionTable<T>();
 		this.pools = new StatePool<T>();
 	}
-	
+
 	/**
 	 * Updates the active state instance.
 	 */
@@ -114,27 +114,27 @@ class FlxFSM<T> implements IFlxDestroyable
 			age += elapsed;
 			state.update(elapsed, owner, this);
 		}
-		
+
 		if (transitions != null && pools != null)
 		{
 			var newStateClass = transitions.poll(stateClass, this.owner);
-			
+
 			if (newStateClass != stateClass)
 			{
 				var curName = null;
 				if (stateClass != null)
 					curName = Type.getClassName(stateClass);
 				var newName = Type.getClassName(newStateClass);
-				
+
 				if (newName != null && !pools.exists(newName))
 				{
 					pools.set(newName, new FlxPool<FlxFSMState<T>>(newStateClass));
 				}
-				
+
 				var returnToPool = state;
-				
+
 				state = pools.get(newName).get();
-				
+
 				if (state != null && curName != null && pools.exists(curName))
 				{
 					pools.get(curName).put(returnToPool);
@@ -142,7 +142,7 @@ class FlxFSM<T> implements IFlxDestroyable
 			}
 		}
 	}
-	
+
 	/**
 	 * Calls exit on current state
 	 */
@@ -155,7 +155,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		transitions = null;
 		pools = null;
 	}
-	
+
 	function set_owner(owner:T):T
 	{
 		if (this.owner != owner)
@@ -173,7 +173,7 @@ class FlxFSM<T> implements IFlxDestroyable
 		}
 		return this.owner;
 	}
-	
+
 	function set_state(state:FlxFSMState<T>):FlxFSMState<T>
 	{
 		var newClass = Type.getClass(state);
@@ -195,8 +195,6 @@ class FlxFSM<T> implements IFlxDestroyable
 	}
 }
 
-
-
 /**
  * Used for grouping FSM instances and updating them according to the stack's updateMode.
  */
@@ -206,19 +204,19 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 	 * Test if the stack is empty
 	 */
 	public var isEmpty(get, never):Bool;
-	
+
 	var _stack:Array<FlxFSM<T>>;
-	
+
 	var _alteredStack:Array<FlxFSM<T>>;
-	
+
 	var _hasLocks:Bool;
-	
+
 	var _lockedNames:Array<String>;
-	
+
 	var _lockedTypes:Int;
-	
+
 	var _lockRemaining:Bool;
-	
+
 	public function new()
 	{
 		super();
@@ -228,7 +226,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 		_hasLocks = false;
 		FlxFSMStackSignal._lockSignal.add(lockType);
 	}
-	
+
 	/**
 	 * Updates the states that have not been locked
 	 */
@@ -239,13 +237,13 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 			_stack = _alteredStack.copy();
 			_alteredStack = null;
 		}
-		
+
 		for (fsm in _stack)
 		{
 			if (_hasLocks)
 			{
 				if (_lockRemaining == false && (fsm.type & _lockedTypes) == 0 && _lockedNames.indexOf(fsm.name) == -1)
-				{				
+				{
 					fsm.update(elapsed);
 				}
 			}
@@ -254,16 +252,16 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 				fsm.update(elapsed);
 			}
 		}
-		
+
 		if (_lockedNames.length != 0)
-		{			
+		{
 			_lockedNames = [];
 		}
 		_lockRemaining = false;
 		_lockedTypes = 0;
 		_hasLocks = false;
 	}
-	
+
 	/**
 	 * Locks the specified FSM for the duration of the update loop
 	 * @param	name
@@ -276,7 +274,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 			_hasLocks = true;
 		}
 	}
-	
+
 	/**
 	 * Locks the remaining FSMs for the duration of the update loop
 	 */
@@ -285,7 +283,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 		_lockRemaining = true;
 		_hasLocks = true;
 	}
-	
+
 	/**
 	 * Locks by type, so that if `FSM.type & bitflag != 0`, the FSM gets locked.
 	 * @param	bitflag		You can use `FSMType` abstract for values or build your own.
@@ -295,7 +293,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 		_lockedTypes |= bitflag;
 		_hasLocks = true;
 	}
-	
+
 	/**
 	 * Adds the FSM to the front of the stack
 	 * @param	FSM
@@ -309,7 +307,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 		FSM.stack = this;
 		_alteredStack.unshift(FSM);
 	}
-	
+
 	/**
 	 * Removes the first FSM from the stack
 	 * @return	The removed FSM
@@ -324,7 +322,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 		FlxDestroyUtil.destroy(FSM);
 		return FSM;
 	}
-	
+
 	/**
 	 * Adds the FSM to the end of the stack
 	 * @param	FSM
@@ -338,7 +336,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 		FSM.stack = this;
 		_alteredStack.push(FSM);
 	}
-	
+
 	/**
 	 * Removes the first FSM from the stack
 	 * @return	The removed FSM
@@ -350,11 +348,11 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 			_alteredStack = _stack.copy();
 		}
 		var FSM = _alteredStack.pop();
-		lock(FSM.name);	// FSM isn't updated during the remainder the loop current
+		lock(FSM.name); // FSM isn't updated during the remainder the loop current
 		FlxDestroyUtil.destroy(FSM);
 		return FSM;
 	}
-	
+
 	/**
 	 * Removes the FSM from the stack and destroys it
 	 * @param	The removed FSM
@@ -371,7 +369,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 			FlxDestroyUtil.destroy(FSM);
 		}
 	}
-	
+
 	/**
 	 * Removes the FSM with given name from the stack and destroys it
 	 * @param	The removed FSM
@@ -386,7 +384,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 			}
 		}
 	}
-	
+
 	/**
 	 * Destroys every member in stack and self
 	 */
@@ -399,7 +397,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 		lockRemaining();
 		FlxFSMStackSignal._lockSignal.remove(lockType);
 	}
-	
+
 	function get_isEmpty():Bool
 	{
 		return (_stack.length == 0);
@@ -414,17 +412,16 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
  */
 private class FlxFSMStackSignal
 {
-	
-	static var _lockSignal:FlxTypedSignal< Int->Void >;
-	
+	static var _lockSignal:FlxTypedSignal<Int->Void>;
+
 	public function new()
 	{
 		if (FlxFSMStackSignal._lockSignal == null)
 		{
-			FlxFSMStackSignal._lockSignal = new FlxTypedSignal < Int->Void > ();
+			FlxFSMStackSignal._lockSignal = new FlxTypedSignal<Int->Void>();
 		}
 	}
-	
+
 	/**
 	 * Sends a message to all active FSMStacks to lock given types.
 	 * @param	type	You can use `FSMType` abstract for values or build your own.
@@ -433,7 +430,6 @@ private class FlxFSMStackSignal
 	{
 		FlxFSMStackSignal._lockSignal.dispatch(type);
 	}
-	
 }
 
 /**
@@ -441,16 +437,15 @@ private class FlxFSMStackSignal
  */
 class FlxFSMTransitionTable<T>
 {
-	
 	var _table:Array<Transition<T>>;
 	var _startState:Class<FlxFSMState<T>>;
 	var _garbagecollect:Bool = false;
-	
+
 	public function new()
 	{
 		_table = new Array<Transition<T>>();
 	}
-	
+
 	/**
 	 * Polls the transition table for active states
 	 * @param	FSM	The FlxFSMState the table belongs to
@@ -462,7 +457,7 @@ class FlxFSMTransitionTable<T>
 		{
 			return _startState;
 		}
-		
+
 		if (_garbagecollect)
 		{
 			_garbagecollect = false;
@@ -486,7 +481,7 @@ class FlxFSMTransitionTable<T>
 				_table.remove(transition);
 			}
 		}
-		
+
 		for (transition in _table)
 		{
 			if (transition.from == currentState || transition.from == null)
@@ -497,10 +492,10 @@ class FlxFSMTransitionTable<T>
 				}
 			}
 		}
-		
+
 		return currentState;
 	}
-	
+
 	/**
 	 * Adds a transition condition to the table.
 	 * @param	From	The state the condition applies to
@@ -519,7 +514,7 @@ class FlxFSMTransitionTable<T>
 		}
 		return this;
 	}
-	
+
 	/**
 	 * Adds a global transition condition to the table.
 	 * @param	To		The state to transition
@@ -536,7 +531,7 @@ class FlxFSMTransitionTable<T>
 		}
 		return this;
 	}
-	
+
 	/**
 	 * Add a transition directly
 	 * @param	transition
@@ -548,7 +543,7 @@ class FlxFSMTransitionTable<T>
 			_table.push(transition);
 		}
 	}
-	
+
 	/**
 	 * Sets the starting State
 	 * @param	With
@@ -558,7 +553,7 @@ class FlxFSMTransitionTable<T>
 		_startState = with;
 		return this;
 	}
-	
+
 	/**
 	 * Replaces given state class with another.
 	 * @param	Target			State class to replace
@@ -576,7 +571,7 @@ class FlxFSMTransitionTable<T>
 					addGlobal(replacement, transition.condition);
 				}
 				else
-				{					
+				{
 					add(transition.from, replacement, transition.condition);
 				}
 				_garbagecollect = true;
@@ -589,7 +584,7 @@ class FlxFSMTransitionTable<T>
 			}
 		}
 	}
-	
+
 	/**
 	 * Removes a transition condition from the table
 	 * @param	From	From State
@@ -639,7 +634,7 @@ class FlxFSMTransitionTable<T>
 				}
 		}
 	}
-	
+
 	/**
 	 * Tells if the table contains specific transition or transitions.
 	 * @param	From	From State
@@ -690,8 +685,8 @@ class FlxFSMTransitionTable<T>
 
 class Transition<T>
 {
-	public function new() {	}
-	
+	public function new() {}
+
 	/**
 	 * If this function returns true, the transition becomes active.
 	 * Note: you can override this function if you don't want to use functions passed as variables.
@@ -700,23 +695,23 @@ class Transition<T>
 	{
 		return condition(target);
 	}
-	
+
 	/**
 	 * The state this transition applies to, or null for global transition, ie. from any state
 	 */
 	public var from:Class<FlxFSMState<T>>;
-	
+
 	/**
 	 * The state this transition leads to
 	 */
 	public var to:Class<FlxFSMState<T>>;
-	
+
 	/**
 	 * Function used for evaluation.
 	 * The evaluation function may be overridden, in which case this param may be redundant.
 	 */
 	public var condition:T->Bool;
-	
+
 	/**
 	 * Used to mark this transition for removal
 	 */

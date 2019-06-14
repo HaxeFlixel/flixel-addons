@@ -8,7 +8,6 @@ import flixel.util.FlxColor;
 import haxe.xml.Parser;
 import openfl.Assets;
 import openfl.display.BlendMode;
-
 #if haxe4
 import haxe.xml.Access;
 #else
@@ -39,7 +38,7 @@ class FlxPexParser
 	 * @param	particleGraphic	The particle graphic
 	 * @param	emitter			(optional) A FlxEmitter. Most properties will be overwritten!
 	 * @param	scale			(optional) Used to scale the resulting emitter. Will scale both the texture size and positions of resulting particles.
-	 * @return	A new emitter	
+	 * @return	A new emitter
 	 */
 	public static function parse<T:FlxEmitter>(data:Dynamic, particleGraphic:FlxGraphicAsset, ?emitter:T, scale:Float = 1):T
 	{
@@ -47,62 +46,63 @@ class FlxPexParser
 		{
 			emitter = cast new FlxEmitter();
 		}
-		
+
 		var config:Access = getAccessNode(data);
 
 		// Need to extract the particle graphic information
 		var particle:FlxParticle = new FlxParticle();
 		particle.loadGraphic(particleGraphic);
-		
+
 		var emitterType = Std.parseInt(config.node.emitterType.att.value);
 		if (emitterType != PexEmitterType.GRAVITY)
 		{
 			FlxG.log.warn("FlxPexParser: This emitter type isn't supported. Only the 'Gravity' emitter type is supported.");
 		}
-		
+
 		var maxParticles:Int = Std.parseInt(config.node.maxParticles.att.value);
-		
+
 		var lifespan = minMax("particleLifeSpan", "particleLifespanVariance", config);
 		var speed = minMax("speed", config);
-		
+
 		var angle = minMax("angle", config);
-		
+
 		var startSize = minMax("startParticleSize", config);
 		var finishSize = minMax("finishParticleSize", "finishParticleSizeVariance", config);
 		var rotationStart = minMax("rotationStart", config);
 		var rotationEnd = minMax("rotationEnd", config);
-		
+
 		var sourcePositionVariance = xy("sourcePositionVariance", config);
 		var gravity = xy("gravity", config);
-		
+
 		var startColors = color("startColor", config);
 		var finishColors = color("finishColor", config);
-		
+
 		emitter.launchMode = FlxEmitterMode.CIRCLE;
 		emitter.loadParticles(particleGraphic, maxParticles);
-		
+
 		emitter.width = (sourcePositionVariance.x == 0 ? 1 : sourcePositionVariance.x * 2) * scale;
 		emitter.height = (sourcePositionVariance.y == 0 ? 1 : sourcePositionVariance.y * 2) * scale;
-		
+
 		emitter.lifespan.set(lifespan.min, lifespan.max);
-		
+
 		emitter.acceleration.set(gravity.x * scale, gravity.y * scale);
-		
+
 		emitter.launchAngle.set(angle.min, angle.max);
-		
+
 		emitter.speed.start.set(speed.min * scale, speed.max * scale);
 		emitter.speed.end.set(speed.min * scale, speed.max * scale);
-		
+
 		emitter.angle.set(rotationStart.min, rotationStart.max, rotationEnd.min, rotationEnd.max);
-		
+
 		emitter.scale.start.min.set(startSize.min / particle.frameWidth * scale, startSize.min / particle.frameHeight * scale);
 		emitter.scale.start.max.set(startSize.max / particle.frameWidth * scale, startSize.max / particle.frameHeight * scale);
 		emitter.scale.end.min.set(finishSize.min / particle.frameWidth * scale, finishSize.min / particle.frameHeight * scale);
 		emitter.scale.end.max.set(finishSize.max / particle.frameWidth * scale, finishSize.max / particle.frameHeight * scale);
-		
-		emitter.alpha.set(startColors.minColor.alphaFloat, startColors.maxColor.alphaFloat, finishColors.minColor.alphaFloat, finishColors.maxColor.alphaFloat);
+
+		emitter.alpha.set(startColors.minColor.alphaFloat, startColors.maxColor.alphaFloat, finishColors.minColor.alphaFloat,
+			finishColors.maxColor.alphaFloat);
 		emitter.color.set(startColors.minColor, startColors.maxColor, finishColors.minColor, finishColors.maxColor);
-		
+
 		if (config.hasNode.blendFuncSource && config.hasNode.blendFuncDestination)
 		{
 			/**
@@ -118,10 +118,11 @@ class FlxPexParser
 			 * 0x305: ONE_MINUS_DESTINATION_ALPHA
 			 * 0x306: DESTINATION_COLOR
 			 * 0x307: ONE_MINUS_DESTINATION_COLOR
-			 **/
-			
+			**/
+
 			var src = Std.parseInt(config.node.blendFuncSource.att.value),
-			dst = Std.parseInt(config.node.blendFuncDestination.att.value);
+				dst = Std.parseInt(config.node.blendFuncDestination.att.value);
+
 			emitter.blend = switch ((src << 12) | dst)
 			{
 				case 0x306303:
@@ -141,55 +142,52 @@ class FlxPexParser
 		emitter.keepScaleRatio = true;
 		return emitter;
 	}
-	
-	static function minMax(property:String, ?propertyVariance:String, config:Access): { min:Float, max:Float } 
+
+	static function minMax(property:String, ?propertyVariance:String, config:Access):{min:Float, max:Float}
 	{
-		if (propertyVariance == null) 
+		if (propertyVariance == null)
 		{
 			propertyVariance = property + "Variance";
 		}
-		
+
 		var node = config.node.resolve(getNodeName(property, config));
 		var varianceNode = config.node.resolve(getNodeName(propertyVariance, config));
-		
+
 		var min = Std.parseFloat(node.att.value);
 		var variance = Std.parseFloat(varianceNode.att.value);
-		
-		return 
-		{ 
-			min: min - variance, 
-			max: min + variance 
+
+		return {
+			min: min - variance,
+			max: min + variance
 		};
 	}
-	
-	static function xy(property:String, config:Access): { x:Float, y:Float }
+
+	static function xy(property:String, config:Access):{x:Float, y:Float}
 	{
 		var node = config.node.resolve(getNodeName(property, config));
-		
-		return 
-		{
+
+		return {
 			x: Std.parseFloat(node.att.x),
 			y: Std.parseFloat(node.att.y)
 		};
 	}
-	
-	static function color(property:String, config:Access): { minColor:FlxColor, maxColor:FlxColor }
+
+	static function color(property:String, config:Access):{minColor:FlxColor, maxColor:FlxColor}
 	{
 		var node = config.node.resolve(getNodeName(property, config));
 		var varianceNode = config.node.resolve(getNodeName(property + "Variance", config));
-		
+
 		var minR = Std.parseFloat(node.att.red);
 		var minG = Std.parseFloat(node.att.green);
 		var minB = Std.parseFloat(node.att.blue);
 		var minA = Std.parseFloat(node.att.alpha);
-		
+
 		var varR = Std.parseFloat(varianceNode.att.red);
 		var varG = Std.parseFloat(varianceNode.att.green);
 		var varB = Std.parseFloat(varianceNode.att.blue);
 		var varA = Std.parseFloat(varianceNode.att.alpha);
-		
-		return 
-		{
+
+		return {
 			minColor: FlxColor.fromRGBFloat(minR - varR, minG - varG, minB - varB, minA - varA),
 			maxColor: FlxColor.fromRGBFloat(minR + varR, minG + varG, minB + varB, minA + varA)
 		};
@@ -206,19 +204,19 @@ class FlxPexParser
 	{
 		var str:String = "";
 		var firstElement:Xml = null;
-		
+
 		// data embedded with @:file
-		if (Std.is(data, Class)) 
+		if (Std.is(data, Class))
 		{
 			str = Type.createInstance(data, []);
 		}
 		// data is a XML object
-		else if (Std.is(data, Xml)) 
+		else if (Std.is(data, Xml))
 		{
 			firstElement = data.firstElement();
 		}
 		// data is an ID or the content
-		else if (Std.is(data, String)) 
+		else if (Std.is(data, String))
 		{
 			// is the pexFile an ID to an asset or the content of the file?
 			if (Assets.exists(data))
@@ -234,18 +232,18 @@ class FlxPexParser
 		{
 			throw 'Unknown input data format. It has to be an ID to the assets file, a file embedded with @:file(), a string with the content of the file or a XML object.';
 		}
-		
+
 		// the data wasn't a XML object.
 		if (firstElement == null)
 		{
 			firstElement = Parser.parse(str).firstElement();
 		}
-		
-		if (firstElement == null || firstElement.nodeName != "particleEmitterConfig") 
+
+		if (firstElement == null || firstElement.nodeName != "particleEmitterConfig")
 		{
 			throw 'The input data is incorrect.';
 		}
-		
+
 		return new Access(firstElement);
 	}
 }

@@ -10,60 +10,66 @@ import openfl.geom.Matrix;
 
 /**
  * This creates a trail copying the bitmapData many times.
- * 
+ *
  * @author adrianulima
  */
 class FlxTrailEffect implements IFlxEffect
 {
 	public var active:Bool = true;
 	public var offset(default, null):FlxPoint = FlxPoint.get();
-	
+
 	/**
 	 * The target FlxEffectSprite that to apply the trail.
 	 */
 	public var target(default, null):FlxEffectSprite;
-	
+
 	/**
-	 * The amount of trail images to create. 
+	 * The amount of trail images to create.
 	 */
 	public var length(default, set):Int;
+
 	/**
 	 * The alpha value for the first trail.
 	 */
 	public var alpha:Float;
+
 	/**
 	 * Number of frames to wait until next updated.
 	 */
 	public var framesDelay:Int;
+
 	/**
 	 * Whether to cache current pixels bitmapData of the target for every trail position.
 	 */
 	public var cachePixels(default, set):Bool;
-	
+
 	/**
 	 * An array containing the 'length' last differences of the target positions.
 	 */
 	var _recentPositions:Array<FlxPoint> = [];
+
 	/**
 	 * An array containing the 'length' last pixels bitmapData of the target. Only used if cachePixels is enabled.
 	 */
 	var _recentPixels:Array<BitmapData> = [];
+
 	/**
 	 * Current number of frames passed.
 	 */
 	var _currentFrames:Int = 0;
+
 	/**
 	 * The actual Flash BitmapData object representing the current effect state.
 	 */
 	var _pixels:BitmapData;
-	
+
 	var _matrix:Matrix = new Matrix();
 	var _colorTransform:ColorTransform = new ColorTransform();
-	
+
 	/**
 	 * Creates a trail effect.
-	 * 
-	 * @param	Length			The amount of trail images to create. 
+	 *
+	 * @param	Length			The amount of trail images to create.
 	 * @param	Alpha			The alpha value for the first trailsprite.
 	 * @param	FramesDelay		How many frames wait until next trail updated.
 	 * @param	CachePixels		Whether to cache current pixels bitmapData of the target for every trail position. Disable if target never update graphics.
@@ -76,26 +82,26 @@ class FlxTrailEffect implements IFlxEffect
 		alpha = Alpha;
 		cachePixels = CachePixels;
 	}
-	
-	public function destroy():Void 
+
+	public function destroy():Void
 	{
 		disposeCachedPixels();
 		_recentPixels = null;
 		_recentPositions = FlxDestroyUtil.putArray(_recentPositions);
-		
+
 		_matrix = null;
 		_colorTransform = null;
-		
+
 		offset = FlxDestroyUtil.put(offset);
 		_pixels = FlxDestroyUtil.dispose(_pixels);
 	}
-	
+
 	public function update(elapsed:Float):Void {}
-	
-	public function updateRecents():Void 
+
+	public function updateRecents():Void
 	{
 		_currentFrames++;
-		
+
 		if (_currentFrames >= framesDelay)
 		{
 			var p:FlxPoint = null;
@@ -109,7 +115,7 @@ class FlxTrailEffect implements IFlxEffect
 			}
 			p.set(target.x, target.y);
 			_recentPositions.push(p);
-			
+
 			if (cachePixels)
 			{
 				if (_recentPixels.length >= length)
@@ -118,26 +124,26 @@ class FlxTrailEffect implements IFlxEffect
 				}
 				_recentPixels.push(target.pixels.clone());
 			}
-			
+
 			_currentFrames = 0;
 		}
 	}
-	
-	public function apply(bitmapData:BitmapData):BitmapData 
+
+	public function apply(bitmapData:BitmapData):BitmapData
 	{
 		updateRecents();
-		
+
 		if (_recentPositions.length < 1)
 			return bitmapData;
-		
+
 		var minX:Float = 0;
 		var maxX:Float = 0;
 		var minY:Float = 0;
 		var maxY:Float = 0;
-		
+
 		var ww:Int = bitmapData.width;
 		var hh:Int = bitmapData.height;
-		
+
 		for (i in 0..._recentPositions.length)
 		{
 			if (cachePixels)
@@ -145,20 +151,20 @@ class FlxTrailEffect implements IFlxEffect
 				ww = _recentPixels[i].width;
 				hh = _recentPixels[i].height;
 			}
-			
+
 			minX = Math.min(_recentPositions[i].x - target.x, Math.min(minX, 0));
 			minY = Math.min(_recentPositions[i].y - target.y, Math.min(minY, 0));
 			maxX = Math.max(_recentPositions[i].x - target.x + ww, Math.max(maxX, 0));
 			maxY = Math.max(_recentPositions[i].y - target.y + hh, Math.max(maxY, 0));
 		}
-		
+
 		offset.set(minX, minY);
-		
+
 		if (!cachePixels && minX == 0 && minY == 0 && maxX == 0 && maxY == 0)
 		{
 			return bitmapData;
 		}
-		
+
 		if (_pixels == null)
 		{
 			FlxDestroyUtil.dispose(_pixels);
@@ -177,16 +183,16 @@ class FlxTrailEffect implements IFlxEffect
 				_pixels.fillRect(_pixels.rect, FlxColor.TRANSPARENT);
 			}
 		}
-		
+
 		var alphaDiff:Float = alpha / _recentPositions.length;
-		
+
 		_pixels.lock();
 		for (i in 0..._recentPositions.length)
 		{
 			_colorTransform.alphaMultiplier = alphaDiff * i;
 			_matrix.tx = _recentPositions[i].x - target.x - offset.x;
 			_matrix.ty = _recentPositions[i].y - target.y - offset.y;
-			
+
 			if (cachePixels || _matrix.tx != 0 || _matrix.ty != 0)
 			{
 				if (cachePixels && _recentPixels.length > i)
@@ -199,18 +205,18 @@ class FlxTrailEffect implements IFlxEffect
 				}
 			}
 		}
-		
+
 		_matrix.tx = -offset.x;
 		_matrix.ty = -offset.y;
-		
+
 		_pixels.draw(bitmapData, _matrix);
 		_pixels.unlock();
-		
+
 		FlxDestroyUtil.dispose(bitmapData);
-		
+
 		return _pixels.clone();
 	}
-	
+
 	/** @since 2.1.0 */
 	public function clear():Void
 	{
@@ -220,7 +226,7 @@ class FlxTrailEffect implements IFlxEffect
 			disposeCachedPixels();
 		}
 	}
-	
+
 	function disposeCachedPixels()
 	{
 		while (_recentPixels.length > 0)
@@ -228,8 +234,8 @@ class FlxTrailEffect implements IFlxEffect
 			FlxDestroyUtil.dispose(_recentPixels.shift());
 		}
 	}
-	
-	function set_length(Value:Int):Int 
+
+	function set_length(Value:Int):Int
 	{
 		Value = FlxMath.maxInt(1, Value);
 		while (Value < _recentPositions.length)
@@ -240,11 +246,11 @@ class FlxTrailEffect implements IFlxEffect
 				_recentPixels.shift();
 			}
 		}
-		
+
 		return length = Value;
 	}
-	
-	function set_cachePixels(Value:Bool):Bool 
+
+	function set_cachePixels(Value:Bool):Bool
 	{
 		if (!Value)
 		{

@@ -10,7 +10,6 @@ import nape.phys.BodyType;
 import nape.phys.Material;
 import nape.shape.Polygon;
 import nape.space.Space;
-
 #if FLX_DEBUG
 import nape.util.ShapeDebug;
 
@@ -25,25 +24,26 @@ private class GraphicNapeDebug extends BitmapData {}
 class FlxNapeSpace extends FlxBasic
 {
 	public static var space:Space;
-	
+
 	/**
 	 * The number of iterations used by nape in resolving errors in the velocities of objects.
 	 * This is together with collision detection the most expensive phase of a simulation update,
 	 * as well as the most important for stable results. (default 10)
 	 */
 	public static var velocityIterations:Int = 10;
+
 	/**
 	 * The number of iterations used by nape in resolving errors in the positions of objects.
 	 * This is far more lightweight than velocity iterations, as well as being less important
 	 * for the stability of results. (default 10)
 	 */
 	public static var positionIterations:Int = 10;
-	
+
 	/**
 	 * Whether or not the nape debug graphics are enabled.
 	 */
 	public static var drawDebug(default, set):Bool;
-	
+
 	#if FLX_DEBUG
 	/**
 	 * A useful "canvas" which can be used to draw debug information on.
@@ -54,9 +54,10 @@ class FlxNapeSpace extends FlxBasic
 	 * Note that shapeDebug is null if drawDebug is false.
 	 */
 	public static var shapeDebug(default, null):ShapeDebug;
+
 	static var drawDebugButton:FlxSystemButton;
 	#end
-	
+
 	/**
 	 * Needs to be called before creating any FlxNapeSprites
 	 * / FlxNapeTilemaps to initialize the space.
@@ -64,12 +65,12 @@ class FlxNapeSpace extends FlxBasic
 	public static function init():Void
 	{
 		FlxG.plugins.add(new FlxNapeSpace());
-		
+
 		if (space == null)
 			space = new Space(new Vec2());
-		
+
 		FlxG.signals.preStateSwitch.add(onStateSwitch);
-		
+
 		#if FLX_DEBUG
 		// Add a button to toggle Nape debug shapes to the debugger
 		drawDebugButton = FlxG.debugger.addButton(RIGHT, new GraphicNapeDebug(0, 0), function()
@@ -79,7 +80,7 @@ class FlxNapeSpace extends FlxBasic
 		drawDebug = false;
 		#end
 	}
-	
+
 	/**
 	 * Creates simple walls around the game area - useful for prototying.
 	 *
@@ -94,15 +95,15 @@ class FlxNapeSpace extends FlxBasic
 	{
 		if (maxX == 0)
 			maxX = FlxG.width;
-		
+
 		if (maxY == 0)
 			maxY = FlxG.height;
-		
+
 		if (material == null)
 			material = new Material(0.4, 0.2, 0.38, 0.7);
-		
+
 		var walls:Body = new Body(BodyType.STATIC);
-		
+
 		// Left wall
 		walls.shapes.add(new Polygon(Polygon.rect(minX - thickness, minY, thickness, maxY + Math.abs(minY))));
 		// Right wall
@@ -111,19 +112,19 @@ class FlxNapeSpace extends FlxBasic
 		walls.shapes.add(new Polygon(Polygon.rect(minX, minY - thickness, maxX + Math.abs(minX), thickness)));
 		// Bottom wall
 		walls.shapes.add(new Polygon(Polygon.rect(minX, maxY, maxX + Math.abs(minX), thickness)));
-		
+
 		walls.space = space;
 		walls.setShapeMaterials(material);
-		
+
 		return walls;
 	}
-	
+
 	static function set_drawDebug(drawDebug:Bool):Bool
 	{
 		#if FLX_DEBUG
 		if (drawDebugButton != null)
 			drawDebugButton.toggled = !drawDebug;
-		
+
 		if (drawDebug)
 		{
 			if (shapeDebug == null)
@@ -141,10 +142,10 @@ class FlxNapeSpace extends FlxBasic
 			shapeDebug = null;
 		}
 		#end
-		
+
 		return FlxNapeSpace.drawDebug = drawDebug;
 	}
-	
+
 	static function onStateSwitch():Void
 	{
 		if (space != null)
@@ -152,10 +153,10 @@ class FlxNapeSpace extends FlxBasic
 			space.clear();
 			space = null; // resets atributes like gravity.
 		}
-		
+
 		#if FLX_DEBUG
 		drawDebug = false;
-		
+
 		if (drawDebugButton != null)
 		{
 			FlxG.debugger.removeButton(drawDebugButton);
@@ -163,13 +164,13 @@ class FlxNapeSpace extends FlxBasic
 		}
 		#end
 	}
-	
+
 	override public function update(elapsed:Float):Void
 	{
 		if (space != null && elapsed > 0)
 			space.step(elapsed, velocityIterations, positionIterations);
 	}
-	
+
 	/**
 	 * Draws debug graphics.
 	 */
@@ -179,10 +180,10 @@ class FlxNapeSpace extends FlxBasic
 		#if FLX_DEBUG
 		if (shapeDebug == null || space == null)
 			return;
-		
+
 		shapeDebug.clear();
 		shapeDebug.draw(space);
-		
+
 		var sprite = shapeDebug.display;
 		sprite.x = 0;
 		sprite.y = 0;

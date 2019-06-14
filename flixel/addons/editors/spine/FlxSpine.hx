@@ -58,7 +58,8 @@ class FlxSpine extends FlxSprite
 	 */
 	public static function readSkeletonData(AtlasName:String, AnimationName:String, DataPath:String, Scale:Float = 1):SkeletonData
 	{
-		if (DataPath.lastIndexOf("/") < 0) DataPath += "/"; // append / at the end of the folder path
+		if (DataPath.lastIndexOf("/") < 0)
+			DataPath += "/"; // append / at the end of the folder path
 		var spineAtlas:Atlas = new Atlas(Assets.getText(DataPath + AtlasName + ".atlas"), new FlixelTextureLoader(DataPath));
 		var json:SkeletonJson = new SkeletonJson(new AtlasAttachmentLoader(spineAtlas));
 		json.scale = Scale;
@@ -78,7 +79,7 @@ class FlxSpine extends FlxSprite
 	 * But you should apply velocity and acceleration to collider rather than to this spine sprite.
 	 */
 	public var collider(default, null):FlxSpineCollider;
-	
+
 	public var renderMeshes:Bool = false;
 
 	var _tempVertices:Array<Float>;
@@ -94,7 +95,8 @@ class FlxSpine extends FlxSprite
 	 * @param	Height			The maximum height of this sprite (avoid very large sprites since they are performance intensive).
 	 * @param	renderMeshes	If true, then graphic will be rendered with drawTriangles(), if false (by default), then it will be rendered with drawTiles().
 	 */
-	public function new(skeletonData:SkeletonData, X:Float = 0, Y:Float = 0, Width:Float = 0, Height:Float = 0, OffsetX:Float = 0, OffsetY:Float = 0, renderMeshes:Bool = false)
+	public function new(skeletonData:SkeletonData, X:Float = 0, Y:Float = 0, Width:Float = 0, Height:Float = 0, OffsetX:Float = 0, OffsetY:Float = 0,
+			renderMeshes:Bool = false)
 	{
 		super(X, Y);
 
@@ -284,12 +286,8 @@ class FlxSpine extends FlxSprite
 					wrapper.indices = Vector.ofArray(triangles);
 					wrapper.uvtData = Vector.ofArray(uvtData);
 
-					wrapperColor = FlxColor.fromRGBFloat(
-						skeleton.r * slot.r * r * color.redFloat,
-						skeleton.g * slot.g * g * color.greenFloat,
-						skeleton.b * slot.b * b * color.blueFloat,
-						1
-					);
+					wrapperColor = FlxColor.fromRGBFloat(skeleton.r * slot.r * r * color.redFloat, skeleton.g * slot.g * g * color.greenFloat,
+						skeleton.b * slot.b * b * color.blueFloat, 1);
 
 					wrapper.color = wrapperColor;
 					wrapper.alpha = skeleton.a * slot.a * a * alpha;
@@ -328,11 +326,8 @@ class FlxSpine extends FlxSprite
 				var wrapper:FlxSprite = getSprite(regionAttachment);
 				wrapper.blend = (slot.data.blendMode == spinehaxe.BlendMode.additive) ? BlendMode.ADD : BlendMode.NORMAL;
 
-				wrapper.color = FlxColor.fromRGBFloat(
-					skeleton.r * slot.r * regionAttachment.r * color.redFloat,
-					skeleton.g * slot.g * regionAttachment.g * color.greenFloat,
-					skeleton.b * slot.b * regionAttachment.b * color.blueFloat
-				);
+				wrapper.color = FlxColor.fromRGBFloat(skeleton.r * slot.r * regionAttachment.r * color.redFloat,
+					skeleton.g * slot.g * regionAttachment.g * color.greenFloat, skeleton.b * slot.b * regionAttachment.b * color.blueFloat);
 
 				wrapper.alpha = skeleton.a * slot.a * regionAttachment.a * this.alpha;
 
@@ -357,10 +352,12 @@ class FlxSpine extends FlxSprite
 				_matrix.translate(wrapperOriginX, wrapperOriginY);
 				_matrix.scale(worldScaleX * flipX, worldScaleY * flipY);
 				_matrix.rotate(worldRotation * Math.PI / 180);
-				if (flipX != 1)	_matrix.rotate(Math.PI);
+				if (flipX != 1)
+					_matrix.rotate(Math.PI);
 
 				wrapper.angle += worldRotation * flip;
-				if (flipX != 1)	wrapper.angle += 180;
+				if (flipX != 1)
+					wrapper.angle += 180;
 				wrapper.angle *= flip;
 
 				wrapper.scale.x *= (wrapperAngle == 0) ? worldScaleX : worldScaleY;
@@ -467,7 +464,6 @@ class FlxSpine extends FlxSprite
 				else
 					collider.y = skeleton.y - collider.offsetY;
 			}
-			
 		}
 
 		return NewY;
@@ -512,7 +508,7 @@ class FlxSpineCollider extends FlxObject
 {
 	public var offsetX(default, set):Float = 0;
 	public var offsetY(default, set):Float = 0;
-	
+
 	public var parent(default, null):FlxSpine;
 
 	public function new(Parent:FlxSpine, X:Float = 0, Y:Float = 0, Width:Float = 0, Height:Float = 0, OffsetX:Float = 0, OffsetY:Float = 0)

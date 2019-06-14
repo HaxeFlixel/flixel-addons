@@ -16,7 +16,7 @@ abstract TransitionType(String)
 	var FADE = "fade";
 }
 
-typedef TransitionTileData = 
+typedef TransitionTileData =
 {
 	asset:FlxGraphicAsset,
 	width:Int,
@@ -37,7 +37,7 @@ class TransitionData implements IFlxDestroyable
 	public var direction:FlxPoint;
 	public var tweenOptions:TweenOptions;
 	public var region:FlxRect;
-	
+
 	public function destroy():Void
 	{
 		tileData = null;
@@ -48,18 +48,22 @@ class TransitionData implements IFlxDestroyable
 		region = null;
 		direction = null;
 	}
-	
-	public function new(TransType:TransitionType=FADE,Color:FlxColor=FlxColor.WHITE,Duration:Float=1.0,?Direction:FlxPoint,?TileData:TransitionTileData,?Region:FlxRect) 
+
+	public function new(TransType:TransitionType = FADE, Color:FlxColor = FlxColor.WHITE, Duration:Float = 1.0, ?Direction:FlxPoint,
+			?TileData:TransitionTileData, ?Region:FlxRect)
 	{
 		type = TransType;
 		tileData = TileData;
 		duration = Duration;
 		color = Color;
 		direction = Direction;
-		if (direction == null) { direction = new FlxPoint(0, 0); }
+		if (direction == null)
+		{
+			direction = new FlxPoint(0, 0);
+		}
 		FlxMath.bound(direction.x, -1, 1);
 		FlxMath.bound(direction.y, -1, 1);
-		tweenOptions = { onComplete: null };
+		tweenOptions = {onComplete: null};
 		region = Region;
 		if (Region == null)
 		{
