@@ -48,24 +48,20 @@ class TiledTileSet
 		numRows = numCols = 1;
 
 		// Use the correct data format
-		#if (haxe_ver < "4.0.0")
-		if (Std.is(data, Access))
-		#else
-		if (Std.is(data, Xml))
-		#end
+		if (Std.is(data, #if (haxe_ver < "4.0.0") Access #else Xml #end))
 		{
 			source = data;
 		}
-	else if (Std.is(data, ValidByteArray))
-	{
-		var bytes:ValidByteArray = cast data;
-		source = new Access(Xml.parse(bytes.toString()));
-		source = source.node.tileset;
-	}
-	else
-	{
-		throw "Unknown TMX tileset format";
-	}
+		else if (Std.is(data, ValidByteArray))
+		{
+			var bytes:ValidByteArray = cast data;
+			source = new Access(Xml.parse(bytes.toString()));
+			source = source.node.tileset;
+		}
+		else
+		{
+			throw "Unknown TMX tileset format";
+		}
 
 		firstGID = (source.has.firstgid) ? Std.parseInt(source.att.firstgid) : 1;
 
