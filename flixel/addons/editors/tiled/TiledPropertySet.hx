@@ -44,7 +44,7 @@ class TiledPropertySet #if (haxe_ver < 4) implements Dynamic<String> #end
 	{
 		for (prop in Source.nodes.property)
 		{
-			keys.set(prop.att.name, prop.att.value);
+			keys.set(prop.att.name, prop.has.value ? prop.att.value : prop.innerHTML);
 		}
 	}
 }
