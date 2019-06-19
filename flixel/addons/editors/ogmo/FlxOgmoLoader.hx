@@ -5,7 +5,6 @@ import flixel.tile.FlxTilemap;
 import flixel.math.FlxRect;
 import haxe.xml.Parser;
 import openfl.Assets;
-
 #if haxe4
 import haxe.xml.Access;
 #else
@@ -24,19 +23,19 @@ class FlxOgmoLoader
 	/**
 	 * Creates a new instance of `FlxOgmoLoader` and prepares the XML level data to be loaded.
 	 * This object can either be contained or ovewritten.
-	 * 
+	 *
 	 * IMPORTANT:
 	 *  * Tile layers must have the Export Mode set to `"CSV"`.
 	 *  * First tile in spritesheet must be blank or debug. It will never get drawn so don't place them in Ogmo!
 	 *    (This is needed to support many other editors that use index `0` as empty)
-	 * 
+	 *
 	 * @param	LevelData	A String or Class representing the location of xml level data.
 	 */
 	public function new(LevelData:Dynamic)
 	{
 		// Load xml file
 		var str:String = "";
-		
+
 		// Passed embedded resource?
 		if (Std.is(LevelData, Class))
 		{
@@ -58,7 +57,7 @@ class FlxOgmoLoader
 	/**
 	 * Load a Tilemap. Tile layers must have the Export Mode set to `"CSV"`.
 	 * Collision with entities should be handled with the reference returned from this function. Here's a tip:
-	 * 
+	 *
 	 * IMPORTANT: Always collide the map with objects, not the other way around.
 	 * This prevents odd collision errors (collision separation code off by 1 px):
 	 *
@@ -82,7 +81,7 @@ class FlxOgmoLoader
 	/**
 	 * Parse every entity in the specified layer and call a function that will spawn game objects based on their name.
 	 * Optional data can be read from the xml object, here's an example that reads the position of an object:
-	 * 
+	 *
 	 * ```haxe
 	 * public function loadEntity(type:String, data:Xml):Void
 	 * {
@@ -99,29 +98,29 @@ class FlxOgmoLoader
 	 *
 	 * @param	EntityLoadCallback		A function with the signature `(name:String, data:Xml):Void` and spawns entities based on their name.
 	 * @param	EntityLayer				The name of the layer the entities are stored in Ogmo editor. Usually `"entities"` or `"actors"`.
-	 */ 
+	 */
 	public function loadEntities(EntityLoadCallback:String->Xml->Void, EntityLayer:String = "entities"):Void
 	{
 		var actors = _fastXml.node.resolve(EntityLayer);
-		
+
 		// Iterate over actors
-		for (a in actors.elements) 
+		for (a in actors.elements)
 		{
 			EntityLoadCallback(a.name, a.x);
 		}
 	}
-	
+
 	/**
 	 * Parse every 'rect' in the specified layer and call a function to do something based on each rectangle.
 	 * Useful for setting up zones or regions in your game that can be filled in procedurally.
-	 * 
+	 *
 	 * @param	RectLoadCallback	A function that takes in the Rectangle object and returns Void.
 	 * @param	RectLayer			The name of the layer which contains 'rect' objects.
 	 */
 	public function loadRectangles(RectLoadCallback:FlxRect->Void, RectLayer:String = "rectangles"):Void
 	{
 		var rects = _fastXml.node.resolve(RectLayer);
-		
+
 		for (r in rects.elements)
 		{
 			RectLoadCallback(FlxRect.get(Std.parseInt(r.x.get("x")), Std.parseInt(r.x.get("y")), Std.parseInt(r.x.get("w")), Std.parseInt(r.x.get("h"))));

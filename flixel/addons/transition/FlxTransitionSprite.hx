@@ -19,7 +19,7 @@ class GraphicTransTileDiamond extends BitmapData {}
 class GraphicTransTileSquare extends BitmapData {}
 
 /**
- * 
+ *
  * @author Tim Hely
  */
 class FlxTransitionSprite extends FlxSprite
@@ -28,10 +28,13 @@ class FlxTransitionSprite extends FlxSprite
 	var _count:Float;
 	var _starting:Bool = true;
 	var _finished:Bool = false;
+
 	public var status:TransitionStatus = IN;
+
 	var _newStatus:TransitionStatus = NULL;
-	
-	public function new(X:Float=0, Y:Float=0, Delay:Float, Graphic:FlxGraphicAsset=null, GraphicWidth:Int=32, GraphicHeight:Int=32, FrameRate:Int=40) 
+
+	public function new(X:Float = 0, Y:Float = 0, Delay:Float, Graphic:FlxGraphicAsset = null, GraphicWidth:Int = 32, GraphicHeight:Int = 32,
+			FrameRate:Int = 40)
 	{
 		super(X, Y);
 		if (Graphic == null)
@@ -42,10 +45,10 @@ class FlxTransitionSprite extends FlxSprite
 		}
 		_delay = Delay;
 		loadGraphic(Graphic, true, GraphicWidth, GraphicHeight);
-		
+
 		graphic.persist = true;
 		graphic.destroyOnNoUse = false;
-		
+
 		var inArray:Array<Int> = [];
 		var outArray:Array<Int> = [];
 		for (i in 1...(numFrames - 1))
@@ -54,15 +57,15 @@ class FlxTransitionSprite extends FlxSprite
 		}
 		outArray = inArray.copy();
 		outArray.reverse();
-		
+
 		animation.add("empty", [0], 0, false);
 		animation.add("in", inArray, FrameRate, false);
 		animation.add("full", [numFrames - 1], 0, false);
 		animation.add("out", outArray, FrameRate, false);
-		
+
 		setStatus(FULL);
 	}
-	
+
 	public function start(NewStatus:TransitionStatus):Void
 	{
 		_starting = true;
@@ -70,42 +73,44 @@ class FlxTransitionSprite extends FlxSprite
 		_count = 0;
 		_newStatus = NewStatus;
 	}
-	
+
 	function startStatus(NewStatus:TransitionStatus):Void
 	{
 		setStatus(NewStatus);
 	}
-	
+
 	public function setStatus(Status:TransitionStatus):Void
 	{
-		var anim:String = switch (Status) 
+		var anim:String = switch (Status)
 		{
 			case IN: "in";
 			case OUT: "out";
-			case EMPTY,NULL: "empty";
+			case EMPTY, NULL: "empty";
 			case FULL: "full";
 		}
-		
+
 		animation.play(anim);
 		animation.finishCallback = onFinishAnim;
 		status = Status;
 	}
-	
+
 	function onFinishAnim(str:String):Void
 	{
 		if (!_finished)
 		{
 			_finished = true;
-			switch (status) 
+			switch (status)
 			{
-				case IN:	setStatus(FULL);
-				case OUT:	setStatus(EMPTY);
+				case IN:
+					setStatus(FULL);
+				case OUT:
+					setStatus(EMPTY);
 				default:
 			}
 		}
 	}
-	
-	override public function update(elapsed:Float):Void 
+
+	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
 		if (_starting)
@@ -117,7 +122,7 @@ class FlxTransitionSprite extends FlxSprite
 			}
 		}
 	}
-	
+
 	function onTime():Void
 	{
 		_starting = false;

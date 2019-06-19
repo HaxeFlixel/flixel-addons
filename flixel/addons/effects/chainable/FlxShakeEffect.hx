@@ -7,39 +7,42 @@ import openfl.display.BitmapData;
 
 /**
  * This will shake the bitmapData.
- * 
+ *
  * @author adrianulima
  */
 class FlxShakeEffect implements IFlxEffect
 {
 	public var active:Bool = true;
 	public var offset(default, null):FlxPoint = FlxPoint.get();
-	
+
 	/**
 	 * Value in pixels representing the maximum distance that the bitmapData can move while shaking.
 	 */
 	public var intensity:Float = 0;
+
 	/**
 	 * A function you want to run when the shake finishes.
 	 */
 	public var onComplete:Void->Void;
+
 	/**
 	 * On what axes to shake.
 	 */
 	public var axes:FlxAxes = XY;
-	
+
 	/**
 	 * The length in seconds that the shaking effect should last.
 	 */
 	var _duration:Float = 0;
+
 	/**
 	 * Current time of the effect.
 	 */
 	var _time:Float = 0;
-	
+
 	/**
 	 * A shake effect.
-	 * 
+	 *
 	 * @param	Intensity	Value in pixels representing the maximum distance that the bitmapData can move while shaking.
 	 * @param	Duration	The length in seconds that the shaking effect should last.
 	 * @param	OnComplete	Optional completion callback function.
@@ -52,29 +55,29 @@ class FlxShakeEffect implements IFlxEffect
 		onComplete = OnComplete;
 		axes = Axes;
 	}
-	
-	public function destroy():Void 
+
+	public function destroy():Void
 	{
 		offset = FlxDestroyUtil.put(offset);
 		onComplete = null;
 	}
-	
-	public function update(elapsed:Float):Void 
+
+	public function update(elapsed:Float):Void
 	{
 		if (_time <= 0)
 			return;
-		
+
 		_time -= elapsed;
-		
+
 		if (_time > 0)
 		{
 			if (axes != FlxAxes.Y)
 			{
-				offset.x = FlxG.random.float( -intensity, intensity);
+				offset.x = FlxG.random.float(-intensity, intensity);
 			}
 			if (axes != FlxAxes.X)
 			{
-				offset.y = FlxG.random.float( -intensity, intensity);
+				offset.y = FlxG.random.float(-intensity, intensity);
 			}
 		}
 		else
@@ -86,15 +89,15 @@ class FlxShakeEffect implements IFlxEffect
 			}
 		}
 	}
-	
-	public function apply(bitmapData:BitmapData):BitmapData 
+
+	public function apply(bitmapData:BitmapData):BitmapData
 	{
 		return bitmapData;
 	}
-	
+
 	/**
 	 * Reset and start the effect with the same parameters.
-	 * 
+	 *
 	 * @param	Force	Force the effect to reset.
 	 */
 	public function start(Force:Bool = false):Void
@@ -103,13 +106,13 @@ class FlxShakeEffect implements IFlxEffect
 		{
 			return;
 		}
-		
+
 		reset(intensity, _duration, onComplete, axes);
 	}
-	
+
 	/**
 	 * Reset the effect, need to set the parameters again. To use the same parameters call method start().
-	 * 
+	 *
 	 * @param	Intensity	Value in pixels representing the maximum distance that the bitmapData can move while shaking.
 	 * @param	Duration	The length in seconds that the shaking effect should last.
 	 * @param	OnComplete	Optional completion callback function.
@@ -119,7 +122,7 @@ class FlxShakeEffect implements IFlxEffect
 	{
 		if (Axes == null)
 			Axes = XY;
-		
+
 		intensity = Intensity;
 		_duration = Duration;
 		_time = Duration;

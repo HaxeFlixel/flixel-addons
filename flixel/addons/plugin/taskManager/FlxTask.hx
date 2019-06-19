@@ -14,19 +14,22 @@ class FlxTask implements IFlxDestroyable
 	 * Method-task to be executed
 	 */
 	public var func:Void->Bool;
+
 	/**
 	 * If true then the task will be deleted from the manager immediately after execution.
 	 */
 	public var ignoreCycle:Bool;
+
 	/**
 	 * If true the task will be completed right after it's first call
 	 */
 	public var instant:Bool;
+
 	/**
 	 * Pointer to the next task.
 	 */
 	public var next:FlxTask;
-	
+
 	/**
 	 * Creates a new FlxTask
 	 */
@@ -37,7 +40,7 @@ class FlxTask implements IFlxDestroyable
 		instant = Instant;
 		next = Next;
 	}
-	
+
 	/**
 	 * Destroys the list.
 	 */

@@ -16,7 +16,7 @@ import openfl.geom.Point;
 private class GraphicDiagonalGradient extends BitmapData {}
 
 /**
- * 
+ *
  * @author larsiusprime
  */
 class TransitionFade extends TransitionEffect
@@ -28,41 +28,48 @@ class TransitionFade extends TransitionEffect
 	var tweenValStart2:Float = 0;
 	var tweenValEnd:Float = 0;
 	var tweenValEnd2:Float = 0;
-	
-	public function new(data:TransitionData) 
+
+	public function new(data:TransitionData)
 	{
 		super(data);
-		
+
 		back = makeSprite(data.direction.x, data.direction.y);
 		back.scrollFactor.set(0, 0);
 		add(back);
 	}
-	
-	public override function destroy():Void {
+
+	public override function destroy():Void
+	{
 		super.destroy();
 		back = null;
 	}
-	
+
 	public override function start(NewStatus:TransitionStatus):Void
 	{
 		super.start(NewStatus);
-		
+
 		setTweenValues(NewStatus, _data.direction.x, _data.direction.y);
-		
+
 		switch (tweenStr)
 		{
-			case "alpha":	back.alpha = tweenValStart;
-			case "x":		back.x = tweenValStart;
-			case "y":		back.y = tweenValStart;
+			case "alpha":
+				back.alpha = tweenValStart;
+			case "x":
+				back.x = tweenValStart;
+			case "y":
+				back.y = tweenValStart;
 		}
 		switch (tweenStr2)
 		{
-			case "alpha":	back.alpha = tweenValStart2;
-			case "x": 		back.x = tweenValStart2;
-			case "y":		back.y = tweenValStart2;
+			case "alpha":
+				back.alpha = tweenValStart2;
+			case "x":
+				back.x = tweenValStart2;
+			case "y":
+				back.y = tweenValStart2;
 		}
-		
-		var Values:Dynamic = { };
+
+		var Values:Dynamic = {};
 		Reflect.setField(Values, tweenStr, tweenValEnd);
 		if (tweenStr2 != "")
 		{
@@ -71,19 +78,19 @@ class TransitionFade extends TransitionEffect
 		_data.tweenOptions.onComplete = finishTween;
 		FlxTween.tween(back, Values, _data.duration, _data.tweenOptions);
 	}
-	
+
 	function setTweenValues(NewStatus:TransitionStatus, DirX:Float, DirY:Float):Void
 	{
 		if (DirX == 0 && DirY == 0)
 		{
-			//no direction
+			// no direction
 			tweenStr = "alpha";
 			tweenValStart = NewStatus == IN ? 0.0 : 1.0;
 			tweenValEnd = NewStatus == IN ? 1.0 : 0.0;
 		}
 		else if (Math.abs(DirX) > 0 && DirY == 0)
 		{
-			//horizontal wipe
+			// horizontal wipe
 			tweenStr = "x";
 			if (DirX > 0)
 			{
@@ -98,7 +105,7 @@ class TransitionFade extends TransitionEffect
 		}
 		else if ((DirX == 0 && Math.abs(DirY) > 0))
 		{
-			//vertical wipe
+			// vertical wipe
 			tweenStr = "y";
 			if (DirY > 0)
 			{
@@ -113,7 +120,7 @@ class TransitionFade extends TransitionEffect
 		}
 		else if (Math.abs(DirX) > 0 && Math.abs(DirY) > 0)
 		{
-			//diagonal wipe
+			// diagonal wipe
 			tweenStr = "x";
 			tweenStr2 = "y";
 			if (DirX > 0)
@@ -123,8 +130,8 @@ class TransitionFade extends TransitionEffect
 			}
 			else
 			{
-				tweenValStart = NewStatus == IN ? FlxG.width : -back.width * (2/3);
-				tweenValEnd = NewStatus == IN ? -back.width  * (2/3) : FlxG.width;
+				tweenValStart = NewStatus == IN ? FlxG.width : -back.width * (2 / 3);
+				tweenValEnd = NewStatus == IN ? -back.width * (2 / 3) : FlxG.width;
 			}
 			if (DirY > 0)
 			{
@@ -133,12 +140,12 @@ class TransitionFade extends TransitionEffect
 			}
 			else
 			{
-				tweenValStart2 = NewStatus == IN ? FlxG.height : -back.height * (2/3);
-				tweenValEnd2 = NewStatus == IN ? -back.height * (2/3): FlxG.height;
+				tweenValStart2 = NewStatus == IN ? FlxG.height : -back.height * (2 / 3);
+				tweenValEnd2 = NewStatus == IN ? -back.height * (2 / 3) : FlxG.height;
 			}
 		}
 	}
-	
+
 	function makeSprite(DirX:Float, DirY:Float):FlxSprite
 	{
 		var s = new FlxSprite(0, 0);
@@ -148,12 +155,12 @@ class TransitionFade extends TransitionEffect
 		var pixels:BitmapData = null;
 		if (DirX == 0 && DirY == 0)
 		{
-			//no direction
+			// no direction
 			s.makeGraphic(FlxG.width, FlxG.height, _data.color);
 		}
 		else if (DirX == 0 && Math.abs(DirY) > 0)
 		{
-			//vertical wipe
+			// vertical wipe
 			locY = DirY > 0 ? FlxG.height : 0;
 			angle = DirY > 0 ? 90 : 270;
 			s.makeGraphic(1, FlxG.height * 2, _data.color);
@@ -166,7 +173,7 @@ class TransitionFade extends TransitionEffect
 		}
 		else if (Math.abs(DirX) > 0 && DirY == 0)
 		{
-			//horizontal wipe
+			// horizontal wipe
 			locX = DirX > 0 ? FlxG.width : 0;
 			angle = DirX > 0 ? 0 : 180;
 			s.makeGraphic(FlxG.width * 2, 1, _data.color);
@@ -179,7 +186,7 @@ class TransitionFade extends TransitionEffect
 		}
 		else if (Math.abs(DirX) > 0 && Math.abs(DirY) > 0)
 		{
-			//diagonal wipe
+			// diagonal wipe
 			locY = DirY > 0 ? FlxG.height : 0;
 			s.loadGraphic(getGradient());
 			s.flipX = DirX < 0;
@@ -187,11 +194,11 @@ class TransitionFade extends TransitionEffect
 		}
 		return s;
 	}
-	
+
 	function getGradient():BitmapData
 	{
-		//TODO: this could perhaps be optimized a lot by creating a single-pixel wide sprite, rotating it, scaling it super big, and positioning it properly
-		var rawBmp = new GraphicDiagonalGradient(0,0);
+		// TODO: this could perhaps be optimized a lot by creating a single-pixel wide sprite, rotating it, scaling it super big, and positioning it properly
+		var rawBmp = new GraphicDiagonalGradient(0, 0);
 		var gdiag:BitmapData = cast rawBmp;
 		var gdiag_scaled:BitmapData = new BitmapData(FlxG.width * 2, FlxG.height * 2, true);
 		var m:Matrix = new Matrix();
@@ -199,12 +206,13 @@ class TransitionFade extends TransitionEffect
 		gdiag_scaled.draw(gdiag, m, null, null, null, true);
 		var theColor:FlxColor = _data.color;
 		var final_pixels:BitmapData = new BitmapData(FlxG.width * 3, FlxG.height * 3, true, theColor);
-		final_pixels.copyChannel(gdiag_scaled, gdiag_scaled.rect, new Point(final_pixels.width-gdiag_scaled.width,final_pixels.height-gdiag_scaled.height), BitmapDataChannel.RED, BitmapDataChannel.ALPHA);
+		final_pixels.copyChannel(gdiag_scaled, gdiag_scaled.rect,
+			new Point(final_pixels.width - gdiag_scaled.width, final_pixels.height - gdiag_scaled.height), BitmapDataChannel.RED, BitmapDataChannel.ALPHA);
 		gdiag.dispose();
 		gdiag_scaled.dispose();
 		return final_pixels;
 	}
-	
+
 	function finishTween(f:FlxTween):Void
 	{
 		delayThenFinish();

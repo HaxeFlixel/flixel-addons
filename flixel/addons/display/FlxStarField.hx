@@ -2,6 +2,7 @@
  * The logic in this module is largely ported from StarfieldFX.as by Richard Davey / photonstorm
  * @see https://github.com/photonstorm/Flixel-Power-Tools/blob/master/src/org/flixel/plugin/photonstorm/FX/StarfieldFX.as
  */
+
 package flixel.addons.display;
 
 import flixel.FlxG;
@@ -15,28 +16,28 @@ import flixel.math.FlxRandom;
 class FlxStarField2D extends FlxStarField
 {
 	public var starVelocityOffset(default, null):FlxPoint;
-	
+
 	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, StarAmount:Int = 300)
 	{
 		super(X, Y, Width, Height, StarAmount);
-		starVelocityOffset = FlxPoint.get( -1, 0);
+		starVelocityOffset = FlxPoint.get(-1, 0);
 		setStarDepthColors(5, 0xff585858, 0xffF4F4F4);
 		setStarSpeed(100, 400);
 	}
-	
+
 	override public function destroy():Void
 	{
 		starVelocityOffset = FlxDestroyUtil.put(starVelocityOffset);
 		super.destroy();
 	}
-	
+
 	override public function update(elapsed:Float):Void
 	{
 		for (star in _stars)
 		{
 			star.x += (starVelocityOffset.x * star.speed) * elapsed;
 			star.y += (starVelocityOffset.y * star.speed) * elapsed;
-			
+
 			// wrap the star
 			if (star.x > width)
 			{
@@ -46,7 +47,7 @@ class FlxStarField2D extends FlxStarField
 			{
 				star.x = width;
 			}
-			
+
 			if (star.y > height)
 			{
 				star.y = 0;
@@ -56,7 +57,7 @@ class FlxStarField2D extends FlxStarField
 				star.y = height;
 			}
 		}
-		
+
 		super.update(elapsed);
 	}
 }
@@ -64,7 +65,7 @@ class FlxStarField2D extends FlxStarField
 class FlxStarField3D extends FlxStarField
 {
 	public var center(default, null):FlxPoint;
-	
+
 	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, StarAmount:Int = 300)
 	{
 		super(X, Y, Width, Height, StarAmount);
@@ -72,13 +73,13 @@ class FlxStarField3D extends FlxStarField
 		setStarDepthColors(300, 0xff292929, 0xffffffff);
 		setStarSpeed(0, 200);
 	}
-	
+
 	override public function destroy():Void
 	{
 		center = FlxDestroyUtil.put(center);
 		super.destroy();
 	}
-	
+
 	override public function update(elapsed:Float):Void
 	{
 		for (star in _stars)
@@ -86,7 +87,7 @@ class FlxStarField3D extends FlxStarField
 			star.d *= 1.1;
 			star.x = center.x + ((Math.cos(star.r) * star.d) * star.speed) * elapsed;
 			star.y = center.y + ((Math.sin(star.r) * star.d) * star.speed) * elapsed;
-			
+
 			if ((star.x < 0) || (star.x > width) || (star.y < 0) || (star.y > height))
 			{
 				star.d = 1;
@@ -94,11 +95,11 @@ class FlxStarField3D extends FlxStarField
 				star.x = 0;
 				star.y = 0;
 				star.speed = FlxG.random.float(_minSpeed, _maxSpeed);
-				
+
 				_stars[star.index] = star;
 			}
 		}
-		
+
 		super.update(elapsed);
 	}
 }
@@ -106,20 +107,20 @@ class FlxStarField3D extends FlxStarField
 private class FlxStarField extends FlxSprite
 {
 	public var bgColor:Int = FlxColor.BLACK;
-	
+
 	var _stars:Array<FlxStar>;
 	var _depthColors:Array<Int>;
 	var _minSpeed:Float;
 	var _maxSpeed:Float;
-	
-	public function new(X:Int, Y:Int, Width:Int, Height:Int, StarAmount:Int) 
+
+	public function new(X:Int, Y:Int, Width:Int, Height:Int, StarAmount:Int)
 	{
 		super(X, Y);
 		Width = (Width <= 0) ? FlxG.width : Width;
 		Height = (Height <= 0) ? FlxG.height : Height;
 		makeGraphic(Width, Height, bgColor, true);
 		_stars = [];
-		
+
 		for (i in 0...StarAmount)
 		{
 			var star = new FlxStar();
@@ -131,7 +132,7 @@ private class FlxStarField extends FlxSprite
 			_stars.push(star);
 		}
 	}
-	
+
 	override public function destroy():Void
 	{
 		for (star in _stars)
@@ -142,27 +143,27 @@ private class FlxStarField extends FlxSprite
 		_depthColors = null;
 		super.destroy();
 	}
-	
+
 	override public function draw():Void
 	{
 		pixels.lock();
 		pixels.fillRect(_flashRect, bgColor);
-		
+
 		for (star in _stars)
 		{
 			var colorIndex:Int = Std.int(((star.speed - _minSpeed) / (_maxSpeed - _minSpeed)) * _depthColors.length);
 			pixels.setPixel32(Std.int(star.x), Std.int(star.y), _depthColors[colorIndex]);
 		}
-		
+
 		pixels.unlock();
 		framePixels = pixels;
 		dirty = false;
 		super.draw();
 	}
-	
+
 	/**
 	 * Change the number of layers (depth) and colors used for each layer of the starfield.
-	 * 
+	 *
 	 * @param	Depth			Number of depths (for a 2D starfield the default is 5)
 	 * @param	LowestColor		The color given to the slowest stars, typically the darker colour
 	 * @param	HighestColor	The color given to the fastest stars, typically the brighter colour
@@ -171,12 +172,12 @@ private class FlxStarField extends FlxSprite
 	{
 		_depthColors = FlxGradient.createGradientArray(1, Depth, [LowestColor, HighestColor]);
 	}
-	
+
 	public function setStarSpeed(Min:Int, Max:Int):Void
 	{
 		_minSpeed = Min;
 		_maxSpeed = Max;
-		
+
 		for (star in _stars)
 		{
 			star.speed = FlxG.random.float(Min, Max);
@@ -192,6 +193,6 @@ private class FlxStar
 	public var d:Float;
 	public var r:Float;
 	public var speed:Float;
-	
+
 	public function new() {}
 }

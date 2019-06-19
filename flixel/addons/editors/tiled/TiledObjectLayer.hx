@@ -2,7 +2,6 @@ package flixel.addons.editors.tiled;
 
 import flixel.addons.editors.tiled.TiledLayer.TiledLayerType;
 import flixel.util.FlxColor;
-
 #if haxe4
 import haxe.xml.Access;
 #else
@@ -18,7 +17,7 @@ class TiledObjectLayer extends TiledLayer
 {
 	public var objects:Array<TiledObject>;
 	public var color:FlxColor;
-	
+
 	public function new(source:Access, parent:TiledMap)
 	{
 		super(source, parent);
@@ -27,7 +26,7 @@ class TiledObjectLayer extends TiledLayer
 		color = source.has.color ? FlxColor.fromString(source.att.color) : FlxColor.TRANSPARENT;
 		loadObjects(source);
 	}
-	
+
 	function loadObjects(source:Access):Void
 	{
 		for (node in source.nodes.object)

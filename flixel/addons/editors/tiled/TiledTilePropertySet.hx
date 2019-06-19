@@ -3,7 +3,8 @@ package flixel.addons.editors.tiled;
 import flixel.addons.editors.tiled.TiledObject;
 
 /** @since 2.2.0 */
-typedef TileAnimationData = {
+typedef TileAnimationData =
+{
 	var tileID:Int;
 	var duration:Float;
 }
@@ -13,6 +14,7 @@ class TiledTilePropertySet extends TiledPropertySet
 {
 	public var tileID:Int;
 	public var animationFrames:Array<TileAnimationData>;
+
 	/** @since 2.8.0 */
 	public var tileObjects:Array<TiledObject>;
 
@@ -26,7 +28,7 @@ class TiledTilePropertySet extends TiledPropertySet
 
 	public function addAnimationFrame(tileID:Int, duration:Float):Void
 	{
-		animationFrames.push({ tileID: tileID, duration: duration });
+		animationFrames.push({tileID: tileID, duration: duration});
 	}
 
 	/** @since 2.8.0 */

@@ -1,7 +1,6 @@
 package flixel.addons.editors.tiled;
 
 import flash.utils.ByteArray;
-
 #if haxe4
 import haxe.xml.Access;
 #else
@@ -10,7 +9,7 @@ import haxe.xml.Fast as Access;
 
 /**
  * Base class for Tiled object and tile layers
- * 
+ *
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)
  * This content is released under the MIT License.
  */
@@ -22,8 +21,10 @@ class TiledLayer
 	public var opacity:Float;
 	public var visible:Bool;
 	public var properties:TiledPropertySet;
+
 	/** @since 2.1.0 */
 	public var offsetX:Float;
+
 	/** @since 2.1.0 */
 	public var offsetY:Float;
 
@@ -36,7 +37,7 @@ class TiledLayer
 		opacity = (source.has.opacity) ? Std.parseFloat(source.att.opacity) : 1.0;
 		offsetX = (source.has.offsetx) ? Std.parseFloat(source.att.offsetx) : 0.0;
 		offsetY = (source.has.offsety) ? Std.parseFloat(source.att.offsety) : 0.0;
-		
+
 		loadProperties(source);
 	}
 

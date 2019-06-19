@@ -24,7 +24,7 @@ class FlxNapeVelocity
 		var direction = FlxAngle.angleBetween(Source, Dest);
 		Source.body.applyImpulse(Vec2.fromPolar(Speed, direction));
 	}
-	
+
 	#if FLX_MOUSE
 	/**
 	 * Move the given FlxNapeSprite towards the mouse pointer coordinates at a steady velocity
@@ -39,7 +39,7 @@ class FlxNapeVelocity
 		Source.body.applyImpulse(Vec2.fromPolar(Speed, direction));
 	}
 	#end
-	
+
 	#if FLX_TOUCH
 	/**
 	 * Move the given FlxNapeSprite towards a FlxTouch point at a steady velocity
@@ -54,7 +54,7 @@ class FlxNapeVelocity
 		Source.body.applyImpulse(Vec2.fromPolar(Speed, direction));
 	}
 	#end
-	
+
 	/**
 	 * Sets the x/y velocity on the source FlxNapeSprite so it will move towards the target coordinates at the speed given (in pixels per second)
 	 * Timings are approximate due to the way Flash timers work, and irrespective of SWF frame rate. Allow for a variance of +- 50ms.
@@ -68,13 +68,13 @@ class FlxNapeVelocity
 		var direction = FlxAngle.angleBetweenPoint(Source, Target);
 		Source.body.applyImpulse(Vec2.fromPolar(Speed, direction));
 	}
-	
+
 	/**
 	 * Stops a FlxNapeSprite from moving by setting its velocity to 0, 0.
 	 * @param	Source		The FlxNapeSprite to stop
 	 */
 	public static inline function stopVelocity(Source:FlxNapeSprite):Void
 	{
-		Source.body.velocity.set(Vec2.get(0, 0)); 
+		Source.body.velocity.set(Vec2.get(0, 0));
 	}
 }
