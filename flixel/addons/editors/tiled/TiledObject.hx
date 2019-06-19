@@ -31,7 +31,8 @@ class TiledObject
 	public static inline var POLYGON = 2;
 	public static inline var POLYLINE = 3;
 	public static inline var TILE = 4;
-
+	
+	public var id:Int;
 	public var x:Int;
 	public var y:Int;
 	public var width:Int;
@@ -93,6 +94,7 @@ class TiledObject
 		name = (source.has.name) ? source.att.name : "";
 		type = (source.has.type) ? source.att.type : (parent != null
 			&& parent.properties.contains("defaultType") ? parent.properties.get("defaultType") : "");
+		id = Std.parseInt(source.att.id);
 		x = Std.parseInt(source.att.x);
 		y = Std.parseInt(source.att.y);
 		width = (source.has.width) ? Std.parseInt(source.att.width) : 0;
