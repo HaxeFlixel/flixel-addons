@@ -33,8 +33,8 @@ class TiledObject
 	public static inline var TILE = 4;
 	
 	public var id:Int;
-	public var x:Int;
-	public var y:Int;
+	public var x:Float;
+	public var y:Float;
 	public var width:Int;
 	public var height:Int;
 	public var name:String;
@@ -95,8 +95,8 @@ class TiledObject
 		type = (source.has.type) ? source.att.type : (parent != null
 			&& parent.properties.contains("defaultType") ? parent.properties.get("defaultType") : "");
 		id = Std.parseInt(source.att.id);
-		x = Std.parseInt(source.att.x);
-		y = Std.parseInt(source.att.y);
+		x = Std.parseFloat(source.att.x);
+		y = Std.parseFloat(source.att.y);
 		width = (source.has.width) ? Std.parseInt(source.att.width) : 0;
 		height = (source.has.height) ? Std.parseInt(source.att.height) : 0;
 		angle = (source.has.rotation) ? Std.parseFloat(source.att.rotation) : 0;
