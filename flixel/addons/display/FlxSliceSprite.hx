@@ -340,9 +340,26 @@ class FlxSliceSprite extends FlxStrip
 		var rectX2:Float = Std.int(FlxMath.bound(sliceRect.right, rectX, sourceWidth));
 		var rectY2:Float = Std.int(FlxMath.bound(sliceRect.bottom, rectY, sourceHeight));
 
+		var sourceX:Float = 0;
+		var sourceY:Float = 0;
+
+		if (sourceRect != null)
+		{
+			sourceX = Std.int(FlxMath.bound(sourceRect.x, 0, sourceWidth));
+			sourceY = Std.int(FlxMath.bound(sourceRect.y, 0, sourceHeight));
+			sourceWidth = Std.int(FlxMath.bound(sourceX + sourceRect.width, 0, sourceWidth));
+			sourceHeight = Std.int(FlxMath.bound(sourceY + sourceRect.height, 0, sourceHeight));
+		}
+
+		rectX += sourceX;
+		rectY += sourceY;
+
+		rectX2 += sourceX;
+		rectY2 += sourceY;
+
 		// fill all 9 slice rectangles:
-		var xArray:Array<Float> = [0, rectX, rectX2, sourceWidth];
-		var yArray:Array<Float> = [0, rectY, rectY2, sourceHeight];
+		var xArray:Array<Float> = [sourceX, rectX, rectX2, sourceWidth];
+		var yArray:Array<Float> = [sourceY, rectY, rectY2, sourceHeight];
 
 		for (i in 0...3)
 		{
