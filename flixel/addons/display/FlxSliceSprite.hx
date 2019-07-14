@@ -67,9 +67,19 @@ class FlxSliceSprite extends FlxStrip
 	public var stretchCenter(default, set):Bool = false;
 
 	/**
+	 * Whether to fill center part of sprite.
+	 */
+	public var fillCenter(default, set):Bool = true;
+
+	/**
 	 * Rectangle that defines slice grid:
 	 */
 	public var sliceRect(default, set):FlxRect;
+
+	/**
+	 * Rectangle that defines what part of source image to use as a texture for slicing.
+	 */
+	public var sourceRect(default, set):FlxRect;
 
 	/**
 	 * Actual width of the sprite which will be visible.
@@ -110,7 +120,7 @@ class FlxSliceSprite extends FlxStrip
 	var _snappedWidth:Float = -1;
 	var _snappedHeight:Float = -1;
 
-	public function new(Graphic:FlxGraphicAsset, SliceRect:FlxRect, Width:Float, Height:Float)
+	public function new(Graphic:FlxGraphicAsset, SliceRect:FlxRect, Width:Float, Height:Float, ?SourceRect:FlxRect)
 	{
 		super();
 
@@ -137,6 +147,7 @@ class FlxSliceSprite extends FlxStrip
 
 		repeat = true;
 		sliceRect = SliceRect;
+		sourceRect = SourceRect;
 		loadGraphic(Graphic);
 
 		width = Width;
@@ -203,6 +214,9 @@ class FlxSliceSprite extends FlxStrip
 		_snappedWidth = centerWidth + sliceRects[LEFT].width + sliceRects[RIGHT].width;
 		_snappedHeight = centerHeight + sliceRects[TOP].height + sliceRects[BOTTOM].height;
 
+		var centerX = sliceRects[TOP_LEFT].width;
+		var centerY = sliceRects[TOP_LEFT].height;
+
 		if (FlxG.renderBlit)
 		{
 			if (renderSprite.width != _snappedWidth || renderSprite.height != _snappedHeight)
@@ -215,33 +229,33 @@ class FlxSliceSprite extends FlxStrip
 				renderSprite.pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
 			}
 
-			blitTileOnCanvas(CENTER, stretchCenter, sliceRects[CENTER].x, sliceRects[CENTER].y, centerWidth, centerHeight);
-			blitTileOnCanvas(TOP, stretchTop, sliceRects[TOP].x, 0, centerWidth, sliceRects[TOP].height);
-			blitTileOnCanvas(BOTTOM, stretchBottom, sliceRects[BOTTOM].x, _snappedHeight - sliceRects[BOTTOM].height, centerWidth, sliceRects[BOTTOM].height);
-			blitTileOnCanvas(LEFT, stretchLeft, 0, sliceRects[LEFT].y, sliceRects[LEFT].width, centerHeight);
-			blitTileOnCanvas(RIGHT, stretchRight, _snappedWidth - sliceRects[RIGHT].width, sliceRects[RIGHT].y, sliceRects[RIGHT].width, centerHeight);
+			if (fillCenter)
+				blitTileOnCanvas(CENTER, stretchCenter, centerX, centerY, centerWidth, centerHeight);
+
+			blitTileOnCanvas(TOP, stretchTop, centerX, 0, centerWidth, sliceRects[TOP].height);
+			blitTileOnCanvas(BOTTOM, stretchBottom, centerX, centerY + centerHeight, centerWidth, sliceRects[BOTTOM].height);
+			blitTileOnCanvas(LEFT, stretchLeft, 0, centerY, sliceRects[LEFT].width, centerHeight);
+			blitTileOnCanvas(RIGHT, stretchRight, _snappedWidth - sliceRects[RIGHT].width, centerY, sliceRects[RIGHT].width, centerHeight);
 			blitTileOnCanvas(TOP_LEFT, false, 0, 0, sliceRects[TOP_LEFT].width, sliceRects[TOP_LEFT].height);
 			blitTileOnCanvas(TOP_RIGHT, false, _snappedWidth - sliceRects[TOP_RIGHT].width, 0, sliceRects[TOP_RIGHT].width, sliceRects[TOP_RIGHT].height);
-			blitTileOnCanvas(BOTTOM_LEFT, false, 0, _snappedHeight - sliceRects[BOTTOM_LEFT].height, sliceRects[BOTTOM_LEFT].width,
-				sliceRects[BOTTOM_LEFT].height);
-			blitTileOnCanvas(BOTTOM_RIGHT, false, _snappedWidth - sliceRects[BOTTOM_RIGHT].width, _snappedHeight - sliceRects[BOTTOM_RIGHT].height,
-				sliceRects[BOTTOM_RIGHT].width, sliceRects[BOTTOM_RIGHT].height);
+			blitTileOnCanvas(BOTTOM_LEFT, false, 0, centerY + centerHeight, sliceRects[BOTTOM_LEFT].width, sliceRects[BOTTOM_LEFT].height);
+			blitTileOnCanvas(BOTTOM_RIGHT, false, _snappedWidth - sliceRects[BOTTOM_RIGHT].width, centerY + centerHeight, sliceRects[BOTTOM_RIGHT].width, sliceRects[BOTTOM_RIGHT].height);
 
 			renderSprite.dirty = true;
 		}
 		else
 		{
-			fillTileVerticesUVs(CENTER, stretchCenter, sliceRects[CENTER].x, sliceRects[CENTER].y, centerWidth, centerHeight);
-			fillTileVerticesUVs(TOP, stretchTop, sliceRects[TOP].x, 0, centerWidth, sliceRects[TOP].height);
-			fillTileVerticesUVs(BOTTOM, stretchBottom, sliceRects[TOP].x, _snappedHeight - sliceRects[BOTTOM].height, centerWidth, sliceRects[BOTTOM].height);
-			fillTileVerticesUVs(LEFT, stretchLeft, 0, sliceRects[LEFT].y, sliceRects[LEFT].width, centerHeight);
-			fillTileVerticesUVs(RIGHT, stretchRight, _snappedWidth - sliceRects[RIGHT].width, sliceRects[RIGHT].y, sliceRects[RIGHT].width, centerHeight);
+			if (fillCenter)
+				fillTileVerticesUVs(CENTER, stretchCenter, centerX, centerY, centerWidth, centerHeight);
+
+			fillTileVerticesUVs(TOP, stretchTop, centerX, 0, centerWidth, sliceRects[TOP].height);
+			fillTileVerticesUVs(BOTTOM, stretchBottom, centerX, centerY + centerHeight, centerWidth, sliceRects[BOTTOM].height);
+			fillTileVerticesUVs(LEFT, stretchLeft, 0, centerY, sliceRects[LEFT].width, centerHeight);
+			fillTileVerticesUVs(RIGHT, stretchRight, _snappedWidth - sliceRects[RIGHT].width, centerY, sliceRects[RIGHT].width, centerHeight);
 			fillTileVerticesUVs(TOP_LEFT, false, 0, 0, sliceRects[TOP_LEFT].width, sliceRects[TOP_LEFT].height);
 			fillTileVerticesUVs(TOP_RIGHT, false, _snappedWidth - sliceRects[TOP_RIGHT].width, 0, sliceRects[TOP_RIGHT].width, sliceRects[TOP_RIGHT].height);
-			fillTileVerticesUVs(BOTTOM_LEFT, false, 0, _snappedHeight - sliceRects[BOTTOM_LEFT].height, sliceRects[BOTTOM_LEFT].width,
-				sliceRects[BOTTOM_LEFT].height);
-			fillTileVerticesUVs(BOTTOM_RIGHT, false, _snappedWidth - sliceRects[BOTTOM_RIGHT].width, _snappedHeight - sliceRects[BOTTOM_RIGHT].height,
-				sliceRects[BOTTOM_RIGHT].width, sliceRects[BOTTOM_RIGHT].height);
+			fillTileVerticesUVs(BOTTOM_LEFT, false, 0, centerY + centerHeight, sliceRects[BOTTOM_LEFT].width, sliceRects[BOTTOM_LEFT].height);
+			fillTileVerticesUVs(BOTTOM_RIGHT, false, _snappedWidth - sliceRects[BOTTOM_RIGHT].width, centerY + centerHeight, sliceRects[BOTTOM_RIGHT].width, sliceRects[BOTTOM_RIGHT].height);
 		}
 
 		regen = false;
@@ -326,9 +340,26 @@ class FlxSliceSprite extends FlxStrip
 		var rectX2:Float = Std.int(FlxMath.bound(sliceRect.right, rectX, sourceWidth));
 		var rectY2:Float = Std.int(FlxMath.bound(sliceRect.bottom, rectY, sourceHeight));
 
+		var sourceX:Float = 0;
+		var sourceY:Float = 0;
+
+		if (sourceRect != null)
+		{
+			sourceX = Std.int(FlxMath.bound(sourceRect.x, 0, sourceWidth));
+			sourceY = Std.int(FlxMath.bound(sourceRect.y, 0, sourceHeight));
+			sourceWidth = Std.int(FlxMath.bound(sourceX + sourceRect.width, 0, sourceWidth));
+			sourceHeight = Std.int(FlxMath.bound(sourceY + sourceRect.height, 0, sourceHeight));
+		}
+
+		rectX += sourceX;
+		rectY += sourceY;
+
+		rectX2 += sourceX;
+		rectY2 += sourceY;
+
 		// fill all 9 slice rectangles:
-		var xArray:Array<Float> = [0, rectX, rectX2, sourceWidth];
-		var yArray:Array<Float> = [0, rectY, rectY2, sourceHeight];
+		var xArray:Array<Float> = [sourceX, rectX, rectX2, sourceWidth];
+		var yArray:Array<Float> = [sourceY, rectY, rectY2, sourceHeight];
 
 		for (i in 0...3)
 		{
@@ -510,10 +541,24 @@ class FlxSliceSprite extends FlxStrip
 		return stretchCenter = Value;
 	}
 
+	function set_fillCenter(Value:Bool):Bool
+	{
+		if (Value != fillCenter)
+			regen = true;
+		
+		return fillCenter = Value;
+	}
+
 	function set_sliceRect(Value:FlxRect):FlxRect
 	{
 		regen = regenSlices = true;
 		return sliceRect = Value;
+	}
+
+	function set_sourceRect(Value:FlxRect):FlxRect
+	{
+		regen = regenSlices = true;
+		return sourceRect = Value;
 	}
 
 	function get_snappedWidth():Float
