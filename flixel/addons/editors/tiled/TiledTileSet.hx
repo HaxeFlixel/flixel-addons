@@ -30,6 +30,8 @@ class TiledTileSet
 	public var numTiles:Int;
 	public var numRows:Int;
 	public var numCols:Int;
+	
+	public var tileCount:Int;
 
 	public var properties:TiledPropertySet;
 
@@ -111,6 +113,7 @@ class TiledTileSet
 			}
 
 			name = source.att.name;
+			tileCount = Std.parseInt(source.att.tilecount);
 
 			var imgWidth = 0;
 			if (node.has.width)
@@ -209,12 +212,23 @@ class TiledTileSet
 
 	public inline function hasGid(Gid:Int):Bool
 	{
-		return (Gid >= firstGID) && Gid < (firstGID + numTiles);
+		// TODO hack to account for possibility of image collection where numTiles isn't useful (0 in flixel)
+		// GIDs in an image group dont necessarily align with even Tiled's tileCount
+		// because the tiles may have been deleted, reducing the tileCount but leaving GIDs greater than
+		// firstGID + tileCount
+		if (numTiles > 0)
+		{
+			return (Gid >= firstGID) && Gid < (firstGID + numTiles);
+		}
+		else
+		{
+			return Gid >= firstGID && tileImagesSources[fromGid(Gid)] != null;
+		}
 	}
 
 	public inline function fromGid(Gid:Int):Int
 	{
-		return Gid - (firstGID - 1);
+		return Gid - firstGID;
 	}
 
 	public inline function toGid(ID:Int):Int
