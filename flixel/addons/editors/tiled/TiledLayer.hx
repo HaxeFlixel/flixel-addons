@@ -15,6 +15,7 @@ import haxe.xml.Fast as Access;
  */
 class TiledLayer
 {
+	public var id:Int;
 	public var type:TiledLayerType;
 	public var map:TiledMap;
 	public var name:String;
@@ -33,6 +34,7 @@ class TiledLayer
 		properties = new TiledPropertySet();
 		map = parent;
 		name = source.att.name;
+		id = Std.parseInt(source.att.id);
 		visible = (source.has.visible && source.att.visible == "0") ? false : true;
 		opacity = (source.has.opacity) ? Std.parseFloat(source.att.opacity) : 1.0;
 		offsetX = (source.has.offsetx) ? Std.parseFloat(source.att.offsetx) : 0.0;
