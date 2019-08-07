@@ -6,6 +6,7 @@ import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
@@ -30,6 +31,11 @@ class FlxSliceSprite extends FlxStrip
 	static inline var BOTTOM_LEFT:Int = 6;
 	static inline var BOTTOM:Int = 7;
 	static inline var BOTTOM_RIGHT:Int = 8;
+
+	static var helperRect:FlxRect = new FlxRect();
+	static var helperSize:FlxPoint = new FlxPoint();
+	static var helperDst:FlxPoint = new FlxPoint();
+	static var helperBdSize:FlxPoint = new FlxPoint();
 
 	/**
 	 * Whether to adjust sprite's width to slice grid or not.
@@ -94,17 +100,9 @@ class FlxSliceSprite extends FlxStrip
 	public var snappedHeight(get, null):Float;
 
 	/**
-	 * Internal array of FlxGraphic objects for each element of slice grid.
-	 */
-	var slices:Array<FlxGraphic>;
-
-	/**
 	 * Internal array of FlxRect objects for each element of slice grid.
 	 */
 	var sliceRects:Array<FlxRect>;
-
-	var sliceVertices:Array<DrawData<Float>>;
-	var sliceUVTs:Array<DrawData<Float>>;
 
 	/**
 	 * Helper sprite, which does actual rendering in blit render mode.
@@ -120,6 +118,11 @@ class FlxSliceSprite extends FlxStrip
 	var _snappedWidth:Float = -1;
 	var _snappedHeight:Float = -1;
 
+	/**
+	 * Current number of vertices
+	 */
+	var numVertices:Int = 0;
+
 	public function new(Graphic:FlxGraphicAsset, SliceRect:FlxRect, Width:Float, Height:Float, ?SourceRect:FlxRect)
 	{
 		super();
@@ -128,22 +131,9 @@ class FlxSliceSprite extends FlxStrip
 			renderSprite = new FlxSprite();
 
 		sliceRects = [];
-		sliceVertices = [];
-		sliceUVTs = [];
 
 		for (i in 0...9)
-		{
 			sliceRects[i] = new FlxRect();
-			sliceVertices[i] = new DrawData<Float>();
-			sliceUVTs[i] = new DrawData<Float>();
-		}
-
-		indices[0] = 0;
-		indices[1] = 1;
-		indices[2] = 2;
-		indices[3] = 2;
-		indices[4] = 3;
-		indices[5] = 0;
 
 		repeat = true;
 		sliceRect = SliceRect;
@@ -158,9 +148,6 @@ class FlxSliceSprite extends FlxStrip
 	{
 		sliceRect = null;
 		sliceRects = null;
-		sliceVertices = null;
-		sliceUVTs = null;
-		slices = FlxDestroyUtil.destroyArray(slices);
 		helperFrame = FlxDestroyUtil.destroy(helperFrame);
 		renderSprite = FlxDestroyUtil.destroy(renderSprite);
 
@@ -194,28 +181,201 @@ class FlxSliceSprite extends FlxStrip
 			return;
 
 		if (regenSlices)
-			regenSliceFrames();
+			regenSliceRects();
 
-		var centerWidth:Float = width - sliceRects[LEFT].width - sliceRects[RIGHT].width;
-		var centerHeight:Float = height - sliceRects[TOP].height - sliceRects[BOTTOM].height;
+		var topLeft:FlxRect = sliceRects[TOP_LEFT];
+		var topMiddle:FlxRect = sliceRects[TOP];
+		var topRight:FlxRect = sliceRects[TOP_RIGHT];
+
+		var middleLeft:FlxRect = sliceRects[LEFT];
+		var middle:FlxRect = sliceRects[CENTER];
+		var middleRight:FlxRect = sliceRects[RIGHT];
+
+		var bottomLeft:FlxRect = sliceRects[BOTTOM_LEFT];
+		var bottomMiddle:FlxRect = sliceRects[BOTTOM];
+		var bottomRight:FlxRect = sliceRects[BOTTOM_RIGHT];
+
+		var centerWidth:Float = width - middleLeft.width - middleRight.width;
+		var centerHeight:Float = height - topMiddle.height - bottomMiddle.height;
 
 		if (snapWidth)
 		{
-			centerWidth = Math.floor((width - sliceRects[LEFT].width - sliceRects[RIGHT].width) / sliceRects[CENTER].width) * sliceRects[CENTER].width;
-			centerWidth = Math.max(centerWidth, sliceRects[CENTER].width);
+			centerWidth = Math.floor((width - middleLeft.width - middleRight.width) / middle.width) * middle.width;
+			centerWidth = Math.max(centerWidth, middle.width);
 		}
 
 		if (snapHeight)
 		{
-			centerHeight = Math.floor((height - sliceRects[TOP].height - sliceRects[BOTTOM].height) / sliceRects[CENTER].height) * sliceRects[CENTER].height;
-			centerHeight = Math.max(centerHeight, sliceRects[CENTER].height);
+			centerHeight = Math.floor((height - topMiddle.height - bottomMiddle.height) / middle.height) * middle.height;
+			centerHeight = Math.max(centerHeight, middle.height);
 		}
 
-		_snappedWidth = centerWidth + sliceRects[LEFT].width + sliceRects[RIGHT].width;
-		_snappedHeight = centerHeight + sliceRects[TOP].height + sliceRects[BOTTOM].height;
+		_snappedWidth = centerWidth + middleLeft.width + middleRight.width;
+		_snappedHeight = centerHeight + topMiddle.height + bottomMiddle.height;
 
-		var centerX = sliceRects[TOP_LEFT].width;
-		var centerY = sliceRects[TOP_LEFT].height;
+		var centerX = topLeft.width;
+		var centerY = topLeft.height;
+		
+		var bdSize:FlxPoint = helperBdSize.set(graphic.width, graphic.height);
+		var dst:FlxPoint = helperDst;
+		var slice:FlxRect = helperRect;
+		var size:FlxPoint = helperSize;
+
+		var numHorizontal:Int = Math.ceil((_snappedWidth - topLeft.width - topRight.width) / topMiddle.width);
+		var numVertical:Int = Math.ceil((_snappedHeight - topLeft.height - bottomLeft.height) / middleLeft.height);
+	
+		vertices = new DrawData<Float>();
+		uvtData = new DrawData<Float>();
+		indices = new DrawData<Int>();
+		colors = new DrawData<Int>();
+		numVertices = 0;
+
+		if (fillCenter)
+		{
+			// fill central tiles:
+			slice.copyFrom(middle);
+
+			if (stretchCenter)
+			{
+				size.set(_snappedWidth - middleLeft.width - middleRight.width, _snappedHeight - topMiddle.height - bottomMiddle.height);
+				dst.set(topLeft.width, topLeft.height);
+				numVertices = stretchSlice(numVertices, slice, dst, bdSize, size);
+			}
+			else
+			{
+				for (i in 0...numHorizontal)
+				{
+					slice.width = middle.width;
+					if (i == numHorizontal - 1)
+					{
+						slice.width = _snappedWidth - middleLeft.width - middleRight.width - (numHorizontal - 1) * middle.width;
+					}
+
+					for (j in 0...numVertical)
+					{
+						slice.height = middle.height;
+						if (j == numVertical - 1)
+						{
+							slice.height = _snappedHeight - topMiddle.height - bottomMiddle.height - (numVertical - 1) * middle.height;
+						}
+
+						size.set(slice.width, slice.height);
+						dst.set(topLeft.width + i * middle.width, topLeft.height + j * middle.height);
+						numVertices = stretchSlice(numVertices, slice, dst, bdSize, size);
+					}
+				}
+			}
+		}
+
+		if (stretchTop)
+		{
+			slice.copyFrom(topMiddle);
+			size.set(_snappedWidth - topLeft.width - topRight.width, topMiddle.height);
+			dst.set(topLeft.width, 0);
+			numVertices = stretchSlice(numVertices, slice, dst, bdSize, size);
+		}
+		else
+		{
+			for (i in 0...numHorizontal)
+			{
+				slice.copyFrom(topMiddle);
+				if (i == numHorizontal - 1)
+				{
+					slice.width = _snappedWidth - topLeft.width - topRight.width - (numHorizontal - 1) * topMiddle.width;
+				}
+
+				size.set(slice.width, slice.height);
+				dst.set(topLeft.width + i * topMiddle.width, 0);
+				numVertices = stretchSlice(numVertices, slice, dst, bdSize, size);
+			}
+		}
+
+		if (stretchBottom)
+		{
+			slice.copyFrom(bottomMiddle);
+			dst.set(bottomLeft.width, _snappedHeight - bottomMiddle.height);
+			size.set(_snappedWidth - bottomLeft.width - bottomRight.width, bottomMiddle.height);
+			numVertices = stretchSlice(numVertices, slice, dst, bdSize, size);
+		}
+		else
+		{
+			for (i in 0...numHorizontal)
+			{
+				slice.copyFrom(bottomMiddle);
+				if (i == numHorizontal - 1)
+				{
+					slice.width = _snappedWidth - bottomLeft.width - bottomRight.width - (numHorizontal - 1) * bottomMiddle.width;
+				}
+
+				dst.set(bottomLeft.width + i * bottomMiddle.width, _snappedHeight - bottomMiddle.height);
+				size.set(slice.width, slice.height);
+				numVertices = stretchSlice(numVertices, slice, dst, bdSize, size);
+			}
+		}
+
+		if (stretchLeft)
+		{
+			slice.copyFrom(middleLeft);
+			dst.set(0, topLeft.height);
+			size.set(middleLeft.width, _snappedHeight - topLeft.height - bottomLeft.height);
+			numVertices = stretchSlice(numVertices, slice, dst, bdSize, size);
+		}
+		else
+		{
+			for (i in 0...numVertical)
+			{
+				slice.copyFrom(middleLeft);
+				if (i == numVertical - 1)
+				{
+					slice.height = _snappedHeight - topLeft.height - bottomLeft.height - (numVertical - 1) * middleLeft.height;
+				}
+
+				dst.set(0, topLeft.height + i * middleLeft.height);
+				size.set(slice.width, slice.height);
+				numVertices = stretchSlice(numVertices, slice, dst, bdSize, size);
+			}
+		}
+
+		if (stretchRight)
+		{
+			slice.copyFrom(middleRight);
+			dst.set(_snappedWidth - middleRight.width, topRight.height);
+			size.set(middleRight.width, _snappedHeight - topRight.height - bottomRight.height);
+			numVertices = stretchSlice(numVertices, slice, dst, bdSize, size);
+		}
+		else
+		{
+			for (i in 0...numVertical)
+			{
+				slice.copyFrom(middleRight);
+				if (i == numVertical - 1)
+				{
+					slice.height = _snappedHeight - topRight.height - bottomRight.height - (numVertical - 1) * middleRight.height;
+				}
+
+				dst.set(_snappedWidth - middleRight.width, topRight.height + i * middleRight.height);
+				size.set(slice.width, slice.height);
+				numVertices = stretchSlice(numVertices, slice, dst, bdSize, size);
+			}
+		}
+
+		// draw corners:
+		// 1. top left
+		dst.set(0, 0);
+		size.set(topLeft.width, topLeft.height);
+		numVertices = stretchSlice(numVertices, topLeft, dst, bdSize, size);
+		// 2. bottom left
+		dst.set(0, _snappedHeight - bottomLeft.height);
+		size.set(bottomLeft.width, bottomLeft.height);
+		numVertices = stretchSlice(numVertices, bottomLeft, dst, bdSize, size);
+		// 3. top right
+		dst.set(_snappedWidth - topRight.width, 0);
+		size.set(topRight.width, topRight.height);
+		numVertices = stretchSlice(numVertices, topRight, dst, bdSize, size);
+		// 4. bottom right
+		dst.set(_snappedWidth - bottomRight.width, _snappedHeight - bottomRight.height);
+		size.set(bottomRight.width, bottomRight.height);
+		numVertices = stretchSlice(numVertices, bottomRight, dst, bdSize, size);
 
 		if (FlxG.renderBlit)
 		{
@@ -229,104 +389,67 @@ class FlxSliceSprite extends FlxStrip
 				renderSprite.pixels.fillRect(_flashRect2, FlxColor.TRANSPARENT);
 			}
 
-			if (fillCenter)
-				blitTileOnCanvas(CENTER, stretchCenter, centerX, centerY, centerWidth, centerHeight);
-
-			blitTileOnCanvas(TOP, stretchTop, centerX, 0, centerWidth, sliceRects[TOP].height);
-			blitTileOnCanvas(BOTTOM, stretchBottom, centerX, centerY + centerHeight, centerWidth, sliceRects[BOTTOM].height);
-			blitTileOnCanvas(LEFT, stretchLeft, 0, centerY, sliceRects[LEFT].width, centerHeight);
-			blitTileOnCanvas(RIGHT, stretchRight, _snappedWidth - sliceRects[RIGHT].width, centerY, sliceRects[RIGHT].width, centerHeight);
-			blitTileOnCanvas(TOP_LEFT, false, 0, 0, sliceRects[TOP_LEFT].width, sliceRects[TOP_LEFT].height);
-			blitTileOnCanvas(TOP_RIGHT, false, _snappedWidth - sliceRects[TOP_RIGHT].width, 0, sliceRects[TOP_RIGHT].width, sliceRects[TOP_RIGHT].height);
-			blitTileOnCanvas(BOTTOM_LEFT, false, 0, centerY + centerHeight, sliceRects[BOTTOM_LEFT].width, sliceRects[BOTTOM_LEFT].height);
-			blitTileOnCanvas(BOTTOM_RIGHT, false, _snappedWidth - sliceRects[BOTTOM_RIGHT].width, centerY + centerHeight, sliceRects[BOTTOM_RIGHT].width, sliceRects[BOTTOM_RIGHT].height);
+			FlxSpriteUtil.flashGfx.clear();
+			FlxSpriteUtil.flashGfx.beginBitmapFill(graphic.bitmap);
+			FlxSpriteUtil.flashGfx.drawTriangles(vertices, indices, uvtData);
+			FlxSpriteUtil.flashGfx.endFill();
+			renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
+			FlxSpriteUtil.flashGfx.clear();
 
 			renderSprite.dirty = true;
 		}
 		else
 		{
-			if (fillCenter)
-				fillTileVerticesUVs(CENTER, stretchCenter, centerX, centerY, centerWidth, centerHeight);
-
-			fillTileVerticesUVs(TOP, stretchTop, centerX, 0, centerWidth, sliceRects[TOP].height);
-			fillTileVerticesUVs(BOTTOM, stretchBottom, centerX, centerY + centerHeight, centerWidth, sliceRects[BOTTOM].height);
-			fillTileVerticesUVs(LEFT, stretchLeft, 0, centerY, sliceRects[LEFT].width, centerHeight);
-			fillTileVerticesUVs(RIGHT, stretchRight, _snappedWidth - sliceRects[RIGHT].width, centerY, sliceRects[RIGHT].width, centerHeight);
-			fillTileVerticesUVs(TOP_LEFT, false, 0, 0, sliceRects[TOP_LEFT].width, sliceRects[TOP_LEFT].height);
-			fillTileVerticesUVs(TOP_RIGHT, false, _snappedWidth - sliceRects[TOP_RIGHT].width, 0, sliceRects[TOP_RIGHT].width, sliceRects[TOP_RIGHT].height);
-			fillTileVerticesUVs(BOTTOM_LEFT, false, 0, centerY + centerHeight, sliceRects[BOTTOM_LEFT].width, sliceRects[BOTTOM_LEFT].height);
-			fillTileVerticesUVs(BOTTOM_RIGHT, false, _snappedWidth - sliceRects[BOTTOM_RIGHT].width, centerY + centerHeight, sliceRects[BOTTOM_RIGHT].width, sliceRects[BOTTOM_RIGHT].height);
+			var c:FlxColor = color;
+			c.alphaFloat = alpha;
+			updateColors(c);
 		}
 
 		regen = false;
 	}
 
-	function blitTileOnCanvas(TileIndex:Int, Stretch:Bool, X:Float, Y:Float, Width:Float, Height:Float):Void
+	function stretchSlice(vertex:Int, slice:FlxRect, dst:FlxPoint, bdSize:FlxPoint, size:FlxPoint):Int
 	{
-		var tile:FlxGraphic = slices[TileIndex];
+		// there are 2 values per vertex:
+		var vertexIndex:Int = 2 * vertex;
+		var uvIndex:Int = vertexIndex;
+		var colorIndex:Int = vertex;
 
-		if (tile != null)
-		{
-			FlxSpriteUtil.flashGfx.clear();
+		vertices[vertexIndex++] = dst.x;
+		vertices[vertexIndex++] = dst.y;
+		vertices[vertexIndex++] = dst.x + size.x;
+		vertices[vertexIndex++] = dst.y;
+		vertices[vertexIndex++] = dst.x + size.x;
+		vertices[vertexIndex++] = dst.y + size.y;
+		vertices[vertexIndex++] = dst.x;
+		vertices[vertexIndex++] = dst.y + size.y;
 
-			_matrix.identity();
+		uvtData[uvIndex++] = slice.x / bdSize.x;
+		uvtData[uvIndex++] = slice.y / bdSize.y;
 
-			if (Stretch)
-				_matrix.scale(Width / tile.width, Height / tile.height);
+		uvtData[uvIndex++] = slice.right / bdSize.x;
+		uvtData[uvIndex++] = slice.y / bdSize.y;
 
-			_matrix.translate(X, Y);
-			FlxSpriteUtil.flashGfx.beginBitmapFill(tile.bitmap, _matrix);
+		uvtData[uvIndex++] = slice.right / bdSize.x;
+		uvtData[uvIndex++] = slice.bottom / bdSize.y;
 
-			FlxSpriteUtil.flashGfx.drawRect(X, Y, Width, Height);
-			renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
-			FlxSpriteUtil.flashGfx.clear();
-		}
+		uvtData[uvIndex++] = slice.x / bdSize.x;
+		uvtData[uvIndex++] = slice.bottom / bdSize.y;
+
+		// there are 6 indices per slice, which have 4 vertices per vertex:
+		var indexPosition:Int = Math.round(6 * vertex / 4);
+
+		indices[indexPosition++] = vertex + 0;
+		indices[indexPosition++] = vertex + 1;
+		indices[indexPosition++] = vertex + 2;
+		indices[indexPosition++] = vertex + 0;
+		indices[indexPosition++] = vertex + 2;
+		indices[indexPosition++] = vertex + 3;
+
+		return vertex + 4;
 	}
 
-	function fillTileVerticesUVs(TileIndex:Int, Stretch:Bool, X:Float, Y:Float, Width:Float, Height:Float):Void
-	{
-		var tile:FlxGraphic = slices[TileIndex];
-
-		if (tile != null)
-		{
-			var sliceV:DrawData<Float> = sliceVertices[TileIndex];
-			var sliceUVs:DrawData<Float> = sliceUVTs[TileIndex];
-
-			sliceV[0] = X;
-			sliceV[1] = Y;
-			sliceV[2] = X + Width;
-			sliceV[3] = Y;
-			sliceV[4] = X + Width;
-			sliceV[5] = Y + Height;
-			sliceV[6] = X;
-			sliceV[7] = Y + Height;
-
-			if (Stretch)
-			{
-				sliceUVs[0] = 0;
-				sliceUVs[1] = 0;
-				sliceUVs[2] = 1;
-				sliceUVs[3] = 0;
-				sliceUVs[4] = 1;
-				sliceUVs[5] = 1;
-				sliceUVs[6] = 0;
-				sliceUVs[7] = 1;
-			}
-			else
-			{
-				sliceUVs[0] = 0;
-				sliceUVs[1] = 0;
-				sliceUVs[2] = Width / tile.width;
-				sliceUVs[3] = 0;
-				sliceUVs[4] = Width / tile.width;
-				sliceUVs[5] = Height / tile.height;
-				sliceUVs[6] = 0;
-				sliceUVs[7] = Height / tile.height;
-			}
-		}
-	}
-
-	function regenSliceFrames():Void
+	function regenSliceRects():Void
 	{
 		if (!regenSlices || graphic == null || sliceRect == null)
 			return;
@@ -374,20 +497,6 @@ class FlxSliceSprite extends FlxStrip
 			}
 		}
 
-		slices = FlxDestroyUtil.destroyArray(slices);
-		slices = [];
-
-		for (i in 0...9)
-		{
-			var tempRect:FlxRect = sliceRects[i];
-
-			if (tempRect.width > 0 && tempRect.height > 0)
-			{
-				helperFrame = graphic.imageFrame.frame.subFrameTo(tempRect, helperFrame);
-				slices[i] = FlxGraphic.fromFrame(helperFrame, true, null, false);
-			}
-		}
-
 		regenSlices = false;
 	}
 
@@ -407,23 +516,14 @@ class FlxSliceSprite extends FlxStrip
 		}
 		else
 		{
-			for (camera in cameras)
-			{
-				if (!camera.visible || !camera.exists)
-					continue;
-
-				getScreenPosition(_point, camera);
-
-				for (i in 0...9)
-					drawTileOnCamera(i, camera);
-			}
+			super.draw();
 		}
 	}
 
-	inline function drawTileOnCamera(TileIndex:Int, Camera:FlxCamera):Void
+	function updateColors(color:FlxColor):Void
 	{
-		if (slices[TileIndex] != null)
-			Camera.drawTriangles(slices[TileIndex], sliceVertices[TileIndex], indices, sliceUVTs[TileIndex], colors, _point, blend, repeat, antialiasing);
+		for (i in 0...numVertices)
+			colors[i] = color;
 	}
 
 	override function set_alpha(Alpha:Float):Float
@@ -439,9 +539,7 @@ class FlxSliceSprite extends FlxStrip
 		{
 			var c:FlxColor = color;
 			c.alphaFloat = newAlpha;
-
-			for (i in 0...4)
-				colors[i] = c;
+			updateColors(c);
 		}
 		regen = true;
 		return newAlpha;
@@ -455,9 +553,7 @@ class FlxSliceSprite extends FlxStrip
 		{
 			var newColor:FlxColor = Color;
 			newColor.alphaFloat = alpha;
-
-			for (i in 0...4)
-				colors[i] = newColor;
+			updateColors(newColor);
 		}
 
 		return super.set_color(Color);
