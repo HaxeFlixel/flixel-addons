@@ -5,10 +5,11 @@ import flixel.group.FlxGroup;
 import flixel.FlxG;
 import flixel.tile.FlxTilemap;
 import flixel.math.FlxRect;
+import flixel.math.FlxAngle;
+import openfl.Assets;
+import haxe.Json;
 
 using flixel.addons.editors.ogmo.FlxOgmo3Loader;
-using openfl.Assets;
-using haxe.Json;
 using Math;
 using Reflect;
 
@@ -30,15 +31,13 @@ class FlxOgmo3Loader
 	 */
 	public function new(ProjectData:String, LevelData:String)
 	{
-		project = ProjectData.getText().parseProjectJSON();
-		level = LevelData.getText().parseLevelJSON();
+		project = Assets.getText(ProjectData).parseProjectJSON();
+		level = Assets.getText(LevelData).parseLevelJSON();
 	}
 
 	/**
 	 * Get a custom value for the loaded level.
 	 * Returns `null` if no value is present.
-	 * @param Value 
-	 * @return Dynamic
 	 */
 	public function getLevelValue(Value:String):Dynamic
 	{
@@ -76,12 +75,9 @@ class FlxOgmo3Loader
 	 * Loads a Map of FlxPoint arrays from a grid layer. For example:
 	 *
 	 * ```haxe
-	 * 	var gridData = myOgmoData.loadGridMap('my grid layer');
-	 * 	for (point in gridData['e']) addSpawnPoint(point.x, point.y);
+	 * var gridData = myOgmoData.loadGridMap('my grid layer');
+	 * for (point in gridData['e']) addSpawnPoint(point.x, point.y);
 	 * ```
-	 *
-	 * @param GridLayer
-	 * @return Map<String, Array<FlxPoint>>
 	 */
 	public function loadGridMap(GridLayer:String = "grid"):Map<String, Array<FlxPoint>>
 	{
@@ -114,18 +110,18 @@ class FlxOgmo3Loader
 	 * Here's an example that reads the position of an object:
 	 *
 	 * ```haxe
-	 *	function loadEntity(entity:EntityData)
-	 *	{
-	 * 		switch (entity.name)
-	 *		{
-	 *			case "player":
-	 *				player.x = entity.x;
-	 *				player.y = entity.y;
-	 *				player.custom_value = entity.values.custom_value;
-	 *			default:
-	 *				throw 'Unrecognized actor type ${entity.name}';
-	 *		}
-	 *	}
+	 * function loadEntity(entity:EntityData)
+	 * {
+	 *   switch (entity.name)
+	 *   {
+	 *     case "player":
+	 *       player.x = entity.x;
+	 *       player.y = entity.y;
+	 *       player.custom_value = entity.values.custom_value;
+	 *     default:
+	 *       throw 'Unrecognized actor type ${entity.name}';
+	 *   }
+	 * }
 	 * ```
 	 *
 	 * @param	EntityLoadCallback		A function with the signature `(name:String, data:Xml):Void` and spawns entities based on their name.
@@ -144,7 +140,6 @@ class FlxOgmo3Loader
 	 *
 	 * @param DecalLayer	The name of the layer the decals are stored in Ogmo editor. Usually `"decals"`.
 	 * @param decalsPath 	The path to the directory in which your decal assets are stored.
-	 * @return FlxGroup
 	 */
 	public function loadDecals(DecalLayer:String = 'decals', decalsPath:String):FlxGroup
 	{
@@ -160,7 +155,7 @@ class FlxOgmo3Loader
 			if (decal.scaleY != null)
 				s.scale.y = decal.scaleY;
 			if (decal.rotation != null)
-				s.angle = project.anglesRadians ? decal.rotation * 180 / Math.PI : decal.rotation;
+				s.angle = project.anglesRadians ? FlxAngle.asDegrees(decal.rotation) : decal.rotation;
 			g.add(s);
 		}
 		return g;
@@ -168,29 +163,22 @@ class FlxOgmo3Loader
 
 	/**
 	 * Parse OGMO Editor level .json text
-	 * @param json
-	 * @return LevelData
 	 */
 	static function parseLevelJSON(json:String):LevelData
 	{
-		return cast json.parse();
+		return cast Json.parse(json);
 	}
 
 	/**
 	 * Parse OGMO Editor Project .ogmo text
-	 * @param json
-	 * @return ProjectData
 	 */
 	static function parseProjectJSON(json:String):ProjectData
 	{
-		return cast json.parse();
+		return cast Json.parse(json);
 	}
 
 	/**
 	 * Get Tile Layer data matching a given name
-	 * @param data
-	 * @param name
-	 * @return TileLayer
 	 */
 	static function getTileLayer(data:LevelData, name:String):TileLayer
 	{
@@ -202,9 +190,6 @@ class FlxOgmo3Loader
 
 	/**
 	 * Get Grid Layer data matching a given name
-	 * @param data
-	 * @param name
-	 * @return TileLayer
 	 */
 	static function getGridLayer(data:LevelData, name:String):GridLayer
 	{
@@ -216,9 +201,6 @@ class FlxOgmo3Loader
 
 	/**
 	 * Get Entity Layer data matching a given name
-	 * @param data
-	 * @param name
-	 * @return EntityLayer
 	 */
 	static function getEntityLayer(data:LevelData, name:String):EntityLayer
 	{
@@ -230,9 +212,6 @@ class FlxOgmo3Loader
 
 	/**
 	 * Get Decal Layer data matching a given name
-	 * @param data
-	 * @param name
-	 * @return DecalLayer
 	 */
 	static function getDecalLayer(data:LevelData, name:String):DecalLayer
 	{
@@ -244,9 +223,6 @@ class FlxOgmo3Loader
 
 	/**
 	 * Get matching Tileset data from a given name
-	 * @param data
-	 * @param name
-	 * @return ProjectTilesetData
 	 */
 	static function getTilesetData(data:ProjectData, name:String):ProjectTilesetData
 	{
@@ -259,7 +235,6 @@ class FlxOgmo3Loader
 
 // Parsed .OGMO Project data
 
-@:dox(hide)
 typedef ProjectData =
 {
 	name:String,
@@ -290,7 +265,6 @@ typedef ProjectData =
 
 // Project Layer
 
-@:dox(hide)
 typedef ProjectLayerData =
 {
 	definition:String,
@@ -315,7 +289,6 @@ typedef ProjectLayerData =
 
 // Project Entity
 
-@:dox(hide)
 typedef ProjectEntityData =
 {
 	exportID:String,
@@ -358,7 +331,6 @@ typedef ProjectEntityData =
 
 // Project Tileset
 
-@:dox(hide)
 typedef ProjectTilesetData =
 {
 	label:String,
@@ -372,7 +344,6 @@ typedef ProjectTilesetData =
 
 // Parsed .JSON Level data
 
-@:dox(hide)
 typedef LevelData =
 {
 	width:Int,
@@ -385,7 +356,6 @@ typedef LevelData =
 
 // Level Layer data
 
-@:dox(hide)
 typedef LayerData =
 {
 	name:String,
@@ -408,7 +378,6 @@ typedef LayerData =
 
 // Tile subset of LayerData
 
-@:dox(hide)
 typedef TileLayer =
 {
 	name:String,
@@ -431,7 +400,6 @@ typedef TileLayer =
 
 // Grid subset of LayerData
 
-@:dox(hide)
 typedef GridLayer =
 {
 	name:String,
@@ -449,7 +417,6 @@ typedef GridLayer =
 
 // Entity subset of LayerData
 
-@:dox(hide)
 typedef EntityLayer =
 {
 	name:String,
@@ -465,7 +432,6 @@ typedef EntityLayer =
 
 // Individual Entity data
 
-@:dox(hide)
 typedef EntityData =
 {
 	name:String,
@@ -486,7 +452,6 @@ typedef EntityData =
 
 // Decal subset of LayerData
 
-@:dox(hide)
 typedef DecalLayer =
 {
 	name:String,
@@ -502,7 +467,6 @@ typedef DecalLayer =
 
 // Individual Decal data
 
-@:dox(hide)
 typedef DecalData =
 {
 	x:Int,

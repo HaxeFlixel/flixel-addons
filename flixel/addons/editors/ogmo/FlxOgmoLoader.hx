@@ -11,6 +11,9 @@ import haxe.xml.Access;
 import haxe.xml.Fast as Access;
 #end
 
+/**
+ * This is for loading maps made with OGMO Editor 2. For loading maps made with OGMO Editor 3, use `FlxOgmo3Loader`
+ */
 class FlxOgmoLoader
 {
 	public var width:Int;
