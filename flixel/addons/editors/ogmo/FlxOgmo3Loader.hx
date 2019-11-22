@@ -82,7 +82,7 @@ class FlxOgmo3Loader
 	public function loadGridMap(GridLayer:String = "grid"):Map<String, Array<FlxPoint>>
 	{
 		var gridLayer = level.getGridLayer(GridLayer);
-		var out:Map<String, Array<FlxPoint>> = [];
+		var out:Map<String, Array<FlxPoint>> = new Map();
 		switch gridLayer.arrayMode
 		{
 			case 0:
@@ -143,7 +143,7 @@ class FlxOgmo3Loader
 	 */
 	public function loadDecals(DecalLayer:String = 'decals', decalsPath:String):FlxGroup
 	{
-		if (decalsPath.charAt(decalsPath.length - 1) != '/')
+		if (!StringTools.endsWith('/'))
 			decalsPath += '/';
 		var g = new FlxGroup();
 		for (decal in level.getDecalLayer(DecalLayer).decals)
@@ -233,8 +233,9 @@ class FlxOgmo3Loader
 	}
 }
 
-// Parsed .OGMO Project data
-
+/**
+ * Parsed .OGMO Project data
+ */
 typedef ProjectData =
 {
 	name:String,
@@ -263,8 +264,9 @@ typedef ProjectData =
 	tilesets:Array<ProjectTilesetData>,
 }
 
-// Project Layer
-
+/**
+ * Project Layer
+ */
 typedef ProjectLayerData =
 {
 	definition:String,
@@ -287,8 +289,9 @@ typedef ProjectLayerData =
 	?legend:Dynamic,
 }
 
-// Project Entity
-
+/**
+ * Project Entity
+ */
 typedef ProjectEntityData =
 {
 	exportID:String,
@@ -329,8 +332,9 @@ typedef ProjectEntityData =
 	values:Array<Dynamic>,
 }
 
-// Project Tileset
-
+/**
+ * Project Tileset
+ */
 typedef ProjectTilesetData =
 {
 	label:String,
@@ -342,8 +346,9 @@ typedef ProjectTilesetData =
 	tileSeparationY:Int,
 }
 
-// Parsed .JSON Level data
-
+/**
+ * Parsed .JSON Level data
+ */
 typedef LevelData =
 {
 	width:Int,
@@ -354,8 +359,9 @@ typedef LevelData =
 	?values:Dynamic,
 }
 
-// Level Layer data
-
+/**
+ * Level Layer data
+ */
 typedef LayerData =
 {
 	name:String,
@@ -376,8 +382,9 @@ typedef LayerData =
 	?arrayMode:Int,
 }
 
-// Tile subset of LayerData
-
+/**
+ * Tile subset of LayerData
+ */
 typedef TileLayer =
 {
 	name:String,
@@ -398,8 +405,9 @@ typedef TileLayer =
 	?dataCoords2D:Array<Array<Array<Int>>>,
 }
 
-// Grid subset of LayerData
-
+/**
+ * Grid subset of LayerData
+ */
 typedef GridLayer =
 {
 	name:String,
@@ -415,8 +423,9 @@ typedef GridLayer =
 	?grid2D:Array<Array<String>>,
 }
 
-// Entity subset of LayerData
-
+/**
+ * Entity subset of LayerData
+ */
 typedef EntityLayer =
 {
 	name:String,
@@ -430,8 +439,9 @@ typedef EntityLayer =
 	entities:Array<EntityData>,
 }
 
-// Individual Entity data
-
+/**
+ * Individual Entity data
+ */
 typedef EntityData =
 {
 	name:String,
@@ -450,8 +460,9 @@ typedef EntityData =
 	?values:Dynamic,
 }
 
-// Decal subset of LayerData
-
+/**
+ * Decal subset of LayerData
+ */
 typedef DecalLayer =
 {
 	name:String,
@@ -465,8 +476,9 @@ typedef DecalLayer =
 	decals:Array<DecalData>,
 }
 
-// Individual Decal data
-
+/**
+ * Individual Decal data
+ */
 typedef DecalData =
 {
 	x:Int,
