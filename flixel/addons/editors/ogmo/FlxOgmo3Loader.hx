@@ -20,15 +20,10 @@ class FlxOgmo3Loader
 	var level:LevelData;
 
 	/**
-	 * Creates a new instance of `FlxOgmoLoader` and prepares the XML level data to be loaded.
-	 * This object can either be contained or ovewritten.
+	 * Creates a new instance of `FlxOgmo3Loader` and prepares the level and project data to be used in other methods
 	 *
-	 * IMPORTANT:
-	 *  * Tile layers must have the Export Mode set to `"CSV"`.
-	 *  * First tile in spritesheet must be blank or debug. It will never get drawn so don't place them in Ogmo!
-	 *    (This is needed to support many other editors that use index `0` as empty)
-	 *
-	 * @param	LevelData	A String or Class representing the location of xml level data.
+	 * @param	ProjectData	The path to your project data (.ogmo).
+	 * @param	LevelData	The path to your level data (.json).
 	 */
 	public function new(ProjectData:String, LevelData:String)
 	{
