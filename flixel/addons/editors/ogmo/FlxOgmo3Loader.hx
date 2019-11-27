@@ -12,6 +12,7 @@ import haxe.Json;
 using flixel.addons.editors.ogmo.FlxOgmo3Loader;
 using Math;
 using Reflect;
+using StringTools;
 
 class FlxOgmo3Loader
 {
@@ -143,7 +144,7 @@ class FlxOgmo3Loader
 	 */
 	public function loadDecals(DecalLayer:String = 'decals', decalsPath:String):FlxGroup
 	{
-		if (!StringTools.endsWith('/'))
+		if (!decalsPath.endsWith('/'))
 			decalsPath += '/';
 		var g = new FlxGroup();
 		for (decal in level.getDecalLayer(DecalLayer).decals)
