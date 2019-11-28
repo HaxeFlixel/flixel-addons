@@ -21,7 +21,7 @@ class FlxOgmo3Loader
 	 * Creates a new instance of `FlxOgmo3Loader` and prepares the level and project data to be used in other methods
 	 *
 	 * @param	projectData	The path to your project data (.ogmo).
-	 * @param	LevelData	The path to your level data (.json).
+	 * @param	levelData	The path to your level data (.json).
 	 */
 	public function new(projectData:String, levelData:String)
 	{
@@ -45,7 +45,7 @@ class FlxOgmo3Loader
 	 * IMPORTANT: Tile layers must export using IDs, not Coords!
 	 *
 	 * @param	tileGraphic		A String or Class representing the location of the image asset for the tilemap.
-	 * @param	TileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
+	 * @param	tileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
 	 * @return	A `FlxTilemap`, where you can collide your entities against.
 	 */
 	public function loadTilemap(tileGraphic:Dynamic, tileLayer:String = "tiles"):FlxTilemap
