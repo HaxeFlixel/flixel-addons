@@ -10,8 +10,6 @@ import openfl.Assets;
 import haxe.Json;
 
 using flixel.addons.editors.ogmo.FlxOgmo3Loader;
-using Math;
-using Reflect;
 using StringTools;
 
 class FlxOgmo3Loader
@@ -37,7 +35,7 @@ class FlxOgmo3Loader
 	 */
 	public function getLevelValue(Value:String):Dynamic
 	{
-		return level.field(Value);
+		return Reflect.field(level, Value);
 	}
 
 	/**
@@ -72,14 +70,15 @@ class FlxOgmo3Loader
 	 *
 	 * ```haxe
 	 * var gridData = myOgmoData.loadGridMap('my grid layer');
-	 * for (point in gridData['e']) addSpawnPoint(point.x, point.y);
+	 * for (point in gridData['e'])
+	 *     addSpawnPoint(point.x, point.y);
 	 * ```
 	 */
 	public function loadGridMap(GridLayer:String = "grid"):Map<String, Array<FlxPoint>>
 	{
 		var gridLayer = level.getGridLayer(GridLayer);
-		var out:Map<String, Array<FlxPoint>> = new Map();
-		switch gridLayer.arrayMode
+		var out = new Map<String, Array<FlxPoint>>();
+		switch (gridLayer.arrayMode)
 		{
 			case 0:
 				for (i in 0...gridLayer.grid.length)
@@ -87,7 +86,7 @@ class FlxOgmo3Loader
 					if (!out.exists(gridLayer.grid[i]))
 						out.set(gridLayer.grid[i], []);
 					out[gridLayer.grid[i]].push(FlxPoint.get((i % gridLayer.gridCellsX) * gridLayer.gridCellWidth,
-						(i / gridLayer.gridCellsX).floor() * gridLayer.gridCellHeight));
+						Math.floor(i / gridLayer.gridCellsX) * gridLayer.gridCellHeight));
 				}
 			case 1:
 				for (j in 0...gridLayer.grid2D.length)
@@ -108,15 +107,15 @@ class FlxOgmo3Loader
 	 * ```haxe
 	 * function loadEntity(entity:EntityData)
 	 * {
-	 *   switch (entity.name)
-	 *   {
-	 *     case "player":
-	 *       player.x = entity.x;
-	 *       player.y = entity.y;
-	 *       player.custom_value = entity.values.custom_value;
-	 *     default:
-	 *       throw 'Unrecognized actor type ${entity.name}';
-	 *   }
+	 *     switch (entity.name)
+	 *     {
+	 *         case "player":
+	 *             player.x = entity.x;
+	 *             player.y = entity.y;
+	 *             player.custom_value = entity.values.custom_value;
+	 *         default:
+	 *             throw 'Unrecognized actor type ${entity.name}';
+	 *     }
 	 * }
 	 * ```
 	 *
@@ -135,7 +134,7 @@ class FlxOgmo3Loader
 	 * IMPORTANT: All decals must be included in one directory!
 	 *
 	 * @param DecalLayer	The name of the layer the decals are stored in Ogmo editor. Usually `"decals"`.
-	 * @param decalsPath 	The path to the directory in which your decal assets are stored.
+	 * @param decalsPath	The path to the directory in which your decal assets are stored.
 	 */
 	public function loadDecals(DecalLayer:String = 'decals', decalsPath:String):FlxGroup
 	{
@@ -240,18 +239,9 @@ typedef ProjectData =
 	gridColor:String,
 	anglesRadians:Bool,
 	directoryDepth:Int,
-	levelDefaultSize:
-	{
-			x:Int, y:Int
-	},
-	levelMinSize:
-	{
-			x:Int, y:Int
-	},
-	levelMaxSize:
-	{
-			x:Int, y:Int
-	},
+	levelDefaultSize:Point,
+	levelMinSize:Point,
+	levelMaxSize:Point,
 	levelVaues:Array<Dynamic>,
 	defaultExportMode:String,
 	entityTags:Array<String>,
@@ -267,10 +257,7 @@ typedef ProjectLayerData =
 {
 	definition:String,
 	name:String,
-	gridSize:
-	{
-			x:Int, y:Int
-	},
+	gridSize:Point,
 	exportID:String,
 	?requiredTags:Array<String>,
 	?excludedTags:Array<String>,
@@ -293,26 +280,18 @@ typedef ProjectEntityData =
 	exportID:String,
 	name:String,
 	limit:Int,
-	size:
-	{
-			x:Int, y:Int
-	},
-	origin:
-	{
-			x:Int, y:Int
-	},
+	size:Point,
+	origin:Point,
 	originAnchored:Bool,
 	shape:
 	{
-			label:String, points:Array<{x:Int, y:Int}>
+		label:String,
+		points:Array<Point>
 	},
 	color:String,
 	tileX:Bool,
 	tileY:Bool,
-	tileSize:
-	{
-			x:Int, y:Int
-	},
+	tileSize:Point,
 	resizeableX:Bool,
 	resizeableY:Bool,
 	rotatable:Bool,
@@ -483,4 +462,10 @@ typedef DecalData =
 	?scaleX:Float,
 	?scaleY:Float,
 	?rotation:Float,
+}
+
+typedef Point =
+{
+	x:Int,
+	y:Int
 }
