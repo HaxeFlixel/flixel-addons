@@ -20,53 +20,51 @@ class FlxOgmo3Loader
 	/**
 	 * Creates a new instance of `FlxOgmo3Loader` and prepares the level and project data to be used in other methods
 	 *
-	 * @param	ProjectData	The path to your project data (.ogmo).
+	 * @param	projectData	The path to your project data (.ogmo).
 	 * @param	LevelData	The path to your level data (.json).
 	 */
-	public function new(ProjectData:String, LevelData:String)
+	public function new(projectData:String, levelData:String)
 	{
-		project = Assets.getText(ProjectData).parseProjectJSON();
-		level = Assets.getText(LevelData).parseLevelJSON();
+		project = Assets.getText(projectData).parseProjectJSON();
+		level = Assets.getText(levelData).parseLevelJSON();
 	}
 
 	/**
 	 * Get a custom value for the loaded level.
 	 * Returns `null` if no value is present.
 	 */
-	public function getLevelValue(Value:String):Dynamic
+	public function getLevelValue(value:String):Dynamic
 	{
-		return Reflect.field(level, Value);
+		return Reflect.field(level, value);
 	}
 
 	/**
-	 * Load a Tilemap. Tile layers must have the Export Mode set to `"CSV"`.
-	 * Collision with entities should be handled with the reference returned from this function. Here's a tip:
+	 * Load a Tilemap.
+	 * Collision with entities should be handled with the reference returned from this function.
 	 *
 	 * IMPORTANT: Tile layers must export using IDs, not Coords!
 	 *
-	 * @param	TileGraphic		A String or Class representing the location of the image asset for the tilemap.
-	 * @param	TileWidth		The width of each individual tile.
-	 * @param	TileHeight		The height of each individual tile.
+	 * @param	tileGraphic		A String or Class representing the location of the image asset for the tilemap.
 	 * @param	TileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
-	 * @return	A FlxTilemap, where you can collide your entities against.
+	 * @return	A `FlxTilemap`, where you can collide your entities against.
 	 */
-	public function loadTilemap(TileGraphic:Dynamic, TileLayer:String = "tiles"):FlxTilemap
+	public function loadTilemap(tileGraphic:Dynamic, tileLayer:String = "tiles"):FlxTilemap
 	{
 		var tilemap = new FlxTilemap();
-		var layer = level.getTileLayer(TileLayer);
+		var layer = level.getTileLayer(tileLayer);
 		var tileset = project.getTilesetData(layer.tileset);
 		switch (layer.arrayMode)
 		{
 			case 0:
-				tilemap.loadMapFromArray(layer.data, layer.gridCellsX, layer.gridCellsY, TileGraphic, tileset.tileWidth, tileset.tileHeight);
+				tilemap.loadMapFromArray(layer.data, layer.gridCellsX, layer.gridCellsY, tileGraphic, tileset.tileWidth, tileset.tileHeight);
 			case 1:
-				tilemap.loadMapFrom2DArray(layer.data2D, TileGraphic, tileset.tileWidth, tileset.tileHeight);
+				tilemap.loadMapFrom2DArray(layer.data2D, tileGraphic, tileset.tileWidth, tileset.tileHeight);
 		}
 		return tilemap;
 	}
 
 	/**
-	 * Loads a Map of FlxPoint arrays from a grid layer. For example:
+	 * Loads a Map of `FlxPoint` arrays from a grid layer. For example:
 	 *
 	 * ```haxe
 	 * var gridData = myOgmoData.loadGridMap('my grid layer');
@@ -74,9 +72,9 @@ class FlxOgmo3Loader
 	 *     addSpawnPoint(point.x, point.y);
 	 * ```
 	 */
-	public function loadGridMap(GridLayer:String = "grid"):Map<String, Array<FlxPoint>>
+	public function loadGridMap(gridLayer:String = "grid"):Map<String, Array<FlxPoint>>
 	{
-		var gridLayer = level.getGridLayer(GridLayer);
+		var gridLayer = level.getGridLayer(gridLayer);
 		var out = new Map<String, Array<FlxPoint>>();
 		switch (gridLayer.arrayMode)
 		{
@@ -119,13 +117,13 @@ class FlxOgmo3Loader
 	 * }
 	 * ```
 	 *
-	 * @param	EntityLoadCallback		A function with the signature `(name:String, data:Xml):Void` and spawns entities based on their name.
-	 * @param	EntityLayer				The name of the layer the entities are stored in Ogmo editor. Usually `"entities"` or `"actors"`.
+	 * @param	entityLoadCallback		A function with the signature `(name:String, data:Xml):Void` and spawns entities based on their name.
+	 * @param	entityLayer				The name of the layer the entities are stored in Ogmo editor. Usually `"entities"` or `"actors"`.
 	 */
-	public function loadEntities(EntityLoadCallback:EntityData->Void, EntityLayer:String = "entities"):Void
+	public function loadEntities(entityLoadCallback:EntityData->Void, entityLayer:String = "entities"):Void
 	{
-		for (entity in level.getEntityLayer(EntityLayer).entities)
-			EntityLoadCallback(entity);
+		for (entity in level.getEntityLayer(entityLayer).entities)
+			entityLoadCallback(entity);
 	}
 
 	/**
@@ -133,15 +131,15 @@ class FlxOgmo3Loader
 	 *
 	 * IMPORTANT: All decals must be included in one directory!
 	 *
-	 * @param DecalLayer	The name of the layer the decals are stored in Ogmo editor. Usually `"decals"`.
+	 * @param decalLayer	The name of the layer the decals are stored in Ogmo editor. Usually `"decals"`.
 	 * @param decalsPath	The path to the directory in which your decal assets are stored.
 	 */
-	public function loadDecals(DecalLayer:String = 'decals', decalsPath:String):FlxGroup
+	public function loadDecals(decalLayer:String = 'decals', decalsPath:String):FlxGroup
 	{
 		if (!decalsPath.endsWith('/'))
 			decalsPath += '/';
 		var g = new FlxGroup();
-		for (decal in level.getDecalLayer(DecalLayer).decals)
+		for (decal in level.getDecalLayer(decalLayer).decals)
 		{
 			var s = new FlxSprite(decal.x, decal.y, decalsPath + decal.texture);
 			s.offset.set(s.width / 2, s.height / 2);
