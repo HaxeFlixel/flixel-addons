@@ -147,6 +147,7 @@ class TiledMap
 
 			var layer:TiledLayer = switch (el.name.toLowerCase())
 			{
+				case "group": new TiledGroupLayer(el, this, noLoadHash);
 				case "layer": new TiledTileLayer(el, this);
 				case "objectgroup": new TiledObjectLayer(el, this);
 				case "imagelayer": new TiledImageLayer(el, this);
