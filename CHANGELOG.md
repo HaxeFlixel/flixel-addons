@@ -1,3 +1,11 @@
+2.8.0 (February 8, 2020)
+------------------------------
+* `FlxSliceSprite`:
+  * added `sourceRect` and `fillCenter` (#334)
+  * redid the implementation to make it work on older machines and in Safari (#335)
+* Added `flixel.addons.editors.ogmo.FlxOgmo3Loader` (#337)
+* `flixel.addons.editors.tiled`: added support for grouped layers (#332)
+
 2.7.5 (April 3, 2019)
 ------------------------------
 * `TiledMap`: fixed a crash on HashLink
@@ -14,9 +22,9 @@
 ------------------------------
 * Compatibility with flixel 4.6.0 and Haxe 4.0.0-rc.1
 * `flixel.addons.editors.tiled`:
-    * `TiledTileSet`: fixed `numRows` and `numCols` being flipped (#326)
-    * added support for Tiled Collision Editor (#327)
-    * `TiledImageLayer`: improved documentation (#329)
+  * `TiledTileSet`: fixed `numRows` and `numCols` being flipped (#326)
+  * added support for Tiled Collision Editor (#327)
+  * `TiledImageLayer`: improved documentation (#329)
 
 2.7.1 (November 10, 2018)
 ------------------------------

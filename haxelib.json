@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": ["game", "openfl", "flash", "neko", "cpp", "android", "ios", "cross"],
 	"description": "flixel-addons is a set of useful, additional classes for HaxeFlixel.",
-	"version": "2.7.5",
-	"releasenote": "Fixed a crash in TiledMap on HashLink.",
+	"version": "2.8.0",
+	"releasenote": "Redid FlxSliceSprite, added FlxOgmo3Loader and Tiled grouped layer support.",
 	"contributors": ["haxeflixel", "Gama11"]
 }
