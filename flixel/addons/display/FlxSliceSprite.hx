@@ -91,13 +91,13 @@ class FlxSliceSprite extends FlxStrip
 	 * Actual width of the sprite which will be visible.
 	 * Its calculation is based on snapWidth and sliceRect values.
 	 */
-	public var snappedWidth(get, null):Float;
+	public var snappedWidth(get, never):Float;
 
 	/**
 	 * Actual height of the sprite which will be visible.
 	 * Its calculation is based on snapHeight and sliceRect values.
 	 */
-	public var snappedHeight(get, null):Float;
+	public var snappedHeight(get, never):Float;
 
 	/**
 	 * Internal array of FlxRect objects for each element of slice grid.

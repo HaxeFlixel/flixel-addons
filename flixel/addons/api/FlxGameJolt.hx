@@ -70,46 +70,46 @@ class FlxGameJolt
 	/**
 	 * Whether or not the API has been fully initialized by passing game id, private key, and authenticating user name and token.
 	 */
-	public static var initialized(get, null):Bool;
+	public static var initialized(get, never):Bool;
 
 	/**
 	 * Internal method to verify that init() has been called on this class. Called before running functions that require game ID or private key but not user data.
 	 *
 	 * @return	True if game ID is set, false otherwise.
 	 */
-	static var gameInit(get, null):Bool;
+	static var gameInit(get, never):Bool;
 
 	/**
 	 * Internal method to verify that this user (and game) have been authenticated. Called before running functions which require authentication.
 	 *
 	 * @return 	True if authenticated, false otherwise.
 	 */
-	static var authenticated(get, null):Bool;
+	static var authenticated(get, never):Bool;
 
 	/**
 	 * The user's GameJolt user name. Only works if you've called authUser() and/or init(), otherwise will return "No user".
 	 */
-	public static var username(get, null):String;
+	public static var username(get, never):String;
 
 	/**
 	 * The user's GameJolt user token. Only works if you've called authUser() and/or init(), otherwise will return "No token".
 	 * Generally you should not need to mess with this.
 	 */
-	public static var usertoken(get, null):String;
+	public static var usertoken(get, never):String;
 
 	/**
 	 * An alternative to running authUser() and hoping for the best; this will tell you if your game was run via Quick Play, and user name and token is available. Does NOT authenticate the user data!
 	 *
 	 * @return	True if this was run via Quick Play with user name and token available, false otherwise.
 	 */
-	public static var isQuickPlay(get, null):Bool;
+	public static var isQuickPlay(get, never):Bool;
 
 	/**
 	 * An alternative to running authUser() and hoping for the best; this will tell you if your game was run as an embedded Flash on GameJolt that has user name and token data already. Does NOT authenticate the user data!
 	 *
 	 * @return	True if it's an embedded SWF with user name and token available, false otherwise.
 	 */
-	public static var isEmbeddedFlash(get, null):Bool;
+	public static var isEmbeddedFlash(get, never):Bool;
 
 	/**
 	 * Internal storage for a callback function, used when the URLLoader is complete.

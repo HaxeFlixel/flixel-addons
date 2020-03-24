@@ -142,7 +142,7 @@ class FlxShape extends FlxSprite
 	}
 
 	/********PRIVATE*********/
-	var strokeBuffer(get, null):Float;
+	var strokeBuffer(get, never):Float;
 
 	var _drawStyle:DrawStyle;
 

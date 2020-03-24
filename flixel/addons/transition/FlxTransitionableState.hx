@@ -3,28 +3,29 @@ package flixel.addons.transition;
 import flixel.FlxState;
 
 /**
- * FlxTransitionableState
- *
- * A FlxState which can perform visual transitions
+ * A `FlxState` which can perform visual transitions
  *
  * Usage:
  *
- * First, extend FlxTransitionableState as ie, FooState
+ * First, extend `FlxTransitionableState` as ie, `FooState`.
  *
  * Method 1:
  *
- *  var in:TransitionData = new TransitionData(...);		//add your data where "..." is
- *  var out:TransitionData = new TransitionData(...);
+ * ```haxe
+ * var in:TransitionData = new TransitionData(...); // add your data where "..." is
+ * var out:TransitionData = new TransitionData(...);
  *
- *  FlxG.switchState(new FooState(in,out));
+ * FlxG.switchState(new FooState(in,out));
+ * ```
  *
  * Method 2:
  *
- *  FlxTransitionableState.defaultTransIn = new TransitionData(...);
- *  FlxTransitionableState.defaultTransOut = new TransitionData(...);
+ * ```haxe
+ * FlxTransitionableState.defaultTransIn = new TransitionData(...);
+ * FlxTransitionableState.defaultTransOut = new TransitionData(...);
  *
- *  FlxG.switchState(new FooState());
- *
+ * FlxG.switchState(new FooState());
+ * ```
  */
 class FlxTransitionableState extends FlxState
 {
@@ -39,8 +40,8 @@ class FlxTransitionableState extends FlxState
 	public var transIn:TransitionData;
 	public var transOut:TransitionData;
 
-	public var hasTransIn(get, null):Bool;
-	public var hasTransOut(get, null):Bool;
+	public var hasTransIn(get, never):Bool;
+	public var hasTransOut(get, never):Bool;
 
 	/**
 	 * Create a state with the ability to do visual transitions

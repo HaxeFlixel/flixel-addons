@@ -151,7 +151,11 @@ class TiledTileLayer extends TiledLayer
 
 	function get_encoding():String
 	{
-		return encoding != null ? encoding : xmlData.att.encoding;
+		if (encoding == null)
+		{
+			encoding = xmlData.att.encoding;
+		}
+		return encoding;
 	}
 
 	function get_csvData():String
