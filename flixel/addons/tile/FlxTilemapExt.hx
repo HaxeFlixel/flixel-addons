@@ -28,6 +28,9 @@ import flixel.util.FlxDestroyUtil;
  * @author MrCdK
  * @author adrianulima
  * @link https://github.com/TheTurnipMaster/SlopeDemo
+ * ---
+ * Downward Slope fix
+ * @author Early Melon
  */
 class FlxTilemapExt extends FlxTilemap
 {
@@ -35,6 +38,7 @@ class FlxTilemapExt extends FlxTilemap
 	var _snapping:Int = 2;
 	var _slopePoint:FlxPoint = FlxPoint.get();
 	var _objPoint:FlxPoint = FlxPoint.get();
+	var _glue:Bool = false;
 
 	var _slopeNorthwest:Array<Int> = [];
 	var _slopeNortheast:Array<Int> = [];
@@ -391,14 +395,16 @@ class FlxTilemapExt extends FlxTilemap
 				}
 				column++;
 			}
-
 			rowStart += widthInTiles;
 			row++;
 		}
 
 		return results;
 	}
-
+	public function setGlue(glue:Bool):Void
+	{
+		_glue = glue;
+	}
 	/**
 	 * Sets the slope arrays, which define which tiles are treated as slopes.
 	 *
@@ -425,7 +431,6 @@ class FlxTilemapExt extends FlxTilemap
 		{
 			_slopeSoutheast = Southeast;
 		}
-
 		setSlopeProperties();
 	}
 
@@ -524,7 +529,9 @@ class FlxTilemapExt extends FlxTilemap
 		Object.touching = FlxObject.FLOOR;
 
 		// Adjust the object's velocity
-		Object.velocity.y = Math.min(Object.velocity.y, 0);
+		// Object.velocity.y = Math.min(Object.velocity.y, 0);
+
+		if(_glue)Object.velocity.y = Object.maxVelocity.y/2;
 
 		// Reposition the object
 		Object.y = _slopePoint.y - Object.height;
@@ -566,6 +573,10 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	function solveCollisionSlopeNorthwest(Slope:FlxObject, Object:FlxObject):Void
 	{
+		if(Object.x+ Object.width>Slope.x+Slope.width + _snapping) 
+		{
+			return;
+		}
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x + Object.width + _snapping);
 		_objPoint.y = Math.floor(Object.y + Object.height);
@@ -574,7 +585,7 @@ class FlxTilemapExt extends FlxTilemap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
 		_slopePoint.y = (Slope.y + _tileHeight) - (_slopePoint.x - Slope.x);
-
+		
 		var tileId:Int = cast(Slope, FlxTile).index;
 		if (checkThinSteep(tileId))
 		{
@@ -590,10 +601,12 @@ class FlxTilemapExt extends FlxTilemap
 		else if (checkThickSteep(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) + _snapping;
+			// if(Object.velocity.x>0) Object.velocity.x = Object.maxVelocity.x/4;
 		}
 		else if (checkThickGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + (_tileHeight - _slopePoint.x + Slope.x) / 2;
+			// if(Object.velocity.x>0) Object.velocity.x = Object.maxVelocity.x/2;
 		}
 		else if (checkThinGentle(tileId))
 		{
@@ -612,6 +625,7 @@ class FlxTilemapExt extends FlxTilemap
 			// Call the collide function for the floor slope
 			onCollideFloorSlope(Slope, Object);
 		}
+		if(_glue && Object.velocity.x>0 && FlxG.keys.anyPressed(["RIGHT", "D"])) Object.velocity.x = Object.maxVelocity.x/2;
 	}
 
 	/**
@@ -622,6 +636,10 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	function solveCollisionSlopeNortheast(Slope:FlxObject, Object:FlxObject):Void
 	{
+		if(Object.x<Slope.x - _snapping) 
+		{
+			return;
+		}
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x - _snapping);
 		_objPoint.y = Math.floor(Object.y + Object.height);
@@ -646,16 +664,17 @@ class FlxTilemapExt extends FlxTilemap
 		else if (checkThickSteep(tileId))
 		{
 			_slopePoint.y = Slope.y - _tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / _tileWidth))) + _snapping;
+			// if(Object.velocity.x<0)  Object.velocity.x = Object.maxVelocity.x/4*-1;
 		}
 		else if (checkThickGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + (_tileHeight - Slope.x + _slopePoint.x - _tileWidth) / 2;
+			// if(Object.velocity.x<0) Object.velocity.x  = Object.maxVelocity.x/2*-1;
 		}
 		else if (checkThinGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight - (Slope.x - _slopePoint.x + _tileWidth) / 2;
 		}
-
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
 
@@ -668,6 +687,7 @@ class FlxTilemapExt extends FlxTilemap
 			// Call the collide function for the floor slope
 			onCollideFloorSlope(Slope, Object);
 		}
+		if(_glue && Object.velocity.x<0 && FlxG.keys.anyPressed(["LEFT", "A"])) Object.velocity.x  = Object.maxVelocity.x/2*-1;
 	}
 
 	/**
@@ -678,6 +698,7 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	function solveCollisionSlopeSouthwest(Slope:FlxObject, Object:FlxObject):Void
 	{
+		if(Object.x+ Object.width>Slope.x) return;
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(Object.x + Object.width + _snapping);
 		_objPoint.y = Math.ceil(Object.y);
@@ -735,6 +756,7 @@ class FlxTilemapExt extends FlxTilemap
 	function solveCollisionSlopeSoutheast(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Calculate the corner point of the object
+		if(Object.x<Slope.x-16) return;
 		_objPoint.x = Math.floor(Object.x - _snapping);
 		_objPoint.y = Math.ceil(Object.y);
 
