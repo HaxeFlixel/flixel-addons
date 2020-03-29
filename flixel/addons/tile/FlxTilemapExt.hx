@@ -39,7 +39,9 @@ class FlxTilemapExt extends FlxTilemap
 	var _slopePoint:FlxPoint = FlxPoint.get();
 	var _objPoint:FlxPoint = FlxPoint.get();
 	var _glue:Bool = false;
-
+	var _slopeSlowDownFactor:Float = 0;
+	var _velocityYDownSlope:Float = 0;
+	
 	var _slopeNorthwest:Array<Int> = [];
 	var _slopeNortheast:Array<Int> = [];
 	var _slopeSouthwest:Array<Int> = [];
@@ -401,9 +403,17 @@ class FlxTilemapExt extends FlxTilemap
 
 		return results;
 	}
-	public function setGlue(glue:Bool):Void
+	/**
+	 * Set glue to force contact with slopes and a slow down factor while climbing 
+	 *
+	 * @param 	glue  Activate/Deactivate glue on slopes
+	 * @param 	slopeSlowDownFactor  A slowing down factor while climbing slopes, from 0.0 to 1.0, By default 0.0, no slow down.
+	 */
+	public function setGlue(glue:Bool, slopeSlowDownFactor:Float = 0, velocityYDownSlope:Float = 0):Void
 	{
 		_glue = glue;
+		_slopeSlowDownFactor = 1 - slopeSlowDownFactor / 10;
+		_velocityYDownSlope = velocityYDownSlope;
 	}
 	/**
 	 * Sets the slope arrays, which define which tiles are treated as slopes.
@@ -531,7 +541,10 @@ class FlxTilemapExt extends FlxTilemap
 		// Adjust the object's velocity
 		// Object.velocity.y = Math.min(Object.velocity.y, 0);
 
-		if(_glue)Object.velocity.y = Object.maxVelocity.y/2;
+		if (_glue) {
+			if (_velocityYDownSlope == 0) Object.velocity.y = Object.maxVelocity.y / 2;
+			if (_velocityYDownSlope != 0) Object.velocity.y = _velocityYDownSlope;
+		}
 
 		// Reposition the object
 		Object.y = _slopePoint.y - Object.height;
@@ -596,23 +609,28 @@ class FlxTilemapExt extends FlxTilemap
 			else
 			{
 				_slopePoint.y = Slope.y + _tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / _tileWidth)) + _snapping;
+				if(_glue && Object.velocity.x>0) Object.velocity.x *= 1 - (1-_slopeSlowDownFactor)*3;
 			}
 		}
 		else if (checkThickSteep(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) + _snapping;
-			// if(Object.velocity.x>0) Object.velocity.x = Object.maxVelocity.x/4;
+			if(_glue && Object.velocity.x>0) Object.velocity.x *= 1 - (1-_slopeSlowDownFactor)*3;
 		}
 		else if (checkThickGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + (_tileHeight - _slopePoint.x + Slope.x) / 2;
-			// if(Object.velocity.x>0) Object.velocity.x = Object.maxVelocity.x/2;
+			if(_glue && Object.velocity.x>0) Object.velocity.x *=_slopeSlowDownFactor;
 		}
 		else if (checkThinGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight - (_slopePoint.x - Slope.x) / 2;
+			if(_glue && Object.velocity.x>0) Object.velocity.x *=_slopeSlowDownFactor;
 		}
-
+		else
+		{
+			if(_glue && Object.velocity.x>0) Object.velocity.x *= _slopeSlowDownFactor;
+		}
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
 
@@ -625,7 +643,6 @@ class FlxTilemapExt extends FlxTilemap
 			// Call the collide function for the floor slope
 			onCollideFloorSlope(Slope, Object);
 		}
-		if(_glue && Object.velocity.x>0 && FlxG.keys.anyPressed(["RIGHT", "D"])) Object.velocity.x = Object.maxVelocity.x/2;
 	}
 
 	/**
@@ -660,20 +677,26 @@ class FlxTilemapExt extends FlxTilemap
 			{
 				_slopePoint.y = Slope.y + _tileHeight * 2 * ((_slopePoint.x - Slope.x) / _tileWidth) + _snapping;
 			}
+			if(_glue && Object.velocity.x<0) Object.velocity.x *= 1 - (1-_slopeSlowDownFactor)*3;
 		}
 		else if (checkThickSteep(tileId))
 		{
 			_slopePoint.y = Slope.y - _tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / _tileWidth))) + _snapping;
-			// if(Object.velocity.x<0)  Object.velocity.x = Object.maxVelocity.x/4*-1;
+			if(_glue && Object.velocity.x<0) Object.velocity.x *= 1 - (1-_slopeSlowDownFactor)*3;
 		}
 		else if (checkThickGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + (_tileHeight - Slope.x + _slopePoint.x - _tileWidth) / 2;
-			// if(Object.velocity.x<0) Object.velocity.x  = Object.maxVelocity.x/2*-1;
+			if(_glue && Object.velocity.x<0) Object.velocity.x *= _slopeSlowDownFactor;
 		}
 		else if (checkThinGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight - (Slope.x - _slopePoint.x + _tileWidth) / 2;
+			if(_glue && Object.velocity.x<0) Object.velocity.x *= _slopeSlowDownFactor;
+		}
+		else
+		{
+			if(_glue && Object.velocity.x<0) Object.velocity.x *=_slopeSlowDownFactor;
 		}
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
@@ -687,7 +710,6 @@ class FlxTilemapExt extends FlxTilemap
 			// Call the collide function for the floor slope
 			onCollideFloorSlope(Slope, Object);
 		}
-		if(_glue && Object.velocity.x<0 && FlxG.keys.anyPressed(["LEFT", "A"])) Object.velocity.x  = Object.maxVelocity.x/2*-1;
 	}
 
 	/**
