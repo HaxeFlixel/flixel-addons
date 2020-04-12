@@ -25,7 +25,6 @@ typedef TransitionTileData =
 }
 
 /**
- * ...
  * @author larsiusprime
  */
 class TransitionData implements IFlxDestroyable

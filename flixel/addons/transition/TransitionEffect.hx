@@ -7,7 +7,6 @@ import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxTimer;
 
 /**
- * ...
  * @author larsiusprime
  */
 @:allow(flixel.addons.transition.Transition)
