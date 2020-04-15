@@ -8,9 +8,6 @@ jobs:
       matrix:
         haxe-version: ["3.4.7", stable, nightly]
         target: [html5, hl, neko, flash, cpp]
-        exclude:
-        - {haxe-version: "3.4.7", target: hl}
-        - {haxe-version: nightly, target: html5}
       fail-fast: false
     runs-on: ubuntu-latest
     steps:
