@@ -6,6 +6,7 @@ import flixel.FlxG;
 import flixel.tile.FlxTilemap;
 import flixel.math.FlxRect;
 import flixel.math.FlxAngle;
+import flixel.addons.tile.FlxTilemapExt;
 import openfl.Assets;
 import haxe.Json;
 
@@ -51,6 +52,31 @@ class FlxOgmo3Loader
 	public function loadTilemap(tileGraphic:Dynamic, tileLayer:String = "tiles"):FlxTilemap
 	{
 		var tilemap = new FlxTilemap();
+		var layer = level.getTileLayer(tileLayer);
+		var tileset = project.getTilesetData(layer.tileset);
+		switch (layer.arrayMode)
+		{
+			case 0:
+				tilemap.loadMapFromArray(layer.data, layer.gridCellsX, layer.gridCellsY, tileGraphic, tileset.tileWidth, tileset.tileHeight);
+			case 1:
+				tilemap.loadMapFrom2DArray(layer.data2D, tileGraphic, tileset.tileWidth, tileset.tileHeight);
+		}
+		return tilemap;
+	}
+	
+	/**
+	 * Load a FlxTilemapExt.
+	 * Collision with entities should be handled with the reference returned from this function.
+	 *
+	 * IMPORTANT: Tile layers must export using IDs, not Coords!
+	 *
+	 * @param	tileGraphic		A String or Class representing the location of the image asset for the tilemap.
+	 * @param	tileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
+	 * @return	A `FlxTilemapExt`, where you can collide your entities against.
+	 */
+	public function loadTilemap(tileGraphic:Dynamic, tileLayer:String = "tiles"):FlxTilemapExt
+	{
+		var tilemap = new FlxTilemapExt();
 		var layer = level.getTileLayer(tileLayer);
 		var tileset = project.getTilesetData(layer.tileset);
 		switch (layer.arrayMode)
