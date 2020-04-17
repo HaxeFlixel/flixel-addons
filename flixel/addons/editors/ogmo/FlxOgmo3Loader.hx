@@ -48,9 +48,9 @@ class FlxOgmo3Loader
 	 * @param	tileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
 	 * @return	A `FlxTilemap`, where you can collide your entities against.
 	 */
-	public function loadTilemap(tileGraphic:Dynamic, tileLayer:String = "tiles"):FlxTilemap
+	public function loadTilemap(tileGraphic:Dynamic, tileLayer:String = "tiles", ?tilemap:FlxTilemap):FlxTilemap
 	{
-		var tilemap = new FlxTilemap();
+		if (tilemap == null) tilemap = new FlxTilemap();
 		var layer = level.getTileLayer(tileLayer);
 		var tileset = project.getTilesetData(layer.tileset);
 		switch (layer.arrayMode)
