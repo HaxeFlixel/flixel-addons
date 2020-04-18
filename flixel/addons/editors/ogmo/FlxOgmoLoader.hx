@@ -72,13 +72,16 @@ class FlxOgmoLoader
 	 * @param	TileWidth		The width of each individual tile.
 	 * @param	TileHeight		The height of each individual tile.
 	 * @param	TileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
+	 * @param	tilemap			(optional) A tilemap to load tilemap data into. If not specified, new `FlxTilemap` instance is created.
 	 * @return	A FlxTilemap, where you can collide your entities against.
 	 */
-	public function loadTilemap(TileGraphic:Dynamic, TileWidth:Int = 16, TileHeight:Int = 16, TileLayer:String = "tiles"):FlxTilemap
+	public function loadTilemap(TileGraphic:Dynamic, TileWidth:Int = 16, TileHeight:Int = 16, TileLayer:String = "tiles", ?tilemap:FlxTilemap):FlxTilemap
 	{
-		var tileMap:FlxTilemap = new FlxTilemap();
-		tileMap.loadMapFromCSV(_fastXml.node.resolve(TileLayer).innerData, TileGraphic, TileWidth, TileHeight);
-		return tileMap;
+		if (tilemap == null)
+			tilemap = new FlxTilemap();
+
+		tilemap.loadMapFromCSV(_fastXml.node.resolve(TileLayer).innerData, TileGraphic, TileWidth, TileHeight);
+		return tilemap;
 	}
 
 	/**
@@ -90,11 +93,11 @@ class FlxOgmoLoader
 	 * {
 	 *     switch (type.toLowerCase())
 	 *     {
-	 *     case "player":
-	 *         player.x = Std.parseFloat(data.get("x"));
-	 *         player.y = Std.parseFloat(data.get("y"));
-	 *     default:
-	 *         throw 'Unrecognized actor type $type';
+	 *         case "player":
+	 *             player.x = Std.parseFloat(data.get("x"));
+	 *             player.y = Std.parseFloat(data.get("y"));
+	 *         default:
+	 *             throw 'Unrecognized actor type $type';
 	 *     }
 	 * }
 	 * ```

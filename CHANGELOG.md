@@ -1,3 +1,8 @@
+2.8.1 (to be released)
+------------------------------
+* `FlxOgmoLoader`: added an optional `tilemap` parameter to `loadTilemap()`
+* `FlxOgmo3Loader`: added an optional `tilemap` parameter to `loadTilemap()` (#341)
+
 2.8.0 (February 8, 2020)
 ------------------------------
 * `FlxSliceSprite`:
