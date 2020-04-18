@@ -46,12 +46,14 @@ class FlxOgmo3Loader
 	 *
 	 * @param	tileGraphic		A String or Class representing the location of the image asset for the tilemap.
 	 * @param	tileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
-	 * @param	tilemap			(optional) A tilemap to load tilemap data into.
+	 * @param	tilemap			(optional) A tilemap to load tilemap data into. If not specified, new `FlxTilemap` instance is created.
 	 * @return	A `FlxTilemap`, where you can collide your entities against.
 	 */
 	public function loadTilemap(tileGraphic:Dynamic, tileLayer:String = "tiles", ?tilemap:FlxTilemap):FlxTilemap
 	{
-		if (tilemap == null) tilemap = new FlxTilemap();
+		if (tilemap == null)
+			tilemap = new FlxTilemap();
+
 		var layer = level.getTileLayer(tileLayer);
 		var tileset = project.getTilesetData(layer.tileset);
 		switch (layer.arrayMode)
