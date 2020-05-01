@@ -410,7 +410,9 @@ class FlxTilemapExt extends FlxTilemap
 	 *
 	 * @param 	downwardsGlue  Activate/Deactivate glue on slopes on the
 	 * @param 	slopeSlowDownFactor  A slowing down factor while climbing slopes, from 0.0 to 1.0, By default 0.0, no slow down.
-	 * @param 	velocityYDownSlope The maximum velocity Y down a slope, it should be high enough to be able to use downwardsGlue. Default to 200
+	 * @param 	velocityYDownSlope The maximum velocity Y down a slope, it should be high enough to be able to use downwardsGlue. Default to 200.
+	 *
+	 * @since 2.9.0
 	 */
 	public function setDownwardsGlue(downwardsGlue:Bool, slopeSlowDownFactor:Float = 0.0, velocityYDownSlope:Float = 200):Void
 	{
