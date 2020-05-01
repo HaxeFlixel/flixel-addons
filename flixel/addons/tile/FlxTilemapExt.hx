@@ -404,8 +404,9 @@ class FlxTilemapExt extends FlxTilemap
 
 		return results;
 	}
+
 	/**
-	 * Set glue to force contact with slopes and a slow down factor while climbing 
+	 * Set glue to force contact with slopes and a slow down factor while climbing
 	 *
 	 * @param 	downwardsGlue  Activate/Deactivate glue on slopes on the
 	 * @param 	slopeSlowDownFactor  A slowing down factor while climbing slopes, from 0.0 to 1.0, By default 0.0, no slow down.
@@ -414,9 +415,10 @@ class FlxTilemapExt extends FlxTilemap
 	public function setDownwardsGlue(downwardsGlue:Bool, slopeSlowDownFactor:Float = 0.0, velocityYDownSlope:Float = 200):Void
 	{
 		_downwardsGlue = downwardsGlue;
-		_slopeSlowDownFactor = 1 - slopeSlowDownFactor/10;
+		_slopeSlowDownFactor = 1 - slopeSlowDownFactor / 10;
 		_velocityYDownSlope = velocityYDownSlope;
 	}
+
 	/**
 	 * Sets the slope arrays, which define which tiles are treated as slopes.
 	 *
@@ -541,8 +543,10 @@ class FlxTilemapExt extends FlxTilemap
 		Object.touching = FlxObject.FLOOR;
 
 		// Adjust the object's velocity
-		if(_downwardsGlue)Object.velocity.y = _velocityYDownSlope;
-		else Object.velocity.y = Math.min(Object.velocity.y, 0);
+		if (_downwardsGlue)
+			Object.velocity.y = _velocityYDownSlope;
+		else
+			Object.velocity.y = Math.min(Object.velocity.y, 0);
 
 		// Reposition the object
 		Object.y = _slopePoint.y - Object.height;
@@ -584,7 +588,7 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	function solveCollisionSlopeNorthwest(Slope:FlxObject, Object:FlxObject):Void
 	{
-		if(Object.x+ Object.width>Slope.x+Slope.width + _snapping) 
+		if (Object.x + Object.width > Slope.x + Slope.width + _snapping)
 		{
 			return;
 		}
@@ -596,7 +600,7 @@ class FlxTilemapExt extends FlxTilemap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
 		_slopePoint.y = (Slope.y + _tileHeight) - (_slopePoint.x - Slope.x);
-		
+
 		var tileId:Int = cast(Slope, FlxTile).index;
 		if (checkThinSteep(tileId))
 		{
@@ -607,27 +611,32 @@ class FlxTilemapExt extends FlxTilemap
 			else
 			{
 				_slopePoint.y = Slope.y + _tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / _tileWidth)) + _snapping;
-				if(_downwardsGlue && Object.velocity.x>0) Object.velocity.x *= 1 - (1-_slopeSlowDownFactor)*3;
+				if (_downwardsGlue && Object.velocity.x > 0)
+					Object.velocity.x *= 1 - (1 - _slopeSlowDownFactor) * 3;
 			}
 		}
 		else if (checkThickSteep(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) + _snapping;
-			if(_downwardsGlue && Object.velocity.x>0) Object.velocity.x *= 1 - (1-_slopeSlowDownFactor)*3;
+			if (_downwardsGlue && Object.velocity.x > 0)
+				Object.velocity.x *= 1 - (1 - _slopeSlowDownFactor) * 3;
 		}
 		else if (checkThickGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + (_tileHeight - _slopePoint.x + Slope.x) / 2;
-			if(_downwardsGlue && Object.velocity.x>0) Object.velocity.x *=_slopeSlowDownFactor;
+			if (_downwardsGlue && Object.velocity.x > 0)
+				Object.velocity.x *= _slopeSlowDownFactor;
 		}
 		else if (checkThinGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight - (_slopePoint.x - Slope.x) / 2;
-			if(_downwardsGlue && Object.velocity.x>0) Object.velocity.x *=_slopeSlowDownFactor;
+			if (_downwardsGlue && Object.velocity.x > 0)
+				Object.velocity.x *= _slopeSlowDownFactor;
 		}
 		else
 		{
-			if(_downwardsGlue && Object.velocity.x>0) Object.velocity.x *= _slopeSlowDownFactor;
+			if (_downwardsGlue && Object.velocity.x > 0)
+				Object.velocity.x *= _slopeSlowDownFactor;
 		}
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
@@ -651,7 +660,7 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	function solveCollisionSlopeNortheast(Slope:FlxObject, Object:FlxObject):Void
 	{
-		if(Object.x<Slope.x - _snapping) 
+		if (Object.x < Slope.x - _snapping)
 		{
 			return;
 		}
@@ -675,26 +684,31 @@ class FlxTilemapExt extends FlxTilemap
 			{
 				_slopePoint.y = Slope.y + _tileHeight * 2 * ((_slopePoint.x - Slope.x) / _tileWidth) + _snapping;
 			}
-			if(_downwardsGlue && Object.velocity.x<0) Object.velocity.x *= 1 - (1-_slopeSlowDownFactor)*3;
+			if (_downwardsGlue && Object.velocity.x < 0)
+				Object.velocity.x *= 1 - (1 - _slopeSlowDownFactor) * 3;
 		}
 		else if (checkThickSteep(tileId))
 		{
 			_slopePoint.y = Slope.y - _tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / _tileWidth))) + _snapping;
-			if(_downwardsGlue && Object.velocity.x<0) Object.velocity.x *= 1 - (1-_slopeSlowDownFactor)*3;
+			if (_downwardsGlue && Object.velocity.x < 0)
+				Object.velocity.x *= 1 - (1 - _slopeSlowDownFactor) * 3;
 		}
 		else if (checkThickGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + (_tileHeight - Slope.x + _slopePoint.x - _tileWidth) / 2;
-			if(_downwardsGlue && Object.velocity.x<0) Object.velocity.x *= _slopeSlowDownFactor;
+			if (_downwardsGlue && Object.velocity.x < 0)
+				Object.velocity.x *= _slopeSlowDownFactor;
 		}
 		else if (checkThinGentle(tileId))
 		{
 			_slopePoint.y = Slope.y + _tileHeight - (Slope.x - _slopePoint.x + _tileWidth) / 2;
-			if(_downwardsGlue && Object.velocity.x<0) Object.velocity.x *= _slopeSlowDownFactor;
+			if (_downwardsGlue && Object.velocity.x < 0)
+				Object.velocity.x *= _slopeSlowDownFactor;
 		}
 		else
 		{
-			if(_downwardsGlue && Object.velocity.x<0) Object.velocity.x *=_slopeSlowDownFactor;
+			if (_downwardsGlue && Object.velocity.x < 0)
+				Object.velocity.x *= _slopeSlowDownFactor;
 		}
 		// Fix the slope point to the slope tile
 		fixSlopePoint(cast(Slope, FlxTile));
