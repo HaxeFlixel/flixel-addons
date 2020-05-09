@@ -2,8 +2,10 @@
 
 [flixel](https://github.com/HaxeFlixel/flixel) | [addons](https://github.com/HaxeFlixel/flixel-addons) | [ui](https://github.com/HaxeFlixel/flixel-ui) | [demos](https://github.com/HaxeFlixel/flixel-demos) | [tools](https://github.com/HaxeFlixel/flixel-tools) | [templates](https://github.com/HaxeFlixel/flixel-templates) | [docs](https://github.com/HaxeFlixel/flixel-docs) | [haxeflixel.com](https://github.com/HaxeFlixel/haxeflixel.com)
 
-[![Haxelib Version](https://img.shields.io/github/tag/HaxeFlixel/flixel-addons.svg?label=haxelib)](http://lib.haxe.org/p/flixel-addons)
 [![CI](https://img.shields.io/github/workflow/status/HaxeFlixel/flixel-addons/CI.svg?logo=github)](https://github.com/HaxeFlixel/flixel-addons/actions?query=workflow%3ACI)
+[![Haxelib Version](https://badgen.net/haxelib/v/flixel-addons)](https://lib.haxe.org/p/flixel-addons)
+[![Haxelib Downloads](https://badgen.net/haxelib/d/flixel-addons?color=blue)](https://lib.haxe.org/p/flixel-addons)
+[![Haxelib License](https://badgen.net/haxelib/license/flixel-addons)](LICENSE.md)
 
 ## About
 
