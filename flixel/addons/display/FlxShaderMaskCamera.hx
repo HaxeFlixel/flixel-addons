@@ -8,6 +8,8 @@ import flixel.FlxG;
 import flixel.graphics.tile.FlxDrawBaseItem;
 import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
+import openfl.display.Graphics;
 import openfl.display.Shader;
 import openfl.display.Sprite;
 import openfl.filters.ShaderFilter;
@@ -35,7 +37,7 @@ class FlxShaderMaskCamera extends FlxCamera {
      * It is a child of `flashSprite`.
      * Its position is also modified by the `updateScrollRect()` method.
      */
-    var _shadedScrollRect:Sprite;
+    var _shadedScrollRect:Sprite = new Sprite();
     
     /**
      * All tile rendering is duplicated to this canvas, so that we have
@@ -59,6 +61,18 @@ class FlxShaderMaskCamera extends FlxCamera {
     */
     var _maskGroup:FlxGroup;
 
+    /**
+	 * Instantiates a new camera at the specified location, with the specified size and zoom level,
+     * which will be shaded in areas by the specified shader.
+     * 
+     * @param   effectShader  Shader to be applied to the masked area.
+	 * @param   X             X location of the camera's display in pixels. Uses native, 1:1 resolution, ignores zoom.
+	 * @param   Y             Y location of the camera's display in pixels. Uses native, 1:1 resolution, ignores zoom.
+	 * @param   Width         The width of the camera display in pixels.
+	 * @param   Height        The height of the camera display in pixels.
+	 * @param   Zoom          The initial zoom level of the camera.
+	 *                        A zoom level of 2 will make all pixels display at 2x resolution.
+     */
     public function new(effectShader:Shader, X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, Zoom:Float = 0) {
         
         if (FlxG.renderBlit)
@@ -66,10 +80,9 @@ class FlxShaderMaskCamera extends FlxCamera {
             throw "FlxShaderMaskCamera is not supported in blit render mode";
         }
 
-        // Create display objects
+        // Create display objects and set mask
         shaderCanvas = new Sprite();
         maskCanvas = new Sprite();
-        _shadedScrollRect = new Sprite();
         _shadedScrollRect.mask = maskCanvas;
         // Call super, which will call overriden functions to position our new objects
         super(X, Y, Width, Height, Zoom);
@@ -80,7 +93,7 @@ class FlxShaderMaskCamera extends FlxCamera {
         
         _maskGroup = new FlxGroup();
         
-        // apply the provided shader using a ShaderFilter
+        // Apply the provided shader using a ShaderFilter
         shaderFilter = new ShaderFilter(effectShader);
         _shadedScrollRect.filters = [shaderFilter];
     }
@@ -145,6 +158,98 @@ class FlxShaderMaskCamera extends FlxCamera {
         _maskGroup.remove(object);
     }
 
+    override function destroy():Void
+    {
+        FlxDestroyUtil.removeChild(flashSprite, _shadedScrollRect);
+
+        FlxDestroyUtil.removeChild(_shadedScrollRect, shaderCanvas);
+        if (shaderCanvas != null)
+        {
+            for (i in 0...shaderCanvas.numChildren)
+            {
+                shaderCanvas.removeChildAt(0);
+            }
+            shaderCanvas = null;
+        }
+        if (maskCanvas != null)
+        {
+            for (i in 0...maskCanvas.numChildren)
+            {
+                maskCanvas.removeChildAt(0);
+            }
+            maskCanvas = null;
+        }
+
+        if(_maskGroup != null) 
+        {
+            _maskGroup.destroy();
+            _maskGroup = null;
+        }
+
+        _shadedScrollRect = null;
+        shaderFilter = null;
+
+        super.destroy();
+    }
+
+    // Apply position/size changes to our duplicate and mask canvases
+    override function updateInternalSpritePositions():Void
+    {
+        super.updateInternalSpritePositions();
+        for (iCanvas in [shaderCanvas, maskCanvas])
+        {
+            if (iCanvas != null)
+            {
+                iCanvas.x = -0.5 * width * (scaleX - initialZoom) * FlxG.scaleMode.scale.x;
+                iCanvas.y = -0.5 * height * (scaleY - initialZoom) * FlxG.scaleMode.scale.y;
+                
+                iCanvas.scaleX = totalScaleX;
+                iCanvas.scaleY = totalScaleY;
+            }
+        }
+    }
+
+    // Apply non-directed fills to both the canvas and duplicate canvas
+    override public function fill(Color:FlxColor, BlendAlpha:Bool = true, FxAlpha:Float = 1.0, ?graphics:Graphics):Void
+    {
+        if(graphics != null) {
+            super.fill(Color, BlendAlpha, FxAlpha, graphics);
+        }
+        else {
+            super.fill(Color, BlendAlpha, FxAlpha, canvas.graphics);
+            super.fill(Color, BlendAlpha, FxAlpha, shaderCanvas.graphics);
+        }
+    }
+
+    // Apply effects to our duplicate canvas
+    override function drawFX():Void
+	{
+        super.drawFX();
+		var alphaComponent:Float;
+
+		// Draw the "flash" special effect onto the buffer
+		if (_fxFlashAlpha > 0.0)
+		{
+			alphaComponent = _fxFlashColor.alpha;
+            super.fill((_fxFlashColor & 0x00ffffff), true, ((alphaComponent <= 0) ? 0xff : alphaComponent) * _fxFlashAlpha / 255, shaderCanvas.graphics);
+		}
+
+		// Draw the "fade" special effect onto the buffer
+		if (_fxFadeAlpha > 0.0)
+		{
+			alphaComponent = _fxFadeColor.alpha;
+            super.fill((_fxFadeColor & 0x00ffffff), true, ((alphaComponent <= 0) ? 0xff : alphaComponent) * _fxFadeAlpha / 255, shaderCanvas.graphics);
+		}
+	}
+
+    // Apply alpha changes to our duplicate canvas
+    override function set_alpha(Alpha:Float):Float
+    {
+        super.set_alpha(Alpha);
+        shaderCanvas.alpha = canvas.alpha;
+        return Alpha;
+    }
+
     // Apply color changes to our duplicate canvas
     override function set_color(Color:FlxColor):FlxColor
     {
@@ -173,23 +278,6 @@ class FlxShaderMaskCamera extends FlxCamera {
 
             _shadedScrollRect.x = -0.5 * rect.width;
             _shadedScrollRect.y = -0.5 * rect.height;
-        }
-    }
-
-    // Apply position/size changes to our duplicate and mask canvases
-    override function updateInternalSpritePositions():Void
-    {
-        super.updateInternalSpritePositions();
-        for (iCanvas in [shaderCanvas, maskCanvas])
-        {
-            if (iCanvas != null)
-            {
-                iCanvas.x = -0.5 * width * (scaleX - initialZoom) * FlxG.scaleMode.scale.x;
-                iCanvas.y = -0.5 * height * (scaleY - initialZoom) * FlxG.scaleMode.scale.y;
-                
-                iCanvas.scaleX = totalScaleX;
-                iCanvas.scaleY = totalScaleY;
-            }
         }
     }
 }
