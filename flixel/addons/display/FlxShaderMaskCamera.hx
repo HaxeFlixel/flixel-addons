@@ -199,15 +199,15 @@ class FlxShaderMaskCamera extends FlxCamera {
 	override function updateInternalSpritePositions():Void
 	{
 		super.updateInternalSpritePositions();
-		for (iCanvas in [shaderCanvas, maskCanvas])
+		for (canvas in [shaderCanvas, maskCanvas])
 		{
-			if (iCanvas != null)
+			if (canvas != null)
 			{
-				iCanvas.x = -0.5 * width * (scaleX - initialZoom) * FlxG.scaleMode.scale.x;
-				iCanvas.y = -0.5 * height * (scaleY - initialZoom) * FlxG.scaleMode.scale.y;
+				canvas.x = -0.5 * width * (scaleX - initialZoom) * FlxG.scaleMode.scale.x;
+				canvas.y = -0.5 * height * (scaleY - initialZoom) * FlxG.scaleMode.scale.y;
 				
-				iCanvas.scaleX = totalScaleX;
-				iCanvas.scaleY = totalScaleY;
+				canvas.scaleX = totalScaleX;
+				canvas.scaleY = totalScaleY;
 			}
 		}
 	}
