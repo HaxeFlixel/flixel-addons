@@ -1,7 +1,6 @@
 package flixel.addons.display;
 
 #if (openfl >= "8.0.0")
-
 import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxG;
@@ -29,41 +28,46 @@ import openfl.geom.Rectangle;
  *     |-> `_shadedScrollRect:Sprite` (the effect shader is applied to this sprite, which holds a copy of the scene and is masked by `maskCanvas`)
  *         |-> `shaderCanvas:Sprite` (everything rendered to `canvas` will simultaneously render to this canvas)
  *         |-> `maskCanvas:Sprite` (all mask objects are rendered to this sprite, which is then used to mask `_shadedScrollRect`)
+ *
+ * @since 2.9.0
  */
-class FlxShaderMaskCamera extends FlxCamera {
-
+class FlxShaderMaskCamera extends FlxCamera
+{
 	/**
 	 * Internal sprite, duplicate of `_scrollRect` to which we apply a shader and mask.
 	 * It is a child of `flashSprite`.
 	 * Its position is also modified by the `updateScrollRect()` method.
 	 */
 	var _shadedScrollRect:Sprite = new Sprite();
+
 	/**
 	 * All tile rendering is duplicated to this canvas, so that we have
 	 * another copy of the scene to which to apply the effect shader.
 	 * It is a child of `_shadedScrollRect`
 	 * Its position is modified by `updateInternalSpritePositions()`
 	 */
-	public var shaderCanvas:Sprite;
+	var shaderCanvas:Sprite;
+
 	/**
 	 * Only the mask objects are rendered to this sprite,
 	 * which is both a child of and used as a mask for `_shadedScrollRect`.
 	 */
-	public var maskCanvas:Sprite;
+	var maskCanvas:Sprite;
+
 	/**
-	 * This filter is applied to the area masked by maskCanvas 
+	 * This filter is applied to the area masked by maskCanvas
 	 */
-	public var shaderFilter:ShaderFilter;
+	var shaderFilter:ShaderFilter;
 
 	/**
 	 *  Collection of objects that will be rendered to the mask buffer rather than the main camera.
-	*/
+	 */
 	var _maskGroup:FlxGroup;
 
 	/**
 	 * Instantiates a new camera at the specified location, with the specified size and zoom level,
 	 * which will be shaded in areas by the specified shader.
-	 * 
+	 *
 	 * @param   effectShader  Shader to be applied to the masked area.
 	 * @param   X             X location of the camera's display in pixels. Uses native, 1:1 resolution, ignores zoom.
 	 * @param   Y             Y location of the camera's display in pixels. Uses native, 1:1 resolution, ignores zoom.
@@ -72,7 +76,7 @@ class FlxShaderMaskCamera extends FlxCamera {
 	 * @param   Zoom          The initial zoom level of the camera.
 	 *                        A zoom level of 2 will make all pixels display at 2x resolution.
 	 */
-	public function new(effectShader:Shader, X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, Zoom:Float = 0) 
+	public function new(effectShader:Shader, X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, Zoom:Float = 0)
 	{
 		if (FlxG.renderBlit)
 		{
@@ -89,9 +93,9 @@ class FlxShaderMaskCamera extends FlxCamera {
 		flashSprite.addChild(_shadedScrollRect);
 		_shadedScrollRect.addChild(shaderCanvas);
 		_shadedScrollRect.addChild(maskCanvas);
-		
+
 		_maskGroup = new FlxGroup();
-		
+
 		// Apply the provided shader using a ShaderFilter
 		shaderFilter = new ShaderFilter(effectShader);
 		_shadedScrollRect.filters = [shaderFilter];
@@ -105,21 +109,21 @@ class FlxShaderMaskCamera extends FlxCamera {
 
 	override function render():Void
 	{
-		// clear our duplicate canvas 
+		// clear our duplicate canvas
 		shaderCanvas.graphics.clear();
 		super.fill(bgColor.to24Bit(), useBgAlphaBlending, bgColor.alphaFloat, shaderCanvas.graphics);
 		// iterate over draw items, but draw them to both canvases
 		var currItem:FlxDrawBaseItem<Dynamic> = _headOfDrawStack;
-		var oldCanvas:Sprite = this.canvas;
+		var oldCanvas:Sprite = canvas;
 		while (currItem != null)
 		{
 			// render to main canvas
 			currItem.render(this);
 			// render to shader canvas
-			this.canvas = this.shaderCanvas;
+			canvas = shaderCanvas;
 			currItem.render(this);
 			// revert canvas
-			this.canvas = oldCanvas;
+			canvas = oldCanvas;
 			currItem = currItem.next;
 		}
 		// reset these to avoid re-drawing all other draw items to the mask canvas
@@ -127,17 +131,17 @@ class FlxShaderMaskCamera extends FlxCamera {
 		_currentDrawItem = null;
 		_headOfDrawStack = null;
 		// populate the draw stack with mask items
-		this._maskGroup.draw();
+		_maskGroup.draw();
 		// render draw stack to mask canvas
 		maskCanvas.graphics.clear();
-		this.canvas = maskCanvas;
+		canvas = maskCanvas;
 		currItem = _headOfDrawStack;
 		while (currItem != null)
 		{
 			currItem.render(this);
 			currItem = currItem.next;
 		}
-		this.canvas = oldCanvas;
+		canvas = oldCanvas;
 	}
 
 	/**
@@ -145,20 +149,22 @@ class FlxShaderMaskCamera extends FlxCamera {
 	 * The effect shader is applied to the area covered by objects added in this way.
 	 * The camera will `update()` objects added here, so you probably want to avoid
 	 * adding them to your scene as well.
-	 * 
+	 *
 	 * @return  The same `FlxBasic` object that was passed in.
 	 */
-	public function addMaskObject(object:FlxBasic):FlxBasic {
+	public function addMaskObject(object:FlxBasic):FlxBasic
+	{
 		object.camera = this;
 		return _maskGroup.add(object);
 	}
 
 	/**
 	 * Remove objects and groups from the mask.
-	 * 
+	 *
 	 * @return  The removed object.
 	 */
-	public function removeMaskObject(object:FlxBasic):FlxBasic {
+	public function removeMaskObject(object:FlxBasic):FlxBasic
+	{
 		return _maskGroup.remove(object);
 	}
 
@@ -183,7 +189,7 @@ class FlxShaderMaskCamera extends FlxCamera {
 			maskCanvas = null;
 		}
 
-		if (_maskGroup != null) 
+		if (_maskGroup != null)
 		{
 			_maskGroup.destroy();
 			_maskGroup = null;
@@ -205,7 +211,7 @@ class FlxShaderMaskCamera extends FlxCamera {
 			{
 				canvas.x = -0.5 * width * (scaleX - initialZoom) * FlxG.scaleMode.scale.x;
 				canvas.y = -0.5 * height * (scaleY - initialZoom) * FlxG.scaleMode.scale.y;
-				
+
 				canvas.scaleX = totalScaleX;
 				canvas.scaleY = totalScaleY;
 			}
@@ -230,18 +236,17 @@ class FlxShaderMaskCamera extends FlxCamera {
 	override function drawFX():Void
 	{
 		super.drawFX();
-		var alphaComponent:Float;
 
 		// Draw the "flash" special effect onto the buffer
 		if (_fxFlashAlpha > 0.0)
 		{
-			alphaComponent = _fxFlashColor.alpha;
+			var alphaComponent = _fxFlashColor.alpha;
 			super.fill((_fxFlashColor & 0x00ffffff), true, ((alphaComponent <= 0) ? 0xff : alphaComponent) * _fxFlashAlpha / 255, shaderCanvas.graphics);
 		}
 		// Draw the "fade" special effect onto the buffer
 		if (_fxFadeAlpha > 0.0)
 		{
-			alphaComponent = _fxFadeColor.alpha;
+			var alphaComponent = _fxFadeColor.alpha;
 			super.fill((_fxFadeColor & 0x00ffffff), true, ((alphaComponent <= 0) ? 0xff : alphaComponent) * _fxFadeAlpha / 255, shaderCanvas.graphics);
 		}
 	}
@@ -260,13 +265,13 @@ class FlxShaderMaskCamera extends FlxCamera {
 		super.set_color(Color);
 
 		var colorTransform = shaderCanvas.transform.colorTransform;
-			
+
 		colorTransform.redMultiplier = color.redFloat;
 		colorTransform.greenMultiplier = color.greenFloat;
 		colorTransform.blueMultiplier = color.blueFloat;
-		
+
 		shaderCanvas.transform.colorTransform = colorTransform;
-		
+
 		return Color;
 	}
 
@@ -284,5 +289,4 @@ class FlxShaderMaskCamera extends FlxCamera {
 		}
 	}
 }
-
-#end // (openfl >= "8.0.0")
+#end
