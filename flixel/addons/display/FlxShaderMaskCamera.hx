@@ -80,25 +80,28 @@ class FlxShaderMaskCamera extends FlxCamera
 	{
 		if (FlxG.renderBlit)
 		{
-			throw "FlxShaderMaskCamera is not supported in blit render mode";
+			super(X, Y, Width, Height, Zoom);
+			_maskGroup = new FlxGroup();
 		}
+		else
+		{
+			// Create display objects and set mask
+			shaderCanvas = new Sprite();
+			maskCanvas = new Sprite();
+			_shadedScrollRect.mask = maskCanvas;
+			// Call super, which will call overriden functions to position our new objects
+			super(X, Y, Width, Height, Zoom);
+			// Add display objects to hierarchy
+			flashSprite.addChild(_shadedScrollRect);
+			_shadedScrollRect.addChild(shaderCanvas);
+			_shadedScrollRect.addChild(maskCanvas);
 
-		// Create display objects and set mask
-		shaderCanvas = new Sprite();
-		maskCanvas = new Sprite();
-		_shadedScrollRect.mask = maskCanvas;
-		// Call super, which will call overriden functions to position our new objects
-		super(X, Y, Width, Height, Zoom);
-		// Add display objects to hierarchy
-		flashSprite.addChild(_shadedScrollRect);
-		_shadedScrollRect.addChild(shaderCanvas);
-		_shadedScrollRect.addChild(maskCanvas);
+			_maskGroup = new FlxGroup();
 
-		_maskGroup = new FlxGroup();
-
-		// Apply the provided shader using a ShaderFilter
-		shaderFilter = new ShaderFilter(effectShader);
-		_shadedScrollRect.filters = [shaderFilter];
+			// Apply the provided shader using a ShaderFilter
+			shaderFilter = new ShaderFilter(effectShader);
+			_shadedScrollRect.filters = [shaderFilter];
+		}
 	}
 
 	override function update(elapsed:Float):Void
@@ -109,39 +112,46 @@ class FlxShaderMaskCamera extends FlxCamera
 
 	override function render():Void
 	{
-		// clear our duplicate canvas
-		shaderCanvas.graphics.clear();
-		super.fill(bgColor.to24Bit(), useBgAlphaBlending, bgColor.alphaFloat, shaderCanvas.graphics);
-		// iterate over draw items, but draw them to both canvases
-		var currItem:FlxDrawBaseItem<Dynamic> = _headOfDrawStack;
-		var oldCanvas:Sprite = canvas;
-		while (currItem != null)
+		if (FlxG.renderBlit)
 		{
-			// render to main canvas
-			currItem.render(this);
-			// render to shader canvas
-			canvas = shaderCanvas;
-			currItem.render(this);
-			// revert canvas
+			super.render();
+		}
+		else
+		{
+			// clear our duplicate canvas
+			shaderCanvas.graphics.clear();
+			super.fill(bgColor.to24Bit(), useBgAlphaBlending, bgColor.alphaFloat, shaderCanvas.graphics);
+			// iterate over draw items, but draw them to both canvases
+			var currItem:FlxDrawBaseItem<Dynamic> = _headOfDrawStack;
+			var oldCanvas:Sprite = canvas;
+			while (currItem != null)
+			{
+				// render to main canvas
+				currItem.render(this);
+				// render to shader canvas
+				canvas = shaderCanvas;
+				currItem.render(this);
+				// revert canvas
+				canvas = oldCanvas;
+				currItem = currItem.next;
+			}
+			// reset these to avoid re-drawing all other draw items to the mask canvas
+			// this is safe, since draw items are disposed by iterating over _headTiles and _headTriangles
+			_currentDrawItem = null;
+			_headOfDrawStack = null;
+			// populate the draw stack with mask items
+			_maskGroup.draw();
+			// render draw stack to mask canvas
+			maskCanvas.graphics.clear();
+			canvas = maskCanvas;
+			currItem = _headOfDrawStack;
+			while (currItem != null)
+			{
+				currItem.render(this);
+				currItem = currItem.next;
+			}
 			canvas = oldCanvas;
-			currItem = currItem.next;
 		}
-		// reset these to avoid re-drawing all other draw items to the mask canvas
-		// this is safe, since draw items are disposed by iterating over _headTiles and _headTriangles
-		_currentDrawItem = null;
-		_headOfDrawStack = null;
-		// populate the draw stack with mask items
-		_maskGroup.draw();
-		// render draw stack to mask canvas
-		maskCanvas.graphics.clear();
-		canvas = maskCanvas;
-		currItem = _headOfDrawStack;
-		while (currItem != null)
-		{
-			currItem.render(this);
-			currItem = currItem.next;
-		}
-		canvas = oldCanvas;
 	}
 
 	/**
@@ -170,34 +180,35 @@ class FlxShaderMaskCamera extends FlxCamera
 
 	override function destroy():Void
 	{
-		FlxDestroyUtil.removeChild(flashSprite, _shadedScrollRect);
-		FlxDestroyUtil.removeChild(_shadedScrollRect, shaderCanvas);
-		if (shaderCanvas != null)
+		if (FlxG.renderTile)
 		{
-			for (i in 0...shaderCanvas.numChildren)
+			FlxDestroyUtil.removeChild(flashSprite, _shadedScrollRect);
+			FlxDestroyUtil.removeChild(_shadedScrollRect, shaderCanvas);
+			if (shaderCanvas != null)
 			{
-				shaderCanvas.removeChildAt(0);
+				for (i in 0...shaderCanvas.numChildren)
+				{
+					shaderCanvas.removeChildAt(0);
+				}
+				shaderCanvas = null;
 			}
-			shaderCanvas = null;
-		}
-		if (maskCanvas != null)
-		{
-			for (i in 0...maskCanvas.numChildren)
+			if (maskCanvas != null)
 			{
-				maskCanvas.removeChildAt(0);
+				for (i in 0...maskCanvas.numChildren)
+				{
+					maskCanvas.removeChildAt(0);
+				}
+				maskCanvas = null;
 			}
-			maskCanvas = null;
-		}
 
+			_shadedScrollRect = null;
+			shaderFilter = null;
+		}
 		if (_maskGroup != null)
 		{
 			_maskGroup.destroy();
 			_maskGroup = null;
 		}
-
-		_shadedScrollRect = null;
-		shaderFilter = null;
-
 		super.destroy();
 	}
 
@@ -205,15 +216,17 @@ class FlxShaderMaskCamera extends FlxCamera
 	override function updateInternalSpritePositions():Void
 	{
 		super.updateInternalSpritePositions();
-		for (canvas in [shaderCanvas, maskCanvas])
+		if (FlxG.renderTile)
 		{
-			if (canvas != null)
+			for (canvas in [shaderCanvas, maskCanvas])
 			{
-				canvas.x = -0.5 * width * (scaleX - initialZoom) * FlxG.scaleMode.scale.x;
-				canvas.y = -0.5 * height * (scaleY - initialZoom) * FlxG.scaleMode.scale.y;
-
-				canvas.scaleX = totalScaleX;
-				canvas.scaleY = totalScaleY;
+				if (canvas != null)
+				{
+					canvas.x = -0.5 * width * (scaleX - initialZoom) * FlxG.scaleMode.scale.x;
+					canvas.y = -0.5 * height * (scaleY - initialZoom) * FlxG.scaleMode.scale.y;
+					canvas.scaleX = totalScaleX;
+					canvas.scaleY = totalScaleY;
+				}
 			}
 		}
 	}
@@ -221,7 +234,7 @@ class FlxShaderMaskCamera extends FlxCamera
 	// Apply non-directed fills to both the canvas and duplicate canvas
 	override public function fill(Color:FlxColor, BlendAlpha:Bool = true, FxAlpha:Float = 1.0, ?graphics:Graphics):Void
 	{
-		if (graphics != null)
+		if (FlxG.renderBlit || graphics != null)
 		{
 			super.fill(Color, BlendAlpha, FxAlpha, graphics);
 		}
@@ -236,18 +249,20 @@ class FlxShaderMaskCamera extends FlxCamera
 	override function drawFX():Void
 	{
 		super.drawFX();
-
-		// Draw the "flash" special effect onto the buffer
-		if (_fxFlashAlpha > 0.0)
+		if (FlxG.renderTile)
 		{
-			var alphaComponent = _fxFlashColor.alpha;
-			super.fill((_fxFlashColor & 0x00ffffff), true, ((alphaComponent <= 0) ? 0xff : alphaComponent) * _fxFlashAlpha / 255, shaderCanvas.graphics);
-		}
-		// Draw the "fade" special effect onto the buffer
-		if (_fxFadeAlpha > 0.0)
-		{
-			var alphaComponent = _fxFadeColor.alpha;
-			super.fill((_fxFadeColor & 0x00ffffff), true, ((alphaComponent <= 0) ? 0xff : alphaComponent) * _fxFadeAlpha / 255, shaderCanvas.graphics);
+			// Draw the "flash" special effect onto the buffer
+			if (_fxFlashAlpha > 0.0)
+			{
+				var alphaComponent = _fxFlashColor.alpha;
+				super.fill((_fxFlashColor & 0x00ffffff), true, ((alphaComponent <= 0) ? 0xff : alphaComponent) * _fxFlashAlpha / 255, shaderCanvas.graphics);
+			}
+			// Draw the "fade" special effect onto the buffer
+			if (_fxFadeAlpha > 0.0)
+			{
+				var alphaComponent = _fxFadeColor.alpha;
+				super.fill((_fxFadeColor & 0x00ffffff), true, ((alphaComponent <= 0) ? 0xff : alphaComponent) * _fxFadeAlpha / 255, shaderCanvas.graphics);
+			}
 		}
 	}
 
@@ -255,7 +270,10 @@ class FlxShaderMaskCamera extends FlxCamera
 	override function set_alpha(Alpha:Float):Float
 	{
 		super.set_alpha(Alpha);
-		shaderCanvas.alpha = canvas.alpha;
+		if (FlxG.renderTile)
+		{
+			shaderCanvas.alpha = canvas.alpha;
+		}
 		return Alpha;
 	}
 
@@ -263,14 +281,16 @@ class FlxShaderMaskCamera extends FlxCamera
 	override function set_color(Color:FlxColor):FlxColor
 	{
 		super.set_color(Color);
+		if (FlxG.renderTile)
+		{
+			var colorTransform = shaderCanvas.transform.colorTransform;
 
-		var colorTransform = shaderCanvas.transform.colorTransform;
+			colorTransform.redMultiplier = color.redFloat;
+			colorTransform.greenMultiplier = color.greenFloat;
+			colorTransform.blueMultiplier = color.blueFloat;
 
-		colorTransform.redMultiplier = color.redFloat;
-		colorTransform.greenMultiplier = color.greenFloat;
-		colorTransform.blueMultiplier = color.blueFloat;
-
-		shaderCanvas.transform.colorTransform = colorTransform;
+			shaderCanvas.transform.colorTransform = colorTransform;
+		}
 
 		return Color;
 	}
@@ -279,13 +299,16 @@ class FlxShaderMaskCamera extends FlxCamera
 	override function updateScrollRect():Void
 	{
 		super.updateScrollRect();
-		var rect:Rectangle = (_scrollRect != null) ? _scrollRect.scrollRect : null;
-
-		if (rect != null)
+		if (FlxG.renderTile)
 		{
-			_shadedScrollRect.scrollRect = rect;
-			_shadedScrollRect.x = -0.5 * rect.width;
-			_shadedScrollRect.y = -0.5 * rect.height;
+			var rect:Rectangle = (_scrollRect != null) ? _scrollRect.scrollRect : null;
+
+			if (rect != null)
+			{
+				_shadedScrollRect.scrollRect = rect;
+				_shadedScrollRect.x = -0.5 * rect.width;
+				_shadedScrollRect.y = -0.5 * rect.height;
+			}
 		}
 	}
 }
