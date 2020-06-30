@@ -40,12 +40,12 @@ class FlxOgmoLoader
 		var str:String = "";
 
 		// Passed embedded resource?
-		if (Std.is(LevelData, Class))
+		if ((LevelData is Class))
 		{
 			str = Type.createInstance(LevelData, []);
 		}
 		// Passed path to resource?
-		else if (Std.is(LevelData, String))
+		else if ((LevelData is String))
 		{
 			str = Assets.getText(LevelData);
 		}

@@ -434,7 +434,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 			return false;
 		}
 
-		if (Std.is(Object, FlxTilemap))
+		if ((Object is FlxTilemap))
 		{
 			return cast(Object, FlxTilemap).overlapsWithCallback(Bullet);
 		}

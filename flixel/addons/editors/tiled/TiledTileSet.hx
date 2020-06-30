@@ -48,11 +48,11 @@ class TiledTileSet
 		numRows = numCols = 1;
 
 		// Use the correct data format
-		if (Std.is(data, #if (haxe_ver < "4.0.0") Access #else Xml #end))
+		if ((data is #if (haxe_ver < "4.0.0") Access #else Xml #end))
 		{
 			source = data;
 		}
-		else if (Std.is(data, ValidByteArray))
+		else if ((data is ValidByteArray))
 		{
 			var bytes:ValidByteArray = cast data;
 			source = new Access(Xml.parse(bytes.toString()));

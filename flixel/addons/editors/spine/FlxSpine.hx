@@ -129,7 +129,7 @@ class FlxSpine extends FlxSprite
 				continue;
 			}
 
-			if (Std.is(slot.attachment, MeshAttachment))
+			if ((slot.attachment is MeshAttachment))
 			{
 				renderMeshes = true;
 				break;
@@ -212,7 +212,7 @@ class FlxSpine extends FlxSprite
 			{
 				wrapper = null;
 
-				if (Std.is(slot.attachment, RegionAttachment))
+				if ((slot.attachment is RegionAttachment))
 				{
 					var region:RegionAttachment = cast slot.attachment;
 					verticesLength = 8;
@@ -237,7 +237,7 @@ class FlxSpine extends FlxSprite
 					b = region.b;
 					a = region.a;
 				}
-				else if (Std.is(slot.attachment, MeshAttachment))
+				else if ((slot.attachment is MeshAttachment))
 				{
 					var mesh:MeshAttachment = cast slot.attachment;
 					verticesLength = mesh.vertices.length;
@@ -245,7 +245,7 @@ class FlxSpine extends FlxSprite
 					uvtData = mesh.uvs;
 					triangles = mesh.triangles;
 
-					if (Std.is(mesh.rendererObject, FlxStrip))
+					if ((mesh.rendererObject is FlxStrip))
 					{
 						wrapper = cast mesh.rendererObject;
 					}
@@ -318,7 +318,7 @@ class FlxSpine extends FlxSprite
 			}
 
 			var regionAttachment:RegionAttachment = null;
-			if (Std.is(slot.attachment, RegionAttachment))
+			if ((slot.attachment is RegionAttachment))
 				regionAttachment = cast slot.attachment;
 
 			if (regionAttachment != null)
@@ -384,7 +384,7 @@ class FlxSpine extends FlxSprite
 	function getSprite(regionAttachment:RegionAttachment):FlxSprite
 	{
 		var wrapper = _regionWrappers[regionAttachment];
-		if (wrapper != null && Std.is(wrapper, FlxSprite))
+		if (wrapper != null && (wrapper is FlxSprite))
 			return wrapper;
 
 		var region:AtlasRegion = cast regionAttachment.rendererObject;

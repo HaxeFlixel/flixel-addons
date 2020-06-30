@@ -206,17 +206,17 @@ class FlxPexParser
 		var firstElement:Xml = null;
 
 		// data embedded with @:file
-		if (Std.is(data, Class))
+		if ((data is Class))
 		{
 			str = Type.createInstance(data, []);
 		}
 		// data is a XML object
-		else if (Std.is(data, Xml))
+		else if ((data is Xml))
 		{
 			firstElement = data.firstElement();
 		}
 		// data is an ID or the content
-		else if (Std.is(data, String))
+		else if ((data is String))
 		{
 			// is the pexFile an ID to an asset or the content of the file?
 			if (Assets.exists(data))

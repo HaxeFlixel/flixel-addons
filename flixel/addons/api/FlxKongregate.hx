@@ -102,7 +102,7 @@ class FlxKongregate
 
 		Security.allowDomain(api.loaderInfo.url);
 
-		if (Std.is(_loadCallback, Dynamic))
+		if ((_loadCallback is Dynamic))
 		{
 			_loadCallback.call();
 		}

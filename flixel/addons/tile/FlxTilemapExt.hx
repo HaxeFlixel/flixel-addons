@@ -383,7 +383,8 @@ class FlxTilemapExt extends FlxTilemap
 					// New generalized slope collisions
 					if (overlapFound || (!overlapFound && checkArrays(tile.index)))
 					{
-						if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.is(Object, tile.filter)))
+						if ((tile.callbackFunction != null)
+							&& ((tile.filter == null) || #if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end (Object, tile.filter)))
 						{
 							tile.mapIndex = rowStart + column;
 							tile.callbackFunction(tile, Object);
@@ -391,7 +392,8 @@ class FlxTilemapExt extends FlxTilemap
 						results = true;
 					}
 				}
-				else if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.is(Object, tile.filter)))
+				else if ((tile.callbackFunction != null)
+					&& ((tile.filter == null) || #if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end (Object, tile.filter)))
 				{
 					tile.mapIndex = rowStart + column;
 					tile.callbackFunction(tile, Object);

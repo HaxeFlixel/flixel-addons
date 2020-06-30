@@ -66,13 +66,13 @@ class TiledMap
 		if (rootPath != null)
 			this.rootPath = rootPath;
 
-		if (Std.is(data, String))
+		if ((data is String))
 		{
 			if (this.rootPath == null)
 				this.rootPath = Path.directory(data) + "/";
 			source = new Access(Xml.parse(Assets.getText(data)));
 		}
-		else if (Std.is(data, Xml))
+		else if ((data is Xml))
 		{
 			if (this.rootPath == null)
 				this.rootPath = "";
