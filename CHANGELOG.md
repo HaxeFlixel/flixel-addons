@@ -1,9 +1,10 @@
-2.9.0 (to be released)
+2.9.0 (July 2, 2020)
 ------------------------------
 * `FlxOgmoLoader`: added an optional `tilemap` parameter to `loadTilemap()`
 * `FlxOgmo3Loader`: added an optional `tilemap` parameter to `loadTilemap()` (#341)
 * `FlxTilemapExt`: added `setDownwardsGlue()` (#339)
 * Added `flixel.addons.display.FlxShaderMaskCamera` (#342)
+* Fixed `Std.is()` deprecation warnings with Haxe 4.2
 
 2.8.0 (February 8, 2020)
 ------------------------------
