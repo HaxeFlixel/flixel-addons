@@ -192,7 +192,7 @@ class TiledTileLayer extends TiledLayer
 					{
 						if (cell != "")
 						{
-							tileArray.push(Std.parseInt(cell));
+							tileArray.push(resolveTile(Std.parseInt(cell)));
 						}
 					}
 				}
