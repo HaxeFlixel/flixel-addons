@@ -7,6 +7,7 @@ import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
+import flixel.math.FlxRect;
 import openfl.Assets;
 import openfl.display.BitmapDataChannel;
 import openfl.geom.Matrix;
@@ -33,7 +34,7 @@ class TransitionFade extends TransitionEffect
 	{
 		super(data);
 
-		back = makeSprite(data.direction.x, data.direction.y);
+		back = makeSprite(data.direction.x, data.direction.y, data.region);
 		back.scrollFactor.set(0, 0);
 		add(back);
 	}
@@ -146,9 +147,9 @@ class TransitionFade extends TransitionEffect
 		}
 	}
 
-	function makeSprite(DirX:Float, DirY:Float):FlxSprite
+	function makeSprite(DirX:Float, DirY:Float, region:FlxRect):FlxSprite
 	{
-		var s = new FlxSprite(0, 0);
+		var s = new FlxSprite(region.x, region.y);
 		var locX:Float = 0;
 		var locY:Float = 0;
 		var angle:Int = 0;
@@ -156,38 +157,38 @@ class TransitionFade extends TransitionEffect
 		if (DirX == 0 && DirY == 0)
 		{
 			// no direction
-			s.makeGraphic(FlxG.width, FlxG.height, _data.color);
+			s.makeGraphic(Std.int(region.width), Std.int(region.height), _data.color);
 		}
 		else if (DirX == 0 && Math.abs(DirY) > 0)
 		{
 			// vertical wipe
-			locY = DirY > 0 ? FlxG.height : 0;
+			locY = DirY > 0 ? region.height : 0;
 			angle = DirY > 0 ? 90 : 270;
-			s.makeGraphic(1, FlxG.height * 2, _data.color);
+			s.makeGraphic(1, Std.int(region.height * 2), _data.color);
 			pixels = s.pixels;
-			var gvert = FlxGradient.createGradientBitmapData(1, FlxG.height, [_data.color, FlxColor.TRANSPARENT], 1, angle);
+			var gvert = FlxGradient.createGradientBitmapData(1, Std.int(region.height), [_data.color, FlxColor.TRANSPARENT], 1, angle);
 			pixels.copyPixels(gvert, gvert.rect, new Point(0, locY));
 			s.pixels = pixels;
-			s.scale.set(FlxG.width, 1.0);
+			s.scale.set(region.width, 1.0);
 			s.updateHitbox();
 		}
 		else if (Math.abs(DirX) > 0 && DirY == 0)
 		{
 			// horizontal wipe
-			locX = DirX > 0 ? FlxG.width : 0;
+			locX = DirX > 0 ? region.width : 0;
 			angle = DirX > 0 ? 0 : 180;
-			s.makeGraphic(FlxG.width * 2, 1, _data.color);
+			s.makeGraphic(Std.int(region.width * 2), 1, _data.color);
 			pixels = s.pixels;
-			var ghorz = FlxGradient.createGradientBitmapData(FlxG.width, 1, [_data.color, FlxColor.TRANSPARENT], 1, angle);
+			var ghorz = FlxGradient.createGradientBitmapData(Std.int(region.width), 1, [_data.color, FlxColor.TRANSPARENT], 1, angle);
 			pixels.copyPixels(ghorz, ghorz.rect, new Point(locX, 0));
 			s.pixels = pixels;
-			s.scale.set(1.0, FlxG.height);
+			s.scale.set(1.0, region.height);
 			s.updateHitbox();
 		}
 		else if (Math.abs(DirX) > 0 && Math.abs(DirY) > 0)
 		{
 			// diagonal wipe
-			locY = DirY > 0 ? FlxG.height : 0;
+			locY = DirY > 0 ? region.height : 0;
 			s.loadGraphic(getGradient());
 			s.flipX = DirX < 0;
 			s.flipY = DirY < 0;
