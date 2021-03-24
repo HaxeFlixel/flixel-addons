@@ -4,6 +4,9 @@ import flixel.math.FlxPoint;
 import flixel.group.FlxGroup;
 import flixel.FlxG;
 import flixel.tile.FlxTilemap;
+import flixel.addons.tile.FlxTilemapExt;
+import flixel.addons.tile.FlxTileSpecial;
+import flixel.util.FlxArrayUtil;
 import flixel.math.FlxRect;
 import flixel.math.FlxAngle;
 import openfl.Assets;
@@ -62,6 +65,43 @@ class FlxOgmo3Loader
 				tilemap.loadMapFromArray(layer.data, layer.gridCellsX, layer.gridCellsY, tileGraphic, tileset.tileWidth, tileset.tileHeight);
 			case 1:
 				tilemap.loadMapFrom2DArray(layer.data2D, tileGraphic, tileset.tileWidth, tileset.tileHeight);
+		}
+		return tilemap;
+	}
+	
+	/**
+	 * Load a FlxTilemapExt, which supports additional features such as flipped and rotated tiles.
+	 * Collision with entities should be handled with the reference returned from this function.
+	 *
+	 * IMPORTANT: Tile layers must export using IDs, not Coords!
+	 *
+	 * @param	tileGraphic		A String or Class representing the location of the image asset for the tilemap.
+	 * @param	tileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
+	 * @param	tilemap			(optional) A tilemap to load tilemap data into. If not specified, new `FlxTilemap` instance is created.
+	 * @return	A `FlxTilemapExt`, where you can collide your entities against.
+	 */
+	public function loadTilemapExt(tileGraphic:Dynamic, tileLayer:String = "tiles", ?tilemap:FlxTilemapExt):FlxTilemapExt
+	{
+		if (tilemap == null)
+			tilemap = new FlxTilemapExt();
+
+		var layer = level.getTileLayer(tileLayer);
+		var tileset = project.getTilesetData(layer.tileset);
+		switch (layer.arrayMode)
+		{
+			case 0:
+				tilemap.loadMapFromArray(layer.data, layer.gridCellsX, layer.gridCellsY, tileGraphic, tileset.tileWidth, tileset.tileHeight);
+				if (layer.tileFlags != null)
+				{
+					applyFlagsToTilemapExt(layer.tileFlags, tilemap);
+				}
+
+			case 1:
+				tilemap.loadMapFrom2DArray(layer.data2D, tileGraphic, tileset.tileWidth, tileset.tileHeight);
+				if (layer.tileFlags2D != null)
+				{
+					applyFlagsToTilemapExt(FlxArrayUtil.flatten2DArray(layer.tileFlags2D), tilemap);
+				}
 		}
 		return tilemap;
 	}
@@ -227,6 +267,37 @@ class FlxOgmo3Loader
 				return tileset;
 		return null;
 	}
+	
+	/**
+	 * Apply flags for flipping and rotating tiles to a FlxTilemapExt
+	 */
+	static function applyFlagsToTilemapExt(tileFlags:Array<Int>, tilemap:FlxTilemapExt)
+	{
+		var specialTiles:Array<FlxTileSpecial> = new Array<FlxTileSpecial>();
+
+		for (i in 0...tileFlags.length)
+		{
+			var flag = tileFlags[i];
+			var specialTile:FlxTileSpecial = new FlxTileSpecial(tilemap.getTileByIndex(i), false, false, 0);
+
+			if (flag & 4 > 0)
+				specialTile.flipX = true;
+			if (flag & 2 > 0)
+				specialTile.flipY = true;
+			if (flag & 1 > 0) {
+				if (specialTile.flipY) {
+					specialTile.flipY = false;
+					specialTile.rotate = FlxTileSpecial.ROTATE_270;
+				}
+				else {
+					specialTile.flipX = !specialTile.flipX;
+					specialTile.rotate = FlxTileSpecial.ROTATE_90;
+				}
+			}
+			specialTiles.push(specialTile);
+		}
+		tilemap.setSpecialTiles(specialTiles);
+	}
 }
 
 /**
@@ -375,7 +446,9 @@ typedef TileLayer =
 	exportMode:Int,
 	arrayMode:Int,
 	?data:Array<Int>,
+	?tileFlags:Array<Int>,
 	?data2D:Array<Array<Int>>,
+	?tileFlags2D:Array<Array<Int>>,
 	?dataCSV:String,
 	?dataCoords:Array<Array<Int>>,
 	?dataCoords2D:Array<Array<Array<Int>>>,
