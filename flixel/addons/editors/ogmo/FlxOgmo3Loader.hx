@@ -1,19 +1,20 @@
 package flixel.addons.editors.ogmo;
 
-import flixel.math.FlxPoint;
-import flixel.group.FlxGroup;
 import flixel.FlxG;
-import flixel.tile.FlxTilemap;
-import flixel.addons.tile.FlxTilemapExt;
 import flixel.addons.tile.FlxTileSpecial;
-import flixel.util.FlxArrayUtil;
-import flixel.math.FlxRect;
+import flixel.addons.tile.FlxTilemapExt;
+import flixel.group.FlxGroup;
 import flixel.math.FlxAngle;
-import openfl.Assets;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
+import flixel.system.FlxAssets.FlxTilemapGraphicAsset;
+import flixel.tile.FlxTilemap;
+import flixel.util.FlxArrayUtil;
 import haxe.Json;
+import openfl.Assets;
 
-using flixel.addons.editors.ogmo.FlxOgmo3Loader;
 using StringTools;
+using flixel.addons.editors.ogmo.FlxOgmo3Loader;
 
 class FlxOgmo3Loader
 {
@@ -23,8 +24,8 @@ class FlxOgmo3Loader
 	/**
 	 * Creates a new instance of `FlxOgmo3Loader` and prepares the level and project data to be used in other methods
 	 *
-	 * @param	projectData	The path to your project data (.ogmo).
-	 * @param	levelData	The path to your level data (.json).
+	 * @param	projectData	The path to your project data (`.ogmo`).
+	 * @param	levelData	The path to your level data (`.json`).
 	 */
 	public function new(projectData:String, levelData:String)
 	{
@@ -52,7 +53,7 @@ class FlxOgmo3Loader
 	 * @param	tilemap			(optional) A tilemap to load tilemap data into. If not specified, new `FlxTilemap` instance is created.
 	 * @return	A `FlxTilemap`, where you can collide your entities against.
 	 */
-	public function loadTilemap(tileGraphic:Dynamic, tileLayer:String = "tiles", ?tilemap:FlxTilemap):FlxTilemap
+	public function loadTilemap(tileGraphic:FlxTilemapGraphicAsset, tileLayer:String = "tiles", ?tilemap:FlxTilemap):FlxTilemap
 	{
 		if (tilemap == null)
 			tilemap = new FlxTilemap();
@@ -68,7 +69,7 @@ class FlxOgmo3Loader
 		}
 		return tilemap;
 	}
-	
+
 	/**
 	 * Load a `FlxTilemapExt`, which supports additional features such as flipped and rotated tiles.
 	 * Collision with entities should be handled with the reference returned from this function.
@@ -80,7 +81,7 @@ class FlxOgmo3Loader
 	 * @param	tilemap			(optional) A tilemap to load tilemap data into. If not specified, new `FlxTilemapExt` instance is created.
 	 * @return	A `FlxTilemapExt`, where you can collide your entities against.
 	 */
-	public function loadTilemapExt(tileGraphic:Dynamic, tileLayer:String = "tiles", ?tilemap:FlxTilemapExt):FlxTilemapExt
+	public function loadTilemapExt(tileGraphic:FlxTilemapGraphicAsset, tileLayer:String = "tiles", ?tilemap:FlxTilemapExt):FlxTilemapExt
 	{
 		if (tilemap == null)
 			tilemap = new FlxTilemapExt();
@@ -267,7 +268,7 @@ class FlxOgmo3Loader
 				return tileset;
 		return null;
 	}
-	
+
 	/**
 	 * Apply flags for flipping and rotating tiles to a FlxTilemapExt
 	 */
@@ -284,12 +285,15 @@ class FlxOgmo3Loader
 				specialTile.flipX = true;
 			if (flag & 2 > 0)
 				specialTile.flipY = true;
-			if (flag & 1 > 0) {
-				if (specialTile.flipY) {
+			if (flag & 1 > 0)
+			{
+				if (specialTile.flipY)
+				{
 					specialTile.flipY = false;
 					specialTile.rotate = FlxTileSpecial.ROTATE_270;
 				}
-				else {
+				else
+				{
 					specialTile.flipX = !specialTile.flipX;
 					specialTile.rotate = FlxTileSpecial.ROTATE_90;
 				}
@@ -357,8 +361,7 @@ typedef ProjectEntityData =
 	originAnchored:Bool,
 	shape:
 	{
-		label:String,
-		points:Array<Point>
+		label:String, points:Array<Point>
 	},
 	color:String,
 	tileX:Bool,

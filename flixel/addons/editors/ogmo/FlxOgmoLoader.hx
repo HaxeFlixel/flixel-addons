@@ -1,8 +1,9 @@
 package flixel.addons.editors.ogmo;
 
 import flixel.FlxG;
-import flixel.tile.FlxTilemap;
 import flixel.math.FlxRect;
+import flixel.system.FlxAssets.FlxTilemapGraphicAsset;
+import flixel.tile.FlxTilemap;
 import haxe.xml.Parser;
 import openfl.Assets;
 #if haxe4
@@ -75,7 +76,8 @@ class FlxOgmoLoader
 	 * @param	tilemap			(optional) A tilemap to load tilemap data into. If not specified, new `FlxTilemap` instance is created.
 	 * @return	A FlxTilemap, where you can collide your entities against.
 	 */
-	public function loadTilemap(TileGraphic:Dynamic, TileWidth:Int = 16, TileHeight:Int = 16, TileLayer:String = "tiles", ?tilemap:FlxTilemap):FlxTilemap
+	public function loadTilemap(TileGraphic:FlxTilemapGraphicAsset, TileWidth:Int = 16, TileHeight:Int = 16, TileLayer:String = "tiles",
+			?tilemap:FlxTilemap):FlxTilemap
 	{
 		if (tilemap == null)
 			tilemap = new FlxTilemap();
