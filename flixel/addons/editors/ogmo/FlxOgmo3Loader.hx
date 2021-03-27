@@ -70,14 +70,14 @@ class FlxOgmo3Loader
 	}
 	
 	/**
-	 * Load a FlxTilemapExt, which supports additional features such as flipped and rotated tiles.
+	 * Load a `FlxTilemapExt`, which supports additional features such as flipped and rotated tiles.
 	 * Collision with entities should be handled with the reference returned from this function.
 	 *
 	 * IMPORTANT: Tile layers must export using IDs, not Coords!
 	 *
 	 * @param	tileGraphic		A String or Class representing the location of the image asset for the tilemap.
 	 * @param	tileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
-	 * @param	tilemap			(optional) A tilemap to load tilemap data into. If not specified, new `FlxTilemap` instance is created.
+	 * @param	tilemap			(optional) A tilemap to load tilemap data into. If not specified, new `FlxTilemapExt` instance is created.
 	 * @return	A `FlxTilemapExt`, where you can collide your entities against.
 	 */
 	public function loadTilemapExt(tileGraphic:Dynamic, tileLayer:String = "tiles", ?tilemap:FlxTilemapExt):FlxTilemapExt
@@ -273,12 +273,12 @@ class FlxOgmo3Loader
 	 */
 	static function applyFlagsToTilemapExt(tileFlags:Array<Int>, tilemap:FlxTilemapExt)
 	{
-		var specialTiles:Array<FlxTileSpecial> = new Array<FlxTileSpecial>();
+		var specialTiles = new Array<FlxTileSpecial>();
 
 		for (i in 0...tileFlags.length)
 		{
 			var flag = tileFlags[i];
-			var specialTile:FlxTileSpecial = new FlxTileSpecial(tilemap.getTileByIndex(i), false, false, 0);
+			var specialTile = new FlxTileSpecial(tilemap.getTileByIndex(i), false, false, 0);
 
 			if (flag & 4 > 0)
 				specialTile.flipX = true;
