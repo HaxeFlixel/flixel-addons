@@ -16,6 +16,9 @@ import openfl.Assets;
 using StringTools;
 using flixel.addons.editors.ogmo.FlxOgmo3Loader;
 
+/**
+ * @since 2.8.0
+ */
 class FlxOgmo3Loader
 {
 	var project:ProjectData;
@@ -80,6 +83,8 @@ class FlxOgmo3Loader
 	 * @param	tileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
 	 * @param	tilemap			(optional) A tilemap to load tilemap data into. If not specified, new `FlxTilemapExt` instance is created.
 	 * @return	A `FlxTilemapExt`, where you can collide your entities against.
+	 * 
+	 * @since 2.10.0
 	 */
 	public function loadTilemapExt(tileGraphic:FlxTilemapGraphicAsset, tileLayer:String = "tiles", ?tilemap:FlxTilemapExt):FlxTilemapExt
 	{

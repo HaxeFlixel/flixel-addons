@@ -1,3 +1,9 @@
+2.10.0 (April 11, 2021)
+------------------------------
+* `FlxOgmo3Loader`: added `loadTilemapExt()` (#349)
+* `TiledTileLayer`: fixed `tile` array not being generated with `encoding = 'csv'` (#347)
+* `TransitionFade`: fixed `region` support (#348)
+
 2.9.0 (July 2, 2020)
 ------------------------------
 * `FlxOgmoLoader`: added an optional `tilemap` parameter to `loadTilemap()`

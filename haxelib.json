@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": ["game", "openfl", "flash", "neko", "cpp", "android", "ios", "cross"],
 	"description": "flixel-addons is a set of useful, additional classes for HaxeFlixel.",
-	"version": "2.9.0",
-	"releasenote": "Added FlxShaderMaskCamera, improved ogmo loaders and FlxTilemapExt.",
+	"version": "2.10.0",
+	"releasenote": "Added FlxOgmo3Loader.loadTilemapExt(), fixes for TiledTileLayer with CSV encoding and TransitionFade regions.",
 	"contributors": ["haxeflixel", "Gama11"]
 }
