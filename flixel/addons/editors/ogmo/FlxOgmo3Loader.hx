@@ -1,6 +1,7 @@
 package flixel.addons.editors.ogmo;
 
 import flixel.FlxG;
+import flixel.tile.FlxTilemapAutoTiling;
 import flixel.addons.tile.FlxTileSpecial;
 import flixel.addons.tile.FlxTilemapExt;
 import flixel.group.FlxGroup;
@@ -67,8 +68,8 @@ class FlxOgmo3Loader
 		switch (layer.arrayMode)
 		{
 			case 0:
-				tilemap.loadMapFromArray(layer.data, layer.gridCellsX, layer.gridCellsY, tileGraphic, tileset.tileWidth, tileset.tileHeight, null,
-					startingIndex);
+				tilemap.loadMapFromArray(layer.data, layer.gridCellsX, layer.gridCellsY, tileGraphic, tileset.tileWidth, tileset.tileHeight,
+					FlxTilemapAutoTiling.OFF, startingIndex);
 			case 1:
 				tilemap.loadMapFrom2DArray(layer.data2D, tileGraphic, tileset.tileWidth, tileset.tileHeight);
 		}
