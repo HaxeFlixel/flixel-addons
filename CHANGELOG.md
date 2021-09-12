@@ -1,3 +1,7 @@
+2.11.0 (September 12, 2021)
+------------------------------
+* Compatibility with flixel 4.10.0
+
 2.10.0 (April 11, 2021)
 ------------------------------
 * `FlxOgmo3Loader`: added `loadTilemapExt()` (#349)
