@@ -15,6 +15,7 @@ import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.tile.FlxTilemapBuffer;
 import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxDirectionFlags;
 
 // TODO: add support for tilemap scaling
 // TODO: try to make it cleaner (i mean rendering and animated tiles)
