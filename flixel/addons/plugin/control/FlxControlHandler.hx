@@ -3,7 +3,6 @@ package flixel.addons.plugin.control;
 #if FLX_KEYBOARD
 import flash.geom.Rectangle;
 import flixel.FlxG;
-import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.system.FlxSound;
 import flixel.math.FlxMath;
@@ -169,7 +168,7 @@ class FlxControlHandler
 	var _jumpFromFallTime:Int;
 	// Internal time of when they last collided with a valid jumpSurface
 	var _extraSurfaceTime:Int;
-	// The surfaces from FlxObject they can jump from (i.e. FlxObject.FLOOR)
+	// The surfaces they can jump from (i.e. FLOOR)
 	var _jumpSurface:Int;
 	// A function to call every time they jump
 	var _jumpCallback:Void->Void;
@@ -600,7 +599,7 @@ class FlxControlHandler
 	 * @param	Key				The key to use as the jump button (String from flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
 	 * @param	Keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
 	 * @param	Height			The height in pixels/sec that the Sprite will attempt to jump (gravity and acceleration can influence this actual height obtained)
-	 * @param	Surface			A bitwise combination of all valid surfaces the Sprite can jump off (from FlxObject, such as FlxObject.FLOOR)
+	 * @param	Surface			A bitwise combination of all valid surfaces the Sprite can jump off (such as FLOOR)
 	 * @param	RepeatDelay		Time delay in ms between which the jumping can repeat (250 would be 4 times per second)
 	 * @param	JumpFromFall	A time in ms that allows the Sprite to still jump even if it's just fallen off a platform, if still within ths time limit
 	 * @param	Callback		A user defined function to call when the Sprite jumps
@@ -658,7 +657,7 @@ class FlxControlHandler
 
 			if (_yFacing)
 			{
-				_entity.facing = FlxObject.UP;
+				_entity.facing = UP;
 			}
 
 			if (_movement == MOVEMENT_INSTANT)
@@ -690,7 +689,7 @@ class FlxControlHandler
 
 			if (_yFacing)
 			{
-				_entity.facing = FlxObject.DOWN;
+				_entity.facing = DOWN;
 			}
 
 			if (_movement == MOVEMENT_INSTANT)
@@ -722,7 +721,7 @@ class FlxControlHandler
 
 			if (_xFacing)
 			{
-				_entity.facing = FlxObject.LEFT;
+				_entity.facing = LEFT;
 			}
 
 			if (_movement == MOVEMENT_INSTANT)
@@ -754,7 +753,7 @@ class FlxControlHandler
 
 			if (_xFacing)
 			{
-				_entity.facing = FlxObject.RIGHT;
+				_entity.facing = RIGHT;
 			}
 
 			if (_movement == MOVEMENT_INSTANT)

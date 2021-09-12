@@ -19,7 +19,7 @@ class TiledObject
 	 *
 	 * ```haxe
 	 * var flipped:Bool = (object.gid & TiledObject.FLIPPED_HORIZONTALLY_FLAG) > 0;
-	 * sprite.facing = flipped ? FlxObject.LEFT : FlxObject.RIGHT;
+	 * sprite.facing = flipped ? LEFT : RIGHT;
 	 * ```
 	 */
 	public static inline var FLIPPED_VERTICALLY_FLAG = 0x40000000;

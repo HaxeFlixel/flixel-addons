@@ -3,7 +3,6 @@ package flixel.addons.display;
 import flash.geom.ColorTransform;
 import flixel.FlxBasic;
 import flixel.FlxG;
-import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
@@ -190,7 +189,7 @@ class FlxNestedSprite extends FlxSprite
 			updateMotion(elapsed);
 
 		wasTouching = touching;
-		touching = FlxObject.NONE;
+		touching = NONE;
 		animation.update(elapsed);
 
 		var delta:Float;
