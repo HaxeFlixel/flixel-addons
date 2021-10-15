@@ -15,6 +15,7 @@ import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.tile.FlxTilemapBuffer;
 import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxDirectionFlags;
 
 // TODO: add support for tilemap scaling
 // TODO: try to make it cleaner (i mean rendering and animated tiles)
@@ -188,11 +189,11 @@ class FlxTilemapExt extends FlxTilemap
 					{
 						if (tile != null)
 						{
-							if (tile.allowCollisions <= FlxObject.NONE)
+							if (tile.allowCollisions <= NONE)
 							{
 								debugTile = _debugTileNotSolid;
 							}
-							else if (tile.allowCollisions != FlxObject.ANY)
+							else if (tile.allowCollisions != ANY)
 							{
 								debugTile = _debugTilePartial;
 							}
@@ -470,7 +471,7 @@ class FlxTilemapExt extends FlxTilemap
 			_slopeThinGentle = ThinTiles;
 			for (tile in _slopeThinGentle)
 			{
-				_tileObjects[tile].allowCollisions = (_slopeSouthwest.indexOf(tile) >= 0 || _slopeSoutheast.indexOf(tile) >= 0) ? FlxObject.CEILING : FlxObject.FLOOR;
+				_tileObjects[tile].allowCollisions = (_slopeSouthwest.indexOf(tile) >= 0 || _slopeSoutheast.indexOf(tile) >= 0) ? CEILING : FLOOR;
 			}
 		}
 	}
@@ -493,7 +494,7 @@ class FlxTilemapExt extends FlxTilemap
 			_slopeThinSteep = ThinTiles;
 			for (tile in _slopeThinSteep)
 			{
-				_tileObjects[tile].allowCollisions = (_slopeSouthwest.indexOf(tile) >= 0 || _slopeNorthwest.indexOf(tile) >= 0) ? FlxObject.RIGHT : FlxObject.LEFT;
+				_tileObjects[tile].allowCollisions = (_slopeSouthwest.indexOf(tile) >= 0 || _slopeNorthwest.indexOf(tile) >= 0) ? RIGHT : LEFT;
 			}
 		}
 	}
@@ -544,7 +545,7 @@ class FlxTilemapExt extends FlxTilemap
 	function onCollideFloorSlope(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Set the object's touching flag
-		Object.touching = FlxObject.FLOOR;
+		Object.touching = FLOOR;
 
 		// Adjust the object's velocity
 		if (_downwardsGlue)
@@ -570,7 +571,7 @@ class FlxTilemapExt extends FlxTilemap
 	function onCollideCeilSlope(Slope:FlxObject, Object:FlxObject):Void
 	{
 		// Set the object's touching flag
-		Object.touching = FlxObject.CEILING;
+		Object.touching = CEILING;
 
 		// Adjust the object's velocity
 		Object.velocity.y = Math.max(Object.velocity.y, 0);
@@ -848,19 +849,19 @@ class FlxTilemapExt extends FlxTilemap
 	{
 		for (tile in _slopeNorthwest)
 		{
-			setTileProperties(tile, FlxObject.RIGHT | FlxObject.FLOOR, solveCollisionSlopeNorthwest);
+			setTileProperties(tile, RIGHT | FLOOR, solveCollisionSlopeNorthwest);
 		}
 		for (tile in _slopeNortheast)
 		{
-			setTileProperties(tile, FlxObject.LEFT | FlxObject.FLOOR, solveCollisionSlopeNortheast);
+			setTileProperties(tile, LEFT | FLOOR, solveCollisionSlopeNortheast);
 		}
 		for (tile in _slopeSouthwest)
 		{
-			setTileProperties(tile, FlxObject.RIGHT | FlxObject.CEILING, solveCollisionSlopeSouthwest);
+			setTileProperties(tile, RIGHT | CEILING, solveCollisionSlopeSouthwest);
 		}
 		for (tile in _slopeSoutheast)
 		{
-			setTileProperties(tile, FlxObject.LEFT | FlxObject.CEILING, solveCollisionSlopeSoutheast);
+			setTileProperties(tile, LEFT | CEILING, solveCollisionSlopeSoutheast);
 		}
 	}
 

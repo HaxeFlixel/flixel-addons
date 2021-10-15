@@ -2,7 +2,6 @@ package flixel.addons.effects;
 
 import flash.geom.Rectangle;
 import flixel.FlxCamera;
-import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
@@ -12,6 +11,7 @@ import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxDirectionFlags;
 import flixel.util.FlxSpriteUtil;
 import openfl.display.BitmapData;
 import openfl.display.Graphics;
@@ -40,9 +40,9 @@ class FlxClothSprite extends FlxSprite
 	public var meshScale(default, null):FlxPoint = FlxPoint.get(1, 1);
 
 	/**
-	 * Bit field of flags (use with FlxObject.UP, DOWN, LEFT, RIGHT, NONE, ANY, etc) indicating pinned side. Use bitwise operators to check the values stored here.
+	 * Bit field of flags (use with UP, DOWN, LEFT, RIGHT, NONE, ANY, etc) indicating pinned side. Use bitwise operators to check the values stored here.
 	 */
-	public var pinnedSide:Int;
+	public var pinnedSide:FlxDirectionFlags;
 
 	/**
 	 * How many iterations will do on constraints for each update.
@@ -114,9 +114,9 @@ class FlxClothSprite extends FlxSprite
 	 * @param	SimpleGraphic	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
 	 * @param	Columns			Number of columns of the created mesh.
 	 * @param	Rows			Number of rows of the created mesh.
-	 * @param	PinnedSide		The pinned side that points are not affected by wind or velocity. Use FlxObject.UP, DOWN, LEFT, RIGHT, NONE, ANY, etc.
+	 * @param	PinnedSide		The pinned side that points are not affected by wind or velocity. Use UP, DOWN, LEFT, RIGHT, NONE, ANY, etc.
 	 */
-	public function new(?X:Float = 0, ?Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset, Columns:Int = 0, Rows:Int = 0, PinnedSide:Int = FlxObject.UP,
+	public function new(?X:Float = 0, ?Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset, Columns:Int = 0, Rows:Int = 0, PinnedSide:FlxDirectionFlags = UP,
 			CrossingConstraints:Bool = false)
 	{
 		super(X, Y, SimpleGraphic);
@@ -215,7 +215,7 @@ class FlxClothSprite extends FlxSprite
 		var color:Null<Int> = debugBoundingBoxColor;
 		if (color == null)
 		{
-			if (allowCollisions != FlxObject.NONE)
+			if (allowCollisions != NONE)
 				color = immovable ? FlxColor.GREEN : FlxColor.RED;
 			else
 				color = FlxColor.BLUE;
@@ -301,10 +301,10 @@ class FlxClothSprite extends FlxSprite
 					y: r * heightInTiles,
 					oldx: c * widthInTiles,
 					oldy: r * heightInTiles,
-					pinned: ((r == 0 && pinnedSide & FlxObject.UP != 0)
-						|| (r == rows - 1 && pinnedSide & FlxObject.DOWN != 0)
-						|| (c == 0 && pinnedSide & FlxObject.LEFT != 0)
-						|| (c == columns - 1 && pinnedSide & FlxObject.RIGHT != 0))
+					pinned: ((r == 0 && pinnedSide & UP != 0)
+						|| (r == rows - 1 && pinnedSide & DOWN != 0)
+						|| (c == 0 && pinnedSide & LEFT != 0)
+						|| (c == columns - 1 && pinnedSide & RIGHT != 0))
 				});
 
 				_vertices.push(c * widthInTiles);

@@ -62,8 +62,9 @@ class TransitionEffect extends FlxSpriteGroup
 		finished = true;
 		if (finishCallback != null)
 		{
-			finishCallback();
+			var callback = finishCallback;
 			finishCallback = null;
+			callback();
 		}
 	}
 }

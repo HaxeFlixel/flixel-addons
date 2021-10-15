@@ -1,13 +1,14 @@
 package flixel.addons.display;
 
-import flixel.addons.plugin.FlxMouseControl;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.system.FlxAssets;
-import flixel.util.FlxCollision;
+import flixel.addons.plugin.FlxMouseControl;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.system.FlxAssets;
+import flixel.util.FlxCollision;
+import flixel.util.FlxDirectionFlags;
 
 /**
  * An enhanced FlxSprite that is capable of receiving mouse clicks, being dragged and thrown, mouse springs, gravity and other useful things
@@ -480,11 +481,11 @@ class FlxExtendedSprite extends FlxSprite
 			if (acceleration.x < 0)
 			{
 				//	Gravity is pulling them left
-				if ((touching & FlxObject.WALL) != 0)
+				if ((touching & WALL) != 0)
 				{
 					drag.y = frictionY;
 
-					if ((wasTouching & FlxObject.WALL) == 0)
+					if ((wasTouching & WALL) == 0)
 					{
 						if (velocity.x < toleranceX)
 						{
@@ -500,12 +501,12 @@ class FlxExtendedSprite extends FlxSprite
 			else if (acceleration.x > 0)
 			{
 				//	Gravity is pulling them right
-				if ((touching & FlxObject.WALL) != 0)
+				if ((touching & WALL) != 0)
 				{
 					//	Stop them sliding like on ice
 					drag.y = frictionY;
 
-					if ((wasTouching & FlxObject.WALL) == 0)
+					if ((wasTouching & WALL) == 0)
 					{
 						if (velocity.x > -toleranceX)
 						{
@@ -526,11 +527,11 @@ class FlxExtendedSprite extends FlxSprite
 			if (acceleration.y < 0)
 			{
 				//	Gravity is pulling them up (velocity is negative)
-				if ((touching & FlxObject.CEILING) != 0)
+				if ((touching & CEILING) != 0)
 				{
 					drag.x = frictionX;
 
-					if ((wasTouching & FlxObject.CEILING) == 0)
+					if ((wasTouching & CEILING) == 0)
 					{
 						if (velocity.y < toleranceY)
 						{
@@ -546,12 +547,12 @@ class FlxExtendedSprite extends FlxSprite
 			else if (acceleration.y > 0)
 			{
 				//	Gravity is pulling them down (velocity is positive)
-				if ((touching & FlxObject.FLOOR) != 0)
+				if ((touching & FLOOR) != 0)
 				{
 					//	Stop them sliding like on ice
 					drag.x = frictionX;
 
-					if ((wasTouching & FlxObject.FLOOR) == 0)
+					if ((wasTouching & FLOOR) == 0)
 					{
 						if (velocity.y > -toleranceY)
 						{

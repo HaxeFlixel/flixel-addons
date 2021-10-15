@@ -295,6 +295,7 @@ class FlxTrail extends FlxSpriteGroup
 				trailSprite.loadGraphic(_graphic);
 			}
 			trailSprite.exists = false;
+			trailSprite.active = false;
 			add(trailSprite);
 			trailSprite.alpha = _transp;
 			_transp -= _difference;
