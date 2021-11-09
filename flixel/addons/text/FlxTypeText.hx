@@ -216,7 +216,10 @@ class FlxTypeText extends FlxText
 			skipKeys = SkipKeys;
 		}
 
-		completeCallback = Callback;
+		if (Callback != null)
+		{
+			completeCallback = Callback;
+		}
 
 		insertBreakLines();
 
