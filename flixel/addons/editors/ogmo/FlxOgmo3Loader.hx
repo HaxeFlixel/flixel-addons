@@ -53,11 +53,10 @@ class FlxOgmo3Loader
 	 *
 	 * @param	tileGraphic		A String or Class representing the location of the image asset for the tilemap.
 	 * @param	tileLayer		The name of the layer the tilemap data is stored in Ogmo editor, usually `"tiles"` or `"stage"`.
-	 * @param	startingIndex	The index of which tile is transparent in your tileset, default is 0
 	 * @param	tilemap			(optional) A tilemap to load tilemap data into. If not specified, new `FlxTilemap` instance is created.
 	 * @return	A `FlxTilemap`, where you can collide your entities against.
 	 */
-	public function loadTilemap(tileGraphic:FlxTilemapGraphicAsset, tileLayer:String = "tiles", ?startingIndex:Int = 0, ?tilemap:FlxTilemap):FlxTilemap
+	public function loadTilemap(tileGraphic:FlxTilemapGraphicAsset, tileLayer:String = "tiles", ?tilemap:FlxTilemap):FlxTilemap
 	{
 		if (tilemap == null)
 			tilemap = new FlxTilemap();
@@ -67,8 +66,7 @@ class FlxOgmo3Loader
 		switch (layer.arrayMode)
 		{
 			case 0:
-				tilemap.loadMapFromArray(layer.data, layer.gridCellsX, layer.gridCellsY, tileGraphic, tileset.tileWidth, tileset.tileHeight, OFF,
-					startingIndex);
+				tilemap.loadMapFromArray(layer.data, layer.gridCellsX, layer.gridCellsY, tileGraphic, tileset.tileWidth, tileset.tileHeight);
 			case 1:
 				tilemap.loadMapFrom2DArray(layer.data2D, tileGraphic, tileset.tileWidth, tileset.tileHeight);
 		}
