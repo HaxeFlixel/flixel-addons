@@ -176,14 +176,14 @@ class FlxBackdrop extends FlxSprite
 					calcFrame(useFramePixels);
 
 				_flashRect2.setTo(0, 0, graphic.width, graphic.height);
-				camera.copyPixels(frame, framePixels, _flashRect2, _ppoint);
+				camera.copyPixels(frame, framePixels, _flashRect2, _ppoint, colorTransform, blend, antialiasing);
 			}
 			else
 			{
 				if (_tileFrame == null)
 					return;
 
-				var drawItem = camera.startQuadBatch(_tileFrame.parent, isColored, hasColorOffsets);
+				var drawItem = camera.startQuadBatch(_tileFrame.parent, isColored, hasColorOffsets, blend, antialiasing);
 
 				_tileFrame.prepareMatrix(_matrix);
 
