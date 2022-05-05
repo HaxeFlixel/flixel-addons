@@ -249,7 +249,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 				internalFireFromAngle(currentBullet, parent.angle + FlxG.random.float(angle.min, angle.max));
 
 			case FIRE_FROM_PARENT_FACING(angle):
-				internalFireFromAngle(currentBullet, FlxAngle.angleFromFacing(parent.facing, true) + FlxG.random.float(angle.min, angle.max));
+				internalFireFromAngle(currentBullet, parent.facing.degrees + FlxG.random.float(angle.min, angle.max));
 
 			#if FLX_TOUCH
 			case FIRE_AT_TOUCH(touch):
@@ -295,7 +295,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	{
 		var returnedPoint:FlxPoint = FlxPoint.weak();
 
-		var inBetweenAngle:Float = origin.angleBetween(point) - 90;
+		var inBetweenAngle:Float = origin.degreesTo(point);
 		inBetweenAngle = angle + inBetweenAngle;
 		var inBetweenDistance:Float = origin.distanceTo(point);
 
