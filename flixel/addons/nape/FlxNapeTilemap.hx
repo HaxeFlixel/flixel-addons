@@ -80,14 +80,14 @@ class FlxNapeTilemap extends FlxTilemap
 		{
 			mat = new Material();
 		}
-		X *= _tileWidth;
-		Y *= _tileHeight;
+		X *= tileWidth;
+		Y *= tileHeight;
 		var vertices = new Array<Vec2>();
 
 		vertices.push(Vec2.get(X, Y));
-		vertices.push(Vec2.get(X + _tileWidth, Y));
-		vertices.push(Vec2.get(X + _tileWidth, Y + _tileHeight));
-		vertices.push(Vec2.get(X, Y + _tileHeight));
+		vertices.push(Vec2.get(X + tileWidth, Y));
+		vertices.push(Vec2.get(X + tileWidth, Y + tileHeight));
+		vertices.push(Vec2.get(X, Y + tileHeight));
 
 		body.shapes.add(new Polygon(vertices, mat));
 
@@ -231,12 +231,12 @@ class FlxNapeTilemap extends FlxTilemap
 		for (rect in rects)
 		{
 			vertices = new Array<Vec2>();
-			rect.x *= _tileWidth;
-			rect.y *= _tileHeight;
+			rect.x *= tileWidth;
+			rect.y *= tileHeight;
 			rect.width++;
-			rect.width *= _tileWidth;
+			rect.width *= tileWidth;
 			rect.height++;
-			rect.height *= _tileHeight;
+			rect.height *= tileHeight;
 
 			vertices.push(Vec2.get(rect.x, rect.y));
 			vertices.push(Vec2.get(rect.width, rect.y));
