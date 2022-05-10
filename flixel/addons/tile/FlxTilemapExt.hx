@@ -1,11 +1,11 @@
 package flixel.addons.tile;
 
 import flash.display.BitmapData;
-import flixel.addons.tile.FlxTilemapExt;
-import flixel.addons.tile.FlxTileSpecial;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
+import flixel.addons.tile.FlxTileSpecial;
+import flixel.addons.tile.FlxTilemapExt;
 import flixel.graphics.frames.FlxFrame;
 import flixel.graphics.frames.FlxFramesCollection;
 import flixel.math.FlxMath;
@@ -111,8 +111,8 @@ class FlxTilemapExt extends FlxTilemap
 
 		var drawX:Float = 0;
 		var drawY:Float = 0;
-		var scaledWidth:Float = _tileWidth;
-		var scaledHeight:Float = _tileHeight;
+		var scaledWidth:Float = tileWidth;
+		var scaledHeight:Float = tileHeight;
 
 		var _tileTransformMatrix:FlxMatrix = null;
 		var matrixToUse:FlxMatrix;
@@ -133,8 +133,8 @@ class FlxTilemapExt extends FlxTilemap
 		_point.x = (Camera.scroll.x * scrollFactor.x) - x - offset.x + Camera.viewOffsetX; // modified from getScreenPosition()
 		_point.y = (Camera.scroll.y * scrollFactor.y) - y - offset.y + Camera.viewOffsetY;
 
-		var screenXInTiles:Int = Math.floor(_point.x / _tileWidth);
-		var screenYInTiles:Int = Math.floor(_point.y / _tileHeight);
+		var screenXInTiles:Int = Math.floor(_point.x / tileWidth);
+		var screenYInTiles:Int = Math.floor(_point.y / tileHeight);
 		var screenRows:Int = Buffer.rows;
 		var screenColumns:Int = Buffer.columns;
 
@@ -236,7 +236,7 @@ class FlxTilemapExt extends FlxTilemap
 
 				if (FlxG.renderBlit)
 				{
-					_flashPoint.x += _tileWidth;
+					_flashPoint.x += tileWidth;
 				}
 				columnIndex++;
 			}
@@ -244,12 +244,12 @@ class FlxTilemapExt extends FlxTilemap
 			rowIndex += widthInTiles;
 			if (FlxG.renderBlit)
 			{
-				_flashPoint.y += _tileHeight;
+				_flashPoint.y += tileHeight;
 			}
 		}
 
-		Buffer.x = screenXInTiles * _tileWidth;
-		Buffer.y = screenYInTiles * _tileHeight;
+		Buffer.x = screenXInTiles * tileWidth;
+		Buffer.y = screenYInTiles * tileHeight;
 
 		if (FlxG.renderBlit)
 		{
@@ -328,10 +328,10 @@ class FlxTilemapExt extends FlxTilemap
 		}
 
 		// Figure out what tiles we need to check against
-		var selectionX:Int = Math.floor((Object.x - X) / _tileWidth);
-		var selectionY:Int = Math.floor((Object.y - Y) / _tileHeight);
-		var selectionWidth:Int = selectionX + (Math.ceil(Object.width / _tileWidth)) + 1;
-		var selectionHeight:Int = selectionY + Math.ceil(Object.height / _tileHeight) + 1;
+		var selectionX:Int = Math.floor((Object.x - X) / tileWidth);
+		var selectionY:Int = Math.floor((Object.y - Y) / tileHeight);
+		var selectionWidth:Int = selectionX + (Math.ceil(Object.width / tileWidth)) + 1;
+		var selectionHeight:Int = selectionY + Math.ceil(Object.height / tileHeight) + 1;
 
 		// Then bound these coordinates by the map edges
 		selectionX = FlxMath.maxInt(selectionX, 0);
@@ -359,8 +359,8 @@ class FlxTilemapExt extends FlxTilemap
 
 				if (tile.allowCollisions != 0)
 				{
-					tile.x = X + column * _tileWidth;
-					tile.y = Y + row * _tileHeight;
+					tile.x = X + column * tileWidth;
+					tile.y = Y + row * tileHeight;
 					tile.last.x = tile.x - deltaX;
 					tile.last.y = tile.y - deltaY;
 
@@ -532,8 +532,8 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	function fixSlopePoint(Slope:FlxTile):Void
 	{
-		_slopePoint.x = FlxMath.bound(_slopePoint.x, Slope.x, Slope.x + _tileWidth);
-		_slopePoint.y = FlxMath.bound(_slopePoint.y, Slope.y, Slope.y + _tileHeight);
+		_slopePoint.x = FlxMath.bound(_slopePoint.x, Slope.x, Slope.x + tileWidth);
+		_slopePoint.y = FlxMath.bound(_slopePoint.y, Slope.y, Slope.y + tileHeight);
 	}
 
 	/**
@@ -579,9 +579,9 @@ class FlxTilemapExt extends FlxTilemap
 		// Reposition the object
 		Object.y = _slopePoint.y;
 
-		if (Object.y > Slope.y + _tileHeight)
+		if (Object.y > Slope.y + tileHeight)
 		{
-			Object.y = Slope.y + _tileHeight;
+			Object.y = Slope.y + tileHeight;
 		}
 	}
 
@@ -604,37 +604,37 @@ class FlxTilemapExt extends FlxTilemap
 		// Calculate position of the point on the slope that the object might overlap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
-		_slopePoint.y = (Slope.y + _tileHeight) - (_slopePoint.x - Slope.x);
+		_slopePoint.y = (Slope.y + tileHeight) - (_slopePoint.x - Slope.x);
 
 		var tileId:Int = cast(Slope, FlxTile).index;
 		if (checkThinSteep(tileId))
 		{
-			if (_slopePoint.x - Slope.x <= _tileWidth / 2)
+			if (_slopePoint.x - Slope.x <= tileWidth / 2)
 			{
 				return;
 			}
 			else
 			{
-				_slopePoint.y = Slope.y + _tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / _tileWidth)) + _snapping;
+				_slopePoint.y = Slope.y + tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / tileWidth)) + _snapping;
 				if (_downwardsGlue && Object.velocity.x > 0)
 					Object.velocity.x *= 1 - (1 - _slopeSlowDownFactor) * 3;
 			}
 		}
 		else if (checkThickSteep(tileId))
 		{
-			_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) + _snapping;
+			_slopePoint.y = Slope.y + tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / tileWidth))) + _snapping;
 			if (_downwardsGlue && Object.velocity.x > 0)
 				Object.velocity.x *= 1 - (1 - _slopeSlowDownFactor) * 3;
 		}
 		else if (checkThickGentle(tileId))
 		{
-			_slopePoint.y = Slope.y + (_tileHeight - _slopePoint.x + Slope.x) / 2;
+			_slopePoint.y = Slope.y + (tileHeight - _slopePoint.x + Slope.x) / 2;
 			if (_downwardsGlue && Object.velocity.x > 0)
 				Object.velocity.x *= _slopeSlowDownFactor;
 		}
 		else if (checkThinGentle(tileId))
 		{
-			_slopePoint.y = Slope.y + _tileHeight - (_slopePoint.x - Slope.x) / 2;
+			_slopePoint.y = Slope.y + tileHeight - (_slopePoint.x - Slope.x) / 2;
 			if (_downwardsGlue && Object.velocity.x > 0)
 				Object.velocity.x *= _slopeSlowDownFactor;
 		}
@@ -648,9 +648,9 @@ class FlxTilemapExt extends FlxTilemap
 
 		// Check if the object is inside the slope
 		if (_objPoint.x > Slope.x + _snapping
-			&& _objPoint.x < Slope.x + _tileWidth + Object.width + _snapping
+			&& _objPoint.x < Slope.x + tileWidth + Object.width + _snapping
 			&& _objPoint.y >= _slopePoint.y
-			&& _objPoint.y <= Slope.y + _tileHeight)
+			&& _objPoint.y <= Slope.y + tileHeight)
 		{
 			// Call the collide function for the floor slope
 			onCollideFloorSlope(Slope, Object);
@@ -676,37 +676,37 @@ class FlxTilemapExt extends FlxTilemap
 		// Calculate position of the point on the slope that the object might overlap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
-		_slopePoint.y = (Slope.y + _tileHeight) - (Slope.x - _slopePoint.x + _tileWidth);
+		_slopePoint.y = (Slope.y + tileHeight) - (Slope.x - _slopePoint.x + tileWidth);
 
 		var tileId:Int = cast(Slope, FlxTile).index;
 		if (checkThinSteep(tileId))
 		{
-			if (_slopePoint.x - Slope.x >= _tileWidth / 2)
+			if (_slopePoint.x - Slope.x >= tileWidth / 2)
 			{
 				return;
 			}
 			else
 			{
-				_slopePoint.y = Slope.y + _tileHeight * 2 * ((_slopePoint.x - Slope.x) / _tileWidth) + _snapping;
+				_slopePoint.y = Slope.y + tileHeight * 2 * ((_slopePoint.x - Slope.x) / tileWidth) + _snapping;
 			}
 			if (_downwardsGlue && Object.velocity.x < 0)
 				Object.velocity.x *= 1 - (1 - _slopeSlowDownFactor) * 3;
 		}
 		else if (checkThickSteep(tileId))
 		{
-			_slopePoint.y = Slope.y - _tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / _tileWidth))) + _snapping;
+			_slopePoint.y = Slope.y - tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / tileWidth))) + _snapping;
 			if (_downwardsGlue && Object.velocity.x < 0)
 				Object.velocity.x *= 1 - (1 - _slopeSlowDownFactor) * 3;
 		}
 		else if (checkThickGentle(tileId))
 		{
-			_slopePoint.y = Slope.y + (_tileHeight - Slope.x + _slopePoint.x - _tileWidth) / 2;
+			_slopePoint.y = Slope.y + (tileHeight - Slope.x + _slopePoint.x - tileWidth) / 2;
 			if (_downwardsGlue && Object.velocity.x < 0)
 				Object.velocity.x *= _slopeSlowDownFactor;
 		}
 		else if (checkThinGentle(tileId))
 		{
-			_slopePoint.y = Slope.y + _tileHeight - (Slope.x - _slopePoint.x + _tileWidth) / 2;
+			_slopePoint.y = Slope.y + tileHeight - (Slope.x - _slopePoint.x + tileWidth) / 2;
 			if (_downwardsGlue && Object.velocity.x < 0)
 				Object.velocity.x *= _slopeSlowDownFactor;
 		}
@@ -720,9 +720,9 @@ class FlxTilemapExt extends FlxTilemap
 
 		// Check if the object is inside the slope
 		if (_objPoint.x > Slope.x - Object.width - _snapping
-			&& _objPoint.x < Slope.x + _tileWidth + _snapping
+			&& _objPoint.x < Slope.x + tileWidth + _snapping
 			&& _objPoint.y >= _slopePoint.y
-			&& _objPoint.y <= Slope.y + _tileHeight)
+			&& _objPoint.y <= Slope.y + tileHeight)
 		{
 			// Call the collide function for the floor slope
 			onCollideFloorSlope(Slope, Object);
@@ -749,26 +749,26 @@ class FlxTilemapExt extends FlxTilemap
 		var tileId:Int = cast(Slope, FlxTile).index;
 		if (checkThinSteep(tileId))
 		{
-			if (_slopePoint.x - Slope.x <= _tileWidth / 2)
+			if (_slopePoint.x - Slope.x <= tileWidth / 2)
 			{
 				return;
 			}
 			else
 			{
-				_slopePoint.y = Slope.y - _tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / _tileWidth))) - _snapping;
+				_slopePoint.y = Slope.y - tileHeight * (1 + (2 * ((Slope.x - _slopePoint.x) / tileWidth))) - _snapping;
 			}
 		}
 		else if (checkThickSteep(tileId))
 		{
-			_slopePoint.y = Slope.y + _tileHeight * 2 * ((_slopePoint.x - Slope.x) / _tileWidth) - _snapping;
+			_slopePoint.y = Slope.y + tileHeight * 2 * ((_slopePoint.x - Slope.x) / tileWidth) - _snapping;
 		}
 		else if (checkThickGentle(tileId))
 		{
-			_slopePoint.y = Slope.y + _tileHeight - (Slope.x - _slopePoint.x + _tileWidth) / 2;
+			_slopePoint.y = Slope.y + tileHeight - (Slope.x - _slopePoint.x + tileWidth) / 2;
 		}
 		else if (checkThinGentle(tileId))
 		{
-			_slopePoint.y = Slope.y + (_tileHeight - Slope.x + _slopePoint.x - _tileWidth) / 2;
+			_slopePoint.y = Slope.y + (tileHeight - Slope.x + _slopePoint.x - tileWidth) / 2;
 		}
 
 		// Fix the slope point to the slope tile
@@ -776,7 +776,7 @@ class FlxTilemapExt extends FlxTilemap
 
 		// Check if the object is inside the slope
 		if (_objPoint.x > Slope.x + _snapping
-			&& _objPoint.x < Slope.x + _tileWidth + Object.width + _snapping
+			&& _objPoint.x < Slope.x + tileWidth + Object.width + _snapping
 			&& _objPoint.y <= _slopePoint.y
 			&& _objPoint.y >= Slope.y)
 		{
@@ -800,31 +800,31 @@ class FlxTilemapExt extends FlxTilemap
 		// Calculate position of the point on the slope that the object might overlap
 		// this would be one side of the object projected onto the slope's surface
 		_slopePoint.x = _objPoint.x;
-		_slopePoint.y = (Slope.y) + (Slope.x - _slopePoint.x + _tileWidth);
+		_slopePoint.y = (Slope.y) + (Slope.x - _slopePoint.x + tileWidth);
 
 		var tileId:Int = cast(Slope, FlxTile).index;
 		if (checkThinSteep(tileId))
 		{
-			if (_slopePoint.x - Slope.x >= _tileWidth / 2)
+			if (_slopePoint.x - Slope.x >= tileWidth / 2)
 			{
 				return;
 			}
 			else
 			{
-				_slopePoint.y = Slope.y + _tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / _tileWidth))) - _snapping;
+				_slopePoint.y = Slope.y + tileHeight * (1 - (2 * ((_slopePoint.x - Slope.x) / tileWidth))) - _snapping;
 			}
 		}
 		else if (checkThickSteep(tileId))
 		{
-			_slopePoint.y = Slope.y + _tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / _tileWidth)) - _snapping;
+			_slopePoint.y = Slope.y + tileHeight * (2 - (2 * (_slopePoint.x - Slope.x) / tileWidth)) - _snapping;
 		}
 		else if (checkThickGentle(tileId))
 		{
-			_slopePoint.y = Slope.y + _tileHeight - (_slopePoint.x - Slope.x) / 2;
+			_slopePoint.y = Slope.y + tileHeight - (_slopePoint.x - Slope.x) / 2;
 		}
 		else if (checkThinGentle(tileId))
 		{
-			_slopePoint.y = Slope.y + (_tileHeight - _slopePoint.x + Slope.x) / 2;
+			_slopePoint.y = Slope.y + (tileHeight - _slopePoint.x + Slope.x) / 2;
 		}
 
 		// Fix the slope point to the slope tile
@@ -832,7 +832,7 @@ class FlxTilemapExt extends FlxTilemap
 
 		// Check if the object is inside the slope
 		if (_objPoint.x > Slope.x - Object.width - _snapping
-			&& _objPoint.x < Slope.x + _tileWidth + _snapping
+			&& _objPoint.x < Slope.x + tileWidth + _snapping
 			&& _objPoint.y <= _slopePoint.y
 			&& _objPoint.y >= Slope.y)
 		{
