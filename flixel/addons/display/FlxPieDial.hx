@@ -3,7 +3,6 @@ package flixel.addons.display;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
-import flixel.math.FlxVector;
 import flixel.util.FlxColor;
 import openfl.display.BitmapData;
 import openfl.display.BitmapDataChannel;
@@ -73,7 +72,7 @@ class FlxPieDial extends FlxSprite
 		var bmp:BitmapData = new BitmapData(W * cols, H * rows, false, back);
 		var i:Int = 0;
 		_flashPoint.setTo(0, 0);
-		var v:FlxVector = FlxVector.get(0, -1);
+		var p:FlxPoint = FlxPoint.get(0, -1);
 		var degrees:Float = 360 / (Frames);
 		if (!Clockwise)
 		{
@@ -105,12 +104,12 @@ class FlxPieDial extends FlxSprite
 				{
 					nextFrame.pixels.copyPixels(fullFrame.pixels, fullFrame.pixels.rect, _flashPointZero);
 					_flashPoint.setTo(c * W, r * H);
-					drawSweep(sweep, v, nextFrame, polygon, W, H, back, fore);
+					drawSweep(sweep, p, nextFrame, polygon, W, H, back, fore);
 					bmp.copyPixels(nextFrame.pixels, nextFrame.pixels.rect, _flashPoint);
 				}
 
 				sweep += degrees;
-				v.rotateByDegrees(degrees);
+				p.rotateByDegrees(degrees);
 
 				i++;
 			}
@@ -185,7 +184,7 @@ class FlxPieDial extends FlxSprite
 		return fullFrame;
 	}
 
-	function drawSweep(sweep:Float, v:FlxVector, nextFrame:FlxSprite, polygon:Array<FlxPoint>, W:Int, H:Int, back:FlxColor, fore:FlxColor)
+	function drawSweep(sweep:Float, p:FlxPoint, nextFrame:FlxSprite, polygon:Array<FlxPoint>, W:Int, H:Int, back:FlxColor, fore:FlxColor)
 	{
 		var halfW = W / 2;
 		var halfH = H / 2;
@@ -196,14 +195,14 @@ class FlxPieDial extends FlxSprite
 		if (sweep < 45)
 		{
 			polygon[1].set(halfW, 0);
-			polygon[2].set(halfW + W * v.x, halfH + H * v.y);
+			polygon[2].set(halfW + W * p.x, halfH + H * p.y);
 			polygon[3].set(halfW, halfH);
 		}
 		else if (sweep < 90)
 		{
 			polygon[1].set(halfW, 0);
 			polygon[2].set(W, 0);
-			polygon[3].set(halfW + W * v.x, halfH + H * v.y);
+			polygon[3].set(halfW + W * p.x, halfH + H * p.y);
 		}
 		else if (sweep < 135)
 		{
@@ -211,7 +210,7 @@ class FlxPieDial extends FlxSprite
 			nextFrame.pixels.fillRect(_flashRect, fore);
 
 			polygon[1].set(W, halfH);
-			polygon[2].set(halfW + W * v.x, halfH + H * v.y);
+			polygon[2].set(halfW + W * p.x, halfH + H * p.y);
 			polygon[3].set(halfW, halfH);
 		}
 		else if (sweep < 180)
@@ -221,7 +220,7 @@ class FlxPieDial extends FlxSprite
 
 			polygon[1].set(W, halfH);
 			polygon[2].set(W, H);
-			polygon[3].set(halfW + W * v.x, halfH + H * v.y);
+			polygon[3].set(halfW + W * p.x, halfH + H * p.y);
 		}
 		else if (sweep < 225)
 		{
@@ -229,7 +228,7 @@ class FlxPieDial extends FlxSprite
 			nextFrame.pixels.fillRect(_flashRect, fore);
 
 			polygon[1].set(halfW, H);
-			polygon[2].set(halfW + W * v.x, halfH + H * v.y);
+			polygon[2].set(halfW + W * p.x, halfH + H * p.y);
 			polygon[3].set(halfW, halfH);
 		}
 		else if (sweep < 270)
@@ -239,7 +238,7 @@ class FlxPieDial extends FlxSprite
 
 			polygon[1].set(halfW, H);
 			polygon[2].set(0, H);
-			polygon[3].set(halfW + W * v.x, halfH + H * v.y);
+			polygon[3].set(halfW + W * p.x, halfH + H * p.y);
 		}
 		else if (sweep < 315)
 		{
@@ -249,7 +248,7 @@ class FlxPieDial extends FlxSprite
 			nextFrame.pixels.fillRect(_flashRect, fore);
 
 			polygon[1].set(0, halfH);
-			polygon[2].set(halfW + W * v.x, halfH + H * v.y);
+			polygon[2].set(halfW + W * p.x, halfH + H * p.y);
 			polygon[3].set(halfW, halfH);
 		}
 		else if (sweep < 360)
@@ -261,7 +260,7 @@ class FlxPieDial extends FlxSprite
 
 			polygon[1].set(0, halfH);
 			polygon[2].set(0, 0);
-			polygon[3].set(halfW + W * v.x, halfH + H * v.y);
+			polygon[3].set(halfW + W * p.x, halfH + H * p.y);
 		}
 
 		polygon[4].set(halfW, halfH);
