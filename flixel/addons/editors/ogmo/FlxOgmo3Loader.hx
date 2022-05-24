@@ -42,7 +42,7 @@ class FlxOgmo3Loader
 	 */
 	public function getLevelValue(value:String):Dynamic
 	{
-		return Reflect.field(level, value);
+		return Reflect.field(level.values, value);
 	}
 
 	/**
