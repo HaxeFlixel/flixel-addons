@@ -9,7 +9,6 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
-import flixel.math.FlxVector;
 
 /**
  * This creates a Lightning bolt drawn on top of a FlxSprite object.
@@ -43,7 +42,7 @@ class FlxShapeLightning extends FlxShapeLine
 	{
 		lightningStyle = Style;
 
-		var v = new FlxVector(A.x - B.x, A.y - B.y);
+		var v = new FlxPoint(A.x - B.x, A.y - B.y);
 		magnitude = v.length;
 
 		if (UseDefaults)

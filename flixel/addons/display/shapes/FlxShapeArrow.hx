@@ -6,7 +6,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
-import flixel.math.FlxVector;
 
 class FlxShapeArrow extends FlxShape
 {
@@ -106,7 +105,7 @@ class FlxShapeArrow extends FlxShape
 		vertices.push(FlxPoint.get(0, -arrowSize)); // close it up
 
 		// get arrowhead rotation vector
-		var fv = FlxVector.get(point.x - point2.x, point.y - point2.y);
+		var fv = FlxPoint.get(point.x - point2.x, point.y - point2.y);
 
 		var canvasWidth:Int = Std.int(Math.max(shapeWidth, arrowSize * 2) + strokeBuffer);
 		var canvasHeight:Int = Std.int(Math.max(shapeHeight, arrowSize * 2) + strokeBuffer);
