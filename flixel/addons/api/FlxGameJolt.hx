@@ -61,13 +61,6 @@ class FlxGameJolt
 	public static var hashType:Int = HASH_MD5;
 
 	/**
-	 * Whether or not to log the URL that is contacted and messages returned from GameJolt.
-	 * Useful if you're not getting the right data back.
-	 * Only works in debug mode.
-	 */
-	public static var verbose:Bool = false;
-
-	/**
 	 * Whether or not the API has been fully initialized by passing game id, private key, and authenticating user name and token.
 	 */
 	public static var initialized(get, never):Bool;
@@ -165,6 +158,11 @@ class FlxGameJolt
 	static var _loader:URLLoader;
 
 	/**
+	 * A string map that contains what is returned from GameJolt servers.
+	 */	
+	static var returnMap:Map<String, String> = new Map<String, String>();
+
+	/**
 	 * Various common strings required by the API's HTTP values.
 	 */
 	static inline var URL_API:String = "http://gamejolt.com/api/game/v1/";
@@ -182,17 +180,22 @@ class FlxGameJolt
 	 * @param	GameID		The unique game ID associated with this game on GameJolt. You must create a game profile on GameJolt to get this number.
 	 * @param	PrivateKey	Your private key. You must have a developer account on GameJolt to have this number. Do NOT store this as plaintext in your game!
 	 * @param	AutoAuth	Call authUser after init() has run to authenticate user data.
-	 * @param 	UserName	The username to authenticate, if AutoAuth is true. If you set AutoAuth to true but don't put a value here, FlxGameJolt will attempt to get the user data automatically, which will only work for Flash embedded on GameJolt, or desktop games run via Quick Play.
-	 * @param 	UserToken	The user token to authenticate, if AutoAuth is true. If you set AutoAuth to true but don't put a value here, FlxGameJolt will attempt to get the user data automatically, which will only work for Flash embedded on GameJolt, or desktop games run via Quick Play.
+	 * @param 	UserName	The username to authenticate, if AutoAuth is true. If you set AutoAuth to true but don't put a value here, FlxGameJolt will attempt to get the user data automatically, which will only work for Flash embedded on GameJolt, or games run via Quick Play.
+	 * @param 	UserToken	The user token to authenticate, if AutoAuth is true. If you set AutoAuth to true but don't put a value here, FlxGameJolt will attempt to get the user data automatically, which will only work for Flash embedded on GameJolt, or games run via Quick Play.
 	 * @param 	Callback 	An optional callback function, which is only used if AutoAuth is set to true. Will return true if authentication was successful, false otherwise.
 	 */
 	public static function init(GameID:Int, PrivateKey:String, AutoAuth:Bool = false, ?UserName:String, ?UserToken:String, ?Callback:Dynamic):Void
 	{
 		if (_gameID != 0 && _privateKey != "")
+		{
+			Callback(false);
 			return;
+		}
 
 		_gameID = GameID;
 		_privateKey = PrivateKey;
+		
+		Callback(true);
 
 		// If we want to automatically authenticate the user, must have both username and usertoken passed
 		// OR it must be embedded flash or quickplay.
@@ -272,7 +275,7 @@ class FlxGameJolt
 
 		if (UserName == null || UserToken == null)
 		{
-			#if desktop
+			#if sys
 			for (arg in Sys.args())
 			{
 				var argArray = arg.split("=");
@@ -427,12 +430,12 @@ class FlxGameJolt
 	 * @param	Limit		The maximum number of scores to retrieve. Leave null to retrieve only this user's scores.
 	 * @param	CallBack	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
 	 */
-	public static function fetchScore(?Limit:Int, ?Callback:Dynamic):Void
+	public static function fetchScore(tableID:Int, ?Limit:Int, ?Callback:Dynamic):Void
 	{
 		if (!gameInit)
 			return;
 
-		var tempURL = URL_API + "scores/" + RETURN_TYPE + URL_GAME_ID + _gameID;
+		var tempURL = URL_API + "scores/" + RETURN_TYPE + URL_GAME_ID + _gameID + "&table_id" + tableID;
 
 		if (!_initialized)
 		{
@@ -719,7 +722,6 @@ class FlxGameJolt
 			return;
 		}
 
-		var returnMap:Map<String, String> = new Map<String, String>();
 		var stringArray:Array<String> = Std.string((cast e.currentTarget).data).split("\r");
 
 		// this regex will remove line breaks and quotes down below
@@ -738,7 +740,7 @@ class FlxGameJolt
 		}
 
 		#if debug
-		if (returnMap.exists("message") && verbose)
+		if (returnMap.exists("message"))
 		{
 			FlxG.log.add("FlxGameJolt: GameJolt returned the following message: " + returnMap.get("message"));
 		}
@@ -948,7 +950,7 @@ class FlxGameJolt
 
 	static function get_isQuickPlay():Bool
 	{
-		#if !desktop
+		#if !sys
 		return false;
 		#else
 		var argmap:Map<String, String> = new Map<String, String>();
