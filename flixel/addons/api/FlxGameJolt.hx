@@ -31,7 +31,7 @@ import flash.Lib;
  		 * var bytearray = new MyKey(); // This will load your private key data as a ByteArray.
  		 * var keystring = bytearray.readUTFBytes(bytearray.length); // This converts the ByteArray to a string.
  		 * var gameid = 1; // Replace "1" with your game ID, visible if you go to https://gamejolt.com/dashboard/ -> Click on your game under "Manage Games" -> Click on "Achievements" in the menu.
- 		 * FlxGameJolt.init(gameid, keystring); // Use this if your game is embedded as Flash on GameJolt's site, or run via Quick Play. If
+ 		 * FlxGameJolt.init(gameid, keystring); // Use this if your game is embedded as Flash on GameJolt's site, or run via Quick Play.
  */
 class FlxGameJolt
 {
@@ -429,7 +429,7 @@ class FlxGameJolt
 	 * Retrieve the high scores from this game's remote data. If not authenticated, leaving Limit null will still return the top ten scores. Requires initialization.
 	 *
 	 * @see		https://gamejolt.com/api/doc/game/scores/fetch/
-	 * @param 	TableID		Optional: the ID of the table you want to pull data from. If null, the pulled score will be returned as the highes. Ignored if zero.
+	 * @param 	TableID		Optional: the ID of the table you want to pull data from. If null, the TableID will not be added (it can work without it).
 	 * @param	Limit		The maximum number of scores to retrieve. Leave null to retrieve only this user's scores.
 	 * @param	CallBack	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
 	 */
