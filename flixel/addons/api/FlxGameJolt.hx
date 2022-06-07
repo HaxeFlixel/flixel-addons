@@ -17,8 +17,8 @@ import flash.Lib;
 /**
  * Similar to FlxKongregate, this allows access to the GameJolt API. Based loosely on the AS3 version by SumYungGai with many changes.
  *
- * @see 	http://gamejolt.com/community/forums/topics/as3-trophy-api/305/
- * @see 	http://gamejolt.com/api/doc/game/
+ * @see 	https://gamejolt.com/community/forums/topics/as3-trophy-api/305/
+ * @see 	https://gamejolt.com/api/doc/game/
  * @author 	SumYungGai
  * @author 	Steve Richey (STVR)
  *
@@ -165,7 +165,7 @@ class FlxGameJolt
 	/**
 	 * Various common strings required by the API's HTTP values.
 	 */
-	static inline var URL_API:String = "http://gamejolt.com/api/game/v1/";
+	static inline var URL_API:String = "https://gamejolt.com/api/game/v1/";
 
 	static inline var RETURN_TYPE:String = "?format=keypair";
 	static inline var URL_GAME_ID:String = "&game_id=";
