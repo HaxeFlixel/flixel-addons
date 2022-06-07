@@ -694,8 +694,7 @@ class FlxGameJolt
 			_loader = new URLLoader();
 
 		#if debug
-		if (verbose)
-			FlxG.log.add("FlxGameJolt: Contacting " + request.url);
+		FlxG.log.add("FlxGameJolt: Contacting " + request.url);
 		#end
 
 		_loader.addEventListener(Event.COMPLETE, parseData);
