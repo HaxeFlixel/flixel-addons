@@ -429,23 +429,23 @@ class FlxGameJolt
 	 * Retrieve the high scores from this game's remote data. If not authenticated, leaving Limit null will still return the top ten scores. Requires initialization.
 	 *
 	 * @see		https://gamejolt.com/api/doc/game/scores/fetch/
-	 * @param	Limit		The maximum number of scores to retrieve. Leave null to retrieve only this user's scores.
-	 * @param 	TableID		The ID of the table you want to pull data from. If left blank, the scores from the primary score table will be returned.
+	 * @param	Limit		The maximum number of scores to retrieve. Use -1 to retrieve only this user's scores.
+	 * @param 	TableID		The ID of the table you want to pull data from. Use -1 to fetch from the primary score table.
 	 * @param	CallBack	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
 	 */
-	public static function fetchScore(?Limit:Int, ?TableID:Int, ?Callback:Dynamic):Void
+	public static function fetchScore(Limit = -1, TableID = -1, ?Callback:Dynamic):Void
 	{
 		if (!gameInit)
 			return;
 
 		var tempURL = URL_API + "scores/" + RETURN_TYPE + URL_GAME_ID + _gameID;
 
-		if (TableID != null)
+		if (TableID != -1)
 			tempURL += "&table_id=" + TableID;
 
 		if (!_initialized)
 		{
-			if (Limit == null)
+			if (Limit == -1)
 			{
 				tempURL += "&limit=10";
 			}
@@ -454,7 +454,7 @@ class FlxGameJolt
 				tempURL += "&limit=" + Std.string(Limit);
 			}
 		}
-		else if (Limit != null)
+		else if (Limit != -1)
 		{
 			tempURL += "&limit=" + Std.string(Limit);
 		}
