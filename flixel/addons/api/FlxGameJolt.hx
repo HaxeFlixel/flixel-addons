@@ -433,19 +433,19 @@ class FlxGameJolt
 	 * @param 	TableID		The ID of the table you want to pull data from. Use -1 to fetch from the primary score table.
 	 * @param	CallBack	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
 	 */
-	public static function fetchScore(Limit = -1, TableID = -1, ?Callback:Dynamic):Void
+	public static function fetchScore(?Limit:Int, ?TableID:Int, ?Callback:Dynamic):Void
 	{
 		if (!gameInit)
 			return;
 
 		var tempURL = URL_API + "scores/" + RETURN_TYPE + URL_GAME_ID + _gameID;
 
-		if (TableID != -1)
+		if (TableID != null)
 			tempURL += "&table_id=" + TableID;
 
 		if (!_initialized)
 		{
-			if (Limit == -1)
+			if (Limit == null)
 			{
 				tempURL += "&limit=10";
 			}
@@ -454,7 +454,7 @@ class FlxGameJolt
 				tempURL += "&limit=" + Std.string(Limit);
 			}
 		}
-		else if (Limit != -1)
+		else if (Limit != null)
 		{
 			tempURL += "&limit=" + Std.string(Limit);
 		}
