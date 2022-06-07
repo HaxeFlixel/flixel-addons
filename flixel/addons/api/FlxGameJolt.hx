@@ -438,7 +438,10 @@ class FlxGameJolt
 		if (!gameInit)
 			return;
 
-		var tempURL = URL_API + "scores/" + RETURN_TYPE + URL_GAME_ID + _gameID + "&table_id" + TableID;
+		var tempURL = URL_API + "scores/" + RETURN_TYPE + URL_GAME_ID + _gameID;
+
+		if (TableID != null)
+			tempURL += "&table_id=" + TableID;
 
 		if (!_initialized)
 		{
