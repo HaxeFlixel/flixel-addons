@@ -61,6 +61,13 @@ class FlxGameJolt
 	public static var hashType:Int = HASH_MD5;
 
 	/**
+	 * Whether or not to log the URL that is contacted and messages returned from GameJolt.
+	 * Useful if you're not getting the right data back.
+	 * Only works in debug mode.
+	 */
+	public static var verbose:Bool = false;
+
+	/**
 	 * Whether or not the API has been fully initialized by passing game id, private key, and authenticating user name and token.
 	 */
 	public static var initialized(get, never):Bool;
@@ -187,15 +194,10 @@ class FlxGameJolt
 	public static function init(GameID:Int, PrivateKey:String, AutoAuth:Bool = false, ?UserName:String, ?UserToken:String, ?Callback:Dynamic):Void
 	{
 		if (_gameID != 0 && _privateKey != "")
-		{
-			Callback(false);
 			return;
-		}
 
 		_gameID = GameID;
 		_privateKey = PrivateKey;
-		
-		Callback(true);
 
 		// If we want to automatically authenticate the user, must have both username and usertoken passed
 		// OR it must be embedded flash or quickplay.
@@ -694,7 +696,8 @@ class FlxGameJolt
 			_loader = new URLLoader();
 
 		#if debug
-		FlxG.log.add("FlxGameJolt: Contacting " + request.url);
+		if (verbose)
+			FlxG.log.add("FlxGameJolt: Contacting " + request.url);
 		#end
 
 		_loader.addEventListener(Event.COMPLETE, parseData);
@@ -739,10 +742,8 @@ class FlxGameJolt
 		}
 
 		#if debug
-		if (returnMap.exists("message"))
-		{
+		if (returnMap.exists("message") && verbose)
 			FlxG.log.add("FlxGameJolt: GameJolt returned the following message: " + returnMap.get("message"));
-		}
 		#end
 
 		if (_getImage)
