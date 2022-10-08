@@ -323,7 +323,7 @@ typedef ProjectData =
 	levelDefaultSize:Point,
 	levelMinSize:Point,
 	levelMaxSize:Point,
-	levelVaues:Array<Dynamic>,
+	levelValues:Array<Dynamic>,
 	defaultExportMode:String,
 	entityTags:Array<String>,
 	layers:Array<ProjectLayerData>,
