@@ -48,6 +48,19 @@ class FlxBackdrop extends FlxSprite
 	public var useScaleHack:Bool = true;
 
 	/**
+	 * The lowest zoom value that the backdrop will be able to have before it starts clipping.
+	 */
+	public var camZoom(default, set):Float = 1;
+	function set_camZoom(val:Float) {
+		if (val != camZoom)
+		{
+			camZoom = val;
+			regenGraphic();
+		}
+		return val;
+	}
+
+	/**
 	 * Creates an instance of the FlxBackdrop class, used to create infinitely scrolling backgrounds.
 	 *
 	 * @param   Graphic		The image you want to use for the backdrop.
@@ -226,12 +239,26 @@ class FlxBackdrop extends FlxSprite
 		var w:Int = ssw;
 		var h:Int = ssh;
 
+		var bwa:Int = Std.int(FlxG.width - (FlxG.width / camZoom));
+		var bha:Int = Std.int(FlxG.height - (FlxG.height / camZoom));
+
+		var bw:Int = 0;
+		var bh:Int = 0;
+		while(bwa < 0) {
+			bwa += ssw;
+			bw -= ssw;
+		}
+		while(bha < 0) {
+			bha += ssh;
+			bh -= ssh;
+		}
+
 		var frameBitmap:BitmapData = null;
 
 		if (_repeatX)
-			w += FlxG.width;
+			w += Std.int(FlxG.width / camZoom);
 		if (_repeatY)
-			h += FlxG.height;
+			h += Std.int(FlxG.height / camZoom);
 
 		if (FlxG.renderBlit)
 		{
@@ -249,7 +276,14 @@ class FlxBackdrop extends FlxSprite
 			height = frameHeight = h;
 		}
 
-		_ppoint.x = _ppoint.y = 0;
+		_ppoint.x = bw;
+		_ppoint.y = bh;
+
+		// Reduces drawn tiles that will always be out of screen
+		if (_repeatX)
+			w -= Std.int(FlxG.width / camZoom / 2);
+		if (_repeatY)
+			h -= Std.int(FlxG.height / camZoom / 2);
 
 		if (FlxG.renderBlit)
 		{
@@ -280,11 +314,11 @@ class FlxBackdrop extends FlxSprite
 			}
 			if (FlxG.renderBlit)
 			{
-				_matrix.tx = 0;
+				_matrix.tx = bw;
 				_matrix.ty += ssh;
 			}
 
-			_ppoint.x = 0;
+			_ppoint.x = bw;
 			_ppoint.y += ssh;
 		}
 
