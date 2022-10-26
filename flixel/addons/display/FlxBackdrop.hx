@@ -1,3 +1,20 @@
+package flixel.addons.display;
+
+import flixel.FlxBasic;
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.FlxCamera;
+import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.FlxFrame;
+import flixel.math.FlxMatrix;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
+import flixel.system.FlxAssets;
+import flixel.util.FlxAxes;
+import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
+
+using flixel.util.FlxColorTransformUtil;
 
 /**
  * Used for showing infinitely scrolling backgrounds.
@@ -5,10 +22,43 @@
  */
 class FlxBackdrop extends FlxSprite
 {
+	/**
+	 * The axes to repeat the backdrop, defaults to XY which covers the whole camera.
+	 */
 	public var repeatAxes:FlxAxes = XY;
-	public var spacing(default, null):FlxPoint = new FlxPoint();
-	public var tiles:Int = 1;
 	
+	/**
+	 * The gap between repeated tiles, defaults to (0, 0), or no gap.
+	 */
+	public var spacing(default, null):FlxPoint = new FlxPoint();
+	
+	/**
+	 * If true, tiles are pre-rendered to a intermediary bitmap whenever `loadGraphic` is called
+	 * or the following properties are changed: camera size camera zoom, `scale.x`, `scale.y`, `spacing.x`,
+	 * `spacing.y` or `angle`.
+	 * 
+	 * Note: If the above properties change often,
+	 */
+	public var drawBlit:Bool = FlxG.renderBlit;
+	
+	/**
+	 * Decides the 
+	 */
+	public var blitMode:BackdropBlitMode = AUTO;
+	
+	
+	var _blitGraphic:FlxGraphic = null;
+	var _prevDrawParams:BackdropDrawParams =
+	{
+		graphicKey:null,
+		tilesX:-1,
+		tilesY:-1,
+		scaleX:0.0,
+		scaleY:0.0,
+		spacingX:0.0,
+		spacingY:0.0,
+		angle:0.0
+	};
 	/**
 	 * Creates an instance of the FlxBackdrop class, used to create infinitely scrolling backgrounds.
 	 *
@@ -44,7 +94,7 @@ class FlxBackdrop extends FlxSprite
 		if (dirty) // rarely
 			calcFrame(useFramePixels);
 
-		if (drawIntermediary)
+		if (drawBlit)
 		{
 			drawToLargestCamera();
 		}
@@ -115,53 +165,45 @@ class FlxBackdrop extends FlxSprite
 	
 	override function isSimpleRenderBlit(?camera:FlxCamera):Bool
 	{
-		return (super.isSimpleRenderBlit(camera) || drawIntermediary)
+		return (super.isSimpleRenderBlit(camera) || drawBlit)
 			&& (camera != null ? isPixelPerfectRender(camera) : pixelPerfectRender);
 	}
 	
 	override function drawSimple(camera:FlxCamera):Void
 	{
-		var drawDirect = !drawIntermediary;
-		final graphic = drawIntermediary ? _blitGraphic : this.graphic;
-		final frame = drawIntermediary ? _blitGraphic.imageFrame.frame : _frame;
+		var drawDirect = !drawBlit;
+		final graphic = drawBlit ? _blitGraphic : this.graphic;
+		final frame = drawBlit ? _blitGraphic.imageFrame.frame : _frame;
 		
 		// The distance between repeated sprites, in screen space
 		var tileSize = FlxPoint.get(frame.frame.width, frame.frame.height);
 		if (drawDirect)
 			tileSize.addPoint(spacing);
 		
-		FlxG.watch.addQuick("tileSize", tileSize);
-		getScreenPosition(_point, camera);
-		_point.subtractPoint(offset);
+		getScreenPosition(_point, camera).subtractPoint(offset);
 		var tilesX = 1;
 		var tilesY = 1;
 		if (repeatAxes != NONE)
 		{
-			var originalTileSize = tileSize;
-			if (drawIntermediary)
-			{
-				originalTileSize = FlxPoint.weak(frameWidth + spacing.x, frameHeight + spacing.y);
-			}
 			var view = camera.getViewRect();
 			if (repeatAxes.x)
 			{
-				final left  = modMin(_point.x + frame.frame.width, tileSize.x, view.left) - frame.frame.width;
+				final left  = modMin(_point.x + frameWidth, tileSize.x, view.left) - frameWidth;
 				final right = modMax(_point.x, tileSize.x, view.right) + tileSize.x;
 				tilesX = Math.round((right - left) / tileSize.x);
-				_point.x = modMin(_point.x + frameWidth, frameWidth + spacing.x, view.left) - frameWidth;
-				FlxG.watch.addQuick("right-left", '($right - $left) / ${tileSize.x} = ${Math.round((right - left) / tileSize.x)}');
+				final origTileSizeX = frameWidth + spacing.x;
+				_point.x = modMin(_point.x + frameWidth, origTileSizeX, view.left) - frameWidth;
 			}
 			
 			if (repeatAxes.y)
 			{
-				final top    = modMin(_point.y + frame.frame.height, tileSize.y, view.top) - frame.frame.height;
+				final top    = modMin(_point.y + frameHeight, tileSize.y, view.top) - frameHeight;
 				final bottom = modMax(_point.y, tileSize.y, view.bottom) + tileSize.y;
 				tilesY = Math.round((bottom - top) / tileSize.y);
-				_point.y = modMin(_point.x + frameHeight, frameHeight + spacing.y, view.top) - frameHeight;
-				FlxG.watch.addQuick("bottom-top", '($bottom - $top) / ${tileSize.y} = ${Math.round((bottom - top) / tileSize.y)}');
+				final origTileSizeY = frameHeight + spacing.y;
+				_point.y = modMin(_point.y + frameHeight, origTileSizeY, view.top) - frameHeight;
 			}
 		}
-		FlxG.watch.addQuick("tiles", '$tilesX x $tilesY');
 		
 		if (FlxG.renderBlit)
 			calcFrame(true);
@@ -181,7 +223,7 @@ class FlxBackdrop extends FlxSprite
 					_flashPoint.y = Math.floor(_flashPoint.y);
 				}
 				
-				final pixels = drawIntermediary ? _blitGraphic.bitmap: framePixels;
+				final pixels = drawBlit ? _blitGraphic.bitmap: framePixels;
 				camera.copyPixels(frame, pixels, pixels.rect, _flashPoint, colorTransform, blend, antialiasing);
 			}
 		}
@@ -191,9 +233,9 @@ class FlxBackdrop extends FlxSprite
 
 	override function drawComplex(camera:FlxCamera)
 	{
-		var drawDirect = !drawIntermediary;
-		final graphic = drawIntermediary ? _blitGraphic : this.graphic;
-		final frame = drawIntermediary ? _blitGraphic.imageFrame.frame : _frame;
+		var drawDirect = !drawBlit;
+		final graphic = drawBlit ? _blitGraphic : this.graphic;
+		final frame = drawBlit ? _blitGraphic.imageFrame.frame : _frame;
 		
 		frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
 		_matrix.translate(-origin.x, -origin.y);
@@ -232,41 +274,34 @@ class FlxBackdrop extends FlxSprite
 			camera.buffer.lock();
 		}
 		
-		getScreenPosition(_point, camera);
+		getScreenPosition(_point, camera).subtractPoint(offset);
 		var tilesX = 1;
 		var tilesY = 1;
 		if (repeatAxes != NONE)
 		{
-			var originalTileSize = tileSize;
-			if (drawIntermediary)
-			{
-				originalTileSize = FlxPoint.weak(frameWidth + spacing.x, frameHeight + spacing.y);
-			}
 			final view = camera.getViewRect();
 			final bounds = getScreenBounds(camera);
 			if (repeatAxes.x)
 			{
-				final left  = modMin(bounds.right, originalTileSize.x, view.left) - bounds.width;
-				final right = modMax(bounds.left, originalTileSize.x, view.right) + originalTileSize.x;
+				final origTileSizeX = (frameWidth + spacing.x) * scale.x;
+				final left  = modMin(bounds.right, origTileSizeX, view.left) - bounds.width;
+				final right = modMax(bounds.left, origTileSizeX, view.right) + origTileSizeX;
 				tilesX = Math.round((right - left) / tileSize.x);
 				_point.x = left + _point.x - bounds.x;
 			}
 			
 			if (repeatAxes.y)
 			{
-				final top    = modMin(bounds.bottom, originalTileSize.y, view.top) - bounds.height;
-				final bottom = modMax(bounds.top, originalTileSize.y, view.bottom) + originalTileSize.y;
+				final origTileSizeY = (frameHeight + spacing.y) * scale.y;
+				final top    = modMin(bounds.bottom, origTileSizeY, view.top) - bounds.height;
+				final bottom = modMax(bounds.top, origTileSizeY, view.bottom) + origTileSizeY;
 				tilesY = Math.round((bottom - top) / tileSize.y);
 				_point.y = top + _point.y - bounds.y;
 			}
 			view.put();
 			bounds.put();
-			originalTileSize.putWeak();
 		}
-		_point.subtractPoint(offset);
 		_point.add(origin.x, origin.y);
-		
-		FlxG.watch.addQuick("tiles", '$tilesX x $tilesY');
 		
 		final mat = new FlxMatrix();
 		for (tileX in 0...tilesX)
@@ -285,7 +320,7 @@ class FlxBackdrop extends FlxSprite
 				
 				if (FlxG.renderBlit)
 				{
-					final pixels = drawIntermediary ? _blitGraphic.bitmap: framePixels;
+					final pixels = drawBlit ? _blitGraphic.bitmap: framePixels;
 					camera.drawPixels(frame, pixels, mat, colorTransform, blend, antialiasing, shader);
 				}
 				else
@@ -301,7 +336,7 @@ class FlxBackdrop extends FlxSprite
 	
 	function getFrameScreenBounds(camera:FlxCamera):FlxRect
 	{
-		if (drawIntermediary)
+		if (drawBlit)
 		{
 			final frame = _blitGraphic.imageFrame.frame.frame;
 			return FlxRect.get(x, y, frame.width, frame.height);
@@ -330,21 +365,6 @@ class FlxBackdrop extends FlxSprite
 		return value - Math.ceil((value - max) / step) * step;
 	}
 	
-	public var drawIntermediary:Bool;
-	
-	var _blitGraphic:FlxGraphic = null;
-	var _prevDrawParams:BackdropDrawParams =
-	{
-		graphicKey:null,
-		tilesX:-1,
-		tilesY:-1,
-		scaleX:0.0,
-		scaleY:0.0,
-		spacingX:0.0,
-		spacingY:0.0,
-		angle:0.0
-	};
-	
 	function regenGraphic(camera:FlxCamera)
 	{
 		// The distance between repeated sprites, in screen space
@@ -354,9 +374,29 @@ class FlxBackdrop extends FlxSprite
 		);
 		
 		var view = camera.getViewRect();
-		var tilesX = repeatAxes.x ? Math.ceil(view.width  / tileSize.x / tiles + 1) : 1;
-		var tilesY = repeatAxes.y ? Math.ceil(view.height / tileSize.y / tiles + 1) : 1;
-			
+		var tilesX = 1;
+		var tilesY = 1;
+		if (repeatAxes != NONE)
+		{
+			inline function min (a:Int, b:Int):Int return a < b ? a : b;
+			switch (blitMode)
+			{
+				case AUTO | SPLIT (1):
+					if (repeatAxes.x) tilesX = Math.ceil(view.width  / tileSize.x) + 1;
+					if (repeatAxes.y) tilesY = Math.ceil(view.height / tileSize.y) + 1;
+				case MAX_TILES(1) | MAX_TILES_XY(1, 1):
+				case MAX_TILES(max):
+					if (repeatAxes.x) tilesX = min(max, Math.ceil(view.width  / tileSize.x) + 1);
+					if (repeatAxes.y) tilesY = min(max, Math.ceil(view.height / tileSize.y) + 1);
+				case MAX_TILES_XY(maxX, maxY):
+					if (repeatAxes.x) tilesX = min(maxX, Math.ceil(view.width  / tileSize.x) + 1);
+					if (repeatAxes.y) tilesY = min(maxY, Math.ceil(view.height / tileSize.y) + 1);
+				case SPLIT(portions):
+					if (repeatAxes.x) tilesX = repeatAxes.x ? Math.ceil(view.width  / tileSize.x / portions + 1) : 1;
+					if (repeatAxes.y) tilesY = repeatAxes.y ? Math.ceil(view.height / tileSize.y / portions + 1) : 1;
+			}
+		}
+		
 		view.put();
 		
 		if (matchPrevDrawParams(tilesX, tilesY))
@@ -381,7 +421,7 @@ class FlxBackdrop extends FlxSprite
 		calcFrame(true);
 		
 		_matrix.identity();
-		// _matrix.translate(-origin.x, -origin.y);
+		_matrix.translate(-origin.x, -origin.y);
 		_matrix.scale(scale.x, scale.y);
 		if (bakedRotationAngle <= 0)
 		{
@@ -389,13 +429,16 @@ class FlxBackdrop extends FlxSprite
 			if (angle != 0)
 				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
 		}
+		
+		_matrix.translate(origin.x, origin.y);
 		_point.set(_matrix.tx, _matrix.ty);
 		
-		FlxG.watch.addQuick("regenTiles", '$tilesX x $tilesY');
-		
-		for (tileX in 0...tilesX)
+		// draw extra tiles on the edge in case the image protrudes past the tile
+		// TODO: Use 0 buffer when angle is multiple of 90 with centered origin
+		final buffer = angle == 0 ? 0 : 1;
+		for (tileX in -buffer...tilesX + buffer)
 		{
-			for (tileY in 0...tilesY)
+			for (tileY in -buffer...tilesY + buffer)
 			{
 				_matrix.tx = _point.x + tileX * tileSize.x;
 				_matrix.ty = _point.y + tileY * tileSize.y;
@@ -432,3 +475,39 @@ class FlxBackdrop extends FlxSprite
 		_prevDrawParams.angle      = angle;
 	}
 }
+
+enum BackdropBlitMode
+{
+	/**
+	 * Not implemented yet.
+	 */
+	AUTO;
+	
+	/**
+	 * Blits a bitmap as big as the specified number of x and y tiles and repeats that.
+	 */
+	MAX_TILES_XY(x:Int, y:Int);
+	
+	/**
+	 * Blits a bitmap as big as the specified number of tiles and repeats that.
+	 */
+	MAX_TILES(tiles:Int);
+	
+	/**
+	 * Blits enough tiles to cover the screen in multiple draws, for example, if the camera is 10x8
+	 * tiles big, SPLIT(2) will draw a blit target 5x4 tiles large and draw it 2x2 times to cover the
+	 * stage.
+	 */
+	SPLIT(portions:Int);
+}
+
+typedef BackdropDrawParams = {
+	graphicKey:String,
+	tilesX:Int,
+	tilesY:Int,
+	scaleX:Float,
+	scaleY:Float,
+	spacingX:Float,
+	spacingY:Float,
+	angle:Float
+};
