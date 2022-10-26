@@ -34,15 +34,16 @@ class FlxBackdrop extends FlxSprite
 	
 	/**
 	 * If true, tiles are pre-rendered to a intermediary bitmap whenever `loadGraphic` is called
-	 * or the following properties are changed: camera size camera zoom, `scale.x`, `scale.y`, `spacing.x`,
-	 * `spacing.y` or `angle`.
+	 * or the following properties are changed: camera size camera zoom, `scale.x`, `scale.y`,
+	 * `spacing.x`, `spacing.y`, `repeatAxes` or `angle`. If these properties change often, it is recommended to
+	 * set `drawBlit` to `false`.
 	 * 
-	 * Note: If the above properties change often,
+	 * Note: blitting will disable animations and only show the first frame.
 	 */
 	public var drawBlit:Bool = FlxG.renderBlit;
 	
 	/**
-	 * Decides the 
+	 * Decides the the size of the blit graphic
 	 */
 	public var blitMode:BackdropBlitMode = AUTO;
 	
@@ -57,17 +58,19 @@ class FlxBackdrop extends FlxSprite
 		scaleY:0.0,
 		spacingX:0.0,
 		spacingY:0.0,
+		repeatAxes:XY,
 		angle:0.0
 	};
+	
 	/**
 	 * Creates an instance of the FlxBackdrop class, used to create infinitely scrolling backgrounds.
 	 *
 	 * @param   graphic     The image you want to use for the backdrop.
 	 * @param   repeatAxes  If the backdrop should repeat on the X axis.
-	 * @param   spaceX      Amount of spacing between tiles on the X axis
-	 * @param   spaceY      Amount of spacing between tiles on the Y axis
+	 * @param   spacingX    Amount of spacing between tiles on the X axis
+	 * @param   spacingY    Amount of spacing between tiles on the Y axis
 	 */
-	public function new(x = 0.0, y = 0.0, ?graphic:FlxGraphicAsset, repeatAxes:FlxAxes = XY, spacingX = 0.0, spacingY = 0.0)
+	public function new(?graphic:FlxGraphicAsset, repeatAxes = XY, spacingX = 0, spacingY = 0)
 	{
 		super(x, y, graphic);
 		
@@ -435,10 +438,11 @@ class FlxBackdrop extends FlxSprite
 		
 		// draw extra tiles on the edge in case the image protrudes past the tile
 		// TODO: Use 0 buffer when angle is multiple of 90 with centered origin
-		final buffer = angle == 0 ? 0 : 1;
-		for (tileX in -buffer...tilesX + buffer)
+		final bufferX = repeatAxes.x && angle != 0 ? 1 : 0;
+		final bufferY = repeatAxes.y && angle != 0 ? 1 : 0;
+		for (tileX in -bufferX...tilesX + bufferX)
 		{
-			for (tileY in -buffer...tilesY + buffer)
+			for (tileY in -bufferY...tilesY + bufferY)
 			{
 				_matrix.tx = _point.x + tileX * tileSize.x;
 				_matrix.ty = _point.y + tileY * tileSize.y;
@@ -460,6 +464,7 @@ class FlxBackdrop extends FlxSprite
 			&& _prevDrawParams.scaleY     == scale.y
 			&& _prevDrawParams.spacingX   == spacing.x
 			&& _prevDrawParams.spacingY   == spacing.y
+			&& _prevDrawParams.repeatAxes == repeatAxes
 			&& _prevDrawParams.angle      == angle;
 	}
 	
@@ -472,6 +477,7 @@ class FlxBackdrop extends FlxSprite
 		_prevDrawParams.scaleY     = scale.y;
 		_prevDrawParams.spacingX   = spacing.x;
 		_prevDrawParams.spacingY   = spacing.y;
+		_prevDrawParams.repeatAxes = repeatAxes;
 		_prevDrawParams.angle      = angle;
 	}
 }
@@ -509,5 +515,6 @@ typedef BackdropDrawParams = {
 	scaleY:Float,
 	spacingX:Float,
 	spacingY:Float,
+	repeatAxes:FlxAxes,
 	angle:Float
 };
