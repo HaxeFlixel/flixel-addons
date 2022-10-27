@@ -72,7 +72,7 @@ class FlxBackdrop extends FlxSprite
 	 */
 	public function new(?graphic:FlxGraphicAsset, repeatAxes = XY, spacingX = 0, spacingY = 0)
 	{
-		super(x, y, graphic);
+		super(0, 0, graphic);
 		
 		this.repeatAxes = repeatAxes;
 		this.spacing.set(spacingX, spacingY);
