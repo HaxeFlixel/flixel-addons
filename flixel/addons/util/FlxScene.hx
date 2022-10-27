@@ -207,7 +207,7 @@ class FlxScene
 				case "backdrop":
 					var att = element.att;
 					var graphics:String = assetsDirectory + att.graphics;
-					var repeatAxes = FlxAxes.fromBools(parseBool(att.repeatX, parseBool(att.repeatY));
+					var repeatAxes = FlxAxes.fromBools(parseBool(att.repeatX), parseBool(att.repeatY));
 
 					var backdrop = new FlxBackdrop(graphics, repeatAxes);
 					backdrop.x = Std.parseInt(att.x);
