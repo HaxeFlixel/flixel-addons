@@ -43,11 +43,13 @@ class FlxBackdrop extends FlxSprite
 	public var drawBlit:Bool = FlxG.renderBlit;
 	
 	/**
-	 * Decides the the size of the blit graphic
+	 * Decides the the size of the blit graphic. Leave as `AUTO` unless you know what you're doing.
+	 * 
+	 * @see flixel.addons.display.FlxBackDrop.BackdropBlitMode
 	 */
 	public var blitMode:BackdropBlitMode = AUTO;
 	
-	
+	var _blitOffset:FlxPoint = FlxPoint.get();
 	var _blitGraphic:FlxGraphic = null;
 	var _prevDrawParams:BackdropDrawParams =
 	{
@@ -81,11 +83,20 @@ class FlxBackdrop extends FlxSprite
 	override function destroy():Void
 	{
 		spacing = FlxDestroyUtil.destroy(spacing);
+		_blitOffset = FlxDestroyUtil.destroy(_blitOffset);
+		_blitGraphic = FlxDestroyUtil.destroy(_blitGraphic);
+		
 		super.destroy();
 	}
 	
 	override function draw()
 	{
+		if (repeatAxes == NONE)
+		{
+			super.draw();
+			return;
+		}
+		
 		checkEmptyFrame();
 
 		if (alpha == 0 || _frame.type == FlxFrameType.EMPTY)
@@ -136,8 +147,8 @@ class FlxBackdrop extends FlxSprite
 		
 		var bounds = getScreenBounds(_rect, camera);
 		var view = camera.getViewRect();
-		if (repeatAxes == X) bounds.x = view.x;
-		if (repeatAxes == Y) bounds.y = view.y;
+		if (repeatAxes.x) bounds.x = view.x;
+		if (repeatAxes.y) bounds.y = view.y;
 		view.put();
 		
 		return camera.containsRect(bounds);
@@ -168,12 +179,21 @@ class FlxBackdrop extends FlxSprite
 	
 	override function isSimpleRenderBlit(?camera:FlxCamera):Bool
 	{
+		if (repeatAxes == NONE)
+			return super.isSimpleRenderBlit(camera);
+		
 		return (super.isSimpleRenderBlit(camera) || drawBlit)
 			&& (camera != null ? isPixelPerfectRender(camera) : pixelPerfectRender);
 	}
 	
 	override function drawSimple(camera:FlxCamera):Void
 	{
+		if (repeatAxes == NONE)
+		{
+			super.drawSimple(camera);
+			return;
+		}
+		
 		var drawDirect = !drawBlit;
 		final graphic = drawBlit ? _blitGraphic : this.graphic;
 		final frame = drawBlit ? _blitGraphic.imageFrame.frame : _frame;
@@ -208,6 +228,9 @@ class FlxBackdrop extends FlxSprite
 			}
 		}
 		
+		if (drawBlit)
+			_point.addPoint(_blitOffset);
+		
 		if (FlxG.renderBlit)
 			calcFrame(true);
 		
@@ -236,6 +259,12 @@ class FlxBackdrop extends FlxSprite
 
 	override function drawComplex(camera:FlxCamera)
 	{
+		if (repeatAxes == NONE)
+		{
+			super.drawComplex(camera);
+			return;
+		}
+		
 		var drawDirect = !drawBlit;
 		final graphic = drawBlit ? _blitGraphic : this.graphic;
 		final frame = drawBlit ? _blitGraphic.imageFrame.frame : _frame;
@@ -304,7 +333,9 @@ class FlxBackdrop extends FlxSprite
 			view.put();
 			bounds.put();
 		}
-		_point.add(origin.x, origin.y);
+		_point.addPoint(origin);
+		if (drawBlit)
+			_point.addPoint(_blitOffset);
 		
 		final mat = new FlxMatrix();
 		for (tileX in 0...tilesX)
@@ -409,8 +440,28 @@ class FlxBackdrop extends FlxSprite
 		}
 		setDrawParams(tilesX, tilesY);
 		
+		_blitOffset.set(0, 0);
 		var graphicSizeX = Math.ceil(tilesX * tileSize.x);
 		var graphicSizeY = Math.ceil(tilesY * tileSize.y);
+		if (repeatAxes != XY)
+		{
+			final screenBounds = getScreenBounds();
+			final screenPos = getScreenPosition();
+			if (!repeatAxes.x)
+			{
+				graphicSizeX = Math.ceil(screenBounds.width);
+				_blitOffset.x = screenBounds.x - screenPos.x;
+			}
+			
+			if (!repeatAxes.y)
+			{
+				graphicSizeY = Math.ceil(screenBounds.height);
+				_blitOffset.y = screenBounds.y - screenPos.y;
+			}
+			screenBounds.put();
+			screenPos.put();
+		}
+		
 		if (_blitGraphic == null || (_blitGraphic.width != graphicSizeX || _blitGraphic.height != graphicSizeY))
 		{
 			_blitGraphic = FlxG.bitmap.create(graphicSizeX, graphicSizeY, 0x0, true);
@@ -434,6 +485,7 @@ class FlxBackdrop extends FlxSprite
 		}
 		
 		_matrix.translate(origin.x, origin.y);
+		_matrix.translate(-_blitOffset.x, -_blitOffset.y);
 		_point.set(_matrix.tx, _matrix.ty);
 		
 		// draw extra tiles on the edge in case the image protrudes past the tile
