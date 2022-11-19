@@ -1,3 +1,7 @@
+2.12.1 (November 19, 2022)
+------------------------------
+* Overhaul FlxBackdrop
+
 2.12.0 (November 19, 2022)
 ------------------------------
 * Compatibility with flixel 5.0.0-alpha
