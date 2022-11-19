@@ -7,6 +7,7 @@ import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.tile.FlxTilemap;
+import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import flixel.addons.display.FlxBackdrop;
 import openfl.Assets;
@@ -204,25 +205,23 @@ class FlxScene
 			switch (element.name)
 			{
 				case "backdrop":
-					var x_att:Float = Std.parseInt(element.att.x);
-					var y_att:Float = Std.parseInt(element.att.y);
-					var graphics:String = assetsDirectory + element.att.graphics;
-					var repeatX:Bool = parseBool(element.att.repeatX);
-					var repeatY:Bool = parseBool(element.att.repeatY);
-					var scrollFactorX:Float = Std.parseFloat(element.att.scrollFactorX);
-					var scrollFactorY:Float = Std.parseFloat(element.att.scrollFactorY);
+					var att = element.att;
+					var graphics:String = assetsDirectory + att.graphics;
+					var repeatAxes = FlxAxes.fromBools(parseBool(att.repeatX), parseBool(att.repeatY));
 
-					var instance = new FlxBackdrop(graphics, scrollFactorX, scrollFactorY, repeatX, repeatY);
-					instance.x = x_att;
-					instance.y = y_att;
+					var backdrop = new FlxBackdrop(graphics, repeatAxes);
+					backdrop.x = Std.parseInt(att.x);
+					backdrop.y = Std.parseInt(att.y);
+					backdrop.scrollFactor.x = Std.parseFloat(att.scrollFactorX);
+					backdrop.scrollFactor.y = Std.parseFloat(att.scrollFactorY);
 
-					addInstance(instance, container, element);
+					addInstance(backdrop, container, element);
 
 				case "sprite":
-					var instance = new FlxSprite();
-					applySpriteProperties(instance, element);
+					var sprite = new FlxSprite();
+					applySpriteProperties(sprite, element);
 
-					addInstance(instance, container, element);
+					addInstance(sprite, container, element);
 			}
 		}
 	}
