@@ -1,4 +1,4 @@
-2.12.1 (November 19, 2022)
+3.0.0 (November 19, 2022)
 ------------------------------
 * Overhaul FlxBackdrop
 
