@@ -1,6 +1,6 @@
 3.0.0 (November 19, 2022)
 ------------------------------
-* Overhaul FlxBackdrop
+* `FlxBackdrop` - Completely overhauled to work with animation, scale, angle, camera zoom nd shaders ([#373](https://github.com/HaxeFlixel/flixel-addons/pull/373))
 
 2.12.0 (November 19, 2022)
 ------------------------------
