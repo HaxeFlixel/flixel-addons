@@ -71,6 +71,7 @@ class FlxSkewedSprite extends FlxSprite
 			_matrix.concat(_skewMatrix);
 		}
 
+		getScreenPosition(_point, camera).subtractPoint(offset);
 		_point.addPoint(origin);
 		if (isPixelPerfectRender(camera))
 			_point.floor();

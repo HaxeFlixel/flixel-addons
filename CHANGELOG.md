@@ -1,3 +1,12 @@
+3.0.0 (November 19, 2022)
+------------------------------
+* `FlxBackdrop` - Completely overhauled to work with animation, scale, angle, camera zoom nd shaders ([#373](https://github.com/HaxeFlixel/flixel-addons/pull/373))
+
+2.12.0 (November 19, 2022)
+------------------------------
+* Compatibility with flixel 5.0.0-alpha
+* A lot of fixes for `FlxGameJolt.hx` (#367)
+
 2.11.0 (September 12, 2021)
 ------------------------------
 * Compatibility with flixel 4.10.0

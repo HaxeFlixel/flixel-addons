@@ -193,6 +193,7 @@ class FlxClothSprite extends FlxSprite
 				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
 		}
 
+		getScreenPosition(_point, camera).subtractPoint(offset);
 		if (isPixelPerfectRender(camera))
 			_point.floor();
 
