@@ -200,7 +200,7 @@ class FlxClothSprite extends FlxSprite
 		if (_frameGraphic == null)
 			_frameGraphic = FlxGraphic.fromBitmapData(framePixels, false, null, false);
 
-		camera.drawTriangles(_frameGraphic, _vertices, _indices, _uvtData, colors, _point.addPoint(_drawOffset), blend, antialiasing);
+		camera.drawTriangles(_frameGraphic, _vertices, _indices, _uvtData, colors, _point.addPoint(_drawOffset), blend, false, antialiasing);
 	}
 
 	#if FLX_DEBUG
