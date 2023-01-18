@@ -1,3 +1,7 @@
+3.0.1 (January 18, 2023)
+------------------------------
+* Compatibility with flixel 5.2.0 (fix deprecation warnings in FlxTilemapExt)
+
 3.0.0 (November 19, 2022)
 ------------------------------
 * Overhaul FlxBackdrop
