@@ -130,8 +130,8 @@ class FlxTilemapExt extends FlxTilemap
 		}
 
 		// Copy tile images into the tile buffer
-		_point.x = (Camera.scroll.x * scrollFactor.x) - x - offset.x + Camera.viewOffsetX; // modified from getScreenPosition()
-		_point.y = (Camera.scroll.y * scrollFactor.y) - y - offset.y + Camera.viewOffsetY;
+		_point.x = (Camera.scroll.x * scrollFactor.x) - x - offset.x + Camera.viewMarginX; // modified from getScreenPosition()
+		_point.y = (Camera.scroll.y * scrollFactor.y) - y - offset.y + Camera.viewMarginY;
 
 		var screenXInTiles:Int = Math.floor(_point.x / tileWidth);
 		var screenYInTiles:Int = Math.floor(_point.y / tileHeight);
