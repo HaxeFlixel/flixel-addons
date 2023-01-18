@@ -1,3 +1,7 @@
+3.0.2 (January 18, 2023)
+------------------------------
+* Fix haxelib caching issue from reuploading 3.0.1
+
 3.0.1 (January 18, 2023)
 ------------------------------
 * Compatibility with flixel 5.2.0 (fix deprecation warnings in FlxTilemapExt)
