@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": ["game", "openfl", "flash", "neko", "cpp", "android", "ios", "cross"],
 	"description": "flixel-addons is a set of useful, additional classes for HaxeFlixel.",
-	"version": "3.0.0",
-	"releasenote": "overhaul flxbackdrop.",
+	"version": "3.0.2",
+	"releasenote": "Fix haxelib caching issue from reuploading 3.0.1",
 	"contributors": ["haxeflixel", "Gama11"]
 }

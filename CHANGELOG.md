@@ -1,3 +1,11 @@
+3.0.2 (January 18, 2023)
+------------------------------
+* Fix haxelib caching issue from reuploading 3.0.1
+
+3.0.1 (January 18, 2023)
+------------------------------
+* Compatibility with flixel 5.2.0 (fix deprecation warnings in FlxTilemapExt)
+
 3.0.0 (November 19, 2022)
 ------------------------------
 * `FlxBackdrop` - Completely overhauled to work with animation, scale, angle, camera zoom nd shaders ([#373](https://github.com/HaxeFlixel/flixel-addons/pull/373))
