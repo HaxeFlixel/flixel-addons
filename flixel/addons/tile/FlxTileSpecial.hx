@@ -159,7 +159,7 @@ class FlxTileSpecial extends FlxBasic
 	 * Add an animation to this special tile
 	 * @param	tiles		An array with the tilesetID of each frame
 	 * @param	frameRate	The speed of the animation in frames per second (Default: 30)
-	 * @param	framesData	
+	 * @param	framesData	An optional array of animation parameters for each frame	
 	 */
 	public function addAnimation(tiles:Array<Int>, frameRate:Float = 30, ?framesData:Array<AnimParams>):Void
 	{
