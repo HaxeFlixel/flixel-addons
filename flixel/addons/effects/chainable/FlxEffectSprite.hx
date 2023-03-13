@@ -76,7 +76,7 @@ class FlxEffectSprite extends FlxSprite
 	/**
 	 * Call this function to figure out the on-screen position of the object.
 	 *
-	 * @param	Point		Takes a FlxPoint object and assigns the post-scrolled X and Y values of this object to it.
+	 * @param	point		Takes a FlxPoint object and assigns the post-scrolled X and Y values of this object to it.
 	 * @param	Camera		Specify which game camera you want.  If null getScreenPosition() will just grab the first global camera.
 	 * @return	The Point you passed in, or a new Point if you didn't pass one, containing the screen X and Y position of this object.
 	 */

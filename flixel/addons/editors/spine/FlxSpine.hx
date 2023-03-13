@@ -93,6 +93,8 @@ class FlxSpine extends FlxSprite
 	 * @param	Y				The initial Y position of the sprite.
 	 * @param	Width			The maximum width of this sprite (avoid very large sprites since they are performance intensive).
 	 * @param	Height			The maximum height of this sprite (avoid very large sprites since they are performance intensive).
+	 * @param	OffsetX			
+	 * @param	OffsetY			
 	 * @param	renderMeshes	If true, then graphic will be rendered with drawTriangles(), if false (by default), then it will be rendered with drawTiles().
 	 */
 	public function new(skeletonData:SkeletonData, X:Float = 0, Y:Float = 0, Width:Float = 0, Height:Float = 0, OffsetX:Float = 0, OffsetY:Float = 0,

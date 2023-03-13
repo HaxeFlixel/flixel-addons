@@ -1267,10 +1267,10 @@ class FlxControlHandler
 	 * Enables WASD controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 *
-	 * @param	allowUp		Enable the up (W) key
-	 * @param	allowDown	Enable the down (S) key
-	 * @param	allowLeft	Enable the left (A) key
-	 * @param	allowRight	Enable the right (D) key
+	 * @param	AllowUp		Enable the up (W) key
+	 * @param	AllowDown	Enable the down (S) key
+	 * @param	AllowLeft	Enable the left (A) key
+	 * @param	AllowRight	Enable the right (D) key
 	 */
 	public function setWASDControl(AllowUp:Bool = true, AllowDown:Bool = true, AllowLeft:Bool = true, AllowRight:Bool = true):Void
 	{

@@ -476,7 +476,7 @@ class FlxScene
 	/**
 	 * Gets a specific object by id.
 	 *
-	 * @param 	Id 	Constant name.
+	 * @param 	id 	Constant name.
 	 * @return
 	 */
 	public function object(id:String):Dynamic
@@ -492,7 +492,7 @@ class FlxScene
 	/**
 	 * Helper function to parse Booleans from String to Bool
 	 *
-	 * @param Value 	String value
+	 * @param value 	String value
 	 */
 	function parseBool(value:String):Bool
 	{

@@ -22,6 +22,7 @@ class FlxTextField extends FlxText
 	 * @param	Y				The Y position of the text.
 	 * @param	Width			The width of the text object (height is determined automatically).
 	 * @param	Text			The actual text you would like to display initially.
+	 * @param	Size			The font size for this text object.
 	 * @param	EmbeddedFont	Whether this text field uses embedded fonts or not
 	 */
 	public function new(X:Float, Y:Float, Width:Int, ?Text:String, Size:Int = 8, EmbeddedFont:Bool = true)

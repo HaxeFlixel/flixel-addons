@@ -109,12 +109,13 @@ class FlxClothSprite extends FlxSprite
 	 * Creates a FlxClothSprite at a specified position with a specified one-frame graphic.
 	 * If none is provided, a 16x16 image of the HaxeFlixel logo is used.
 	 *
-	 * @param	X				The initial X position of the sprite.
-	 * @param	Y				The initial Y position of the sprite.
-	 * @param	SimpleGraphic	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
-	 * @param	Columns			Number of columns of the created mesh.
-	 * @param	Rows			Number of rows of the created mesh.
-	 * @param	PinnedSide		The pinned side that points are not affected by wind or velocity. Use UP, DOWN, LEFT, RIGHT, NONE, ANY, etc.
+	 * @param	X					The initial X position of the sprite.
+	 * @param	Y					The initial Y position of the sprite.
+	 * @param	SimpleGraphic		The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
+	 * @param	Columns				Number of columns of the created mesh.
+	 * @param	Rows				Number of rows of the created mesh.
+	 * @param	PinnedSide			The pinned side that points are not affected by wind or velocity. Use UP, DOWN, LEFT, RIGHT, NONE, ANY, etc.
+	 * @param	CrossingConstraints
 	 */
 	public function new(?X:Float = 0, ?Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset, Columns:Int = 0, Rows:Int = 0, PinnedSide:FlxDirectionFlags = UP,
 			CrossingConstraints:Bool = false)

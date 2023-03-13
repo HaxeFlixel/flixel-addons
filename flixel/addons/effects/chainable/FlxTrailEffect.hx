@@ -69,6 +69,7 @@ class FlxTrailEffect implements IFlxEffect
 	/**
 	 * Creates a trail effect.
 	 *
+	 * @param	Target			The FlxEffectSprite the trail is attached to.
 	 * @param	Length			The amount of trail images to create.
 	 * @param	Alpha			The alpha value for the first trailsprite.
 	 * @param	FramesDelay		How many frames wait until next trail updated.

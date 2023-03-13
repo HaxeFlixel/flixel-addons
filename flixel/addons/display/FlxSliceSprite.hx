@@ -215,7 +215,7 @@ class FlxSliceSprite extends FlxStrip
 
 		var centerX = topLeft.width;
 		var centerY = topLeft.height;
-		
+
 		var bdSize:FlxPoint = helperBdSize.set(graphic.width, graphic.height);
 		var dst:FlxPoint = helperDst;
 		var slice:FlxRect = helperRect;
@@ -223,7 +223,7 @@ class FlxSliceSprite extends FlxStrip
 
 		var numHorizontal:Int = Math.ceil((_snappedWidth - topLeft.width - topRight.width) / topMiddle.width);
 		var numVertical:Int = Math.ceil((_snappedHeight - topLeft.height - bottomLeft.height) / middleLeft.height);
-	
+
 		vertices = new DrawData<Float>();
 		uvtData = new DrawData<Float>();
 		indices = new DrawData<Int>();
@@ -641,7 +641,7 @@ class FlxSliceSprite extends FlxStrip
 	{
 		if (Value != fillCenter)
 			regen = true;
-		
+
 		return fillCenter = Value;
 	}
 

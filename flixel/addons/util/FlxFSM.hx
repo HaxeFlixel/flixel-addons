@@ -16,23 +16,23 @@ class FlxFSMState<T> implements IFlxDestroyable
 	/**
 	 * Called when state becomes active.
 	 *
-	 * @param	Owner	The object the state controls
-	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
+	 * @param	owner	The object the state controls
+	 * @param	fsm		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
 	public function enter(owner:T, fsm:FlxFSM<T>):Void {}
 
 	/**
 	 * Called every update loop.
 	 *
-	 * @param	Owner	The object the state controls
-	 * @param	FSM		The FSM instance this state belongs to. Used for changing the state to another.
+	 * @param	owner	The object the state controls
+	 * @param	fsm		The FSM instance this state belongs to. Used for changing the state to another.
 	 */
 	public function update(elapsed:Float, owner:T, fsm:FlxFSM<T>):Void {}
 
 	/**
 	 * Called when the state becomes inactive.
 	 *
-	 * @param	Owner	The object the state controls
+	 * @param	owner	The object the state controls
 	 */
 	public function exit(owner:T):Void {}
 
@@ -42,7 +42,7 @@ class FlxFSMState<T> implements IFlxDestroyable
 /**
  * Helper typedef for FlxExtendedFSM's pools
  */
-typedef StatePool<T> = Map<String, FlxPool<FlxFSMState<T>>>
+typedef StatePool<T> = Map<String, FlxPool<FlxFSMState<T>>>;
 
 /**
  * A generic Finite-state machine implementation.
@@ -264,7 +264,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 
 	/**
 	 * Locks the specified FSM for the duration of the update loop
-	 * @param	name
+	 * @param	name	The name of the FSM to lock
 	 */
 	public function lock(name:String):Void
 	{
@@ -296,7 +296,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 
 	/**
 	 * Adds the FSM to the front of the stack
-	 * @param	FSM
+	 * @param	FSM		The FSM to add
 	 */
 	public function unshift(FSM:FlxFSM<T>)
 	{
@@ -325,7 +325,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 
 	/**
 	 * Adds the FSM to the end of the stack
-	 * @param	FSM
+	 * @param	FSM		The FSM to add
 	 */
 	public function push(FSM:FlxFSM<T>)
 	{
@@ -355,7 +355,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 
 	/**
 	 * Removes the FSM from the stack and destroys it
-	 * @param	The removed FSM
+	 * @param	FSM		The FSM to remove
 	 */
 	public function remove(FSM:FlxFSM<T>)
 	{
@@ -372,7 +372,7 @@ class FlxFSMStack<T> extends FlxFSMStackSignal implements IFlxDestroyable
 
 	/**
 	 * Removes the FSM with given name from the stack and destroys it
-	 * @param	The removed FSM
+	 * @param	name	The name of the FSM to remove
 	 */
 	public function removeByName(name:String)
 	{
@@ -448,7 +448,8 @@ class FlxFSMTransitionTable<T>
 
 	/**
 	 * Polls the transition table for active states
-	 * @param	FSM	The FlxFSMState the table belongs to
+	 * @param	currentState	The class of the current FlxFSMState
+	 * @param	owner			The FlxFSMState the table belongs to
 	 * @return	The state that should become or remain active.
 	 */
 	public function poll(currentState:Class<FlxFSMState<T>>, owner:T):Class<FlxFSMState<T>>
@@ -498,9 +499,9 @@ class FlxFSMTransitionTable<T>
 
 	/**
 	 * Adds a transition condition to the table.
-	 * @param	From	The state the condition applies to
-	 * @param	To		The state to transition
-	 * @param	Condition	Function that returns true if the transition conditions are met
+	 * @param	from		The state the condition applies to
+	 * @param	to			The state to transition
+	 * @param	condition	Function that returns true if the transition conditions are met
 	 */
 	public function add(from:Class<FlxFSMState<T>>, to:Class<FlxFSMState<T>>, condition:T->Bool)
 	{
@@ -517,8 +518,8 @@ class FlxFSMTransitionTable<T>
 
 	/**
 	 * Adds a global transition condition to the table.
-	 * @param	To		The state to transition
-	 * @param	Condition	Function that returns true if the transition conditions are met
+	 * @param	to		The state to transition
+	 * @param	condition	Function that returns true if the transition conditions are met
 	 */
 	public function addGlobal(to:Class<FlxFSMState<T>>, condition:T->Bool)
 	{
@@ -546,7 +547,7 @@ class FlxFSMTransitionTable<T>
 
 	/**
 	 * Sets the starting State
-	 * @param	With
+	 * @param	with	The class of the starting State
 	 */
 	public function start(with:Class<FlxFSMState<T>>)
 	{
@@ -556,8 +557,8 @@ class FlxFSMTransitionTable<T>
 
 	/**
 	 * Replaces given state class with another.
-	 * @param	Target			State class to replace
-	 * @param	Replacement		State class to replace with
+	 * @param	target			State class to replace
+	 * @param	replacement		State class to replace with
 	 */
 	public function replace(target:Class<FlxFSMState<T>>, replacement:Class<FlxFSMState<T>>)
 	{
@@ -587,9 +588,9 @@ class FlxFSMTransitionTable<T>
 
 	/**
 	 * Removes a transition condition from the table
-	 * @param	From	From State
-	 * @param	To		To State
-	 * @param	Condition	Condition function
+	 * @param	from	From State
+	 * @param	to		To State
+	 * @param	condition	Condition function
 	 * @return	True when removed, false if not in table
 	 */
 	public function remove(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:Null<T->Bool>)
@@ -637,9 +638,9 @@ class FlxFSMTransitionTable<T>
 
 	/**
 	 * Tells if the table contains specific transition or transitions.
-	 * @param	From	From State
-	 * @param	To		To State
-	 * @param	Condition	Condition function
+	 * @param	from	From State
+	 * @param	to		To State
+	 * @param	condition	Condition function
 	 * @return	True if match found
 	 */
 	public function hasTransition(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:Null<T->Bool>):Bool
