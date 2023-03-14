@@ -4,14 +4,14 @@ package flixel.addons.plugin.control;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
+import flixel.math.FlxVelocity;
 #if (flixel >= "5.3.0")
 import flixel.sound.FlxSound;
 #else
 import flixel.system.FlxSound;
 #end
-import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
-import flixel.math.FlxVelocity;
 
 /**
  *
@@ -335,8 +335,10 @@ class FlxControlHandler
 	}
 
 	/**
-	 * @param	rotationType
-	 * @param	stoppingType
+	 * Sets the rotation type and the rotation stopping type.
+	 * 
+	 * @param	rotationType The rotation type. Must be either `ROTATION_INSTANT` or `ROTATION_ACCELERATES`.
+	 * @param	stoppingType The rotation stopping type. Must be `ROTATION_STOPPING_INSTANT`, `ROTATION_STOPPING_DECELERATES`, or `ROTATION_STOPPING_NEVER`.
 	 */
 	public function setRotationType(rotationType:Int, stoppingType:Int):Void
 	{
@@ -525,9 +527,10 @@ class FlxControlHandler
 
 	/**
 	 * TODO
+	 * Resets the X and Y speeds. Not yet implemented.
 	 *
-	 * @param	resetX
-	 * @param	resetY
+	 * @param	resetX	Whether to reset the X speed. Defaults to `true`.
+	 * @param	resetY	Whether to reset the Y speed. Defaults to `true`.
 	 */
 	public function resetSpeeds(resetX:Bool = true, resetY:Bool = true):Void
 	{

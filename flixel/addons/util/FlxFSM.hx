@@ -1,8 +1,8 @@
 package flixel.addons.util;
 
-import flixel.util.FlxDestroyUtil;
-import flixel.math.FlxRandom;
 import flixel.FlxG;
+import flixel.math.FlxRandom;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxPool;
 import flixel.util.FlxSignal.FlxTypedSignal;
 
@@ -535,7 +535,7 @@ class FlxFSMTransitionTable<T>
 
 	/**
 	 * Add a transition directly
-	 * @param	transition
+	 * @param	transition	The transition to add
 	 */
 	public function addTransition(transition:Transition<T>)
 	{

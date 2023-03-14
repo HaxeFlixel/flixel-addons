@@ -4,8 +4,8 @@ import flash.geom.Matrix;
 import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;
+import flixel.util.FlxSpriteUtil;
 
 class FlxShapeLine extends FlxShape
 {
@@ -20,7 +20,7 @@ class FlxShapeLine extends FlxShape
 	 * @param	Y y position of the canvas
 	 * @param	a first point in the line (relative to the sprite's origin)
 	 * @param	b second point in the line (relative to the sprite's origin)
-	 * @param	LineStyle_
+	 * @param	LineStyle_ Drawing style for strokes -- see `flixel.util.FlxSpriteUtil.LineStyle`
 	 */
 	public function new(X:Float, Y:Float, a:FlxPoint, b:FlxPoint, LineStyle_:LineStyle)
 	{
