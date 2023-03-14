@@ -61,7 +61,7 @@ class FlxScreenGrab extends FlxBasic
 	 * Specify which key will capture a screen shot. Use the String value of the key in the same way FlxG.keys does (so "F1" for example)
 	 * Optionally save the image to a file immediately. This uses the file systems "Save as" dialog window and pauses your game during the process.
 	 *
-	 * @param	Key			The key(s) you press to capture the screen (i.e. [F1, SPACE])
+	 * @param	Keys		The key(s) you press to capture the screen (i.e. [F1, SPACE])
 	 * @param	SaveToFile	If true it will immediately encodes the grab to a PNG and open a "Save As" dialog window when the hotkey is pressed
 	 * @param	HideMouse	If true the mouse will be hidden before capture and displayed afterwards when the hotkey is pressed
 	 */
@@ -88,7 +88,7 @@ class FlxScreenGrab extends FlxBasic
 	 * @param	CaptureRegion	A Rectangle area to capture. This over-rides that set by "defineCaptureRegion". If neither are set the full SWF size is used.
 	 * @param	SaveToFile		Boolean If set to true it will immediately encode the grab to a PNG and open a "Save As" dialog window
 	 * @param	HideMouse		Boolean If set to true the mouse will be hidden before capture and displayed again afterwards
-	 * @return	Bitmap			The screen grab as a Flash Bitmap image
+	 * @return	The screen grab as a Flash Bitmap image
 	 */
 	public static function grab(?CaptureRegion:Rectangle, ?SaveToFile:Bool = false, HideMouse:Bool = false):Bitmap
 	{

@@ -4,14 +4,14 @@ package flixel.addons.plugin.control;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
+import flixel.math.FlxVelocity;
 #if (flixel >= "5.3.0")
 import flixel.sound.FlxSound;
 #else
 import flixel.system.FlxSound;
 #end
-import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
-import flixel.math.FlxVelocity;
 
 /**
  *
@@ -218,26 +218,26 @@ class FlxControlHandler
 	 * Sets the FlxSprite to be controlled by this class, and defines the initial movement and stopping types.
 	 * After creating an instance of this class you should call setMovementSpeed, and one of the enableXControl functions if you need more than basic cursors.
 	 *
-	 * @param	Sprite			The FlxSprite you want this class to control. It can only control one FlxSprite at once.
-	 * @param	MovementType	Set to either MOVEMENT_INSTANT or MOVEMENT_ACCELERATES
+	 * @param	sprite			The FlxSprite you want this class to control. It can only control one FlxSprite at once.
+	 * @param	movementType	Set to either MOVEMENT_INSTANT or MOVEMENT_ACCELERATES
 	 * @param	StoppingType	Set to STOPPING_INSTANT, STOPPING_DECELERATES or STOPPING_NEVER
-	 * @param	UpdateFacing	If true it sets the FlxSprite.facing value to the direction pressed (default false)
-	 * @param	EnableArrowKeys	If true it will enable all arrow keys (default) - see setCursorControl for more fine-grained control
+	 * @param	updateFacing	If true it sets the FlxSprite.facing value to the direction pressed (default false)
+	 * @param	enableArrowKeys	If true it will enable all arrow keys (default) - see setCursorControl for more fine-grained control
 	 */
-	public function new(Sprite:FlxSprite, MovementType:Int, StoppingType:Int, UpdateFacing:Bool = false, EnableArrowKeys:Bool = true)
+	public function new(sprite:FlxSprite, movementType:Int, stoppingType:Int, updateFacing:Bool = false, enableArrowKeys:Bool = true)
 	{
-		_entity = Sprite;
+		_entity = sprite;
 
-		_movement = MovementType;
-		_stopping = StoppingType;
+		_movement = movementType;
+		_stopping = stoppingType;
 
-		_xFacing = UpdateFacing;
-		_yFacing = UpdateFacing;
+		_xFacing = updateFacing;
+		_yFacing = updateFacing;
 
 		_rotation = ROTATION_INSTANT;
 		_rotationStopping = ROTATION_STOPPING_INSTANT;
 
-		if (EnableArrowKeys)
+		if (enableArrowKeys)
 		{
 			setCursorControl();
 		}
@@ -254,39 +254,39 @@ class FlxControlHandler
 	 *
 	 * If you need different speed values for left/right or up/down then use setAdvancedMovementSpeed
 	 *
-	 * @param	SpeedX			The speed in pixels per second in which the sprite will move/accelerate horizontally
-	 * @param	SpeedY			The speed in pixels per second in which the sprite will move/accelerate vertically
-	 * @param	SpeedMaxX		The maximum speed in pixels per second in which the sprite can move horizontally
-	 * @param	SpeedMaxY		The maximum speed in pixels per second in which the sprite can move vertically
-	 * @param	DecelerationX	A deceleration speed in pixels per second to apply to the sprites horizontal movement (default 0)
-	 * @param	DecelerationY	A deceleration speed in pixels per second to apply to the sprites vertical movement (default 0)
+	 * @param	speedX			The speed in pixels per second in which the sprite will move/accelerate horizontally
+	 * @param	speedY			The speed in pixels per second in which the sprite will move/accelerate vertically
+	 * @param	speedMaxX		The maximum speed in pixels per second in which the sprite can move horizontally
+	 * @param	speedMaxY		The maximum speed in pixels per second in which the sprite can move vertically
+	 * @param	decelerationX	A deceleration speed in pixels per second to apply to the sprites horizontal movement (default 0)
+	 * @param	decelerationY	A deceleration speed in pixels per second to apply to the sprites vertical movement (default 0)
 	 */
-	public function setMovementSpeed(SpeedX:Int, SpeedY:Int, SpeedMaxX:Int, SpeedMaxY:Int, DecelerationX:Int = 0, DecelerationY:Int = 0):Void
+	public function setMovementSpeed(speedX:Int, speedY:Int, speedMaxX:Int, speedMaxY:Int, decelerationX:Int = 0, decelerationY:Int = 0):Void
 	{
-		_leftMoveSpeed = -SpeedX;
-		_rightMoveSpeed = SpeedX;
-		_upMoveSpeed = -SpeedY;
-		_downMoveSpeed = SpeedY;
+		_leftMoveSpeed = -speedX;
+		_rightMoveSpeed = speedX;
+		_upMoveSpeed = -speedY;
+		_downMoveSpeed = speedY;
 
-		setMaximumSpeed(SpeedMaxX, SpeedMaxY);
-		setDeceleration(DecelerationX, DecelerationY);
+		setMaximumSpeed(speedMaxX, speedMaxY);
+		setDeceleration(decelerationX, decelerationY);
 	}
 
 	/**
 	 * If you know you need the same value for the acceleration, maximum speeds and (optionally) deceleration then this is a quick way to set them.
 	 *
-	 * @param	Speed			The speed in pixels per second in which the sprite will move/accelerate/decelerate
-	 * @param	Acceleration	If true it will set the speed value as the deceleration value (default) false will leave deceleration disabled
+	 * @param	speed			The speed in pixels per second in which the sprite will move/accelerate/decelerate
+	 * @param	acceleration	If true it will set the speed value as the deceleration value (default) false will leave deceleration disabled
 	 */
-	public function setStandardSpeed(Speed:Int, Acceleration:Bool = true):Void
+	public function setStandardSpeed(speed:Int, acceleration:Bool = true):Void
 	{
-		if (Acceleration)
+		if (acceleration)
 		{
-			setMovementSpeed(Speed, Speed, Speed, Speed, Speed, Speed);
+			setMovementSpeed(speed, speed, speed, speed, speed, speed);
 		}
 		else
 		{
-			setMovementSpeed(Speed, Speed, Speed, Speed);
+			setMovementSpeed(speed, speed, speed, speed);
 		}
 	}
 
@@ -297,25 +297,25 @@ class FlxControlHandler
 	 *
 	 * If you don't need different speed values for every direction on its own then use setMovementSpeed
 	 *
-	 * @param	LeftSpeed		The speed in pixels per second in which the sprite will move/accelerate to the left
-	 * @param	RightSpeed		The speed in pixels per second in which the sprite will move/accelerate to the right
-	 * @param	UpSpeed			The speed in pixels per second in which the sprite will move/accelerate up
-	 * @param	DownSpeed		The speed in pixels per second in which the sprite will move/accelerate down
-	 * @param	SpeedMaxX		The maximum speed in pixels per second in which the sprite can move horizontally
-	 * @param	SpeedMaxY		The maximum speed in pixels per second in which the sprite can move vertically
-	 * @param	DecelerationX	Deceleration speed in pixels per second to apply to the sprites horizontal movement (default 0)
-	 * @param	DecelerationY	Deceleration speed in pixels per second to apply to the sprites vertical movement (default 0)
+	 * @param	leftSpeed		The speed in pixels per second in which the sprite will move/accelerate to the left
+	 * @param	rightSpeed		The speed in pixels per second in which the sprite will move/accelerate to the right
+	 * @param	upSpeed			The speed in pixels per second in which the sprite will move/accelerate up
+	 * @param	downSpeed		The speed in pixels per second in which the sprite will move/accelerate down
+	 * @param	speedMaxX		The maximum speed in pixels per second in which the sprite can move horizontally
+	 * @param	speedMaxY		The maximum speed in pixels per second in which the sprite can move vertically
+	 * @param	decelerationX	Deceleration speed in pixels per second to apply to the sprites horizontal movement (default 0)
+	 * @param	decelerationY	Deceleration speed in pixels per second to apply to the sprites vertical movement (default 0)
 	 */
-	public function setAdvancedMovementSpeed(LeftSpeed:Int, RightSpeed:Int, UpSpeed:Int, DownSpeed:Int, SpeedMaxX:Int, SpeedMaxY:Int, DecelerationX:Int = 0,
-			DecelerationY:Int = 0):Void
+	public function setAdvancedMovementSpeed(leftSpeed:Int, rightSpeed:Int, upSpeed:Int, downSpeed:Int, speedMaxX:Int, speedMaxY:Int, decelerationX:Int = 0,
+			decelerationY:Int = 0):Void
 	{
-		_leftMoveSpeed = -LeftSpeed;
-		_rightMoveSpeed = RightSpeed;
-		_upMoveSpeed = -UpSpeed;
-		_downMoveSpeed = DownSpeed;
+		_leftMoveSpeed = -leftSpeed;
+		_rightMoveSpeed = rightSpeed;
+		_upMoveSpeed = -upSpeed;
+		_downMoveSpeed = downSpeed;
 
-		setMaximumSpeed(SpeedMaxX, SpeedMaxY);
-		setDeceleration(DecelerationX, DecelerationY);
+		setMaximumSpeed(speedMaxX, speedMaxY);
+		setDeceleration(decelerationX, decelerationY);
 	}
 
 	/**
@@ -324,24 +324,26 @@ class FlxControlHandler
 	 * All values are given in pixels per second. So an xSpeed of 100 would rotate the sprite 100 pixels in 1 second (1000ms)
 	 * Due to the nature of the internal Flash timer this amount is not 100% accurate and will vary above/below the desired distance by a few pixels.
 	 */
-	public function setRotationSpeed(AntiClockwiseSpeed:Float, ClockwiseSpeed:Float, SpeedMax:Float, Deceleration:Float):Void
+	public function setRotationSpeed(antiClockwiseSpeed:Float, clockwiseSpeed:Float, speedMax:Float, deceleration:Float):Void
 	{
-		_antiClockwiseRotationSpeed = -AntiClockwiseSpeed;
-		_clockwiseRotationSpeed = ClockwiseSpeed;
+		_antiClockwiseRotationSpeed = -antiClockwiseSpeed;
+		_clockwiseRotationSpeed = clockwiseSpeed;
 
 		setRotationKeys();
-		setMaximumRotationSpeed(SpeedMax);
-		setRotationDeceleration(Deceleration);
+		setMaximumRotationSpeed(speedMax);
+		setRotationDeceleration(deceleration);
 	}
 
 	/**
-	 * @param	RotationType
-	 * @param	StoppingType
+	 * Sets the rotation type and the rotation stopping type.
+	 * 
+	 * @param	rotationType The rotation type. Must be either `ROTATION_INSTANT` or `ROTATION_ACCELERATES`.
+	 * @param	stoppingType The rotation stopping type. Must be `ROTATION_STOPPING_INSTANT`, `ROTATION_STOPPING_DECELERATES`, or `ROTATION_STOPPING_NEVER`.
 	 */
-	public function setRotationType(RotationType:Int, StoppingType:Int):Void
+	public function setRotationType(rotationType:Int, stoppingType:Int):Void
 	{
-		_rotation = RotationType;
-		_rotationStopping = StoppingType;
+		_rotation = rotationType;
+		_rotationStopping = stoppingType;
 	}
 
 	/**
@@ -349,45 +351,45 @@ class FlxControlHandler
 	 * When the FlxSprite is accelerating (movement type MOVEMENT_ACCELERATES) its speed won't increase above this value.
 	 * However Flixel allows the velocity of an FlxSprite to be set to anything. So if you'd like to check the value and restrain it, then enable "limitVelocity".
 	 *
-	 * @param	Speed			The maximum speed in pixels per second in which the sprite can rotate
-	 * @param	LimitVelocity	If true the angular velocity of the FlxSprite will be checked and kept within the limit. If false it can be set to anything.
+	 * @param	speed			The maximum speed in pixels per second in which the sprite can rotate
+	 * @param	limitVelocity	If true the angular velocity of the FlxSprite will be checked and kept within the limit. If false it can be set to anything.
 	 */
-	public function setMaximumRotationSpeed(Speed:Float, LimitVelocity:Bool = true):Void
+	public function setMaximumRotationSpeed(speed:Float, limitVelocity:Bool = true):Void
 	{
-		_entity.maxAngular = Speed;
+		_entity.maxAngular = speed;
 
-		_capAngularVelocity = LimitVelocity;
+		_capAngularVelocity = limitVelocity;
 	}
 
 	/**
 	 * Deceleration is a speed (in pixels per second) that is applied to the sprite if stopping type is "DECELERATES" and if no rotation is taking place.
 	 * The velocity of the sprite will be reduced until it reaches zero.
 	 *
-	 * @param	Speed	The speed in pixels per second at which the sprite will have its angular rotation speed decreased
+	 * @param	speed	The speed in pixels per second at which the sprite will have its angular rotation speed decreased
 	 */
-	public function setRotationDeceleration(Speed:Float):Void
+	public function setRotationDeceleration(speed:Float):Void
 	{
-		_entity.angularDrag = Speed;
+		_entity.angularDrag = speed;
 	}
 
 	/**
 	 * Set minimum and maximum angle limits that the Sprite won't be able to rotate beyond.
 	 * Values must be between -180 and +180. 0 is pointing right, 90 down, 180 left, -90 up.
 	 *
-	 * @param	MinimumAngle	Minimum angle below which the sprite cannot rotate (must be -180 or above)
-	 * @param	MaximumAngle	Maximum angle above which the sprite cannot rotate (must be 180 or below)
+	 * @param	minimumAngle	Minimum angle below which the sprite cannot rotate (must be -180 or above)
+	 * @param	maximumAngle	Maximum angle above which the sprite cannot rotate (must be 180 or below)
 	 */
-	public function setRotationLimits(MinimumAngle:Int, MaximumAngle:Int):Void
+	public function setRotationLimits(minimumAngle:Int, maximumAngle:Int):Void
 	{
-		if (MinimumAngle > MaximumAngle || MinimumAngle < -180 || MaximumAngle > 180)
+		if (minimumAngle > maximumAngle || minimumAngle < -180 || maximumAngle > 180)
 		{
 			throw "FlxControlHandler setRotationLimits: Invalid Minimum / Maximum angle";
 		}
 		else
 		{
 			_enforceAngleLimits = true;
-			_minAngle = MinimumAngle;
-			_maxAngle = MaximumAngle;
+			_minAngle = minimumAngle;
+			_maxAngle = maximumAngle;
 		}
 	}
 
@@ -402,12 +404,12 @@ class FlxControlHandler
 	/**
 	 * Set which keys will rotate the sprite. The speed of rotation is set in setRotationSpeed.
 	 *
-	 * @param	LeftRight				Use the LEFT and RIGHT arrow keys for anti-clockwise and clockwise rotation respectively.
-	 * @param	UpDown					Use the UP and DOWN arrow keys for anti-clockwise and clockwise rotation respectively.
-	 * @param	CustomAntiClockwise		The String value of your own key to use for anti-clockwise rotation (as taken from flixel.system.input.Keyboard)
-	 * @param	CustomClockwise			The String value of your own key to use for clockwise rotation (as taken from flixel.system.input.Keyboard)
+	 * @param	leftRight				Use the LEFT and RIGHT arrow keys for anti-clockwise and clockwise rotation respectively.
+	 * @param	upDown					Use the UP and DOWN arrow keys for anti-clockwise and clockwise rotation respectively.
+	 * @param	customAntiClockwise		The String value of your own key to use for anti-clockwise rotation (as taken from flixel.system.input.Keyboard)
+	 * @param	customClockwise			The String value of your own key to use for clockwise rotation (as taken from flixel.system.input.Keyboard)
 	 */
-	public function setRotationKeys(LeftRight:Bool = true, UpDown:Bool = false, CustomAntiClockwise:String = "", CustomClockwise:String = ""):Void
+	public function setRotationKeys(leftRight:Bool = true, upDown:Bool = false, customAntiClockwise:String = "", customClockwise:String = ""):Void
 	{
 		_isRotating = true;
 		_rotateAntiClockwise = true;
@@ -415,16 +417,16 @@ class FlxControlHandler
 		_antiClockwiseKey = "LEFT";
 		_clockwiseKey = "RIGHT";
 
-		if (UpDown)
+		if (upDown)
 		{
 			_antiClockwiseKey = "UP";
 			_clockwiseKey = "DOWN";
 		}
 
-		if (CustomAntiClockwise != "" && CustomClockwise != "")
+		if (customAntiClockwise != "" && customClockwise != "")
 		{
-			_antiClockwiseKey = CustomAntiClockwise;
-			_clockwiseKey = CustomClockwise;
+			_antiClockwiseKey = customAntiClockwise;
+			_clockwiseKey = customClockwise;
 		}
 	}
 
@@ -432,27 +434,27 @@ class FlxControlHandler
 	 * If you want to enable a Thrust like motion for your sprite use this to set the speed and keys.
 	 * This is usually used in conjunction with Rotation and it will over-ride anything already defined in setMovementSpeed.
 	 *
-	 * @param	ThrustKey		Specify the key String (as taken from flixel.system.input.Keyboard) to use for the Thrust action
-	 * @param	ThrustSpeed		The speed in pixels per second which the sprite will move. Acceleration or Instant movement is determined by the Movement Type.
-	 * @param	ReverseKey		If you want to be able to reverse, set the key string as taken from flixel.system.input.Keyboard (defaults to null).
-	 * @param	ReverseSpeed	The speed in pixels per second which the sprite will reverse. Acceleration or Instant movement is determined by the Movement Type.
+	 * @param	thrustKey		Specify the key String (as taken from flixel.system.input.Keyboard) to use for the Thrust action
+	 * @param	thrustSpeed		The speed in pixels per second which the sprite will move. Acceleration or Instant movement is determined by the Movement Type.
+	 * @param	reverseKey		If you want to be able to reverse, set the key string as taken from flixel.system.input.Keyboard (defaults to null).
+	 * @param	reverseSpeed	The speed in pixels per second which the sprite will reverse. Acceleration or Instant movement is determined by the Movement Type.
 	 */
-	public function setThrust(ThrustKey:String, ThrustSpeed:Float, ?ReverseKey:String, ReverseSpeed:Float = 0):Void
+	public function setThrust(thrustKey:String, thrustSpeed:Float, ?reverseKey:String, reverseSpeed:Float = 0):Void
 	{
 		_thrustEnabled = false;
 		_reverseEnabled = false;
 
-		if (ThrustKey != "")
+		if (thrustKey != "")
 		{
-			_thrustKey = ThrustKey;
-			_thrustSpeed = Math.floor(ThrustSpeed);
+			_thrustKey = thrustKey;
+			_thrustSpeed = Math.floor(thrustSpeed);
 			_thrustEnabled = true;
 		}
 
-		if (ReverseKey != null)
+		if (reverseKey != null)
 		{
-			_reverseKey = ReverseKey;
-			_reverseSpeed = Math.floor(ReverseSpeed);
+			_reverseKey = reverseKey;
+			_reverseSpeed = Math.floor(reverseSpeed);
 			_reverseEnabled = true;
 		}
 	}
@@ -462,29 +464,29 @@ class FlxControlHandler
 	 * When the FlxSprite is accelerating (movement type MOVEMENT_ACCELERATES) its speed won't increase above this value.
 	 * However Flixel allows the velocity of an FlxSprite to be set to anything. So if you'd like to check the value and restrain it, then enable "limitVelocity".
 	 *
-	 * @param	SpeedX			The maximum speed in pixels per second in which the sprite can move horizontally
-	 * @param	SpeedY			The maximum speed in pixels per second in which the sprite can move vertically
-	 * @param	LimitVelocity	If true the velocity of the FlxSprite will be checked and kept within the limit. If false it can be set to anything.
+	 * @param	speedX			The maximum speed in pixels per second in which the sprite can move horizontally
+	 * @param	speedY			The maximum speed in pixels per second in which the sprite can move vertically
+	 * @param	limitVelocity	If true the velocity of the FlxSprite will be checked and kept within the limit. If false it can be set to anything.
 	 */
-	public function setMaximumSpeed(SpeedX:Int, SpeedY:Int, LimitVelocity:Bool = true):Void
+	public function setMaximumSpeed(speedX:Int, speedY:Int, limitVelocity:Bool = true):Void
 	{
-		_entity.maxVelocity.x = SpeedX;
-		_entity.maxVelocity.y = SpeedY;
+		_entity.maxVelocity.x = speedX;
+		_entity.maxVelocity.y = speedY;
 
-		_capVelocity = LimitVelocity;
+		_capVelocity = limitVelocity;
 	}
 
 	/**
 	 * Deceleration is a speed (in pixels per second) that is applied to the sprite if stopping type is "DECELERATES" and if no acceleration is taking place.
 	 * The velocity of the sprite will be reduced until it reaches zero, and can be configured separately per axis.
 	 *
-	 * @param	SpeedX		The speed in pixels per second at which the sprite will have its horizontal speed decreased
-	 * @param	SpeedY		The speed in pixels per second at which the sprite will have its vertical speed decreased
+	 * @param	speedX		The speed in pixels per second at which the sprite will have its horizontal speed decreased
+	 * @param	speedY		The speed in pixels per second at which the sprite will have its vertical speed decreased
 	 */
-	public function setDeceleration(SpeedX:Int, SpeedY:Int):Void
+	public function setDeceleration(speedX:Int, speedY:Int):Void
 	{
-		_entity.drag.x = SpeedX;
-		_entity.drag.y = SpeedY;
+		_entity.drag.x = speedX;
+		_entity.drag.y = speedY;
 	}
 
 	/**
@@ -492,13 +494,13 @@ class FlxControlHandler
 	 * Gravity is given in pixels per second and is applied as acceleration. The speed the sprite reaches under gravity will never exceed the Maximum Movement Speeds set.
 	 * If you don't want gravity for a specific direction pass a value of zero.
 	 *
-	 * @param	ForceX	A positive value applies gravity dragging the sprite to the right. A negative value drags the sprite to the left. Zero disables horizontal gravity.
-	 * @param	ForceY	A positive value applies gravity dragging the sprite down. A negative value drags the sprite up. Zero disables vertical gravity.
+	 * @param	forceX	A positive value applies gravity dragging the sprite to the right. A negative value drags the sprite to the left. Zero disables horizontal gravity.
+	 * @param	forceY	A positive value applies gravity dragging the sprite down. A negative value drags the sprite up. Zero disables vertical gravity.
 	 */
-	public function setGravity(ForceX:Int, ForceY:Int):Void
+	public function setGravity(forceX:Int, forceY:Int):Void
 	{
-		_gravityX = ForceX;
-		_gravityY = ForceY;
+		_gravityX = forceX;
+		_gravityY = forceY;
 
 		_entity.acceleration.x = _gravityX;
 		_entity.acceleration.y = _gravityY;
@@ -525,18 +527,19 @@ class FlxControlHandler
 
 	/**
 	 * TODO
+	 * Resets the X and Y speeds. Not yet implemented.
 	 *
-	 * @param	ResetX
-	 * @param	ResetY
+	 * @param	resetX	Whether to reset the X speed. Defaults to `true`.
+	 * @param	resetY	Whether to reset the Y speed. Defaults to `true`.
 	 */
-	public function resetSpeeds(ResetX:Bool = true, ResetY:Bool = true):Void
+	public function resetSpeeds(resetX:Bool = true, resetY:Bool = true):Void
 	{
-		if (ResetX)
+		if (resetX)
 		{
 			_xSpeedAdjust = 0;
 		}
 
-		if (ResetY)
+		if (resetY)
 		{
 			_ySpeedAdjust = 0;
 		}
@@ -545,53 +548,53 @@ class FlxControlHandler
 	/**
 	 * Set sound effects for the movement events jumping, firing, walking and thrust.
 	 *
-	 * @param	Jump	The FlxSound to play when the user jumps
-	 * @param	Fire	The FlxSound to play when the user fires
-	 * @param	Walk	The FlxSound to play when the user walks
-	 * @param	Thrust	The FlxSound to play when the user thrusts
+	 * @param	jump	The FlxSound to play when the user jumps
+	 * @param	fire	The FlxSound to play when the user fires
+	 * @param	walk	The FlxSound to play when the user walks
+	 * @param	thrust	The FlxSound to play when the user thrusts
 	 */
-	public function setSounds(?Jump:FlxSound, ?Fire:FlxSound, ?Walk:FlxSound, ?Thrust:FlxSound):Void
+	public function setSounds(?jump:FlxSound, ?fire:FlxSound, ?walk:FlxSound, ?thrust:FlxSound):Void
 	{
-		if (Jump != null)
+		if (jump != null)
 		{
-			_jumpSound = Jump;
+			_jumpSound = jump;
 		}
 
-		if (Fire != null)
+		if (fire != null)
 		{
-			_fireSound = Fire;
+			_fireSound = fire;
 		}
 
-		if (Walk != null)
+		if (walk != null)
 		{
-			_walkSound = Walk;
+			_walkSound = walk;
 		}
 
-		if (Thrust != null)
+		if (thrust != null)
 		{
-			_thrustSound = Thrust;
+			_thrustSound = thrust;
 		}
 	}
 
 	/**
 	 * Enable a fire button
 	 *
-	 * @param	Key				The key to use as the fire button (String from flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
-	 * @param	Keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
-	 * @param	RepeatDelay		Time delay in ms between which the fire action can repeat (0 means instant, 250 would allow it to fire approx. 4 times per second)
-	 * @param	Callback		A user defined function to call when it fires
-	 * @param	AltKey			Specify an alternative fire key that works AS WELL AS the primary fire key (TODO)
+	 * @param	key				The key to use as the fire button (String from flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
+	 * @param	keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
+	 * @param	repeatDelay		Time delay in ms between which the fire action can repeat (0 means instant, 250 would allow it to fire approx. 4 times per second)
+	 * @param	callback		A user defined function to call when it fires
+	 * @param	altKey			Specify an alternative fire key that works AS WELL AS the primary fire key (TODO)
 	 */
-	public function setFireButton(Key:String, Keymode:Int, RepeatDelay:Int, Callback:Void->Void, AltKey:String = ""):Void
+	public function setFireButton(key:String, keymode:Int, repeatDelay:Int, callback:Void->Void, altKey:String = ""):Void
 	{
-		_fireKey = Key;
-		_fireKeyMode = Keymode;
-		_fireRate = RepeatDelay;
-		_fireCallback = Callback;
+		_fireKey = key;
+		_fireKeyMode = keymode;
+		_fireRate = repeatDelay;
+		_fireCallback = callback;
 
-		if (AltKey != "")
+		if (altKey != "")
 		{
-			_altFireKey = AltKey;
+			_altFireKey = altKey;
 		}
 
 		_fire = true;
@@ -600,29 +603,29 @@ class FlxControlHandler
 	/**
 	 * Enable a jump button
 	 *
-	 * @param	Key				The key to use as the jump button (String from flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
-	 * @param	Keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
-	 * @param	Height			The height in pixels/sec that the Sprite will attempt to jump (gravity and acceleration can influence this actual height obtained)
-	 * @param	Surface			A bitwise combination of all valid surfaces the Sprite can jump off (such as FLOOR)
-	 * @param	RepeatDelay		Time delay in ms between which the jumping can repeat (250 would be 4 times per second)
-	 * @param	JumpFromFall	A time in ms that allows the Sprite to still jump even if it's just fallen off a platform, if still within ths time limit
-	 * @param	Callback		A user defined function to call when the Sprite jumps
-	 * @param	AltKey			Specify an alternative jump key that works AS WELL AS the primary jump key (TODO)
+	 * @param	key				The key to use as the jump button (String from flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
+	 * @param	keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
+	 * @param	height			The height in pixels/sec that the Sprite will attempt to jump (gravity and acceleration can influence this actual height obtained)
+	 * @param	surface			A bitwise combination of all valid surfaces the Sprite can jump off (such as FLOOR)
+	 * @param	repeatDelay		Time delay in ms between which the jumping can repeat (250 would be 4 times per second)
+	 * @param	jumpFromFall	A time in ms that allows the Sprite to still jump even if it's just fallen off a platform, if still within ths time limit
+	 * @param	callback		A user defined function to call when the Sprite jumps
+	 * @param	altKey			Specify an alternative jump key that works AS WELL AS the primary jump key (TODO)
 	 */
-	public function setJumpButton(Key:String, Keymode:Int, Height:Int, Surface:Int, RepeatDelay:Int = 250, JumpFromFall:Int = 0, ?Callback:Void->Void,
-			AltKey:String = ""):Void
+	public function setJumpButton(key:String, keymode:Int, height:Int, surface:Int, repeatDelay:Int = 250, jumpFromFall:Int = 0, ?callback:Void->Void,
+			altKey:String = ""):Void
 	{
-		_jumpKey = Key;
-		_jumpKeyMode = Keymode;
-		_jumpHeight = Height;
-		_jumpSurface = Surface;
-		_jumpRate = RepeatDelay;
-		_jumpFromFallTime = JumpFromFall;
-		_jumpCallback = Callback;
+		_jumpKey = key;
+		_jumpKeyMode = keymode;
+		_jumpHeight = height;
+		_jumpSurface = surface;
+		_jumpRate = repeatDelay;
+		_jumpFromFallTime = jumpFromFall;
+		_jumpCallback = callback;
 
-		if (AltKey != "")
+		if (altKey != "")
 		{
-			_altJumpKey = AltKey;
+			_altJumpKey = altKey;
 		}
 
 		_jump = true;
@@ -632,14 +635,14 @@ class FlxControlHandler
 	 * Limits the sprite to only be allowed within this rectangle. If its x/y coordinates go outside it will be repositioned back inside.
 	 * Coordinates should be given in GAME WORLD pixel values (not screen value, although often they are the two same things)
 	 *
-	 * @param	X		The x coordinate of the top left corner of the area (in game world pixels)
-	 * @param	Y		The y coordinate of the top left corner of the area (in game world pixels)
-	 * @param	Width	The width of the area (in pixels)
-	 * @param	Height	The height of the area (in pixels)
+	 * @param	x		The x coordinate of the top left corner of the area (in game world pixels)
+	 * @param	y		The y coordinate of the top left corner of the area (in game world pixels)
+	 * @param	width	The width of the area (in pixels)
+	 * @param	height	The height of the area (in pixels)
 	 */
-	public function setBounds(X:Int, Y:Int, Width:Int, Height:Int):Void
+	public function setBounds(x:Int, y:Int, width:Int, height:Int):Void
 	{
-		_bounds = new Rectangle(X, Y, Width, Height);
+		_bounds = new Rectangle(x, y, width, height);
 	}
 
 	/**
@@ -1209,35 +1212,35 @@ class FlxControlHandler
 	 * Sets Custom Key controls. Useful if none of the pre-defined sets work. All String values should be taken from flixel.system.input.Keyboard
 	 * Pass a blank (empty) String to disable that key from being checked.
 	 *
-	 * @param	CustomUpKey		The String to use for the Up key.
-	 * @param	CustomDownKey	The String to use for the Down key.
-	 * @param	CustomLeftKey	The String to use for the Left key.
-	 * @param	CustomRightKey	The String to use for the Right key.
+	 * @param	customUpKey		The String to use for the Up key.
+	 * @param	customDownKey	The String to use for the Down key.
+	 * @param	customLeftKey	The String to use for the Left key.
+	 * @param	customRightKey	The String to use for the Right key.
 	 */
-	public function setCustomKeys(CustomUpKey:String, CustomDownKey:String, CustomLeftKey:String, CustomRightKey:String):Void
+	public function setCustomKeys(customUpKey:String, customDownKey:String, customLeftKey:String, customRightKey:String):Void
 	{
-		if (CustomUpKey != "")
+		if (customUpKey != "")
 		{
 			_up = true;
-			_upKey = CustomUpKey;
+			_upKey = customUpKey;
 		}
 
-		if (CustomDownKey != "")
+		if (customDownKey != "")
 		{
 			_down = true;
-			_downKey = CustomDownKey;
+			_downKey = customDownKey;
 		}
 
-		if (CustomLeftKey != "")
+		if (customLeftKey != "")
 		{
 			_left = true;
-			_leftKey = CustomLeftKey;
+			_leftKey = customLeftKey;
 		}
 
-		if (CustomRightKey != "")
+		if (customRightKey != "")
 		{
 			_right = true;
-			_rightKey = CustomRightKey;
+			_rightKey = customRightKey;
 		}
 	}
 
@@ -1245,17 +1248,17 @@ class FlxControlHandler
 	 * Enables Cursor/Arrow Key controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 *
-	 * @param	AllowUp		Enable the UP key
-	 * @param	AllowDown	Enable the DOWN key
-	 * @param	AllowLeft	Enable the LEFT key
-	 * @param	AllowRight	Enable the RIGHT key
+	 * @param	allowUp		Enable the UP key
+	 * @param	allowDown	Enable the DOWN key
+	 * @param	allowLeft	Enable the LEFT key
+	 * @param	allowRight	Enable the RIGHT key
 	 */
-	public function setCursorControl(AllowUp:Bool = true, AllowDown:Bool = true, AllowLeft:Bool = true, AllowRight:Bool = true):Void
+	public function setCursorControl(allowUp:Bool = true, allowDown:Bool = true, allowLeft:Bool = true, allowRight:Bool = true):Void
 	{
-		_up = AllowUp;
-		_down = AllowDown;
-		_left = AllowLeft;
-		_right = AllowRight;
+		_up = allowUp;
+		_down = allowDown;
+		_left = allowLeft;
+		_right = allowRight;
 
 		_upKey = "UP";
 		_downKey = "DOWN";
@@ -1272,12 +1275,12 @@ class FlxControlHandler
 	 * @param	allowLeft	Enable the left (A) key
 	 * @param	allowRight	Enable the right (D) key
 	 */
-	public function setWASDControl(AllowUp:Bool = true, AllowDown:Bool = true, AllowLeft:Bool = true, AllowRight:Bool = true):Void
+	public function setWASDControl(allowUp:Bool = true, allowDown:Bool = true, allowLeft:Bool = true, allowRight:Bool = true):Void
 	{
-		_up = AllowUp;
-		_down = AllowDown;
-		_left = AllowLeft;
-		_right = AllowRight;
+		_up = allowUp;
+		_down = allowDown;
+		_left = allowLeft;
+		_right = allowRight;
 
 		_upKey = "W";
 		_downKey = "S";
@@ -1289,17 +1292,17 @@ class FlxControlHandler
 	 * Enables ESDF (home row) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 *
-	 * @param	AllowUp		Enable the up (E) key
-	 * @param	AllowDown	Enable the down (D) key
-	 * @param	AllowLeft	Enable the left (S) key
-	 * @param	AllowRight	Enable the right (F) key
+	 * @param	allowUp		Enable the up (E) key
+	 * @param	allowDown	Enable the down (D) key
+	 * @param	allowLeft	Enable the left (S) key
+	 * @param	allowRight	Enable the right (F) key
 	 */
-	public function setESDFControl(AllowUp:Bool = true, AllowDown:Bool = true, AllowLeft:Bool = true, AllowRight:Bool = true):Void
+	public function setESDFControl(allowUp:Bool = true, allowDown:Bool = true, allowLeft:Bool = true, allowRight:Bool = true):Void
 	{
-		_up = AllowUp;
-		_down = AllowDown;
-		_left = AllowLeft;
-		_right = AllowRight;
+		_up = allowUp;
+		_down = allowDown;
+		_left = allowLeft;
+		_right = allowRight;
 
 		_upKey = "E";
 		_downKey = "D";
@@ -1311,17 +1314,17 @@ class FlxControlHandler
 	 * Enables IJKL (right-sided or secondary player) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 *
-	 * @param	AllowUp		Enable the up (I) key
-	 * @param	AllowDown	Enable the down (K) key
-	 * @param	AllowLeft	Enable the left (J) key
-	 * @param	AllowRight	Enable the right (L) key
+	 * @param	allowUp		Enable the up (I) key
+	 * @param	allowDown	Enable the down (K) key
+	 * @param	allowLeft	Enable the left (J) key
+	 * @param	allowRight	Enable the right (L) key
 	 */
-	public function setIJKLControl(AllowUp:Bool = true, AllowDown:Bool = true, AllowLeft:Bool = true, AllowRight:Bool = true):Void
+	public function setIJKLControl(allowUp:Bool = true, allowDown:Bool = true, allowLeft:Bool = true, allowRight:Bool = true):Void
 	{
-		_up = AllowUp;
-		_down = AllowDown;
-		_left = AllowLeft;
-		_right = AllowRight;
+		_up = allowUp;
+		_down = allowDown;
+		_left = allowLeft;
+		_right = allowRight;
 
 		_upKey = "I";
 		_downKey = "K";
@@ -1333,17 +1336,17 @@ class FlxControlHandler
 	 * Enables HJKL (Rogue / Net-Hack) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 *
-	 * @param	AllowUp		Enable the up (K) key
-	 * @param	AllowDown	Enable the down (J) key
-	 * @param	AllowLeft	Enable the left (H) key
-	 * @param	AllowRight	Enable the right (L) key
+	 * @param	allowUp		Enable the up (K) key
+	 * @param	allowDown	Enable the down (J) key
+	 * @param	allowLeft	Enable the left (H) key
+	 * @param	allowRight	Enable the right (L) key
 	 */
-	public function setHJKLControl(AllowUp:Bool = true, AllowDown:Bool = true, AllowLeft:Bool = true, AllowRight:Bool = true):Void
+	public function setHJKLControl(allowUp:Bool = true, allowDown:Bool = true, allowLeft:Bool = true, allowRight:Bool = true):Void
 	{
-		_up = AllowUp;
-		_down = AllowDown;
-		_left = AllowLeft;
-		_right = AllowRight;
+		_up = allowUp;
+		_down = allowDown;
+		_left = allowLeft;
+		_right = allowRight;
 
 		_upKey = "K";
 		_downKey = "J";
@@ -1355,17 +1358,17 @@ class FlxControlHandler
 	 * Enables ZQSD (Azerty keyboard) controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 *
-	 * @param	AllowUp		Enable the up (Z) key
-	 * @param	AllowDown	Enable the down (Q) key
-	 * @param	AllowLeft	Enable the left (S) key
-	 * @param	AllowRight	Enable the right (D) key
+	 * @param	allowUp		Enable the up (Z) key
+	 * @param	allowDown	Enable the down (Q) key
+	 * @param	allowLeft	Enable the left (S) key
+	 * @param	allowRight	Enable the right (D) key
 	 */
-	public function setZQSDControl(AllowUp:Bool = true, AllowDown:Bool = true, AllowLeft:Bool = true, AllowRight:Bool = true):Void
+	public function setZQSDControl(allowUp:Bool = true, allowDown:Bool = true, allowLeft:Bool = true, allowRight:Bool = true):Void
 	{
-		_up = AllowUp;
-		_down = AllowDown;
-		_left = AllowLeft;
-		_right = AllowRight;
+		_up = allowUp;
+		_down = allowDown;
+		_left = allowLeft;
+		_right = allowRight;
 
 		_upKey = "Z";
 		_downKey = "S";
@@ -1377,17 +1380,17 @@ class FlxControlHandler
 	 * Enables Dvoark Simplified Controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 *
-	 * @param	AllowUp		Enable the up (COMMA) key
-	 * @param	AllowDown	Enable the down (A) key
-	 * @param	AllowLeft	Enable the left (O) key
-	 * @param	AllowRight	Enable the right (E) key
+	 * @param	allowUp		Enable the up (COMMA) key
+	 * @param	allowDown	Enable the down (A) key
+	 * @param	allowLeft	Enable the left (O) key
+	 * @param	allowRight	Enable the right (E) key
 	 */
-	public function setDvorakSimplifiedControl(AllowUp:Bool = true, AllowDown:Bool = true, AllowLeft:Bool = true, AllowRight:Bool = true):Void
+	public function setDvorakSimplifiedControl(allowUp:Bool = true, allowDown:Bool = true, allowLeft:Bool = true, allowRight:Bool = true):Void
 	{
-		_up = AllowUp;
-		_down = AllowDown;
-		_left = AllowLeft;
-		_right = AllowRight;
+		_up = allowUp;
+		_down = allowDown;
+		_left = allowLeft;
+		_right = allowRight;
 
 		_upKey = "COMMA";
 		_downKey = "O";
@@ -1399,17 +1402,17 @@ class FlxControlHandler
 	 * Enables Numpad (left-handed) Controls. Can be set on a per-key basis. Useful if you only want to allow a few keys.
 	 * For example in a Space Invaders game you'd only enable LEFT and RIGHT.
 	 *
-	 * @param	AllowUp		Enable the up (NUMPADEIGHT) key
-	 * @param	AllowDown	Enable the down (NUMPADTWO) key
-	 * @param	AllowLeft	Enable the left (NUMPADFOUR) key
-	 * @param	AllowRight	Enable the right (NUMPADSIX) key
+	 * @param	allowUp		Enable the up (NUMPADEIGHT) key
+	 * @param	allowDown	Enable the down (NUMPADTWO) key
+	 * @param	allowLeft	Enable the left (NUMPADFOUR) key
+	 * @param	allowRight	Enable the right (NUMPADSIX) key
 	 */
-	public function setNumpadControl(AllowUp:Bool = true, AllowDown:Bool = true, AllowLeft:Bool = true, AllowRight:Bool = true):Void
+	public function setNumpadControl(allowUp:Bool = true, allowDown:Bool = true, allowLeft:Bool = true, allowRight:Bool = true):Void
 	{
-		_up = AllowUp;
-		_down = AllowDown;
-		_left = AllowLeft;
-		_right = AllowRight;
+		_up = allowUp;
+		_down = allowDown;
+		_left = allowLeft;
+		_right = allowRight;
 
 		_upKey = "NUMPADEIGHT";
 		_downKey = "NUMPADTWO";

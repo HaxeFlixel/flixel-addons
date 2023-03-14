@@ -166,7 +166,7 @@ class FlxGameJolt
 
 	/**
 	 * A string map that contains what is returned from GameJolt servers.
-	 */	
+	 */
 	static var returnMap:Map<String, String> = new Map<String, String>();
 
 	/**
@@ -431,7 +431,7 @@ class FlxGameJolt
 	 * @see		https://gamejolt.com/api/doc/game/scores/fetch/
 	 * @param	Limit		The maximum number of scores to retrieve. If blank to retrieve only this user's scores.
 	 * @param 	TableID		The ID of the table you want to pull data from. Leave blank to fetch from the primary score table.
-	 * @param	CallBack	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
+	 * @param	Callback	An optional callback function. Will return a Map<String:String> whose keys and values are equivalent to the key-value pairs returned by GameJolt.
 	 */
 	public static function fetchScore(?Limit:Int, ?TableID:Int, ?Callback:Dynamic):Void
 	{
@@ -714,7 +714,7 @@ class FlxGameJolt
 	 * However, if we're getting an image, a second URLRequest is called, and that will be done first.
 	 * Or, if we're authenticating the user, the verifyAuthentication function will be called instead.
 	 *
-	 * @param	The URLLoader complete event.
+	 * @param	e	The URLLoader complete event.
 	 */
 	static function parseData(e:Event):Void
 	{
