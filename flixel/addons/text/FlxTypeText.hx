@@ -2,8 +2,6 @@ package flixel.addons.text;
 
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
-		if (FlxG.keys.justPressed.ENTER && isTalking)
-			skip();
 import flixel.math.FlxMath;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
