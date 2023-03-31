@@ -2,6 +2,8 @@ package flixel.addons.text;
 
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
+		if (FlxG.keys.justPressed.ENTER && isTalking)
+			skip();
 import flixel.math.FlxMath;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
@@ -106,6 +108,11 @@ class FlxTypeText extends FlxText
 	 * This function is called when the message is done erasing, if that is enabled.
 	 */
 	public var eraseCallback:Void->Void;
+	
+	/**
+	* This function is called when the text is skipped.
+	*/
+	public var skipCallback:Void->Void;
 
 	/**
 	 * The text that will ultimately be displayed.
@@ -540,6 +547,9 @@ class FlxTypeText extends FlxText
 		{
 			_length = _finalText.length;
 		}
+		
+		if (skipCallback != null)
+			skipCallback();
 	}
 
 	function loadDefaultSound():Void
