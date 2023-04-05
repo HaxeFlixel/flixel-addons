@@ -99,7 +99,7 @@ class FlxNestedSprite extends FlxSprite
 	var relativeColorTransform:ColorTransform;
 
 	/**
-	 * This will remove this sprite entirely. Use kill() if you
+	 * WARNING: This will remove this sprite entirely. Use kill() if you
 	 * want to disable it temporarily only and reset() it later to revive it.
 	 * Used to clean up memory.
 	 */
