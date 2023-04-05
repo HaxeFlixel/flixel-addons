@@ -1,18 +1,15 @@
 package flixel.addons.display;
 
-import flash.geom.ColorTransform;
+import openfl.geom.ColorTransform;
+import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.FlxBasic;
-import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.math.FlxAngle;
-import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
-import flixel.math.FlxVelocity;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
-using flixel.util.FlxArrayUtil;
+using flixel.util.FlxColorTransformUtil;
 
 /**
  * Some sort of DisplayObjectContainer but very limited.
@@ -22,47 +19,70 @@ using flixel.util.FlxArrayUtil;
 class FlxNestedSprite extends FlxSprite
 {
 	/**
+	 * Internal variable to determine the parent of the nested sprite.
+	 */
+	var _parent:FlxNestedSprite;
+
+	@:noCompletion
+	@:deprecated("`relativeX` is deprecated. Use `x` instead.")
+	/**
 	 * X position of this sprite relative to parent, 0 by default
 	 */
 	public var relativeX:Float = 0;
 
+	@:noCompletion
+	@:deprecated("`relativeY` is deprecated. Use `y` instead.")
 	/**
 	 * Y position of this sprite relative to parent, 0 by default
 	 */
 	public var relativeY:Float = 0;
-
+	
+	@:noCompletion
+	@:deprecated("`relativeAngle` is deprecated. Use `angle` instead.")
 	/**
 	 * Angle of this sprite relative to parent
 	 */
 	public var relativeAngle:Float = 0;
-
+	
+	@:noCompletion
+	@:deprecated("`relativeAngularVelocity` is deprecated. Use `angularVelocity` instead.")
 	/**
 	 * Angular velocity relative to parent sprite
 	 */
 	public var relativeAngularVelocity:Float = 0;
-
+	
+	@:noCompletion
+	@:deprecated("relativeAngularAcceleration is deprecated. Use `angularAcceleration` instead.")
 	/**
 	 * Angular acceleration relative to parent sprite
 	 */
 	public var relativeAngularAcceleration:Float = 0;
-
+	@:noCompletion
+	@:deprecated("`relativeAlpha` is deprecated. Use `alpha` instead.")
 	public var relativeAlpha:Float = 1;
-
+	
+	@:noCompletion
+	@:deprecated("`relativeScale` is deprecated. Use `scale` instead.")
 	/**
 	 * Scale of this sprite relative to parent
 	 */
 	public var relativeScale(default, null):FlxPoint = FlxPoint.get(1, 1);
-
+	
+	@:noCompletion
+	@:deprecated("`relativeVelocity` is deprecated. Use `velocity` instead.")
 	/**
 	 * Velocity relative to parent sprite
 	 */
 	public var relativeVelocity(default, null):FlxPoint = FlxPoint.get();
-
+	
+	@:noCompletion
+	@:deprecated("`relativeAcceleration` is deprecated. Use `acceleration` instead.")
 	/**
 	 * Acceleration relative to parent sprite
 	 */
 	public var relativeAcceleration(default, null):FlxPoint = FlxPoint.get();
 
+	
 	/**
 	 * All FlxNestedSprites in this list.
 	 */
@@ -72,24 +92,23 @@ class FlxNestedSprite extends FlxSprite
 	 * Amount of Graphics in this list.
 	 */
 	public var count(get, never):Int;
-
-	var _parentRed:Float = 1;
-	var _parentGreen:Float = 1;
-	var _parentBlue:Float = 1;
+	
+	/**
+	 * Internal variable, a concatenation between the parent's `relativeColorTransform` and `colorTransform` 
+	 */
+	var relativeColorTransform:ColorTransform;
 
 	/**
-	 * WARNING: This will remove this sprite entirely. Use kill() if you
+	 * This will remove this sprite entirely. Use kill() if you
 	 * want to disable it temporarily only and reset() it later to revive it.
 	 * Used to clean up memory.
 	 */
 	override public function destroy():Void
 	{
 		super.destroy();
-
-		relativeScale = FlxDestroyUtil.put(relativeScale);
-		relativeVelocity = FlxDestroyUtil.put(relativeVelocity);
-		relativeAcceleration = FlxDestroyUtil.put(relativeAcceleration);
+		
 		children = FlxDestroyUtil.destroyArray(children);
+		_parent = null;
 	}
 
 	/**
@@ -104,17 +123,14 @@ class FlxNestedSprite extends FlxSprite
 			return Child;
 
 		children.push(Child);
-		Child.velocity.set(0, 0);
-		Child.acceleration.set(0, 0);
-		Child.scrollFactor.copyFrom(scrollFactor);
-
-		Child.alpha = Child.relativeAlpha * alpha;
-		Child._parentRed = color.redFloat;
-		Child._parentGreen = color.greenFloat;
-		Child._parentBlue = color.blueFloat;
-		Child.color = Child.color;
+		Child._parent = this;
 
 		return Child;
+	}
+	override function initVars()
+	{
+		relativeColorTransform = new ColorTransform();
+		super.initVars();
 	}
 
 	/**
@@ -129,6 +145,8 @@ class FlxNestedSprite extends FlxSprite
 
 		if (index >= 0)
 			children.splice(index, 1);
+		
+		Child._parent = null;
 
 		return Child;
 	}
@@ -155,6 +173,27 @@ class FlxNestedSprite extends FlxSprite
 			remove(child);
 	}
 
+	override public function draw():Void
+	{
+		super.draw();
+
+		for (child in children)
+		{
+			if (child.exists && child.visible)
+				child.draw();
+		}
+	}
+	override function drawSimple(camera:FlxCamera)
+	{
+		if (_parent != null)
+			_point.addPoint(_parent._point);
+
+		if (isPixelPerfectRender(camera))
+			_point.floor();
+
+		_point.copyToFlash(_flashPoint);
+		camera.copyPixels(_frame, framePixels, _flashRect, _flashPoint, relativeColorTransform, blend, antialiasing);
+	}
 	public function preUpdate(elapsed:Float):Void
 	{
 		#if FLX_DEBUG
@@ -169,8 +208,7 @@ class FlxNestedSprite extends FlxSprite
 				child.preUpdate(elapsed);
 		}
 	}
-
-	override public function update(elapsed:Float):Void
+	override public function update(elapsed:Float) 
 	{
 		preUpdate(elapsed);
 
@@ -179,92 +217,71 @@ class FlxNestedSprite extends FlxSprite
 			if (child.active && child.exists)
 				child.update(elapsed);
 		}
-
+		
 		postUpdate(elapsed);
 	}
 
-	public function postUpdate(elapsed:Float):Void
+	public function postUpdate(elapsed:Float)
 	{
-		if (moves)
-			updateMotion(elapsed);
+		updateAnimation(elapsed);
+	}
+	override function drawComplex(camera:FlxCamera)
+	{
+		_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
+		if (_parent != null)
+			_matrix.concat(_parent._matrix);
+		_matrix.translate(-origin.x, -origin.y);
+		_matrix.scale(scale.x, scale.y);
 
-		wasTouching = touching;
-		touching = NONE;
-		animation.update(elapsed);
-
-		var delta:Float;
-		var velocityDelta:Float;
-
-		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeAngularVelocity, relativeAngularAcceleration, angularDrag, maxAngular, elapsed)
-			- relativeAngularVelocity);
-		relativeAngularVelocity += velocityDelta;
-		relativeAngle += relativeAngularVelocity * elapsed;
-		relativeAngularVelocity += velocityDelta;
-
-		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocity.x, relativeAcceleration.x, drag.x, maxVelocity.x, elapsed) - relativeVelocity.x);
-		relativeVelocity.x += velocityDelta;
-		delta = relativeVelocity.x * elapsed;
-		relativeVelocity.x += velocityDelta;
-		relativeX += delta;
-
-		velocityDelta = 0.5 * (FlxVelocity.computeVelocity(relativeVelocity.y, relativeAcceleration.y, drag.y, maxVelocity.y, elapsed) - relativeVelocity.y);
-		relativeVelocity.y += velocityDelta;
-		delta = relativeVelocity.y * elapsed;
-		relativeVelocity.y += velocityDelta;
-		relativeY += delta;
-
-		for (child in children)
+		if (bakedRotationAngle <= 0)
 		{
-			if (child.active && child.exists)
-			{
-				child.velocity.x = child.velocity.y = 0;
-				child.acceleration.x = child.acceleration.y = 0;
-				child.angularVelocity = child.angularAcceleration = 0;
-				child.postUpdate(elapsed);
+			updateTrig();
 
-				if (isSimpleRender(camera))
-				{
-					child.x = x + child.relativeX - offset.x;
-					child.y = y + child.relativeY - offset.y;
-				}
-				else
-				{
-					var radians:Float = angle * FlxAngle.TO_RAD;
-					var cos:Float = Math.cos(radians);
-					var sin:Float = Math.sin(radians);
-
-					var dx = width / 2 - child.width / 2 - offset.x;
-					dx += scale.x * cos * (child.relativeX - width / 2 + child.width / 2);
-					dx -= scale.y * sin * (child.relativeY - height / 2 + child.height / 2);
-
-					var dy = height / 2 - child.height / 2 - offset.y;
-					dy += scale.y * cos * (child.relativeY - height / 2 + child.height / 2);
-					dy += scale.x * sin * (child.relativeX - width / 2 + child.width / 2);
-
-					child.x = x + dx;
-					child.y = y + dy;
-				}
-
-				child.angle = angle + child.relativeAngle;
-				child.scale.x = scale.x * child.relativeScale.x;
-				child.scale.y = scale.y * child.relativeScale.y;
-
-				child.velocity.x = velocity.x;
-				child.velocity.y = velocity.y;
-				child.acceleration.x = acceleration.x;
-				child.acceleration.y = acceleration.y;
-			}
+			if (angle != 0)
+				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
 		}
+
+		_point.add(origin.x, origin.y);
+		_matrix.translate(_point.x, _point.y);
+
+		if (isPixelPerfectRender(camera))
+		{
+			_matrix.tx = Math.floor(_matrix.tx);
+			_matrix.ty = Math.floor(_matrix.ty);
+		}
+
+		camera.drawPixels(_frame, framePixels, _matrix, relativeColorTransform, blend, antialiasing, shader);
+	}
+	override public function setColorTransform(redMultiplier:Float = 1.0, greenMultiplier:Float = 1.0, blueMultiplier:Float = 1.0, alphaMultiplier:Float = 1.0, redOffset:Int = 0, greenOffset:Int = 0, blueOffset:Int = 0, alphaOffset:Int = 0) 
+	{
+		super.setColorTransform(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset);
+
+		concatRelativeColor();
+	}
+	override function updateColorTransform() 
+	{
+		super.updateColorTransform();
+
+		concatRelativeColor();
 	}
 
-	override public function draw():Void
+	function concatRelativeColor()
 	{
-		super.draw();
+		if (relativeColorTransform == null)
+			relativeColorTransform = new ColorTransform();
+
+
+		relativeColorTransform.setMultipliers(1, 1, 1, 1);
+		relativeColorTransform.setOffsets(0, 0, 0, 0);
+
+		if (_parent != null)
+			relativeColorTransform.concat(_parent.relativeColorTransform);
+
+		relativeColorTransform.concat(colorTransform);
 
 		for (child in children)
 		{
-			if (child.exists && child.visible)
-				child.draw();
+			child.concatRelativeColor();
 		}
 	}
 
@@ -280,125 +297,6 @@ class FlxNestedSprite extends FlxSprite
 		}
 	}
 	#end
-
-	override function set_alpha(Alpha:Float):Float
-	{
-		Alpha = FlxMath.bound(Alpha, 0, 1);
-		if (Alpha == alpha)
-			return alpha;
-
-		alpha = Alpha * relativeAlpha;
-
-		if ((alpha != 1) || (color != 0x00ffffff))
-		{
-			var red:Float = (color >> 16) * _parentRed / 255;
-			var green:Float = (color >> 8 & 0xff) * _parentGreen / 255;
-			var blue:Float = (color & 0xff) * _parentBlue / 255;
-
-			if (colorTransform == null)
-			{
-				colorTransform = new ColorTransform(red, green, blue, alpha);
-			}
-			else
-			{
-				colorTransform.redMultiplier = red;
-				colorTransform.greenMultiplier = green;
-				colorTransform.blueMultiplier = blue;
-				colorTransform.alphaMultiplier = alpha;
-			}
-			useColorTransform = true;
-		}
-		else
-		{
-			if (colorTransform != null)
-			{
-				colorTransform.redMultiplier = 1;
-				colorTransform.greenMultiplier = 1;
-				colorTransform.blueMultiplier = 1;
-				colorTransform.alphaMultiplier = 1;
-			}
-			useColorTransform = false;
-		}
-		dirty = true;
-
-		if (children != null)
-		{
-			for (child in children)
-				child.alpha = alpha;
-		}
-
-		return alpha;
-	}
-
-	override function set_color(Color:FlxColor):FlxColor
-	{
-		Color = Color.to24Bit();
-
-		var combinedRed:Float = (Color >> 16) * _parentRed / 255;
-		var combinedGreen:Float = (Color >> 8 & 0xff) * _parentGreen / 255;
-		var combinedBlue:Float = (Color & 0xff) * _parentBlue / 255;
-
-		var combinedColor:Int = FlxColor.fromRGBFloat(combinedRed, combinedGreen, combinedBlue, 0);
-
-		if (color == combinedColor)
-			return color;
-
-		color = combinedColor;
-		if ((alpha != 1) || (color != 0x00ffffff))
-		{
-			if (colorTransform == null)
-			{
-				colorTransform = new ColorTransform(combinedRed, combinedGreen, combinedBlue, alpha);
-			}
-			else
-			{
-				colorTransform.redMultiplier = combinedRed;
-				colorTransform.greenMultiplier = combinedGreen;
-				colorTransform.blueMultiplier = combinedBlue;
-				colorTransform.alphaMultiplier = alpha;
-			}
-			useColorTransform = true;
-		}
-		else
-		{
-			if (colorTransform != null)
-			{
-				colorTransform.redMultiplier = 1;
-				colorTransform.greenMultiplier = 1;
-				colorTransform.blueMultiplier = 1;
-				colorTransform.alphaMultiplier = 1;
-			}
-			useColorTransform = false;
-		}
-
-		dirty = true;
-
-		if (FlxG.renderTile)
-		{
-			color.redFloat = combinedRed;
-			color.greenFloat = combinedGreen;
-			color.blueFloat = combinedBlue;
-		}
-
-		for (child in children)
-		{
-			var childColor:Int = child.color;
-
-			var childRed:Float = (childColor >> 16) / (255 * child._parentRed);
-			var childGreen:Float = (childColor >> 8 & 0xff) / (255 * child._parentGreen);
-			var childBlue:Float = (childColor & 0xff) / (255 * child._parentBlue);
-
-			combinedColor = FlxColor.fromRGBFloat(childRed, childGreen, childBlue, 0);
-
-			child.color = combinedColor;
-
-			child._parentRed = combinedRed;
-			child._parentGreen = combinedGreen;
-			child._parentBlue = combinedBlue;
-		}
-
-		return color;
-	}
 
 	override function set_facing(Direction:Int):Int
 	{
