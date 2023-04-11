@@ -5,7 +5,7 @@ import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.math.FlxRandom;
 import flash.media.Sound;
 
