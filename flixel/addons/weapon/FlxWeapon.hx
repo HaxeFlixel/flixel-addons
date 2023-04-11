@@ -14,6 +14,7 @@ import flixel.math.FlxRect;
 import flixel.math.FlxVelocity;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxTimer;
 import flixel.util.helpers.FlxBounds;
 import flixel.util.helpers.FlxRange;
 #if (flixel >= "5.3.0")
