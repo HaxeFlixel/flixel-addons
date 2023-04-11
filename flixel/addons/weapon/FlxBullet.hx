@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import flixel.math.FlxRect;
+import flixel.util.FlxDestroyUtil;
 
 /**
  * @link http://www.photonstorm.com
@@ -46,5 +47,12 @@ class FlxBullet extends FlxSprite
 		}
 
 		super.update(elapsed);
+	}
+
+	override public function destroy():Void
+	{
+		super.destroy();
+
+		bounds = FlxDestroyUtil.put(bounds);
 	}
 }
