@@ -55,7 +55,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	public static inline var BULLET_SOUTH_WEST:Int = 135;
 
 	/**
-	 * Internal name for this weapon (e.g. `"pulse rifle"`).
+	 * Internal name for this weapon (e.g., `"pulse rifle"`).
 	 */
 	public var name:String;
 
@@ -85,22 +85,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * The parent sprite of this weapon. Only accessible when `fireFrom == PARENT`.
 	 */
 	public var parent(default, null):FlxSprite;
-
-	/**
-	 * Whether to fire bullets in the direction the `parent` is facing (e.g. `UP`, `DOWN`, `LEFT`, `RIGHT`). Used only when `fireFrom == PARENT`.
-	 */
-	public var useParentDirection:Bool;
-
-	/**
-	 * If `parent == null`, the Weapon will fire from a fixed position on the screen, like in the game Missile Command.
-	 */
-	public var firePosition(default, null):FlxBounds<FlxPoint>;
-
-	/**
-	 * A value to use to offset a bullet's position when it is fired.
-	 * Can be used to, for example, line a bullet up with the "nose" of a space ship.
-	 */
-	public var positionOffset(default, null):FlxPoint;
 
 	public var fireFrom(default, set):FlxWeaponFireFrom;
 	public var speedMode:FlxWeaponSpeedMode;
@@ -140,21 +124,18 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	var bulletFactory:FlxTypedWeapon<TBullet>->TBullet;
 
-	var lastFired:Int = 0;
-
 	var skipParentCollision:Bool;
 
 	/**
-	 * A value to use to offset a bullet's angle from the parent's angle when it is fired. Used only if `fireFrom == PARENT` and `fireFrom.useParentAngle == true`.
+	 * A value to use to offset a bullet's angle from the `parent`'s angle when it is fired. Used only if `fireFrom == PARENT` and `fireFrom.useParentAngle == true`.
 	 */
 	var angleOffset:Float = 0;
 
 	/**
 	 * Creates an `FlxWeapon` instance which can fire bullets.
-	 * You should call one of the makeBullet functions to visually create the bullets.
-	 * Then either use setDirection with fire() or one of the fireAt functions to launch them.
+	 * Use one of the `fireFrom...()` or `fireAt...()` functions to fire bullets.
 	 *
-	 * @param	name		The name of the weapon (e.g. `"laser"`, `"shotgun"`). For your internal reference really, but could be displayed in-game too.
+	 * @param	name		The name of the weapon (e.g., `"laser"`, `"shotgun"`). For your internal reference really, but could be displayed in-game too.
 	 * @param	bulletFactory	The factory function used to create new bullets.
 	 * @param	fireFrom	The weapon's firing position (i.e., `PARENT`, `POSITION`).
 	 * @param	speedMode	The speed mode for the bullets (i.e., `SPEED`, `ACCELERATION`).
@@ -196,7 +177,6 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 		#end
 
-		lastFired = FlxG.game.ticks;
 		nextFire = FlxG.game.ticks + Std.int(fireRate / FlxG.timeScale);
 
 		// Get a free bullet from the pool
@@ -207,26 +187,27 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 
 		// Clear any velocity that may have been previously set from the pool
-		currentBullet.velocity.x = 0; // TODO is this really necessary?
-		currentBullet.velocity.y = 0;
+		currentBullet.velocity.zero(); // TODO is this really necessary?
 
 		switch (fireFrom)
 		{
-			case PARENT(parent, offset, useParentDirection, angleOffset):
+			case PARENT(parent, offset, useParentAngle, angleOffset):
 				// store new offset in a new variable
-				var actualOffset = new FlxPoint(FlxG.random.float(offset.min.x, offset.max.x), FlxG.random.float(offset.min.y, offset.max.y));
-				if (useParentDirection)
+				var actualOffset = FlxPoint.get(FlxG.random.float(offset.min.x, offset.max.x), FlxG.random.float(offset.min.y, offset.max.y));
+				if (useParentAngle)
 				{
 					// rotate actual offset around parent origin using the parent angle
-					actualOffset = rotatePoints(actualOffset, parent.origin, parent.angle);
+					rotatePoints(actualOffset, parent.origin, parent.angle, actualOffset);
 
-					// reposition offset to have it's origin at the new returned point
+					// reposition offset to have its origin at the new returned point
 					actualOffset.subtract(currentBullet.width / 2, currentBullet.height / 2);
 					actualOffset.subtract(parent.offset.x, parent.offset.y);
 				}
 
 				currentBullet.last.x = currentBullet.x = parent.x + actualOffset.x;
 				currentBullet.last.y = currentBullet.y = parent.y + actualOffset.y;
+
+				actualOffset.put();
 
 			case POSITION(position):
 				currentBullet.last.x = currentBullet.x = FlxG.random.float(position.min.x, position.max.x);
@@ -293,11 +274,15 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * @param	point	The point to be rotated.
 	 * @param	origin	The point around which to be rotated. Usually the origin of the `parent`.
 	 * @param	angle	The current angle from of the origin, in degrees. Usually the `parent`'s angle.
+	 * @param	returnedPoint An optional point to reuse instead of getting another from the pool.
 	 * @return	The new rotated point.
 	 */
-	public function rotatePoints(point:FlxPoint, origin:FlxPoint, angle:Float):FlxPoint
+	public function rotatePoints(point:FlxPoint, origin:FlxPoint, angle:Float, ?returnedPoint:FlxPoint):FlxPoint
 	{
-		var returnedPoint:FlxPoint = FlxPoint.weak();
+		if (returnedPoint == null)
+		{
+			returnedPoint = FlxPoint.weak();
+		}
 
 		var inBetweenAngle:Float = origin.degreesTo(point);
 		inBetweenAngle = angle + inBetweenAngle;
@@ -384,7 +369,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	/**
 	 * Fires a bullet (if one is available) based on the angle of the weapon's `parent`.
 	 *
-	 * @return	`true` if a bullet was fired, or `false` if one wasn't available. A reference to the bullet fired is stored in `currentBullet`.
+	 * @return `true` if a bullet was fired, or `false` if one wasn't available. A reference to the last fired bullet is stored in `currentBullet`.
 	 */
 	public inline function fireFromParentAngle(angle:FlxBounds<Float>):Bool
 	{
@@ -483,6 +468,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 				var velocity = FlxVelocity.velocityFromAngle(FlxAngle.asDegrees(radians), FlxG.random.float(speed.min, speed.max));
 				bullet.velocity.x = velocity.x;
 				bullet.velocity.y = velocity.y;
+				velocity.put();
 
 			case ACCELERATION(acceleration, maxSpeed):
 				FlxVelocity.accelerateFromAngle(bullet, radians, FlxG.random.float(acceleration.min, acceleration.max),
@@ -513,7 +499,17 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 
 enum FlxWeaponFireFrom
 {
+	/**
+	 * @param parent The parent sprite of the weapon.
+	 * @param offset A value to use to offset a bullet's position when it is fired. Can be used to, for example, line a bullet up with the "nose" of a space ship.
+	 * @param useParentAngle Whether to fire bullets in the direction of the `parent`'s angle.
+	 * @param angleOffset A value to use to offset a bullet's angle from the `parent`'s angle when it is fired.
+	 */
 	PARENT(parent:FlxSprite, offset:FlxBounds<FlxPoint>, ?useParentAngle:Bool, ?angleOffset:Float);
+
+	/**
+	 * @param position A fixed position from which to fire the weapon, like in the game Missile Command.
+	 */
 	POSITION(position:FlxBounds<FlxPoint>);
 }
 
