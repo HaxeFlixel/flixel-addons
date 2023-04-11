@@ -13,6 +13,7 @@ import flixel.math.FlxRandom;
 import flixel.math.FlxRect;
 import flixel.math.FlxVelocity;
 import flixel.tile.FlxTilemap;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.helpers.FlxBounds;
 import flixel.util.helpers.FlxRange;
 #if (flixel >= "5.3.0")
@@ -42,7 +43,7 @@ import flixel.system.FlxSound;
  */
 typedef FlxWeapon = FlxTypedWeapon<FlxBullet>;
 
-class FlxTypedWeapon<TBullet:FlxBullet>
+class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 {
 	// Quick firing direction angle constants
 	public static inline var BULLET_UP:Int = -90;
@@ -65,15 +66,14 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	public var group(default, null):FlxTypedGroup<TBullet>;
 
 	/**
-	 * The game tick after which the weapon will be able to fire. Only used if `fireRate > 0`.
-	 * Internal variable; use with caution.
-	 */
-	public var nextFire:Int = 0;
-
-	/**
 	 * The delay in milliseconds (ms) between which each bullet is fired. Default is 0, which means there is no delay.
 	 */
 	public var fireRate:Int = 0;
+
+	/**
+	 * A timer used whenever the weapon is fired, with its duration set to `fireRate`.
+	 */
+	public var fireTimer:FlxTimer;
 
 	/**
 	 * When a bullet goes outside of these bounds, it will be automatically killed, freeing it up for firing again.
@@ -145,6 +145,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		group = new FlxTypedGroup();
 		bounds = FlxRect.get(0, 0, FlxG.width, FlxG.height);
 		bulletLifeSpan = new FlxBounds(0.0, 0);
+		fireTimer = new FlxTimer().start(); // start() needs to be called for it to be properly initialized
+		fireTimer.cancel();
 
 		this.name = name;
 		this.bulletFactory = bulletFactory;
@@ -160,7 +162,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 */
 	function runFire(mode:FlxWeaponFireMode):Bool
 	{
-		if (fireRate > 0 && FlxG.game.ticks < nextFire)
+		if (fireRate > 0 && !fireTimer.finished)
 		{
 			return false;
 		}
@@ -177,7 +179,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 		#end
 
-		nextFire = FlxG.game.ticks + Std.int(fireRate / FlxG.timeScale);
+		fireTimer.reset(fireRate);
 
 		// Get a free bullet from the pool
 		currentBullet = group.recycle(null, bulletFactory.bind(this));
@@ -494,6 +496,59 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 				parent = null;
 		}
 		return fireFrom = v;
+	}
+
+	public function destroy():Void
+	{
+		name = null;
+		group = FlxDestroyUtil.destroy(group);
+		bounds = FlxDestroyUtil.put(bounds);
+		parent = null; // Don't destroy the parent
+		if (fireFrom != null)
+		{
+			switch (fireFrom)
+			{
+				case PARENT(parent, offset, useParentAngle, angleOffset):
+					parent = null;
+					if (offset != null)
+					{
+						offset.min = FlxDestroyUtil.put(offset.min);
+						offset.max = FlxDestroyUtil.put(offset.max);
+						offset = null;
+					}
+					angleOffset = null;
+				case POSITION(position):
+					if (position != null)
+					{
+						position.min = FlxDestroyUtil.put(position.min);
+						position.max = FlxDestroyUtil.put(position.max);
+						position = null;
+					}
+			}
+			// fireFrom = null; // Can't do this because sending null to set_fireFrom() causes an NPE
+			@:bypassAccessor fireFrom = null;
+		}
+		if (speedMode != null)
+		{
+			switch (speedMode)
+			{
+				case SPEED(speed):
+					speed = null;
+				case ACCELERATION(acceleration, maxSpeed):
+					acceleration = null;
+					maxSpeed = null;
+			}
+			speedMode = null;
+		}
+		bulletLifeSpan = null;
+		currentBullet = FlxDestroyUtil.destroy(currentBullet);
+		onPreFireCallback = null;
+		onPostFireCallback = null;
+		onPreFireSound = null; // TODO Should these be destroyed?
+		onPostFireSound = null;
+		bulletFactory = null;
+
+		fireTimer = FlxDestroyUtil.destroy(fireTimer);
 	}
 }
 
