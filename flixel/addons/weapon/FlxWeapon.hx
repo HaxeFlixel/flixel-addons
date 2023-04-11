@@ -12,14 +12,14 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRandom;
 import flixel.math.FlxRect;
 import flixel.math.FlxVelocity;
+import flixel.tile.FlxTilemap;
+import flixel.util.helpers.FlxBounds;
+import flixel.util.helpers.FlxRange;
 #if (flixel >= "5.3.0")
 import flixel.sound.FlxSound;
 #else
 import flixel.system.FlxSound;
 #end
-import flixel.tile.FlxTilemap;
-import flixel.util.helpers.FlxBounds;
-import flixel.util.helpers.FlxRange;
 
 /**
  * A Weapon can only fire 1 type of bullet. But it can fire many of them at once (in different directions if needed) via createBulletPattern
@@ -171,10 +171,10 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	/**
 	 * Internal function that handles the actual firing of the bullets
 	 *
-	 * @param	Mode	Mode to use for firing the bullet
+	 * @param	mode	Mode to use for firing the bullet
 	 * @return	True if a bullet was fired or false if one wasn't available. The bullet last fired is stored in FlxWeapon.prevBullet
 	 */
-	function runFire(Mode:FlxWeaponFireMode):Bool
+	function runFire(mode:FlxWeaponFireMode):Bool
 	{
 		if (fireRate > 0 && FlxG.game.ticks < nextFire)
 		{
@@ -235,7 +235,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		currentBullet.elasticity = bulletElasticity;
 		currentBullet.lifespan = FlxG.random.float(bulletLifeSpan.min, bulletLifeSpan.max);
 
-		switch (Mode)
+		switch (mode)
 		{
 			case FIRE_AT_POSITION(x, y):
 				internalFireAtPoint(currentBullet, FlxPoint.weak(x, y));
@@ -331,12 +331,12 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	/**
 	 * Fires a bullet (if one is available) at the FlxTouch coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 	 *
-	 * @param	Touch	The FlxTouch object to fire at, if null use the first available one
+	 * @param	touch	The FlxTouch object to fire at, if null use the first available one
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	public function fireAtTouch(?Touch:FlxTouch):Bool
+	public function fireAtTouch(?touch:FlxTouch):Bool
 	{
-		var touch = Touch == null ? FlxG.touches.getFirst() : Touch;
+		var touch = touch == null ? FlxG.touches.getFirst() : touch;
 		if (touch != null)
 			return runFire(FIRE_AT_TOUCH(touch));
 		else
@@ -347,24 +347,24 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	/**
 	 * Fires a bullet (if one is available) at the given x/y coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 	 *
-	 * @param	X	The x coordinate (in game world pixels) to fire at
-	 * @param	Y	The y coordinate (in game world pixels) to fire at
+	 * @param	x	The x coordinate (in game world pixels) to fire at
+	 * @param	y	The y coordinate (in game world pixels) to fire at
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	public inline function fireAtPosition(X:Int, Y:Int):Bool
+	public inline function fireAtPosition(x:Int, y:Int):Bool
 	{
-		return runFire(FIRE_AT_POSITION(X, Y));
+		return runFire(FIRE_AT_POSITION(x, y));
 	}
 
 	/**
 	 * Fires a bullet (if one is available) at the given targets x/y coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 	 *
-	 * @param	Target	The FlxSprite you wish to fire the bullet at
+	 * @param	target	The FlxSprite you wish to fire the bullet at
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
-	public inline function fireAtTarget(Target:FlxSprite):Bool
+	public inline function fireAtTarget(target:FlxSprite):Bool
 	{
-		return runFire(FIRE_AT_TARGET(Target));
+		return runFire(FIRE_AT_TARGET(target));
 	}
 
 	/**
@@ -391,53 +391,53 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	/**
 	 * Sets a pre-fire callback function and sound. These are played immediately before the bullet is fired.
 	 *
-	 * @param	Callback	The function to call
-	 * @param	Sound		A FlxSound to play
+	 * @param	callback	The function to call
+	 * @param	sound		A FlxSound to play
 	 */
-	public function setPreFireCallback(?Callback:Void->Void, ?Sound:FlxSound):Void
+	public function setPreFireCallback(?callback:Void->Void, ?sound:FlxSound):Void
 	{
-		onPreFireCallback = Callback;
-		onPreFireSound = Sound;
+		onPreFireCallback = callback;
+		onPreFireSound = sound;
 	}
 
 	/**
 	 * Sets a post-fire callback function and sound. These are played immediately after the bullet is fired.
 	 *
-	 * @param	Callback	The function to call
-	 * @param	Sound		An FlxSound to play
+	 * @param	callback	The function to call
+	 * @param	sound		An FlxSound to play
 	 */
-	public function setPostFireCallback(?Callback:Void->Void, ?Sound:FlxSound):Void
+	public function setPostFireCallback(?callback:Void->Void, ?sound:FlxSound):Void
 	{
-		onPostFireCallback = Callback;
-		onPostFireSound = Sound;
+		onPostFireCallback = callback;
+		onPostFireSound = sound;
 	}
 
 	/**
 	 * Checks to see if the bullets are overlapping the specified object or group
 	 *
-	 * @param  ObjectOrGroup  	The group or object to check if bullets collide
-	 * @param  NotifyCallBack  	A function that will get called if a bullet overlaps an object
-	 * @param  SkipParent    	Don't trigger collision notifies with the parent of this object
+	 * @param  objectOrGroup  	The group or object to check if bullets collide
+	 * @param  notifyCallBack  	A function that will get called if a bullet overlaps an object
+	 * @param  skipParent    	Don't trigger collision notifies with the parent of this object
 	 */
-	public inline function bulletsOverlap(ObjectOrGroup:FlxBasic, ?NotifyCallBack:FlxObject->FlxObject->Void, SkipParent:Bool = true):Void
+	public inline function bulletsOverlap(objectOrGroup:FlxBasic, ?notifyCallBack:FlxObject->FlxObject->Void, skipParent:Bool = true):Void
 	{
 		if (group != null && group.length > 0)
 		{
-			skipParentCollision = SkipParent;
-			FlxG.overlap(ObjectOrGroup, group, NotifyCallBack != null ? NotifyCallBack : onBulletHit, shouldBulletHit);
+			skipParentCollision = skipParent;
+			FlxG.overlap(objectOrGroup, group, notifyCallBack != null ? notifyCallBack : onBulletHit, shouldBulletHit);
 		}
 	}
 
-	function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
+	function shouldBulletHit(object:FlxObject, bullet:FlxObject):Bool
 	{
-		if (parent == Object && skipParentCollision)
+		if (parent == object && skipParentCollision)
 		{
 			return false;
 		}
 
-		if ((Object is FlxTilemap))
+		if ((object is FlxTilemap))
 		{
-			return cast(Object, FlxTilemap).overlapsWithCallback(Bullet);
+			return cast(object, FlxTilemap).overlapsWithCallback(bullet);
 		}
 		else
 		{
@@ -445,9 +445,9 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-	function onBulletHit(Object:FlxObject, Bullet:FlxObject):Void
+	function onBulletHit(object:FlxObject, bullet:FlxObject):Void
 	{
-		Bullet.kill();
+		bullet.kill();
 	}
 
 	function internalFireAtPoint(bullet:TBullet, point:FlxPoint):Void
