@@ -12,7 +12,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRandom;
 import flixel.math.FlxRect;
 import flixel.math.FlxVelocity;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.tile.FlxTilemap;
 import flixel.util.helpers.FlxBounds;
 import flixel.util.helpers.FlxRange;
