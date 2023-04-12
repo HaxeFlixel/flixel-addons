@@ -4,23 +4,22 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.addons.weapon.FlxWeapon.FlxTypedWeapon;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.input.touch.FlxTouch;
 import flixel.math.FlxAngle;
 import flixel.math.FlxPoint;
-import flixel.math.FlxRandom;
 import flixel.math.FlxRect;
 import flixel.math.FlxVelocity;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxTimer;
 import flixel.util.helpers.FlxBounds;
-import flixel.util.helpers.FlxRange;
 #if (flixel >= "5.3.0")
 import flixel.sound.FlxSound;
 #else
 import flixel.system.FlxSound;
+#end
+#if FLX_TOUCH
+import flixel.input.touch.FlxTouch;
 #end
 
 /**

@@ -1,6 +1,5 @@
 package flixel.addons.weapon;
 
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import flixel.math.FlxRect;
