@@ -180,7 +180,7 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 		}
 		#end
 
-		fireTimer.reset(fireRate);
+		fireTimer.reset(fireRate / 1000);
 
 		// Get a free bullet from the pool
 		currentBullet = group.recycle(null, bulletFactory.bind(this));
