@@ -4,14 +4,12 @@ package flixel.addons.plugin.control;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVelocity;
-#if (flixel >= "5.3.0")
 import flixel.sound.FlxSound;
-#else
-import flixel.system.FlxSound;
-#end
+import haxe.Constraints.Function;
 
 /**
  *
@@ -19,7 +17,6 @@ import flixel.system.FlxSound;
  * Sometimes it's hard to know what values to set, especially if you want gravity, jumping, sliding, etc.
  * This class helps sort that - and adds some cool extra functionality too :)
  *
- * TODO: Hot Keys
  * TODO: Binding of sound effects to keys (seperate from setSounds? as those are event based)
  * TODO: Specify animation frames to play based on velocity
  * TODO: Variable gravity (based on height, the higher the stronger the effect)
@@ -182,7 +179,6 @@ class FlxControlHandler
 	var _rotation:Int;
 	var _rotationStopping:Int;
 	var _capVelocity:Bool;
-	// TODO
 	var _hotkeys:Array<String>;
 
 	var _upKey:String;
@@ -190,10 +186,8 @@ class FlxControlHandler
 	var _leftKey:String;
 	var _rightKey:String;
 	var _fireKey:String;
-	// TODO
 	var _altFireKey:String;
 	var _jumpKey:String;
-	// TODO
 	var _altJumpKey:String;
 	var _antiClockwiseKey:String;
 	var _clockwiseKey:String;
@@ -526,11 +520,34 @@ class FlxControlHandler
 	}
 
 	/**
-	 * TODO
-	 * Resets the X and Y speeds. Not yet implemented.
+	 * Adds the given values to the x and y speeds.
+	 * 
+	 * @param   changeX  The value to be added to the x speed.
+	 * @param   changeY  The value to be added to the y speed.
+	 */
+	public function speedUp(changeX:Float, changeY:Float):Void
+	{
+		_xSpeedAdjust += changeX;
+		_ySpeedAdjust += changeY;
+	}
+
+	/**
+	 * Subtracts the given values from x and y speeds.
+	 * 
+	 * @param   changeX  The value to be subtracted from the x speed.
+	 * @param   changeY  The value to be subtracted from the y speed.
+	 */
+	public function slowDown(changeX:Float, changeY:Float):Void
+	{
+		_xSpeedAdjust -= changeX;
+		_ySpeedAdjust -= changeY;
+	}
+
+	/**
+	 * Resets the x and y speeds. Not yet implemented.
 	 *
-	 * @param	resetX	Whether to reset the X speed. Defaults to `true`.
-	 * @param	resetY	Whether to reset the Y speed. Defaults to `true`.
+	 * @param   resetX  Whether to reset the x speed. Defaults to `true`.
+	 * @param   resetY  Whether to reset the y speed. Defaults to `true`.
 	 */
 	public function resetSpeeds(resetX:Bool = true, resetY:Bool = true):Void
 	{
@@ -543,6 +560,31 @@ class FlxControlHandler
 		{
 			_ySpeedAdjust = 0;
 		}
+	}
+
+	/**
+	 * Creates a new hot key, which will be bound to the specified function (such as "swap weapon", "quit", etc).
+	 * 
+	 * @param   key       The name of the `FlxKey` to use as the hot key (e.g., `"SPACE"`, `"CONTROL"`, `"Q"`, etc).
+	 * @param   callback  The function to call when the key is pressed.
+	 * @param   keymode   The keymode that will trigger the callback. Either `KEYMODE_PRESSED`, `KEYMODE_JUST_DOWN` or `KEYMODE_RELEASED`.
+	 */
+	public function addHotKey(key:String, callback:Function, keymode:Int):Void
+	{
+		// TODO Implement hotkeys
+		if (!_hotkeys.contains(key))
+			_hotkeys.push(key);
+	}
+
+	/**
+	 * Removes a previously defined hot key.
+	 * 
+	 * @param   key  The name of the `FlxKey` to use as the hot key (e.g., `"SPACE"`, `"CONTROL"`, `"Q"`, etc).
+	 * @return  Whether the hot key was successfully found and removed.
+	 */
+	public function removeHotKey(key:String):Bool
+	{
+		return _hotkeys.remove(key);
 	}
 
 	/**
@@ -583,7 +625,7 @@ class FlxControlHandler
 	 * @param	keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
 	 * @param	repeatDelay		Time delay in ms between which the fire action can repeat (0 means instant, 250 would allow it to fire approx. 4 times per second)
 	 * @param	callback		A user defined function to call when it fires
-	 * @param	altKey			Specify an alternative fire key that works AS WELL AS the primary fire key (TODO)
+	 * @param	altKey			Specify an alternative fire key that works AS WELL AS the primary fire key
 	 */
 	public function setFireButton(key:String, keymode:Int, repeatDelay:Int, callback:Void->Void, altKey:String = ""):Void
 	{
@@ -610,7 +652,7 @@ class FlxControlHandler
 	 * @param	repeatDelay		Time delay in ms between which the jumping can repeat (250 would be 4 times per second)
 	 * @param	jumpFromFall	A time in ms that allows the Sprite to still jump even if it's just fallen off a platform, if still within ths time limit
 	 * @param	callback		A user defined function to call when the Sprite jumps
-	 * @param	altKey			Specify an alternative jump key that works AS WELL AS the primary jump key (TODO)
+	 * @param	altKey			Specify an alternative jump key that works AS WELL AS the primary jump key
 	 */
 	public function setJumpButton(key:String, keymode:Int, height:Int, surface:Int, repeatDelay:Int = 250, jumpFromFall:Int = 0, ?callback:Void->Void,
 			altKey:String = ""):Void
@@ -669,11 +711,11 @@ class FlxControlHandler
 
 			if (_movement == MOVEMENT_INSTANT)
 			{
-				_entity.velocity.y = _upMoveSpeed;
+				_entity.velocity.y = _upMoveSpeed - _ySpeedAdjust;
 			}
 			else if (_movement == MOVEMENT_ACCELERATES)
 			{
-				_entity.acceleration.y = _upMoveSpeed;
+				_entity.acceleration.y = _upMoveSpeed - _ySpeedAdjust;
 			}
 
 			if (_bounds != null && _entity.y < _bounds.top)
@@ -701,11 +743,11 @@ class FlxControlHandler
 
 			if (_movement == MOVEMENT_INSTANT)
 			{
-				_entity.velocity.y = _downMoveSpeed;
+				_entity.velocity.y = _downMoveSpeed + _ySpeedAdjust;
 			}
 			else if (_movement == MOVEMENT_ACCELERATES)
 			{
-				_entity.acceleration.y = _downMoveSpeed;
+				_entity.acceleration.y = _downMoveSpeed + _ySpeedAdjust;
 			}
 
 			if (_bounds != null && _entity.y > _bounds.bottom)
@@ -733,11 +775,11 @@ class FlxControlHandler
 
 			if (_movement == MOVEMENT_INSTANT)
 			{
-				_entity.velocity.x = _leftMoveSpeed;
+				_entity.velocity.x = _leftMoveSpeed - _xSpeedAdjust;
 			}
 			else if (_movement == MOVEMENT_ACCELERATES)
 			{
-				_entity.acceleration.x = _leftMoveSpeed;
+				_entity.acceleration.x = _leftMoveSpeed - _xSpeedAdjust;
 			}
 
 			if (_bounds != null && _entity.x < _bounds.x)
@@ -765,11 +807,11 @@ class FlxControlHandler
 
 			if (_movement == MOVEMENT_INSTANT)
 			{
-				_entity.velocity.x = _rightMoveSpeed;
+				_entity.velocity.x = _rightMoveSpeed + _xSpeedAdjust;
 			}
 			else if (_movement == MOVEMENT_ACCELERATES)
 			{
-				_entity.acceleration.x = _rightMoveSpeed;
+				_entity.acceleration.x = _rightMoveSpeed + _xSpeedAdjust;
 			}
 
 			if (_bounds != null && _entity.x > _bounds.right)
@@ -798,10 +840,9 @@ class FlxControlHandler
 				_entity.angularAcceleration = _antiClockwiseRotationSpeed;
 			}
 
-			// TODO - Not quite there yet given the way Flixel can rotate to any valid int angle!
 			if (_enforceAngleLimits)
 			{
-				// entity.angle = FlxAngle.angleLimit(entity.angle, minAngle, maxAngle);
+				_entity.angle = FlxMath.bound(FlxAngle.wrap(_entity.angle), _minAngle, _maxAngle);
 			}
 		}
 
@@ -825,10 +866,9 @@ class FlxControlHandler
 				_entity.angularAcceleration = _clockwiseRotationSpeed;
 			}
 
-			// TODO - Not quite there yet given the way Flixel can rotate to any valid int angle!
 			if (_enforceAngleLimits)
 			{
-				// entity.angle = FlxAngle.angleLimit(entity.angle, minAngle, maxAngle);
+				_entity.angle = FlxMath.bound(FlxAngle.wrap(_entity.angle), _minAngle, _maxAngle);
 			}
 		}
 
@@ -847,13 +887,15 @@ class FlxControlHandler
 
 			if (_movement == MOVEMENT_INSTANT)
 			{
-				_entity.velocity.x = motion.x;
-				_entity.velocity.y = motion.y;
+				// TODO Does this really work? I get the feeling that I did this wrong.
+				// Pretend that the above TODO comment is in the below conditional statement too, and is also in the next function.
+				_entity.velocity.x = motion.x + _xSpeedAdjust;
+				_entity.velocity.y = motion.y + _ySpeedAdjust;
 			}
 			else if (_movement == MOVEMENT_ACCELERATES)
 			{
-				_entity.acceleration.x = motion.x;
-				_entity.acceleration.y = motion.y;
+				_entity.acceleration.x = motion.x + _xSpeedAdjust;
+				_entity.acceleration.y = motion.y + _ySpeedAdjust;
 			}
 
 			if (_bounds != null && _entity.x < _bounds.x)
@@ -884,13 +926,13 @@ class FlxControlHandler
 
 			if (_movement == MOVEMENT_INSTANT)
 			{
-				_entity.velocity.x = -motion.x;
-				_entity.velocity.y = -motion.y;
+				_entity.velocity.x = -(motion.x + _xSpeedAdjust);
+				_entity.velocity.y = -(motion.y + _ySpeedAdjust);
 			}
 			else if (_movement == MOVEMENT_ACCELERATES)
 			{
-				_entity.acceleration.x = -motion.x;
-				_entity.acceleration.y = -motion.y;
+				_entity.acceleration.x = -(motion.x + _xSpeedAdjust);
+				_entity.acceleration.y = -(motion.y + _ySpeedAdjust);
 			}
 
 			if (_bounds != null && _entity.x < _bounds.x)
@@ -909,9 +951,9 @@ class FlxControlHandler
 		// 0 = Pressed
 		// 1 = Just Down
 		// 2 = Just Released
-		if (((_fireKeyMode == 0) && FlxG.keys.anyPressed([_fireKey]))
-			|| (_fireKeyMode == 1 && FlxG.keys.anyJustPressed([_fireKey]))
-			|| (_fireKeyMode == 2 && FlxG.keys.anyJustReleased([_fireKey])))
+		if (((_fireKeyMode == 0) && FlxG.keys.anyPressed([_fireKey, _altFireKey]))
+			|| (_fireKeyMode == 1 && FlxG.keys.anyJustPressed([_fireKey, _altFireKey]))
+			|| (_fireKeyMode == 2 && FlxG.keys.anyJustReleased([_fireKey, _altFireKey])))
 		{
 			if (_fireRate > 0)
 			{
@@ -951,9 +993,9 @@ class FlxControlHandler
 			_extraSurfaceTime = FlxG.game.ticks + _jumpFromFallTime;
 		}
 
-		if ((_jumpKeyMode == KEYMODE_PRESSED && FlxG.keys.anyPressed([_jumpKey]))
-			|| (_jumpKeyMode == KEYMODE_JUST_DOWN && FlxG.keys.anyJustPressed([_jumpKey]))
-			|| (_jumpKeyMode == KEYMODE_RELEASED && FlxG.keys.anyJustReleased([_jumpKey])))
+		if ((_jumpKeyMode == KEYMODE_PRESSED && FlxG.keys.anyPressed([_jumpKey, _altJumpKey]))
+			|| (_jumpKeyMode == KEYMODE_JUST_DOWN && FlxG.keys.anyJustPressed([_jumpKey, _altJumpKey]))
+			|| (_jumpKeyMode == KEYMODE_RELEASED && FlxG.keys.anyJustReleased([_jumpKey, _altJumpKey])))
 		{
 			// Sprite not touching a valid jump surface
 			if (_entity.isTouching(_jumpSurface) == false)
