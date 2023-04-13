@@ -508,7 +508,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * Internal helper functions for comparing a tile to the slope arrays to see if a tile should be treated as STEEP or GENTLE slope.
 	 *
 	 * @param 	TileIndex	The Tile Index number of the Tile you want to check.
-	 * @return	Returns true if the tile is listed in one of the slope arrays. Otherwise returns false.
+	 * @return	True if the tile is listed in one of the slope arrays. Otherwise false.
 	 */
 	function checkThickGentle(TileIndex:Int):Bool
 	{
@@ -874,7 +874,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * Internal helper function for comparing a tile to the slope arrays to see if a tile should be treated as a slope.
 	 *
 	 * @param 	TileIndex	The Tile Index number of the Tile you want to check.
-	 * @return	Returns true if the tile is listed in one of the slope arrays. Otherwise returns false.
+	 * @return	True if the tile is listed in one of the slope arrays. Otherwise false.
 	 */
 	function checkArrays(TileIndex:Int):Bool
 	{

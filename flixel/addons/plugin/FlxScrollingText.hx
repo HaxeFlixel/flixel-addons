@@ -241,7 +241,7 @@ class FlxScrollingText extends FlxBasic
 	 * Note: If the text is set to only scroll when on-screen, but if off-screen when this is called, it will still return true.
 	 *
 	 * @param	source	The FlxSprite to check for scrolling on.
-	 * @return	Bool true is the FlxSprite was found and is scrolling, otherwise false
+	 * @return	True if the FlxSprite was found and is scrolling, otherwise false
 	 */
 	public static function isScrolling(source:FlxSprite):Bool
 	{
@@ -257,7 +257,7 @@ class FlxScrollingText extends FlxBasic
 	 * Removes an FlxSprite from the Text Scroller. Note that it doesn't restore the sprite bitmapData.
 	 *
 	 * @param	source	The FlxSprite to remove scrolling for.
-	 * @return	Bool	true if the FlxSprite was removed, otherwise false.
+	 * @return	True if the FlxSprite was removed, otherwise false.
 	 */
 	public static function remove(source:FlxSprite):Bool
 	{

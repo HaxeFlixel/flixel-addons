@@ -30,6 +30,7 @@ class FlxControl extends FlxBasic
 	 * @param	Sprite			The FlxSprite you want this class to control. It can only control one FlxSprite at once.
 	 * @param	MovementType	Set to either MOVEMENT_INSTANT or MOVEMENT_ACCELERATES
 	 * @param	StoppingType	Set to STOPPING_INSTANT, STOPPING_DECELERATES or STOPPING_NEVER
+	 * @param	Player			An optional ID for the player using these controls; using an ID of 1-4 will allow quick reference via `FlxControl.player{ID}`
 	 * @param	UpdateFacing	If true it sets the FlxSprite.facing value to the direction pressed (default false)
 	 * @param	EnableArrowKeys	If true it will enable all arrow keys (default) - see setCursorControl for more fine-grained control
 	 * @return	The new FlxControlHandler
@@ -77,7 +78,7 @@ class FlxControl extends FlxBasic
 	 * Removes a FlxControlHandler
 	 *
 	 * @param	ControlHandler	The FlxControlHandler to delete
-	 * @return	Boolean	true if the FlxControlHandler was removed, otherwise false.
+	 * @return	True if the FlxControlHandler was removed, otherwise false.
 	 */
 	public static function remove(ControlHandler:FlxControlHandler):Bool
 	{

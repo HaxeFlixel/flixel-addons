@@ -1,11 +1,11 @@
 package flixel.addons.editors.spine;
 
-import flixel.addons.editors.spine.texture.FlixelTextureLoader;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxStrip;
+import flixel.addons.editors.spine.texture.FlixelTextureLoader;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxImageFrame;
@@ -17,25 +17,25 @@ import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import haxe.ds.ObjectMap;
-import openfl.display.Graphics;
-import openfl.display.Sprite;
 import openfl.Assets;
+import openfl.Vector;
 import openfl.display.BitmapData;
 import openfl.display.BlendMode;
-import openfl.Vector;
-import spinehaxe.animation.AnimationState;
-import spinehaxe.animation.AnimationStateData;
-import spinehaxe.atlas.Atlas;
-import spinehaxe.atlas.AtlasRegion;
-import spinehaxe.attachments.Attachment;
-import spinehaxe.attachments.MeshAttachment;
-import spinehaxe.attachments.RegionAttachment;
-import spinehaxe.attachments.AtlasAttachmentLoader;
+import openfl.display.Graphics;
+import openfl.display.Sprite;
 import spinehaxe.Bone;
 import spinehaxe.Skeleton;
 import spinehaxe.SkeletonData;
 import spinehaxe.SkeletonJson;
 import spinehaxe.Slot;
+import spinehaxe.animation.AnimationState;
+import spinehaxe.animation.AnimationStateData;
+import spinehaxe.atlas.Atlas;
+import spinehaxe.atlas.AtlasRegion;
+import spinehaxe.attachments.AtlasAttachmentLoader;
+import spinehaxe.attachments.Attachment;
+import spinehaxe.attachments.MeshAttachment;
+import spinehaxe.attachments.RegionAttachment;
 
 /**
  * A Sprite that can play animations exported by Spine (http://esotericsoftware.com/)
@@ -93,6 +93,8 @@ class FlxSpine extends FlxSprite
 	 * @param	Y				The initial Y position of the sprite.
 	 * @param	Width			The maximum width of this sprite (avoid very large sprites since they are performance intensive).
 	 * @param	Height			The maximum height of this sprite (avoid very large sprites since they are performance intensive).
+	 * @param	OffsetX			The X offset of the sprite.
+	 * @param	OffsetY			The Y offset of the sprite.
 	 * @param	renderMeshes	If true, then graphic will be rendered with drawTriangles(), if false (by default), then it will be rendered with drawTiles().
 	 */
 	public function new(skeletonData:SkeletonData, X:Float = 0, Y:Float = 0, Width:Float = 0, Height:Float = 0, OffsetX:Float = 0, OffsetY:Float = 0,
