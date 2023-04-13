@@ -134,7 +134,7 @@ class FlxEffectSprite extends FlxSprite
 	 */
 	override public function update(elapsed:Float):Void
 	{
-		if (updateTargetAnimation && target.animation.frames > 1)
+		if (updateTargetAnimation && target.animation.numFrames > 1)
 		{
 			target.updateAnimation(elapsed);
 		}

@@ -64,7 +64,7 @@ class FlxTransitionableState extends FlxState
 		super();
 	}
 
-	override public function destroy():Void
+	override function destroy():Void
 	{
 		super.destroy();
 		transIn = null;
@@ -72,36 +72,27 @@ class FlxTransitionableState extends FlxState
 		_onExit = null;
 	}
 
-	override public function create():Void
+	override function create():Void
 	{
 		super.create();
 		transitionIn();
 	}
 
-	override public function switchTo(nextState:FlxState):Bool
+	override function startOutro(onOutroComplete:() -> Void)
 	{
 		if (!hasTransOut)
-			return true;
-
-		if (!_exiting)
-			transitionToState(nextState);
-
-		return transOutFinished;
-	}
-
-	function transitionToState(nextState:FlxState):Void
-	{
-		// play the exit transition, and when it's done call FlxG.switchState
-		_exiting = true;
-		transitionOut(function()
+			onOutroComplete();
+		else if (!_exiting)
 		{
-			FlxG.switchState(nextState);
-		});
-
-		if (skipNextTransOut)
-		{
-			skipNextTransOut = false;
-			finishTransOut();
+			// play the exit transition, and when it's done call FlxG.switchState
+			_exiting = true;
+			transitionOut(onOutroComplete);
+			
+			if (skipNextTransOut)
+			{
+				skipNextTransOut = false;
+				finishTransOut();
+			}
 		}
 	}
 

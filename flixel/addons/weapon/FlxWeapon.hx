@@ -9,14 +9,10 @@ import flixel.math.FlxAngle;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.math.FlxVelocity;
+import flixel.sound.FlxSound;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.helpers.FlxBounds;
-#if (flixel >= "5.3.0")
-import flixel.sound.FlxSound;
-#else
-import flixel.system.FlxSound;
-#end
 #if FLX_TOUCH
 import flixel.input.touch.FlxTouch;
 #end
