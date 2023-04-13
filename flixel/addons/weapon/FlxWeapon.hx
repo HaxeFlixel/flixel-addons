@@ -306,7 +306,7 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 	 *
 	 * @param   point    The point to be rotated.
 	 * @param   origin   The point around which to be rotated. Usually the origin of the `parent`.
-	 * @param   degrees  The current angle from of the origin. Usually the `parent`'s angle.
+	 * @param   degrees  The angle by which to rotate `point` around `origin`. Usually the `parent`'s angle.
 	 * @param   result   An optional point to reuse instead of getting another from the pool.
 	 * @return  The new rotated point.
 	 */
@@ -314,10 +314,10 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 	{
 		if (result == null)
 			result = FlxPoint.get();
-		
+
 		final distanceTo = origin.distanceTo(point);
 		final degreesTo = degrees + origin.distanceTo(point);
-		
+
 		result.setPolarDegrees(distanceTo, degreesTo);
 		result.addPoint(origin);
 		return result;
