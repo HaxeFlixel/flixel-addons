@@ -88,6 +88,11 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 	public var useParentDirection(default, set):Bool;
 
 	/**
+	 * A fixed position from which to fire the weapon, like in the game Missile Command. Only accessible when `fireFrom == POSITION`.
+	 */
+	public var firePosition(default, null):FlxBounds<FlxPoint>;
+
+	/**
 	 * A value used to offset a bullet's position when it is fired. Can be used to, for example, line a bullet up with the "nose" of a space ship.
 	 * Only accessible when `fireFrom == PARENT`.
 	 */
@@ -99,11 +104,6 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 	 * Only accessible when `fireFrom == PARENT`.
 	 */
 	public var positionOffsetBounds(default, null):FlxBounds<FlxPoint>;
-
-	/**
-	 * A fixed position from which to fire the weapon, like in the game Missile Command. Only accessible when `fireFrom == POSITION`.
-	 */
-	public var firePosition(default, null):FlxBounds<FlxPoint>;
 
 	public var fireFrom(default, set):FlxWeaponFireFrom;
 	public var speedMode:FlxWeaponSpeedMode;
