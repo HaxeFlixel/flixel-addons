@@ -32,7 +32,7 @@ import flixel.input.touch.FlxTouch;
  * @author Touch added by Impaler / Beeblerox
  *
  * TODO: Angled bullets
- * TODO: multishot
+ * TODO: Multishot
  * TODO: Baked Rotation support for angled bullets
  * TODO: Bullet death styles (particle effects)
  * TODO: Bullet trails - blur FX style and Missile Command "draw lines" style? (could be another FX plugin)
@@ -71,7 +71,7 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 	public var nextFire:Int = 0;
 
 	/**
-	 * The delay in milliseconds (ms) between which each bullet is fired. Default is 0, which means there is no delay.
+	 * The delay in milliseconds (ms) between which each bullet is fired. Default is `0`, which means there is no delay.
 	 */
 	public var fireRate:Int = 0;
 
@@ -120,7 +120,7 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 
 	/**
 	 * The elasticity of the fired bullet controls how much it rebounds off collision surfaces.
-	 * Between 0 and 1 (0 being no rebound, 1 being 100% force rebound). Default is 0.
+	 * Between `0` and `1` (`0` being no rebound, and `1` being 100% force rebound). Default is `0`.
 	 */
 	public var bulletElasticity:Float = 0;
 
@@ -134,12 +134,24 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 	 */
 	public var currentBullet:TBullet;
 
-	// Callbacks
+	/**
+	 * A function that is called immediately before a bullet is fired.
+	 */
 	public var onPreFireCallback:Void->Void;
+
+	/**
+	 * A function that is called immediately after a bullet is fired.
+	 */
 	public var onPostFireCallback:Void->Void;
 
-	// Sounds
+	/**
+	 * A sound that is played immediately before a bullet is fired.
+	 */
 	public var onPreFireSound:FlxSound;
+
+	/**
+	 * A sound that is played immediately after a bullet is fired.
+	 */
 	public var onPostFireSound:FlxSound;
 
 	/**
