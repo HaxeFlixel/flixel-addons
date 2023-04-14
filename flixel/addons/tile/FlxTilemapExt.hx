@@ -376,9 +376,6 @@ class FlxTilemapExt extends FlxTilemap
 			for (column in selectionX...selectionWidth)
 			{
 				final mapIndex:Int = (row * widthInTiles) + column;
-				if (mapIndex < 0 || mapIndex > _data.length - 1)
-					continue;
-				
 				final dataIndex:Int = _data[mapIndex];
 				if (dataIndex < 0)
 					continue;
