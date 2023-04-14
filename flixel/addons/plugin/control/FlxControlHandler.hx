@@ -76,6 +76,8 @@ class FlxControlHandler
 	 */
 	public static inline var ROTATION_STOPPING_NEVER:Int = 2;
 
+	// TODO Deprecate these three KEYMODE constants for FlxInputState
+
 	/**
 	 * This keymode fires for as long as the key is held down
 	 */
@@ -179,8 +181,9 @@ class FlxControlHandler
 	var _rotation:Int;
 	var _rotationStopping:Int;
 	var _capVelocity:Bool;
-	var _hotkeys:Array<String>;
+	var _hotkeys:Map<String, FlxHotKey> = new Map();
 
+	// TODO Use FlxKeys instead of Strings
 	var _upKey:String;
 	var _downKey:String;
 	var _leftKey:String;
@@ -323,6 +326,7 @@ class FlxControlHandler
 		_antiClockwiseRotationSpeed = -antiClockwiseSpeed;
 		_clockwiseRotationSpeed = clockwiseSpeed;
 
+		// TODO Remove this line because it resets the rotation keys if they are already set
 		setRotationKeys();
 		setMaximumRotationSpeed(speedMax);
 		setRotationDeceleration(deceleration);
@@ -400,8 +404,8 @@ class FlxControlHandler
 	 *
 	 * @param	leftRight				Use the LEFT and RIGHT arrow keys for anti-clockwise and clockwise rotation respectively.
 	 * @param	upDown					Use the UP and DOWN arrow keys for anti-clockwise and clockwise rotation respectively.
-	 * @param	customAntiClockwise		The String value of your own key to use for anti-clockwise rotation (as taken from flixel.system.input.Keyboard)
-	 * @param	customClockwise			The String value of your own key to use for clockwise rotation (as taken from flixel.system.input.Keyboard)
+	 * @param	customAntiClockwise		The name of the `FlxKey` to use for anti-clockwise rotation.
+	 * @param	customClockwise			The name of the `FlxKey` to use for clockwise rotation.
 	 */
 	public function setRotationKeys(leftRight:Bool = true, upDown:Bool = false, customAntiClockwise:String = "", customClockwise:String = ""):Void
 	{
@@ -428,7 +432,7 @@ class FlxControlHandler
 	 * If you want to enable a Thrust like motion for your sprite use this to set the speed and keys.
 	 * This is usually used in conjunction with Rotation and it will over-ride anything already defined in setMovementSpeed.
 	 *
-	 * @param	thrustKey		Specify the key String (as taken from flixel.system.input.Keyboard) to use for the Thrust action
+	 * @param	thrustKey		The name of the `FlxKey` to use for the Thrust action
 	 * @param	thrustSpeed		The speed in pixels per second which the sprite will move. Acceleration or Instant movement is determined by the Movement Type.
 	 * @param	reverseKey		If you want to be able to reverse, set the key string as taken from flixel.system.input.Keyboard (defaults to null).
 	 * @param	reverseSpeed	The speed in pixels per second which the sprite will reverse. Acceleration or Instant movement is determined by the Movement Type.
@@ -571,15 +575,14 @@ class FlxControlHandler
 	 */
 	public function addHotKey(key:String, callback:Function, keymode:Int):Void
 	{
-		// TODO Implement hotkeys
-		if (!_hotkeys.contains(key))
-			_hotkeys.push(key);
+		if (!_hotkeys.exists(key))
+			_hotkeys.set(key, {callback: callback, keymode: keymode});
 	}
 
 	/**
 	 * Removes a previously defined hot key.
 	 * 
-	 * @param   key  The name of the `FlxKey` to use as the hot key (e.g., `"SPACE"`, `"CONTROL"`, `"Q"`, etc).
+	 * @param   key  The name of the `FlxKey` used by the hot key.
 	 * @return  Whether the hot key was successfully found and removed.
 	 */
 	public function removeHotKey(key:String):Bool
@@ -621,7 +624,7 @@ class FlxControlHandler
 	/**
 	 * Enable a fire button
 	 *
-	 * @param	key				The key to use as the fire button (String from flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
+	 * @param	key				The name of the `FlxKey` to use as the fire button.
 	 * @param	keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
 	 * @param	repeatDelay		Time delay in ms between which the fire action can repeat (0 means instant, 250 would allow it to fire approx. 4 times per second)
 	 * @param	callback		A user defined function to call when it fires
@@ -645,7 +648,7 @@ class FlxControlHandler
 	/**
 	 * Enable a jump button
 	 *
-	 * @param	key				The key to use as the jump button (String from flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
+	 * @param	key				The name of the `FlxKey` to use as the jump button.
 	 * @param	keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
 	 * @param	height			The height in pixels/sec that the Sprite will attempt to jump (gravity and acceleration can influence this actual height obtained)
 	 * @param	surface			A bitwise combination of all valid surfaces the Sprite can jump off (such as FLOOR)
@@ -842,7 +845,7 @@ class FlxControlHandler
 
 			if (_enforceAngleLimits)
 			{
-				_entity.angle = FlxMath.bound(FlxAngle.wrap(_entity.angle), _minAngle, _maxAngle);
+				_entity.angle = FlxMath.bound(FlxAngle.wrapAngle(_entity.angle), _minAngle, _maxAngle);
 			}
 		}
 
@@ -868,7 +871,7 @@ class FlxControlHandler
 
 			if (_enforceAngleLimits)
 			{
-				_entity.angle = FlxMath.bound(FlxAngle.wrap(_entity.angle), _minAngle, _maxAngle);
+				_entity.angle = FlxMath.bound(FlxAngle.wrapAngle(_entity.angle), _minAngle, _maxAngle);
 			}
 		}
 
@@ -1248,6 +1251,16 @@ class FlxControlHandler
 			}
 		}
 		#end
+
+		for (key => hotkey in _hotkeys)
+		{
+			if ((hotkey.keymode == KEYMODE_PRESSED && FlxG.keys.anyPressed([key]))
+				|| (hotkey.keymode == KEYMODE_JUST_DOWN && FlxG.keys.anyJustPressed([key]))
+				|| (hotkey.keymode == KEYMODE_RELEASED && FlxG.keys.anyJustReleased([key])))
+			{
+				hotkey.callback();
+			}
+		}
 	}
 
 	/**
@@ -1462,4 +1475,10 @@ class FlxControlHandler
 		_rightKey = "NUMPADSIX";
 	}
 }
+
+private typedef FlxHotKey =
+{
+	callback:Function,
+	keymode:Int
+};
 #end
