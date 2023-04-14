@@ -354,26 +354,25 @@ class FlxTilemapExt extends FlxTilemap
 			yPos = position.y;
 			position.putWeak();
 		}
+		
+		inline function bindInt(value:Int, min:Int, max:Int)
+		{
+			return Std.int(FlxMath.bound(value, min, max));
+		}
 
-		// Figure out what tiles we need to check against
-		var selectionX:Int = Math.floor((object.x - xPos) / scaledTileWidth);
-		var selectionY:Int = Math.floor((object.y - yPos) / scaledTileHeight);
-		var selectionWidth:Int = selectionX + Math.ceil(object.width / scaledTileWidth) + 1;
-		var selectionHeight:Int = selectionY + Math.ceil(object.height / scaledTileHeight) + 1;
-
-		// Then bound these coordinates by the map edges
-		selectionX = Std.int(FlxMath.bound(selectionX, 0, widthInTiles));
-		selectionY = Std.int(FlxMath.bound(selectionY, 0, heightInTiles));
-		selectionWidth = Std.int(FlxMath.bound(selectionWidth, 0, widthInTiles));
-		selectionHeight = Std.int(FlxMath.bound(selectionHeight, 0, heightInTiles));
+		// Figure out what tiles we need to check against, and bind them by the map edges
+		final minTileX:Int = bindInt(Math.floor((object.x - xPos) / scaledTileWidth), 0, widthInTiles);
+		final minTileY:Int = bindInt(Math.floor((object.y - yPos) / scaledTileHeight), 0, heightInTiles);
+		final maxTileX:Int = bindInt(Math.ceil((object.x + object.width - xPos) / scaledTileWidth), 0, widthInTiles);
+		final maxTileY:Int = bindInt(Math.ceil((object.y + object.height - yPos) / scaledTileHeight), 0, heightInTiles);
 
 		// Then loop through this selection of tiles
 		final deltaX:Float = xPos - last.x;
 		final deltaY:Float = yPos - last.y;
 
-		for (row in selectionY...selectionHeight)
+		for (row in minTileY...maxTileY)
 		{
-			for (column in selectionX...selectionWidth)
+			for (column in minTileX...maxTileX)
 			{
 				final mapIndex:Int = (row * widthInTiles) + column;
 				final dataIndex:Int = _data[mapIndex];
