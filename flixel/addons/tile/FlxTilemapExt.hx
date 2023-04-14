@@ -366,7 +366,7 @@ class FlxTilemapExt extends FlxTilemap
 		final maxTileX:Int = bindInt(Math.ceil((object.x + object.width - xPos) / scaledTileWidth), 0, widthInTiles);
 		final maxTileY:Int = bindInt(Math.ceil((object.y + object.height - yPos) / scaledTileHeight), 0, heightInTiles);
 
-		// Then loop through this selection of tiles
+		// Then loop through this selection of tiles and call FlxObject.separate() accordingly
 		final deltaX:Float = xPos - last.x;
 		final deltaY:Float = yPos - last.y;
 
