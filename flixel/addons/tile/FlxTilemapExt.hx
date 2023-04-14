@@ -368,8 +368,6 @@ class FlxTilemapExt extends FlxTilemap
 		selectionHeight = Std.int(FlxMath.bound(selectionHeight, 0, heightInTiles));
 
 		// Then loop through this selection of tiles
-		var rowStart:Int = selectionY * widthInTiles;
-		var column:Int;
 		var tile:FlxTile;
 		var overlapFound:Bool;
 		var deltaX:Float = xPos - last.x;
@@ -377,25 +375,13 @@ class FlxTilemapExt extends FlxTilemap
 
 		for (row in selectionY...selectionHeight)
 		{
-			column = selectionX;
-
-			while (column < selectionWidth)
+			for (column in selectionX...selectionWidth)
 			{
-				overlapFound = false;
-
-				var index:Int = rowStart + column;
-				if (index < 0 || index > _data.length - 1)
-				{
-					column++;
+				var index:Int = (row * widthInTiles) + column;
 					continue;
-				}
-
-				var dataIndex:Int = _data[index];
+				
 				if (dataIndex < 0)
-				{
-					column++;
 					continue;
-				}
 
 				tile = _tileObjects[dataIndex];
 
@@ -430,7 +416,7 @@ class FlxTilemapExt extends FlxTilemap
 					{
 						if ((tile.callbackFunction != null) && ((tile.filter == null) || isOfType(object, tile.filter)))
 						{
-							tile.mapIndex = rowStart + column;
+							tile.mapIndex = index;
 							tile.callbackFunction(tile, object);
 						}
 						results = true;
@@ -438,12 +424,10 @@ class FlxTilemapExt extends FlxTilemap
 				}
 				else if ((tile.callbackFunction != null) && ((tile.filter == null) || isOfType(object, tile.filter)))
 				{
-					tile.mapIndex = rowStart + column;
+					tile.mapIndex = index;
 					tile.callbackFunction(tile, object);
 				}
-				column++;
 			}
-			rowStart += widthInTiles;
 		}
 
 		return results;
