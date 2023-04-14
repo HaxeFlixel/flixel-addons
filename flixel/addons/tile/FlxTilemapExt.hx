@@ -370,7 +370,7 @@ class FlxTilemapExt extends FlxTilemap
 		final deltaX:Float = xPos - last.x;
 		final deltaY:Float = yPos - last.y;
 
-		// Then loop through this selection of tiles and call FlxObject.separate() accordingly
+		// Loop through the range of tiles and call the callback on them, accordingly
 		for (row in minTileY...maxTileY)
 		{
 			for (column in minTileX...maxTileX)
