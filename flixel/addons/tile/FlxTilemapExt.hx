@@ -18,12 +18,6 @@ import flixel.util.FlxDirectionFlags;
 
 using flixel.util.FlxColorTransformUtil;
 
-#if (haxe_ver >= 4.2)
-import Std.isOfType;
-#else
-import Std.is as isOfType;
-#end
-
 // TODO: try to make it cleaner (i mean rendering and animated tiles)
 
 /**
@@ -413,7 +407,7 @@ class FlxTilemapExt extends FlxTilemap
 					// New generalized slope collisions
 					if (overlapFound || (!overlapFound && checkArrays(tile.index)))
 					{
-						if ((tile.callbackFunction != null) && ((tile.filter == null) || isOfType(object, tile.filter)))
+						if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.isOfType(object, tile.filter)))
 						{
 							tile.mapIndex = mapIndex;
 							tile.callbackFunction(tile, object);
@@ -421,7 +415,7 @@ class FlxTilemapExt extends FlxTilemap
 						results = true;
 					}
 				}
-				else if ((tile.callbackFunction != null) && ((tile.filter == null) || isOfType(object, tile.filter)))
+				else if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.isOfType(object, tile.filter)))
 				{
 					tile.mapIndex = mapIndex;
 					tile.callbackFunction(tile, object);

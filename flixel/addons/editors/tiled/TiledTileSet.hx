@@ -5,11 +5,7 @@ import flixel.util.typeLimit.OneOfTwo;
 import openfl.Assets;
 import openfl.utils.ByteArray;
 import haxe.io.Path;
-#if haxe4
 import haxe.xml.Access;
-#else
-import haxe.xml.Fast as Access;
-#end
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -48,7 +44,7 @@ class TiledTileSet
 		numRows = numCols = 1;
 
 		// Use the correct data format
-		if ((data is #if (haxe_ver < "4.0.0") Access #else Xml #end))
+		if (data is Xml)
 		{
 			source = data;
 		}

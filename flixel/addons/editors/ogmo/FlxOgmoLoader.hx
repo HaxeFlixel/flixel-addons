@@ -6,11 +6,7 @@ import flixel.system.FlxAssets.FlxTilemapGraphicAsset;
 import flixel.tile.FlxTilemap;
 import haxe.xml.Parser;
 import openfl.Assets;
-#if haxe4
 import haxe.xml.Access;
-#else
-import haxe.xml.Fast as Access;
-#end
 
 /**
  * This is for loading maps made with OGMO Editor 2. For loading maps made with OGMO Editor 3, use `FlxOgmo3Loader`

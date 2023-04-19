@@ -15,11 +15,7 @@ import openfl.Assets;
 
 using haxe.EnumTools;
 
-#if haxe4
 import haxe.xml.Access;
-#else
-import haxe.xml.Fast as Access;
-#end
 
 /**
  * Loads a scene from XML file. Scenes contain layers of entities (custom FlxSprite),

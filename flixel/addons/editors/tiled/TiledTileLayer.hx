@@ -3,11 +3,7 @@ package flixel.addons.editors.tiled;
 import flash.utils.Endian;
 import flixel.addons.editors.tiled.TiledLayer.TiledLayerType;
 import openfl.utils.ByteArray;
-#if haxe4
 import haxe.xml.Access;
-#else
-import haxe.xml.Fast as Access;
-#end
 
 class TiledTileLayer extends TiledLayer
 {
