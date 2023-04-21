@@ -33,7 +33,33 @@ using flixel.util.FlxColorTransformUtil;
  * Downward Slope fix
  * @author Early Melon
  */
-class FlxTilemapExt extends FlxTilemap
+class FlxTilemapExt extends FlxTypedTilemap<FlxTile>
+{
+	function initTileObjects():Void
+	{
+		if (frames == null)
+			return;
+
+		_tileObjects = FlxDestroyUtil.destroyArray(_tileObjects);
+		// Create some tile objects that we'll use for overlap checks (one for each tile)
+		_tileObjects = new Array<FlxTile>();
+
+		var length:Int = frames.numFrames;
+		length += _startingIndex;
+
+		for (i in 0...length)
+			_tileObjects[i] = new FlxTile(this, i, tileWidth, tileHeight, (i >= _drawIndex), (i >= _collideIndex) ? allowCollisions : NONE);
+
+		// Create debug tiles for rendering bounding boxes on demand
+		#if FLX_DEBUG
+		updateDebugTileBoundingBoxSolid();
+		updateDebugTileBoundingBoxNotSolid();
+		updateDebugTileBoundingBoxPartial();
+		#end
+	}
+}
+
+class FlxTypedTilemapExt<Tile:FlxTile> extends FlxTypedTilemap<Tile>
 {
 	// Slope related variables
 	var _snapping:Int = 2;
