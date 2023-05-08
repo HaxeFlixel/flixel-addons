@@ -8,8 +8,7 @@ import flixel.util.FlxColor;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
-@:enum
-abstract TransitionType(String)
+enum abstract TransitionType(String)
 {
 	var NONE = "none";
 	var TILES = "tiles";
