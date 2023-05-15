@@ -80,33 +80,29 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 	/**
 	 * The parent sprite of this weapon. Only accessible when `fireFrom == PARENT`.
 	 */
-	public var parent(default, null):FlxSprite;
+	@:deprecated("use FlxWeaponFireFrom.PARENT's parent param, instead")
+	public var parent(get, set):FlxSprite;
 
 	/**
 	 * Whether to fire bullets in the direction of the `parent`'s angle. Only accessible when `fireFrom == PARENT`.
 	 */
-	public var useParentDirection(default, set):Bool;
+	@:deprecated("use FlxWeaponFireFrom.PARENT's useParentAngle param, instead")
+	public var useParentDirection(get, set):Bool;
 
 	/**
 	 * A fixed position from which to fire the weapon, like in the game Missile Command. Only accessible when `fireFrom == POSITION`.
 	 */
-	public var firePosition(default, null):FlxBounds<FlxPoint>;
+	@:deprecated("use FlxWeaponFireFrom.PARENT's useParentAngle param, instead")
+	public var firePosition(get, set):FlxBounds<FlxPoint>;
 
 	/**
 	 * A value used to offset a bullet's position when it is fired. Can be used to, for example, line a bullet up with the "nose" of a space ship.
 	 * Only accessible when `fireFrom == PARENT`.
 	 */
-	@:deprecated("Use positionOffsetBounds instead")
-	public var positionOffset(default, null):FlxPoint;
+	@:deprecated("use FlxWeaponFireFrom.PARENT's offset param, instead")
+	public var positionOffset(get, set):FlxPoint;
 
-	/**
-	 * A value used to offset a bullet's position when it is fired. Can be used to, for example,
-	 * line a bullet up with the "nose" of a space ship. Only accessible when `fireFrom == PARENT`.
-	 * @since 3.2.0
-	 */
-	public var positionOffsetBounds(default, null):FlxBounds<FlxPoint>;
-
-	public var fireFrom(default, set):FlxWeaponFireFrom;
+	public var fireFrom:FlxWeaponFireFrom;
 	public var speedMode:FlxWeaponSpeedMode;
 
 	/**
@@ -223,9 +219,14 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 		// Clear any velocity that may have been previously set from the pool
 		currentBullet.velocity.zero(); // TODO is this really necessary?
 
+		final parentAngleOffset:Float = null
+		final parent:FlxSprite = null;
+
 		switch (fireFrom)
 		{
-			case PARENT(parent, offset, useParentAngle, angleOffset):
+			case PARENT(enumParent, offset, useParentAngle, angleOffset):
+				parent = enumParent;
+				parentAngleOffset = angleOffset;
 				// store new offset in a new variable
 				var actualOffset = FlxPoint.get(FlxG.random.float(offset.min.x, offset.max.x), FlxG.random.float(offset.min.y, offset.max.y));
 				if (useParentAngle)
@@ -253,6 +254,9 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 		currentBullet.elasticity = bulletElasticity;
 		currentBullet.lifespan = FlxG.random.float(bulletLifeSpan.min, bulletLifeSpan.max);
 
+		inline function randomFloat(range:FlxBounds<Float>)
+			return FlxG.random.float(range.min, range.max);
+
 		switch (mode)
 		{
 			case FIRE_AT_POSITION(x, y):
@@ -262,13 +266,25 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 				internalFireAtPoint(currentBullet, target.getPosition(FlxPoint.weak()));
 
 			case FIRE_FROM_ANGLE(angle):
-				internalFireFromAngle(currentBullet, FlxG.random.float(angle.min, angle.max));
+				internalFireFromAngle(currentBullet, randomFloat(angle));
 
-			case FIRE_FROM_PARENT_ANGLE(angle):
-				internalFireFromAngle(currentBullet, parent.angle + FlxG.random.float(angle.min, angle.max));
+			case FIRE_FROM_PARENT_ANGLE(angleNoise):
+				if (parent != null)
+				{
+					final angleOffset = parentAngleOffset + (angleNoise == null ? 0 : randomFloat(angleNoise));
+					internalFireFromAngle(currentBullet, parent.angle + angleOffset);
+				}
+				else
+					FlxG.log.warn("cannot use fireFromParentAngle");
 
-			case FIRE_FROM_PARENT_FACING(angle):
-				internalFireFromAngle(currentBullet, parent.facing.degrees + FlxG.random.float(angle.min, angle.max));
+			case FIRE_FROM_PARENT_FACING(angleNoise):
+				if (parent != null)
+				{
+					final angleOffset = parentAngleOffset + (angleNoise == null ? 0 : randomFloat(angleNoise));
+					internalFireFromAngle(currentBullet, parent.facing.degrees + angleOffset);
+				}
+				else
+					FlxG.log.warn("cannot use fireFromParentFacing");
 
 			#if FLX_TOUCH
 			case FIRE_AT_TOUCH(touch):
@@ -414,7 +430,7 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 	 * @return  `true` if a bullet was fired, or `false` if one wasn't available.
 	 * A reference to the last fired bullet is stored in `currentBullet`.
 	 */
-	public inline function fireFromParentAngle(angle:FlxBounds<Float>):Bool
+	public inline function fireFromParentAngle(?angle:FlxBounds<Float>):Bool
 	{
 		return runFire(FIRE_FROM_PARENT_ANGLE(angle));
 	}
@@ -461,9 +477,15 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 
 	function shouldBulletHit(object:FlxObject, bullet:FlxObject):Bool
 	{
-		if (parent == object && skipParentCollision)
+		if (skipParentCollision)
 		{
-			return false;
+			switch(fireFrom)
+			{
+				case PARENT(parent, _, _, _):
+					if (parent == object)
+						return false;
+				default:
+			}
 		}
 
 		if ((object is FlxTilemap))
@@ -529,39 +551,21 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 		name = null;
 		group = FlxDestroyUtil.destroy(group);
 		bounds = FlxDestroyUtil.put(bounds);
-		parent = null; // Don't destroy the parent
-		positionOffset = FlxDestroyUtil.put(positionOffset);
-		if (positionOffsetBounds != null)
-		{
-			positionOffsetBounds.min = FlxDestroyUtil.put(positionOffsetBounds.min);
-			positionOffsetBounds.max = FlxDestroyUtil.put(positionOffsetBounds.max);
-			positionOffsetBounds = null;
-		}
-		if (firePosition != null)
-		{
-			firePosition.min = FlxDestroyUtil.put(firePosition.min);
-			firePosition.max = FlxDestroyUtil.put(firePosition.max);
-			firePosition = null;
-		}
 		if (fireFrom != null)
 		{
 			switch (fireFrom)
 			{
 				case PARENT(parent, offset, useParentAngle, angleOffset):
-					parent = null;
 					if (offset != null)
 					{
 						offset.min = FlxDestroyUtil.put(offset.min);
 						offset.max = FlxDestroyUtil.put(offset.max);
-						offset = null;
 					}
-					angleOffset = null;
 				case POSITION(position):
 					if (position != null)
 					{
 						position.min = FlxDestroyUtil.put(position.min);
 						position.max = FlxDestroyUtil.put(position.max);
-						position = null;
 					}
 			}
 			// fireFrom = null; // Can't do this because sending null to set_fireFrom() causes an NPE
@@ -588,45 +592,89 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 		bulletFactory = null;
 	}
 
-	function set_useParentDirection(v:Bool):Bool
+	function get_parent():FlxSprite
+	{
+		return switch (fireFrom)
+		{
+			case PARENT(parent, _, _, _):parent;
+			default: null;
+		}
+	}
+
+	function set_parent(value:FlxSprite):FlxSprite
 	{
 		switch (fireFrom)
 		{
-			case PARENT(parent, offset, useParentAngle, angleOffset):
-				@:bypassAccessor fireFrom = PARENT(parent, offset, v, angleOffset);
+			case PARENT(_, offset, useParentAngle, angleOffset):
+				fireFrom = PARENT(value, offset, useParentAngle, angleOffset);
 			default:
+				FlxG.log.warn("Cannot set parent unless fireFrom is PARENT");
 		}
-		return v;
+		return value;
 	}
 
-	function set_fireFrom(v:FlxWeaponFireFrom):FlxWeaponFireFrom
+	function get_useParentDirection():Bool
 	{
-		switch (v)
+		switch (fireFrom)
 		{
-			case PARENT(parent, offset, useParentAngle, angleOffset):
-				this.parent = parent;
-				// this.positionOffset = offset;
-				this.positionOffsetBounds = offset;
-				this.useParentDirection = useParentAngle;
-				if (angleOffset != null)
-					this.angleOffset = angleOffset;
-
-				this.firePosition = null;
-
-			case POSITION(position):
-				this.firePosition = position;
-
-				this.parent = null;
-				this.positionOffset = null;
-				this.positionOffsetBounds = null;
-
+			case PARENT(_, _, useParentAngle, _):
+				return useParentAngle;
 			default:
-				this.parent = null;
-				this.positionOffset = null;
-				this.positionOffsetBounds = null;
-				this.firePosition = null;
+				return null;
 		}
-		return fireFrom = v;
+	}
+
+	function set_useParentDirection(value:Bool):Bool
+	{
+		switch (fireFrom)
+		{
+			case PARENT(parent, offset, _, angleOffset):
+				fireFrom = PARENT(parent, offset, value, angleOffset);
+			default:
+				FlxG.log.warn("Cannot set useParentDirection unless fireFrom is PARENT");
+		}
+		return value;
+	}
+
+
+	function get_positionOffset():FlxPoint
+	{
+		switch (fireFrom)
+		{
+			case POSITION(position):
+				return position.min;
+			default:
+				return null;
+		}
+	}
+
+	function set_positionOffset(value:FlxPoint):FlxPoint
+	{
+		switch (fireFrom)
+		{
+			case PARENT(parent, _, useParentAngle, angleOffset):
+				fireFrom = PARENT(parent, new FlxBounds(value, value), useParentAngle, angleOffset);
+			default:
+				FlxG.log.warn("Cannot set positionOffset unless fireFrom is PARENT");
+		}
+		return value;
+	}
+
+	function get_firePosition():FlxBounds<FlxPoint>
+	{
+		switch (fireFrom)
+		{
+			case POSITION(position):
+				return position;
+			default:
+				return null;
+		}
+	}
+
+	function set_firePosition(value:FlxBounds<FlxPoint>):FlxBounds<FlxPoint>
+	{
+		fireFrom = POSITION(value);
+		return value;
 	}
 }
 
@@ -653,8 +701,8 @@ enum FlxWeaponFireMode
 	FIRE_AT_POSITION(x:Float, y:Float);
 	FIRE_AT_TARGET(target:FlxSprite);
 	FIRE_FROM_ANGLE(angle:FlxBounds<Float>);
-	FIRE_FROM_PARENT_ANGLE(angleNoise:FlxBounds<Float>);
-	FIRE_FROM_PARENT_FACING(angleNoise:FlxBounds<Float>);
+	FIRE_FROM_PARENT_ANGLE(?angleNoise:FlxBounds<Float>);
+	FIRE_FROM_PARENT_FACING(?angleNoise:FlxBounds<Float>);
 
 	#if FLX_TOUCH
 	FIRE_AT_TOUCH(touch:FlxTouch);
