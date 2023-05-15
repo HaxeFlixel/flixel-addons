@@ -8,11 +8,7 @@ import flixel.util.FlxColor;
 import haxe.xml.Parser;
 import openfl.Assets;
 import openfl.display.BlendMode;
-#if haxe4
 import haxe.xml.Access;
-#else
-import haxe.xml.Fast as Access;
-#end
 
 /**
  * Parser for particle files created with "Starling Particle Editor" or "Particle Designer".
