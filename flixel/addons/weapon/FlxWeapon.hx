@@ -100,8 +100,9 @@ class FlxTypedWeapon<TBullet:FlxBullet> implements IFlxDestroyable
 	public var positionOffset(default, null):FlxPoint;
 
 	/**
-	 * A value used to offset a bullet's position when it is fired. Can be used to, for example, line a bullet up with the "nose" of a space ship.
-	 * Only accessible when `fireFrom == PARENT`.
+	 * A value used to offset a bullet's position when it is fired. Can be used to, for example,
+	 * line a bullet up with the "nose" of a space ship. Only accessible when `fireFrom == PARENT`.
+	 * @since 3.2.0
 	 */
 	public var positionOffsetBounds(default, null):FlxBounds<FlxPoint>;
 
