@@ -244,8 +244,7 @@ class FlxPexParser
 	}
 }
 
-@:enum
-abstract PexEmitterType(Int) from Int
+enum abstract PexEmitterType(Int) from Int
 {
 	var GRAVITY = 0;
 	var RADIAL = 1;
