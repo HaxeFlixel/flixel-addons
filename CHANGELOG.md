@@ -1,3 +1,8 @@
+3.1.1 (May 19, 2023)
+------------------------------
+#### Changes and improvements:
+- Fix `@:enum` deprecation warnings in haxe 4.3.1
+
 3.1.0 (April 25, 2023)
 ------------------------------
 #### Dependencies:
