@@ -132,8 +132,7 @@ class FlxTransitionSprite extends FlxSprite
 	}
 }
 
-@:enum
-abstract TransitionStatus(Int)
+enum abstract TransitionStatus(Int)
 {
 	var IN = 0;
 	var OUT = 1;
