@@ -10,26 +10,34 @@ import flixel.math.FlxPoint;
 import flixel.util.FlxDestroyUtil;
 
 /**
+ * A simple `FlxSprite` with advanced display properties, such as `skew` and `transformMatrix`.
  * @author Zaphod
+ * 
+ * @see [FlxSkewedSprite Demo](https://haxeflixel.com/demos/FlxSkewedSprite/)
  */
 class FlxSkewedSprite extends FlxSprite
 {
+	/**
+	 * The horizontal and vertical skewing of this sprite.
+	 * Used only when matrixExposed is set to true.
+	 */
 	public var skew(default, null):FlxPoint = FlxPoint.get();
 
 	/**
 	 * Tranformation matrix for this sprite.
-	 * Used only when matrixExposed is set to true
+	 * Used only when matrixExposed is set to true.
 	 */
 	public var transformMatrix(default, null):Matrix = new Matrix();
 
 	/**
 	 * Bool flag showing whether transformMatrix is used for rendering or not.
-	 * False by default, which means that transformMatrix isn't used for rendering
+	 * False by default, which means that transformMatrix isn't used for rendering.
 	 */
 	public var matrixExposed:Bool = false;
 
 	/**
-	 * Internal helper matrix object. Used for rendering calculations when matrixExposed is set to false
+	 * Internal helper matrix object. Used for rendering calculations when
+	 * matrixExposed is set to false.
 	 */
 	var _skewMatrix:Matrix = new Matrix();
 
