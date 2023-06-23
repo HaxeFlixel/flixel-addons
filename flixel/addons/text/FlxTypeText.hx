@@ -547,4 +547,10 @@ class FlxTypeText extends FlxText
 		_sound.loadEmbedded(new TypeSound());
 		#end
 	}
+
+	override function regenGraphic(){
+		if (textField == null || !_regen || !isOnScreen())
+			return;
+		super.regenGraphic();
+	}
 }
