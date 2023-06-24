@@ -30,7 +30,7 @@ class FlxBackdrop extends FlxSprite
 	/**
 	 * The gap between repeated tiles, defaults to (0, 0), or no gap.
 	 */
-	public var spacing(default, null):FlxPoint = new FlxPoint();
+	public var spacing(default, null):FlxPoint = FlxPoint.get();
 	
 	/**
 	 * If true, tiles are pre-rendered to a intermediary bitmap whenever `loadGraphic` is called
