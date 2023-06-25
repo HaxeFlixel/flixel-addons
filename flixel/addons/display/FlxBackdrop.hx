@@ -68,7 +68,7 @@ class FlxBackdrop extends FlxSprite
 	 * Creates an instance of the FlxBackdrop class, used to create infinitely scrolling backgrounds.
 	 *
 	 * @param   graphic     The image you want to use for the backdrop.
-	 * @param   repeatAxes  If the backdrop should repeat on the X axis.
+	 * @param   repeatAxes  The axis where the backdrop should repeat to.
 	 * @param   spacingX    Amount of spacing between tiles on the X axis
 	 * @param   spacingY    Amount of spacing between tiles on the Y axis
 	 */
