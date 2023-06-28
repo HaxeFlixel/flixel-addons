@@ -2,12 +2,7 @@ package flixel.addons.editors.tiled;
 
 import flixel.addons.editors.tiled.TiledLayer.TiledLayerType;
 import flixel.util.FlxColor;
-
-#if haxe4
 import haxe.xml.Access;
-#else
-import haxe.xml.Fast as Access;
-#end
 
 /**
  * Copyright (c) 2013 by Samuel Batista
@@ -17,8 +12,9 @@ import haxe.xml.Fast as Access;
 class TiledGroupLayer extends TiledLayer
 {
 	public var layers:Array<TiledLayer> = [];
+
 	var layerMap:Map<String, TiledLayer> = new Map<String, TiledLayer>();
-	
+
 	public function new(source:Access, parent:TiledMap, noLoadHash:Map<String, Bool>)
 	{
 		super(source, parent);
@@ -29,10 +25,10 @@ class TiledGroupLayer extends TiledLayer
 	function loadLayers(source:Access, parent:TiledMap, noLoadHash:Map<String, Bool>):Void
 	{
 		for (el in source.elements)
-		{	
+		{
 			if (el.has.name && noLoadHash.exists(el.att.name))
 				continue;
-			
+
 			var layer:TiledLayer = switch (el.name.toLowerCase())
 			{
 				case "group": new TiledGroupLayer(el, parent, noLoadHash);
@@ -41,7 +37,7 @@ class TiledGroupLayer extends TiledLayer
 				case "imagelayer": new TiledImageLayer(el, parent);
 				case _: null;
 			}
-			
+
 			if (layer != null)
 			{
 				layers.push(layer);
@@ -51,7 +47,7 @@ class TiledGroupLayer extends TiledLayer
 	}
 
 	public function getLayer(name:String):TiledLayer
-	{	
+	{
 		return layerMap.get(name);
 	}
 }

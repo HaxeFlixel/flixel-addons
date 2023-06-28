@@ -77,8 +77,8 @@ class FlxOutlineEffect implements IFlxEffect
 	 * @param	Mode		Which Mode you would like to use for the effect. FAST = Optimized using only 4 draw calls, NORMAL = Outline on all 8 sides, PIXEL_BY_PIXEL = Surround every pixel (can affect performance).
 	 * @param	Color		Color of the outline.
 	 * @param	Thickness	Outline thickness in pixels.
-	 * @param	Quality 	Outline quality - # of iterations to use when drawing. 0:just 1, 1:equal number to Thickness. Not used with PIXEL_BY_PIXEL mode.
 	 * @param	Threshold	Alpha sensitivity, only used with PIXEL_BY_PIXEL mode.
+	 * @param	Quality 	Outline quality - # of iterations to use when drawing. 0:just 1, 1:equal number to Thickness. Not used with PIXEL_BY_PIXEL mode.
 	 */
 	public function new(?Mode:FlxOutlineMode, Color:FlxColor = FlxColor.WHITE, Thickness:Int = 1, Threshold:Int = 0, Quality:Float = 1)
 	{

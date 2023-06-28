@@ -12,7 +12,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRandom;
 import flixel.math.FlxRect;
 import flixel.math.FlxVelocity;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.tile.FlxTilemap;
 import flixel.util.helpers.FlxBounds;
 import flixel.util.helpers.FlxRange;
@@ -34,7 +34,7 @@ import flixel.util.helpers.FlxRange;
  * TODO: Bullet trails - blur FX style and Missile Command "draw lines" style? (could be another FX plugin)
  * TODO: Homing Missiles
  * TODO: Bullet uses random sprite from sprite sheet (for rainbow style bullets), or cycles through them in sequence?
- * TODO: Some Weapon base classes like shotgun, lazer, etc?
+ * TODO: Some Weapon base classes like shotgun, laser, etc?
  */
 typedef FlxWeapon = FlxTypedWeapon<FlxBullet>;
 
@@ -147,8 +147,8 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 * You should call one of the makeBullet functions to visually create the bullets.
 	 * Then either use setDirection with fire() or one of the fireAt functions to launch them.
 	 *
-	 * @param	Name		The name of your weapon (i.e. "lazer" or "shotgun"). For your internal reference really, but could be displayed in-game.
-	 * @param	BulletFactory	FlxWeapon uses this factory function to actually create a bullet
+	 * @param	name		The name of your weapon (i.e. "laser" or "shotgun"). For your internal reference really, but could be displayed in-game.
+	 * @param	bulletFactory	FlxWeapon uses this factory function to actually create a bullet
 	 * @param	fireFrom	enum that describes the weapon firing position, for Example Parent, Position.
 	 * @param	speedMode	enum that describes the bullets speed mode, for Example Velocity, Acceleration.
 	 */
@@ -167,10 +167,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	/**
 	 * Internal function that handles the actual firing of the bullets
 	 *
-	 * @param	Method
-	 * @param	X
-	 * @param	Y
-	 * @param	Target
+	 * @param	Mode	Mode to use for firing the bullet
 	 * @return	True if a bullet was fired or false if one wasn't available. The bullet last fired is stored in FlxWeapon.prevBullet
 	 */
 	function runFire(Mode:FlxWeaponFireMode):Bool
@@ -288,7 +285,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	 *
 	 * @param	point	The to be rotated point
 	 * @param	origin	The to be rotated around point. usually the origin of the parent flxsprite
-	 * @param	point	the current angle from of the origin. usually the parent angle.
+	 * @param	angle	the current angle from of the origin. usually the parent angle.
 	 * @return	The new rotated Point
 	 */
 	public function rotatePoints(point:FlxPoint, origin:FlxPoint, angle:Float):FlxPoint
@@ -369,7 +366,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 	/**
 	 * Fires a bullet (if one is available) based on the given angle
 	 *
-	 * @param	Angle	The angle (in degrees) calculated in clockwise positive direction (down = 90 degrees positive, right = 0 degrees positive, up = 90 degrees negative)
+	 * @param	angle	The angle (in degrees) calculated in clockwise positive direction (down = 90 degrees positive, right = 0 degrees positive, up = 90 degrees negative)
 	 * @return	True if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 	 */
 	public inline function fireFromAngle(angle:FlxBounds<Float>):Bool

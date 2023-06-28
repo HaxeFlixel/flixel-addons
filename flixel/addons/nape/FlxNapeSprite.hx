@@ -1,8 +1,8 @@
 package flixel.addons.nape;
 
 import flixel.FlxSprite;
-import flixel.system.FlxAssets;
 import flixel.math.FlxAngle;
+import flixel.system.FlxAssets;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;

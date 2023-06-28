@@ -2,11 +2,7 @@ package flixel.addons.editors.tiled;
 
 import haxe.Int64;
 import flixel.math.FlxPoint;
-#if haxe4
 import haxe.xml.Access;
-#else
-import haxe.xml.Fast as Access;
-#end
 
 /**
  * (original by Matt Tuttle based on Thomas Jahn's. Haxe port by Adrien Fischer)

@@ -1,11 +1,7 @@
 package flixel.addons.editors.tiled;
 
 import flash.utils.ByteArray;
-#if haxe4
 import haxe.xml.Access;
-#else
-import haxe.xml.Fast as Access;
-#end
 
 /**
  * Base class for Tiled object and tile layers

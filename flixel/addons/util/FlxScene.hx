@@ -3,23 +3,19 @@ package flixel.addons.util;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
-import flixel.ui.FlxButton;
 import flixel.tile.FlxTilemap;
+import flixel.ui.FlxButton;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
-import flixel.addons.display.FlxBackdrop;
-import openfl.Assets;
 import haxe.xml.Parser;
+import openfl.Assets;
 
 using haxe.EnumTools;
 
-#if haxe4
 import haxe.xml.Access;
-#else
-import haxe.xml.Fast as Access;
-#end
 
 /**
  * Loads a scene from XML file. Scenes contain layers of entities (custom FlxSprite),
@@ -458,10 +454,10 @@ class FlxScene
 	}
 
 	/**
-	 * Gets a specific constant by id.
+	 * Gets a specific constant by ID.
 	 *
 	 * @param 	id 	Constant name.
-	 * @return 	Bool, Int, Float or String.
+	 * @return 	Bool, Int, Float or String associated with the ID.
 	 */
 	public function const(id:String):Dynamic
 	{
@@ -474,10 +470,10 @@ class FlxScene
 	}
 
 	/**
-	 * Gets a specific object by id.
+	 * Gets a specific object by ID.
 	 *
-	 * @param 	Id 	Constant name.
-	 * @return
+	 * @param 	id 	Constant name.
+	 * @return	The object associated with the ID.
 	 */
 	public function object(id:String):Dynamic
 	{
@@ -492,7 +488,7 @@ class FlxScene
 	/**
 	 * Helper function to parse Booleans from String to Bool
 	 *
-	 * @param Value 	String value
+	 * @param value 	String value
 	 */
 	function parseBool(value:String):Bool
 	{

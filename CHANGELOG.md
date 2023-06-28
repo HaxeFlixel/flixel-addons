@@ -1,3 +1,19 @@
+3.1.1 (May 19, 2023)
+------------------------------
+#### Changes and improvements:
+- Fix `@:enum` deprecation warnings in haxe 4.3.1
+
+3.1.0 (April 25, 2023)
+------------------------------
+#### Dependencies:
+- Dropped support for haxe 4.0 and 4.1, use 4.2.5 or higher
+- Flixel 5.3.0 compatibility, flixel-addons 3.1.0 will not work with flixel 5.2 or lower.
+
+#### Changes and improvements:
+- `FlxTilemapExt`: Implement scaling ([#384](https://github.com/HaxeFlixel/flixel-addons/pull/384))
+- Improve docs ([#376](https://github.com/HaxeFlixel/flixel-addons/pull/376))
+- `FlxTransitionableState`: Use `startOutro` instead of `switchTo` ([#382](https://github.com/HaxeFlixel/flixel-addons/pull/382))
+
 3.0.2 (January 18, 2023)
 ------------------------------
 * Fix haxelib caching issue from reuploading 3.0.1

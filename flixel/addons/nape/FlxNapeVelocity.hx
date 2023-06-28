@@ -46,6 +46,7 @@ class FlxNapeVelocity
 	 * Timings are approximate due to the way Flash timers work, and irrespective of SWF frame rate. Allow for a variance of +- 50ms.
 	 * The source object doesn't stop moving automatically should it ever reach the destination coordinates.
 	 * @param	Source			The FlxNapeSprite to move
+	 * @param	Touch			The FlxTouch where the source object will move to
 	 * @param	Speed			The speed it will move, in pixels per second (default is 100 pixels/sec)
 	 */
 	public static inline function moveTowardsTouch(Source:FlxNapeSprite, Touch:FlxTouch, Speed:Float = 100):Void
