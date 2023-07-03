@@ -620,16 +620,20 @@ class FlxExtendedSprite extends FlxSprite
 				FlxMouseControl.addToStack(this);
 				return;
 			}
-
-			if (_clickPixelPerfect
-				&& FlxCollision.pixelPerfectPointCheck(Math.floor(FlxG.mouse.x), Math.floor(FlxG.mouse.y), this, _clickPixelPerfectAlpha))
+			
+			// TODO: add pixelsOverlapMouse func to FlxSprite?
+			inline function pixelsOverlapMouse(alpha)
+			{
+				return pixelsOverlapPoint(FlxG.mouse.getPosition(FlxPoint.weak()), alpha);
+			}
+			
+			if (_clickPixelPerfect && pixelsOverlapMouse(_clickPixelPerfectAlpha))
 			{
 				FlxMouseControl.addToStack(this);
 				return;
 			}
 
-			if (_dragPixelPerfect
-				&& FlxCollision.pixelPerfectPointCheck(Math.floor(FlxG.mouse.x), Math.floor(FlxG.mouse.y), this, _dragPixelPerfectAlpha))
+			if (_dragPixelPerfect && pixelsOverlapMouse(_dragPixelPerfectAlpha))
 			{
 				FlxMouseControl.addToStack(this);
 				return;
