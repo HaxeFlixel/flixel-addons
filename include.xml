@@ -4,4 +4,8 @@
 
 	<!-- This prevents a bug in neko where inlined functions exceed the max code length -->
 	<haxedef name="NAPE_NO_INLINE" if="neko" />
+	
+	<assets path="assets/images/transitions/circle.png" rename="flixel/images/transitions/circle.png" embed="true" />
+	<assets path="assets/images/transitions/square.png" rename="flixel/images/transitions/square.png" embed="true" />
+	<assets path="assets/images/transitions/diamond.png" rename="flixel/images/transitions/diamond.png" embed="true" />
 </project>
