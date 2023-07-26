@@ -95,6 +95,9 @@ class FlxTransitionSprite extends FlxSprite
 		}
 		_delay = Delay;
 		loadGraphic(Graphic, true, GraphicWidth, GraphicHeight);
+		
+		if (graphic == null)
+			return;
 
 		graphic.persist = true;
 		graphic.destroyOnNoUse = false;
