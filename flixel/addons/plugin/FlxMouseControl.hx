@@ -15,7 +15,7 @@ import flixel.util.FlxDestroyUtil;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
-@:deprecated("FlxMouseControl is deprecated, use flixel.input.mouse.FlxMouseEvent") // since 5.4.0
+@:deprecated("FlxMouseControl is deprecated, use flixel.input.mouse.FlxMouseEvent") // since 3.1.2
 class FlxMouseControl extends FlxBasic
 {
 	/**
