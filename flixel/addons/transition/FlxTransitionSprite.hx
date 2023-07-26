@@ -17,9 +17,9 @@ class GraphicTransTileCircle extends RawGraphicTransTileCircle
 	static inline var WIDTH = 544;
 	static inline var HEIGHT = 32;
 
-	public function new()
+	public function new(?onLoad)
 	{
-		super(WIDTH, HEIGHT, true, 0xFFffffff);
+		super(WIDTH, HEIGHT, true, 0xFFffffff, onLoad);
 		// Set properties because `@:bitmap` constructors ignore width/height
 		this.width = WIDTH;
 		this.height = HEIGHT;
@@ -33,9 +33,9 @@ class GraphicTransTileDiamond extends RawGraphicTransTileDiamond
 	static inline var WIDTH = 544;
 	static inline var HEIGHT = 32;
 
-	public function new()
+	public function new(?onLoad)
 	{
-		super(WIDTH, HEIGHT, true, 0xFFffffff);
+		super(WIDTH, HEIGHT, true, 0xFFffffff, onLoad);
 		// Set properties because `@:bitmap` constructors ignore width/height
 		this.width = WIDTH;
 		this.height = HEIGHT;
@@ -49,9 +49,9 @@ class GraphicTransTileSquare extends RawGraphicTransTileSquare
 	static inline var WIDTH = 544;
 	static inline var HEIGHT = 32;
 
-	public function new()
+	public function new(?onLoad)
 	{
-		super(WIDTH, HEIGHT, true, 0xFFffffff);
+		super(WIDTH, HEIGHT, true, 0xFFffffff, onLoad);
 		// Set properties because `@:bitmap` constructors ignore width/height
 		this.width = WIDTH;
 		this.height = HEIGHT;
