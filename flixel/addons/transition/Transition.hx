@@ -34,17 +34,10 @@ class Transition extends FlxSubState
 		add(_effect);
 	}
 
-	override public function update(elapsed:Float):Void
-	{
-		super.update(elapsed);
-		_effect.update(elapsed);
-	}
-
 	public override function destroy():Void
 	{
 		super.destroy();
 		finishCallback = null;
-		_effect.destroy();
 		_effect = null;
 	}
 
