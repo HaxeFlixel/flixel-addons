@@ -9,7 +9,6 @@ import openfl.display.BitmapData;
 import openfl.display.ShaderInput;
 import openfl.display.ShaderParameter;
 import openfl.display.ShaderParameterType;
-import openfl.utils.Assets;
 
 using StringTools;
 
@@ -168,19 +167,15 @@ class FlxRuntimeShader extends FlxGraphicsShader
 	 */
 	public function new(?fragmentSource:String, ?vertexSource:String):Void
 	{
-		try
-		{
-			glFragmentSource = Assets.getText(fragmentSource);
-		}
-		catch (e:Dynamic)
-			glFragmentSource = (fragmentSource != null && fragmentSource.length > 0) ? fragmentSource : BASE_FRAGMENT_SOURCE;
+		if (fragmentSource != null && fragmentSource.length > 0)
+			glFragmentSource = fragmentSource;
+		else
+			glFragmentSource = BASE_FRAGMENT_SOURCE;
 
-		try
-		{
-			glVertexSource = Assets.getText(vertexSource);
-		}
-		catch (e:Dynamic)
-			glVertexSource = (vertexSource != null && vertexSource.length > 0) ? vertexSource : BASE_VERTEX_SOURCE;
+		if (vertexSource != null && vertexSource.length > 0)
+			glVertexSource = vertexSource;
+		else
+			glVertexSource = BASE_VERTEX_SOURCE;
 
 		super();
 	}
