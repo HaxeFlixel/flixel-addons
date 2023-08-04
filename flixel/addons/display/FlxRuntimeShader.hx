@@ -2,11 +2,13 @@ package flixel.addons.display;
 
 #if (FLX_DRAW_QUADS && !flash)
 import flixel.graphics.tile.FlxGraphicsShader;
+#if lime
+import lime.utils.Float32Array;
+#end
 import openfl.display.BitmapData;
 import openfl.display.ShaderInput;
 import openfl.display.ShaderParameter;
 import openfl.display.ShaderParameterType;
-import openfl.utils._internal.Float32Array;
 import openfl.utils.Assets;
 
 using StringTools;
