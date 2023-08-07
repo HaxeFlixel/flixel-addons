@@ -11,7 +11,7 @@ import haxe.crypto.Md5;
 import haxe.crypto.Sha1;
 import flixel.FlxG;
 #if flash
-import openfl.Lib;
+import flash.Lib;
 #end
 
 /**
