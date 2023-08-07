@@ -1,8 +1,8 @@
 package flixel.addons.plugin;
 
-import flash.display.BitmapData;
-import flash.geom.Point;
-import flash.geom.Rectangle;
+import openfl.display.BitmapData;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 import flixel.FlxBasic;
 import flixel.text.FlxBitmapText;
 import flixel.util.FlxColor;

@@ -1,6 +1,6 @@
 package flixel.addons.text;
 
-import flash.display.BitmapData;
+import openfl.display.BitmapData;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxG;

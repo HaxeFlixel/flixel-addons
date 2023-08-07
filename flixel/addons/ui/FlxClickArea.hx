@@ -1,9 +1,9 @@
 package flixel.addons.ui;
 
-import flash.events.Event;
-import flash.events.MouseEvent;
-import flash.events.TouchEvent;
-import flash.Lib;
+import openfl.events.Event;
+import openfl.events.MouseEvent;
+import openfl.events.TouchEvent;
+import openfl.Lib;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.ui.FlxButton;

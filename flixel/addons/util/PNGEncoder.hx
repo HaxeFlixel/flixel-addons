@@ -33,9 +33,9 @@
 package flixel.addons.util;
 
 #if !js
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.utils.ByteArray;
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import openfl.utils.ByteArray;
 
 /**
  * Class that converts BitmapData into a valid PNG
