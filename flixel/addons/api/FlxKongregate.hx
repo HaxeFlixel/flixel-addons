@@ -1,12 +1,12 @@
 package flixel.addons.api;
 
 #if flash
-import flash.display.DisplayObject;
-import flash.display.Loader;
-import flash.events.Event;
-import flash.events.IOErrorEvent;
-import flash.net.URLRequest;
-import flash.system.Security;
+import openfl.display.DisplayObject;
+import openfl.display.Loader;
+import openfl.events.Event;
+import openfl.events.IOErrorEvent;
+import openfl.net.URLRequest;
+import openfl.system.Security;
 import flixel.FlxG;
 
 /**

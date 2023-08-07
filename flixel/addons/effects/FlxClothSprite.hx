@@ -1,6 +1,6 @@
 package flixel.addons.effects;
 
-import flash.geom.Rectangle;
+import openfl.geom.Rectangle;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;

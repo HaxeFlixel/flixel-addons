@@ -1,17 +1,17 @@
 package flixel.addons.api;
 
-import flash.display.Loader;
-import flash.display.BitmapData;
-import flash.events.Event;
-import flash.events.IOErrorEvent;
-import flash.net.URLLoader;
-import flash.net.URLRequest;
-import flash.net.URLRequestMethod;
+import openfl.display.Loader;
+import openfl.display.BitmapData;
+import openfl.events.Event;
+import openfl.events.IOErrorEvent;
+import openfl.net.URLLoader;
+import openfl.net.URLRequest;
+import openfl.net.URLRequestMethod;
 import haxe.crypto.Md5;
 import haxe.crypto.Sha1;
 import flixel.FlxG;
 #if flash
-import flash.Lib;
+import openfl.Lib;
 #end
 
 /**

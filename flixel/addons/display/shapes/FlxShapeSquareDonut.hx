@@ -1,7 +1,7 @@
 package flixel.addons.display.shapes;
 
-import flash.display.BlendMode;
-import flash.geom.Matrix;
+import openfl.display.BlendMode;
+import openfl.geom.Matrix;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 
