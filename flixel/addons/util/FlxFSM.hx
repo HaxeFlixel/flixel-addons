@@ -462,10 +462,11 @@ class FlxFSMTransitionTable<T>
 		if (_garbagecollect)
 		{
 			_garbagecollect = false;
-			var removeThese = [];
-			for (transition in _table)
+			var i = _table.length;
+			while (i-- > 0)
 			{
-				if (transition.remove == true)
+				final transition = _table[i];
+				if (transition.remove)
 				{
 					if (transition.from == currentState)
 					{
@@ -473,13 +474,9 @@ class FlxFSMTransitionTable<T>
 					}
 					else
 					{
-						removeThese.push(transition);
+						_table.remove(transition);
 					}
 				}
-			}
-			for (transition in removeThese)
-			{
-				_table.remove(transition);
 			}
 		}
 
@@ -487,7 +484,7 @@ class FlxFSMTransitionTable<T>
 		{
 			if (transition.from == currentState || transition.from == null)
 			{
-				if (transition.evaluate(owner) == true)
+				if (transition.evaluate(owner))
 				{
 					return transition.to;
 				}
@@ -557,16 +554,19 @@ class FlxFSMTransitionTable<T>
 
 	/**
 	 * Replaces given state class with another.
-	 * @param	target			State class to replace
-	 * @param	replacement		State class to replace with
+	 * @param   target       State class to replace
+	 * @param   replacement  State class to replace with
+	 * @param   removeNow    If true, the transition is removed immediately, otherwise it's
+	 *                       removed when the target is not in the specified `from` state
 	 */
-	public function replace(target:Class<FlxFSMState<T>>, replacement:Class<FlxFSMState<T>>)
+	public function replace(target:Class<FlxFSMState<T>>, replacement:Class<FlxFSMState<T>>, removeNow = false)
 	{
-		for (transition in _table)
+		var i = _table.length;
+		while (i-- > 0)
 		{
+			final transition = _table[i];
 			if (transition.to == target)
 			{
-				transition.remove = true;
 				if (transition.from == null)
 				{
 					addGlobal(replacement, transition.condition);
@@ -575,64 +575,56 @@ class FlxFSMTransitionTable<T>
 				{
 					add(transition.from, replacement, transition.condition);
 				}
-				_garbagecollect = true;
+				
+				removeTransition(transition, removeNow);
 			}
-			if (transition.from == target)
+			else if (transition.from == target)
 			{
-				transition.remove = true;
 				add(replacement, transition.to, transition.condition);
-				_garbagecollect = true;
+				removeTransition(transition, removeNow);
 			}
 		}
 	}
 
 	/**
 	 * Removes a transition condition from the table
-	 * @param	from	From State
-	 * @param	to		To State
-	 * @param	condition	Condition function
-	 * @return	True when removed, false if not in table
+	 * @param   from       From state. If null, this arg is ignored
+	 * @param   to         To state. If null, this arg is ignored
+	 * @param   condition  Condition function. If null, this arg is ignored
+	 * @param   removeNow  If true, the transition is removed immediately, otherwise it's
+	 *                     removed when the target is not in the specified `from` state
 	 */
-	public function remove(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:Null<T->Bool>)
+	public function remove(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:(T)->Bool, removeNow = false)
 	{
-		switch ([from, to, condition])
+		if (from == null && to == null && condition == null)
 		{
-			case [f, null, null]:
-				for (transition in _table)
-				{
-					if (from == transition.from)
-					{
-						transition.remove = true;
-						_garbagecollect = true;
-					}
-				}
-			case [f, t, null]:
-				for (transition in _table)
-				{
-					if (from == transition.from && to == transition.to)
-					{
-						transition.remove = true;
-						_garbagecollect = true;
-					}
-				}
-			case [null, t, c]:
-				for (transition in _table)
-				{
-					if (to == transition.to && condition == transition.condition)
-					{
-						transition.remove = true;
-						_garbagecollect = true;
-					}
-				}
-			case [f, t, c]:
-				for (transition in _table)
-				{
-					if (from == transition.from && to == transition.to && condition == transition.condition)
-					{
-						transition.remove = true;
-						_garbagecollect = true;
-					}
-				}
+			FlxG.log.error('Cannot call remove with all null parameters');
+			return;
+		}
+		
+		var i = _table.length;
+		while (i-- > 0)
+		{
+			final transition = _table[i];
+			if ((from == null || from == transition.from)
+				&& (to == null || to == transition.to)
+				&& (condition == null || condition == transition.condition))
+			{
+				removeTransition(transition, removeNow);
+			}
+		}
+	}
+	
+	function removeTransition(transition:Transition<T>, removeNow:Bool)
+	{
+		if (removeNow)
+		{
+			_table.remove(transition);
+		}
+		else
+		{
+			transition.remove = true;
+			_garbagecollect = true;
 		}
 	}
 
@@ -645,41 +637,24 @@ class FlxFSMTransitionTable<T>
 	 */
 	public function hasTransition(?from:Class<FlxFSMState<T>>, ?to:Class<FlxFSMState<T>>, ?condition:Null<T->Bool>):Bool
 	{
-		switch ([from, to, condition])
+		if (from == null && to == null && condition == null)
 		{
-			case [f, null, null]:
-				for (transition in _table)
-				{
-					if (from == transition.from && transition.remove == false)
-					{
-						return true;
-					}
-				}
-			case [f, t, null]:
-				for (transition in _table)
-				{
-					if (from == transition.from && to == transition.to && transition.remove == false)
-					{
-						return true;
-					}
-				}
-			case [null, t, c]:
-				for (transition in _table)
-				{
-					if (to == transition.to && condition == transition.condition && transition.remove == false)
-					{
-						return true;
-					}
-				}
-			case [f, t, c]:
-				for (transition in _table)
-				{
-					if (from == transition.from && to == transition.to && condition == transition.condition && transition.remove == false)
-					{
-						return true;
-					}
-				}
+			FlxG.log.error('Cannot call exists with all null parameters');
+			return false;
 		}
+		
+		var i = _table.length;
+		while (i-- > 0)
+		{
+			final transition = _table[i];
+			if ((from == null || from == transition.from)
+				&& (to == null || to == transition.to)
+				&& (condition == null || condition == transition.condition))
+			{
+				return true;
+			}
+		}
+		
 		return false;
 	}
 }
