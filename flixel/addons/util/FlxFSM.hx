@@ -639,7 +639,7 @@ class FlxFSMTransitionTable<T>
 	{
 		if (from == null && to == null && condition == null)
 		{
-			FlxG.log.error('Cannot call exists with all null parameters');
+			FlxG.log.error('Cannot call hasTransition with all null parameters');
 			return false;
 		}
 		
