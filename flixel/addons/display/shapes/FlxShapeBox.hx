@@ -1,8 +1,8 @@
 package flixel.addons.display.shapes;
 
-import flash.display.BitmapData;
-import flash.display.Shape;
-import flash.geom.Matrix;
+import openfl.display.BitmapData;
+import openfl.display.Shape;
+import openfl.geom.Matrix;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxSpriteUtil.LineStyle;

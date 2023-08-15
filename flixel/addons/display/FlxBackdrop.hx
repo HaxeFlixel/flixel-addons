@@ -30,7 +30,7 @@ class FlxBackdrop extends FlxSprite
 	/**
 	 * The gap between repeated tiles, defaults to (0, 0), or no gap.
 	 */
-	public var spacing(default, null):FlxPoint = new FlxPoint();
+	public var spacing(default, null):FlxPoint = FlxPoint.get();
 	
 	/**
 	 * If true, tiles are pre-rendered to a intermediary bitmap whenever `loadGraphic` is called
@@ -68,7 +68,7 @@ class FlxBackdrop extends FlxSprite
 	 * Creates an instance of the FlxBackdrop class, used to create infinitely scrolling backgrounds.
 	 *
 	 * @param   graphic     The image you want to use for the backdrop.
-	 * @param   repeatAxes  If the backdrop should repeat on the X axis.
+	 * @param   repeatAxes  The axes on which to repeat. The default, `XY` will tile the entire camera.
 	 * @param   spacingX    Amount of spacing between tiles on the X axis
 	 * @param   spacingY    Amount of spacing between tiles on the Y axis
 	 */

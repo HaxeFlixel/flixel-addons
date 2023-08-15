@@ -1,7 +1,7 @@
 package flixel.addons.plugin.control;
 
 #if FLX_KEYBOARD
-import flash.geom.Rectangle;
+import openfl.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
