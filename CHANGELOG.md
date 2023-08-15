@@ -1,7 +1,7 @@
 3.2.0 (TBD)
 ------------------------------
 #### New Features:
-- `FlxRuntimeShaders`: Generate shaders from glsl provided at runtime ([#399](https://github.com/HaxeFlixel/flixel-addons/pull/399))
+- `FlxRuntimeShader`: Generate shaders from glsl provided at runtime ([#399](https://github.com/HaxeFlixel/flixel-addons/pull/399))
 
 #### Changes and improvements:
 - `FlxSkewedSprite`: Allow shaders ([#390](https://github.com/HaxeFlixel/flixel-addons/pull/390))
