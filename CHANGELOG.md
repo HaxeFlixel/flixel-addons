@@ -1,5 +1,8 @@
-3.1.2 (TBD)
+3.2.0 (TBD)
 ------------------------------
+#### New Features:
+- `FlxRuntimeShaders`: Generate shaders from glsl provided at runtime ([#399](https://github.com/HaxeFlixel/flixel-addons/pull/399))
+
 #### Changes and improvements:
 - `FlxSkewedSprite`: Allow shaders ([#390](https://github.com/HaxeFlixel/flixel-addons/pull/390))
 - `FlxBackdrop`: Use pooled `FlxPoint` for `spacing` ([#394](https://github.com/HaxeFlixel/flixel-addons/pull/394))
@@ -17,6 +20,8 @@
 		- `GraphicDiagonalGradient`
 	- prevent double update on transitions
 	- optimize wipe transitions, especially diagonal wipe
+ - Replace `flash` imports with `openfl` equivalents, where possible ([#400](https://github.com/HaxeFlixel/flixel-addons/pull/400))
+ - `FlxFSMTransitionTable`: Add `removeNow` arg to `remove` and `replace` ([#401](https://github.com/HaxeFlixel/flixel-addons/pull/401))
 
 3.1.1 (May 19, 2023)
 ------------------------------
