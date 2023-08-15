@@ -1,4 +1,4 @@
-3.2.0 (TBD)
+3.2.0 (August 15, 2023)
 ------------------------------
 #### New Features:
 - `FlxRuntimeShader`: Generate shaders from glsl provided at runtime ([#399](https://github.com/HaxeFlixel/flixel-addons/pull/399))
