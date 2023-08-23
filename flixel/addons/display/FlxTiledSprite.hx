@@ -226,7 +226,10 @@ class FlxTiledSprite extends FlxStrip
 		var rect = FlxRect.get(x, y, width, height);
 		if (clipRect != null)
 		{
-			rect = clipRect.intersection(rect);
+			var local = clipRect.copyTo(FlxRect.get());
+			local.x += x;
+			local.y += y;
+			rect = local.intersection(rect);
 		}
 
 		if (repeatX)
@@ -234,7 +237,7 @@ class FlxTiledSprite extends FlxStrip
 			vertices[0] = vertices[6] = rect.left - x;
 			vertices[2] = vertices[4] = rect.right - x;
 
-			uvtData[0] = uvtData[6] = -(scrollX - rect.left) / (frame.sourceSize.x);
+			uvtData[0] = uvtData[6] = -(scrollX + (x - rect.x)) / (frame.sourceSize.x);
 			uvtData[2] = uvtData[4] = uvtData[0] + (rect.width) / (frame.sourceSize.x);
 		}
 		else
@@ -257,7 +260,7 @@ class FlxTiledSprite extends FlxStrip
 			vertices[1] = vertices[3] = rect.y - y;
 			vertices[5] = vertices[7] = rect.bottom - y;
 
-			uvtData[1] = uvtData[3] = -(scrollY - rect.y) / frame.sourceSize.y;
+			uvtData[1] = uvtData[3] = -(scrollY + (y - rect.y)) / frame.sourceSize.y;
 			uvtData[5] = uvtData[7] = uvtData[1] + (rect.height) / frame.sourceSize.y;
 		}
 		else
