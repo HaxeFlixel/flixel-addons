@@ -230,6 +230,7 @@ class FlxTiledSprite extends FlxStrip
 			local.x += x;
 			local.y += y;
 			rect = local.intersection(rect);
+			local.put();
 		}
 
 		if (repeatX)
@@ -277,6 +278,7 @@ class FlxTiledSprite extends FlxStrip
 			uvtData[1] = uvtData[3] = (vertices[1] - scrollY) / frame.sourceSize.y;
 			uvtData[5] = uvtData[7] = uvtData[1] + (vertices[5] - vertices[1]) / frame.sourceSize.y;
 		}
+		rect.put();
 	}
 
 	override function set_width(Width:Float):Float
