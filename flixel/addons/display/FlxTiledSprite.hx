@@ -1,10 +1,11 @@
 package flixel.addons.display;
 
-import flixel.FlxStrip;
 import flixel.FlxSprite;
+import flixel.FlxStrip;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFrame;
 import flixel.math.FlxMath;
+import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
@@ -153,6 +154,12 @@ class FlxTiledSprite extends FlxStrip
 		}
 	}
 
+	override function set_clipRect(rect:FlxRect):FlxRect
+	{
+		regen = true;
+		return super.set_clipRect(rect);
+	}
+
 	function updateRenderSprite():Void
 	{
 		graphicVisible = true;
@@ -216,13 +223,19 @@ class FlxTiledSprite extends FlxStrip
 		var frame:FlxFrame = graphic.imageFrame.frame;
 		graphicVisible = true;
 
+		var rect = FlxRect.get(x, y, width, height);
+		if (clipRect != null)
+		{
+			rect = clipRect.intersection(rect);
+		}
+
 		if (repeatX)
 		{
-			vertices[0] = vertices[6] = 0.0;
-			vertices[2] = vertices[4] = width;
+			vertices[0] = vertices[6] = rect.left - x;
+			vertices[2] = vertices[4] = rect.right - x;
 
-			uvtData[0] = uvtData[6] = -scrollX / frame.sourceSize.x;
-			uvtData[2] = uvtData[4] = uvtData[0] + width / frame.sourceSize.x;
+			uvtData[0] = uvtData[6] = -(scrollX - rect.left) / (frame.sourceSize.x);
+			uvtData[2] = uvtData[4] = uvtData[0] + (rect.width) / (frame.sourceSize.x);
 		}
 		else
 		{
@@ -241,11 +254,11 @@ class FlxTiledSprite extends FlxStrip
 
 		if (repeatY)
 		{
-			vertices[1] = vertices[3] = 0.0;
-			vertices[5] = vertices[7] = height;
+			vertices[1] = vertices[3] = rect.y - y;
+			vertices[5] = vertices[7] = rect.bottom - y;
 
-			uvtData[1] = uvtData[3] = -scrollY / frame.sourceSize.y;
-			uvtData[5] = uvtData[7] = uvtData[1] + height / frame.sourceSize.y;
+			uvtData[1] = uvtData[3] = -(scrollY - rect.y) / frame.sourceSize.y;
+			uvtData[5] = uvtData[7] = uvtData[1] + (rect.height) / frame.sourceSize.y;
 		}
 		else
 		{
