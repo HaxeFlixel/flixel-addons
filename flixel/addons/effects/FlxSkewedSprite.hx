@@ -1,6 +1,6 @@
 package flixel.addons.effects;
 
-import flash.geom.Matrix;
+import openfl.geom.Matrix;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;

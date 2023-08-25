@@ -1,6 +1,6 @@
 package flixel.addons.display;
 
-import flash.geom.ColorTransform;
+import openfl.geom.ColorTransform;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;

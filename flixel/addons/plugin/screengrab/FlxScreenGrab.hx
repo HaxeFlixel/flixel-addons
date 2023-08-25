@@ -1,11 +1,11 @@
 package flixel.addons.plugin.screengrab;
 
 #if !js
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.geom.Matrix;
-import flash.geom.Rectangle;
-import flash.utils.ByteArray;
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import openfl.geom.Matrix;
+import openfl.geom.Rectangle;
+import openfl.utils.ByteArray;
 import flixel.addons.util.PNGEncoder;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
@@ -16,7 +16,7 @@ import lime.ui.FileDialogType;
 import openfl.display.PNGEncoderOptions;
 #end
 #else
-import flash.net.FileReference;
+import openfl.net.FileReference;
 #end
 
 /**
@@ -178,7 +178,7 @@ class FlxScreenGrab extends FlxBasic
 		#elseif (!lime_legacy || lime < "2.9.0")
 		var documentsDirectory = "";
 		#if lime_legacy
-		documentsDirectory = flash.filesystem.File.documentsDirectory.nativePath;
+		documentsDirectory = openfl.filesystem.File.documentsDirectory.nativePath;
 		#else
 		documentsDirectory = lime.system.System.documentsDirectory;
 		#end

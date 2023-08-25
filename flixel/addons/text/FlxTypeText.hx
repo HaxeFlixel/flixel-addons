@@ -7,7 +7,7 @@ import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.sound.FlxSound;
 import flixel.math.FlxRandom;
-import flash.media.Sound;
+import openfl.media.Sound;
 
 #if !flash
 @:sound("assets/sounds/type.ogg")
@@ -23,6 +23,7 @@ class TypeSound extends Sound {}
  * This is loosely based on the TypeText class by Noel Berry, who wrote it for his Ludum Dare 22 game - Abandoned
  * http://www.ludumdare.com/compo/ludum-dare-22/?action=preview&uid=1527
  * @author Noel Berry
+ * @see [Flixel Demos - FlxTypeText](https://haxeflixel.com/demos/FlxTypeText/)
  */
 class FlxTypeText extends FlxText
 {

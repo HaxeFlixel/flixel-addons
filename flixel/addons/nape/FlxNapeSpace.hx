@@ -1,6 +1,6 @@
 package flixel.addons.nape;
 
-import flash.display.BitmapData;
+import openfl.display.BitmapData;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.system.ui.FlxSystemButton;

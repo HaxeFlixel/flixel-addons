@@ -1,6 +1,6 @@
 package flixel.addons.editors.tiled;
 
-import flash.utils.ByteArray;
+import openfl.utils.ByteArray;
 import haxe.xml.Access;
 
 /**
