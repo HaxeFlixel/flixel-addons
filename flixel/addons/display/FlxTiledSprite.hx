@@ -52,30 +52,30 @@ class FlxTiledSprite extends FlxStrip
 
 		repeat = true;
 
-		indices[0] = 0;
-		indices[1] = 1;
-		indices[2] = 2;
-		indices[3] = 2;
-		indices[4] = 3;
-		indices[5] = 0;
+		triangles.indices[0] = 0;
+		triangles.indices[1] = 1;
+		triangles.indices[2] = 2;
+		triangles.indices[3] = 2;
+		triangles.indices[4] = 3;
+		triangles.indices[5] = 0;
 
-		uvtData[0] = 0;
-		uvtData[1] = 0;
-		uvtData[2] = 1;
-		uvtData[3] = 0;
-		uvtData[4] = 1;
-		uvtData[5] = 1;
-		uvtData[6] = 0;
-		uvtData[7] = 1;
+		triangles.uvs[0] = 0;
+		triangles.uvs[1] = 0;
+		triangles.uvs[2] = 1;
+		triangles.uvs[3] = 0;
+		triangles.uvs[4] = 1;
+		triangles.uvs[5] = 1;
+		triangles.uvs[6] = 0;
+		triangles.uvs[7] = 1;
 
-		vertices[0] = 0;
-		vertices[1] = 0;
-		vertices[2] = Width;
-		vertices[3] = 0;
-		vertices[4] = Width;
-		vertices[5] = Height;
-		vertices[6] = 0;
-		vertices[7] = Height;
+		triangles.vertices[0] = 0;
+		triangles.vertices[1] = 0;
+		triangles.vertices[2] = Width;
+		triangles.vertices[3] = 0;
+		triangles.vertices[4] = Width;
+		triangles.vertices[5] = Height;
+		triangles.vertices[6] = 0;
+		triangles.vertices[7] = Height;
 
 		width = Width;
 		height = Height;
@@ -218,48 +218,48 @@ class FlxTiledSprite extends FlxStrip
 
 		if (repeatX)
 		{
-			vertices[0] = vertices[6] = 0.0;
-			vertices[2] = vertices[4] = width;
+			triangles.vertices[0] = triangles.vertices[6] = 0.0;
+			triangles.vertices[2] = triangles.vertices[4] = width;
 
-			uvtData[0] = uvtData[6] = -scrollX / frame.sourceSize.x;
-			uvtData[2] = uvtData[4] = uvtData[0] + width / frame.sourceSize.x;
+			triangles.uvs[0] = triangles.uvs[6] = -scrollX / frame.sourceSize.x;
+			triangles.uvs[2] = triangles.uvs[4] = triangles.uvs[0] + width / frame.sourceSize.x;
 		}
 		else
 		{
-			vertices[0] = vertices[6] = FlxMath.bound(scrollX, 0, width);
-			vertices[2] = vertices[4] = FlxMath.bound(scrollX + frame.sourceSize.x, 0, width);
+			triangles.vertices[0] = triangles.vertices[6] = FlxMath.bound(scrollX, 0, width);
+			triangles.vertices[2] = triangles.vertices[4] = FlxMath.bound(scrollX + frame.sourceSize.x, 0, width);
 
-			if (vertices[2] - vertices[0] <= 0)
+			if (triangles.vertices[2] - triangles.vertices[0] <= 0)
 			{
 				graphicVisible = false;
 				return;
 			}
 
-			uvtData[0] = uvtData[6] = (vertices[0] - scrollX) / frame.sourceSize.x;
-			uvtData[2] = uvtData[4] = uvtData[0] + (vertices[2] - vertices[0]) / frame.sourceSize.x;
+			triangles.uvs[0] = triangles.uvs[6] = (triangles.vertices[0] - scrollX) / frame.sourceSize.x;
+			triangles.uvs[2] = triangles.uvs[4] = triangles.uvs[0] + (triangles.vertices[2] - triangles.vertices[0]) / frame.sourceSize.x;
 		}
 
 		if (repeatY)
 		{
-			vertices[1] = vertices[3] = 0.0;
-			vertices[5] = vertices[7] = height;
+			triangles.vertices[1] = triangles.vertices[3] = 0.0;
+			triangles.vertices[5] = triangles.vertices[7] = height;
 
-			uvtData[1] = uvtData[3] = -scrollY / frame.sourceSize.y;
-			uvtData[5] = uvtData[7] = uvtData[1] + height / frame.sourceSize.y;
+			triangles.uvs[1] = triangles.uvs[3] = -scrollY / frame.sourceSize.y;
+			triangles.uvs[5] = triangles.uvs[7] = triangles.uvs[1] + height / frame.sourceSize.y;
 		}
 		else
 		{
-			vertices[1] = vertices[3] = FlxMath.bound(scrollY, 0, height);
-			vertices[5] = vertices[7] = FlxMath.bound(scrollY + frame.sourceSize.y, 0, height);
+			triangles.vertices[1] = triangles.vertices[3] = FlxMath.bound(scrollY, 0, height);
+			triangles.vertices[5] = triangles.vertices[7] = FlxMath.bound(scrollY + frame.sourceSize.y, 0, height);
 
-			if (vertices[5] - vertices[1] <= 0)
+			if (triangles.vertices[5] - triangles.vertices[1] <= 0)
 			{
 				graphicVisible = false;
 				return;
 			}
 
-			uvtData[1] = uvtData[3] = (vertices[1] - scrollY) / frame.sourceSize.y;
-			uvtData[5] = uvtData[7] = uvtData[1] + (vertices[5] - vertices[1]) / frame.sourceSize.y;
+			triangles.uvs[1] = triangles.uvs[3] = (triangles.vertices[1] - scrollY) / frame.sourceSize.y;
+			triangles.uvs[5] = triangles.uvs[7] = triangles.uvs[1] + (triangles.vertices[5] - triangles.vertices[1]) / frame.sourceSize.y;
 		}
 	}
 

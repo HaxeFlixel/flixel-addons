@@ -224,10 +224,7 @@ class FlxSliceSprite extends FlxStrip
 		var numHorizontal:Int = Math.ceil((_snappedWidth - topLeft.width - topRight.width) / topMiddle.width);
 		var numVertical:Int = Math.ceil((_snappedHeight - topLeft.height - bottomLeft.height) / middleLeft.height);
 	
-		vertices = new DrawData<Float>();
-		uvtData = new DrawData<Float>();
-		indices = new DrawData<Int>();
-		colors = new DrawData<Int>();
+		triangles.clear();
 		numVertices = 0;
 
 		if (fillCenter)
@@ -391,7 +388,7 @@ class FlxSliceSprite extends FlxStrip
 
 			FlxSpriteUtil.flashGfx.clear();
 			FlxSpriteUtil.flashGfx.beginBitmapFill(graphic.bitmap);
-			FlxSpriteUtil.flashGfx.drawTriangles(vertices, indices, uvtData);
+			FlxSpriteUtil.flashGfx.drawTriangles(triangles.vertices, triangles.indices, triangles.uvs);
 			FlxSpriteUtil.flashGfx.endFill();
 			renderSprite.pixels.draw(FlxSpriteUtil.flashGfxSprite, null, colorTransform);
 			FlxSpriteUtil.flashGfx.clear();
@@ -415,36 +412,36 @@ class FlxSliceSprite extends FlxStrip
 		var uvIndex:Int = vertexIndex;
 		var colorIndex:Int = vertex;
 
-		vertices[vertexIndex++] = dst.x;
-		vertices[vertexIndex++] = dst.y;
-		vertices[vertexIndex++] = dst.x + size.x;
-		vertices[vertexIndex++] = dst.y;
-		vertices[vertexIndex++] = dst.x + size.x;
-		vertices[vertexIndex++] = dst.y + size.y;
-		vertices[vertexIndex++] = dst.x;
-		vertices[vertexIndex++] = dst.y + size.y;
+		triangles.vertices[vertexIndex++] = dst.x;
+		triangles.vertices[vertexIndex++] = dst.y;
+		triangles.vertices[vertexIndex++] = dst.x + size.x;
+		triangles.vertices[vertexIndex++] = dst.y;
+		triangles.vertices[vertexIndex++] = dst.x + size.x;
+		triangles.vertices[vertexIndex++] = dst.y + size.y;
+		triangles.vertices[vertexIndex++] = dst.x;
+		triangles.vertices[vertexIndex++] = dst.y + size.y;
 
-		uvtData[uvIndex++] = slice.x / bdSize.x;
-		uvtData[uvIndex++] = slice.y / bdSize.y;
+		triangles.uvs[uvIndex++] = slice.x / bdSize.x;
+		triangles.uvs[uvIndex++] = slice.y / bdSize.y;
 
-		uvtData[uvIndex++] = slice.right / bdSize.x;
-		uvtData[uvIndex++] = slice.y / bdSize.y;
+		triangles.uvs[uvIndex++] = slice.right / bdSize.x;
+		triangles.uvs[uvIndex++] = slice.y / bdSize.y;
 
-		uvtData[uvIndex++] = slice.right / bdSize.x;
-		uvtData[uvIndex++] = slice.bottom / bdSize.y;
+		triangles.uvs[uvIndex++] = slice.right / bdSize.x;
+		triangles.uvs[uvIndex++] = slice.bottom / bdSize.y;
 
-		uvtData[uvIndex++] = slice.x / bdSize.x;
-		uvtData[uvIndex++] = slice.bottom / bdSize.y;
+		triangles.uvs[uvIndex++] = slice.x / bdSize.x;
+		triangles.uvs[uvIndex++] = slice.bottom / bdSize.y;
 
 		// there are 6 indices per slice, which have 4 vertices per vertex:
 		var indexPosition:Int = Math.round(6 * vertex / 4);
 
-		indices[indexPosition++] = vertex + 0;
-		indices[indexPosition++] = vertex + 1;
-		indices[indexPosition++] = vertex + 2;
-		indices[indexPosition++] = vertex + 0;
-		indices[indexPosition++] = vertex + 2;
-		indices[indexPosition++] = vertex + 3;
+		triangles.indices[indexPosition++] = vertex + 0;
+		triangles.indices[indexPosition++] = vertex + 1;
+		triangles.indices[indexPosition++] = vertex + 2;
+		triangles.indices[indexPosition++] = vertex + 0;
+		triangles.indices[indexPosition++] = vertex + 2;
+		triangles.indices[indexPosition++] = vertex + 3;
 
 		return vertex + 4;
 	}
@@ -519,11 +516,31 @@ class FlxSliceSprite extends FlxStrip
 			super.draw();
 		}
 	}
+	
+	override function getScreenBounds(?newRect:FlxRect, ?camera:FlxCamera)
+	{
+		if (newRect == null)
+			newRect = FlxRect.get();
+		
+		if (camera == null)
+			camera = FlxG.camera;
+		
+		newRect.setPosition(x, y);
+		if (pixelPerfectPosition)
+			newRect.floor();
+		_scaledOrigin.set(origin.x * scale.x, origin.y * scale.y);
+		newRect.x += -Std.int(camera.scroll.x * scrollFactor.x) - offset.x + origin.x - _scaledOrigin.x;
+		newRect.y += -Std.int(camera.scroll.y * scrollFactor.y) - offset.y + origin.y - _scaledOrigin.y;
+		if (isPixelPerfectRender(camera))
+			newRect.floor();
+		newRect.setSize(width * Math.abs(scale.x), height * Math.abs(scale.y));
+		return newRect.getRotatedBounds(angle, _scaledOrigin, newRect);
+	}
 
 	function updateColors(color:FlxColor):Void
 	{
 		for (i in 0...numVertices)
-			colors[i] = color;
+			triangles.colors[i] = color;
 	}
 
 	override function set_alpha(Alpha:Float):Float
