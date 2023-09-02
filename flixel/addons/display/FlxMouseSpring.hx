@@ -5,7 +5,7 @@ import flixel.FlxG;
 
 class FlxMouseSpring
 {
-	public var sprite:FlxExtendedSprite;
+	public var sprite:FlxExtendedMouseSprite;
 
 	/**
 	 * The tension of the spring, smaller numbers create springs closer to the mouse pointer
@@ -45,7 +45,7 @@ class FlxMouseSpring
 	 * @param	Friction		The friction applied to the spring as it moves
 	 * @param	Gravity			The gravity controls how far "down" the spring hangs (use a negative value for it to hang up!)
 	 */
-	public function new(Sprite:FlxExtendedSprite, RetainVelocity:Bool = false, Tension:Float = 0.1, Friction:Float = 0.95, Gravity:Float = 0)
+	public function new(Sprite:FlxExtendedMouseSprite, RetainVelocity:Bool = false, Tension:Float = 0.1, Friction:Float = 0.95, Gravity:Float = 0)
 	{
 		sprite = Sprite;
 		_retainVelocity = RetainVelocity;

@@ -1,7 +1,7 @@
 package flixel.addons.plugin;
 
 #if FLX_MOUSE
-import flixel.addons.display.FlxExtendedSprite;
+import flixel.addons.display.FlxExtendedMouseSprite;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.math.FlxMath;
@@ -29,7 +29,7 @@ class FlxMouseControl extends FlxBasic
 	public static inline var DESCENDING:Int = 1;
 
 	/**
-	 * The value that the FlxExtendedSprites are sorted by before deciding which is "on-top" for click select
+	 * The value that the FlxExtendedMouseSprites are sorted by before deciding which is "on-top" for click select
 	 */
 	public static var sortIndex:String = "y";
 
@@ -44,11 +44,11 @@ class FlxMouseControl extends FlxBasic
 	public static var isDragging:Bool = false;
 
 	/**
-	 * The FlxExtendedSprite that is currently being dragged, if any.
+	 * The FlxExtendedMouseSprite that is currently being dragged, if any.
 	 */
-	public static var dragTarget:FlxExtendedSprite;
+	public static var dragTarget:FlxExtendedMouseSprite;
 
-	public static var clickTarget:FlxExtendedSprite;
+	public static var clickTarget:FlxExtendedMouseSprite;
 
 	/**
 	 * The speed the mouse is moving on the X axis in pixels per frame
@@ -76,9 +76,9 @@ class FlxMouseControl extends FlxBasic
 	public static var linkToDeadZone:Bool = false;
 
 	/**
-	 * The FlxExtendedSprite that currently has the mouse button pressed on it
+	 * The FlxExtendedMouseSprite that currently has the mouse button pressed on it
 	 */
-	static var _clickStack:Array<FlxExtendedSprite> = new Array<FlxExtendedSprite>();
+	static var _clickStack:Array<FlxExtendedMouseSprite> = new Array<FlxExtendedMouseSprite>();
 
 	static var _clickCoords:FlxPoint;
 	static var _hasClickTarget:Bool = false;
@@ -94,11 +94,11 @@ class FlxMouseControl extends FlxBasic
 	}
 
 	/**
-	 * Adds the given FlxExtendedSprite to the stack of potential sprites that were clicked, the stack is then sorted and the final sprite is selected from that
+	 * Adds the given FlxExtendedMouseSprite to the stack of potential sprites that were clicked, the stack is then sorted and the final sprite is selected from that
 	 *
-	 * @param	Item	The FlxExtendedSprite that was clicked by the mouse
+	 * @param	Item	The FlxExtendedMouseSprite that was clicked by the mouse
 	 */
-	public static function addToStack(Item:FlxExtendedSprite):Void
+	public static function addToStack(Item:FlxExtendedMouseSprite):Void
 	{
 		if (mouseZone != null)
 		{
@@ -143,7 +143,7 @@ class FlxMouseControl extends FlxBasic
 	}
 
 	/**
-	 * Main Update Loop - checks mouse status and updates FlxExtendedSprites accordingly
+	 * Main Update Loop - checks mouse status and updates FlxExtendedMouseSprites accordingly
 	 */
 	override public function update(elapsed:Float):Void
 	{
@@ -192,7 +192,7 @@ class FlxMouseControl extends FlxBasic
 		}
 		else
 		{
-			// If you are wondering how the brand new array can have anything in it by now, it's because FlxExtendedSprite
+			// If you are wondering how the brand new array can have anything in it by now, it's because FlxExtendedMouseSprite
 			// adds itself to the clickStack
 			if (FlxG.mouse.pressed && _clickStack.length > 0)
 			{
@@ -246,7 +246,7 @@ class FlxMouseControl extends FlxBasic
 	 *
 	 * @return	An integer value: -1 (item1 before item2), 0 (same), or 1 (item1 after item2)
 	 */
-	function sortHandler(Item1:FlxExtendedSprite, Item2:FlxExtendedSprite):Int
+	function sortHandler(Item1:FlxExtendedMouseSprite, Item2:FlxExtendedMouseSprite):Int
 	{
 		var prop1 = Reflect.getProperty(Item1, sortIndex);
 		var prop2 = Reflect.getProperty(Item2, sortIndex);
