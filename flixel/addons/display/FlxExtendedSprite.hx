@@ -2,7 +2,7 @@ package flixel.addons.display;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.addons.plugin.FlxMouseControl;
+import flixel.input.mouse.FlxMouseEvent;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
@@ -12,8 +12,9 @@ import flixel.util.FlxDirectionFlags;
 
 /**
  * An enhanced FlxSprite that is capable of receiving mouse clicks, being dragged and thrown, mouse springs, gravity and other useful things
- *
- * @link http://www.photonstorm.com
+ * 
+ * **Note:** This class will be deprecated soon, It's quite outdated and unmaintained.
+ * 
  * @author Richard Davey / Photon Storm
  */
 class FlxExtendedSprite extends FlxSprite
@@ -101,12 +102,12 @@ class FlxExtendedSprite extends FlxSprite
 	/**
 	 * By default the spring attaches to the top left of the sprite. To change this location provide an x offset (in pixels)
 	 */
-	public var springOffsetX:Int;
+	public var springOffsetX:Int = 0;
 
 	/**
 	 * By default the spring attaches to the top left of the sprite. To change this location provide a y offset (in pixels)
 	 */
-	public var springOffsetY:Int;
+	public var springOffsetY:Int = 0;
 
 	#if FLX_MOUSE
 	/**
@@ -215,6 +216,7 @@ class FlxExtendedSprite extends FlxSprite
 	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset)
 	{
 		super(X, Y, SimpleGraphic);
+		FlxMouseEvent.add(this, (_)->mousePressedHandler(), null, null, null, false, true, false);
 	}
 
 	#if FLX_MOUSE
@@ -228,17 +230,13 @@ class FlxExtendedSprite extends FlxSprite
 	 */
 	public function enableMouseClicks(OnRelease:Bool, PixelPerfect:Bool = false, AlphaThreshold:Int = 255):Void
 	{
-		if (FlxG.plugins.get(FlxMouseControl) == null)
-		{
-			throw "FlxExtendedSprite.enableMouseClicks called but FlxMouseControl plugin not activated";
-		}
-
 		clickable = true;
 
 		_clickOnRelease = OnRelease;
 		_clickPixelPerfect = PixelPerfect;
 		_clickPixelPerfectAlpha = AlphaThreshold;
 		_clickCounter = 0;
+		
 	}
 
 	/**
@@ -263,11 +261,6 @@ class FlxExtendedSprite extends FlxSprite
 	public function enableMouseDrag(LockCenter:Bool = false, PixelPerfect:Bool = false, AlphaThreshold:Int = 255, ?BoundsRect:FlxRect,
 			?BoundsSprite:FlxSprite):Void
 	{
-		if (FlxG.plugins.get(FlxMouseControl) == null)
-		{
-			throw "FlxExtendedSprite.enableMouseDrag called but FlxMouseControl plugin not activated";
-		}
-
 		draggable = true;
 
 		_dragFromPoint = LockCenter;
@@ -292,10 +285,7 @@ class FlxExtendedSprite extends FlxSprite
 	public function disableMouseDrag():Void
 	{
 		if (isDragged)
-		{
-			FlxMouseControl.dragTarget = null;
-			FlxMouseControl.isDragging = false;
-		}
+			stopDrag();
 
 		isDragged = false;
 		draggable = false;
@@ -312,19 +302,9 @@ class FlxExtendedSprite extends FlxSprite
 	 */
 	public function enableMouseThrow(FactorX:Int, FactorY:Int):Void
 	{
-		if (FlxG.plugins.get(FlxMouseControl) == null)
-		{
-			throw "FlxExtendedSprite.enableMouseThrow called but FlxMouseControl plugin not activated";
-		}
-
 		throwable = true;
 		_throwXFactor = FactorX;
 		_throwYFactor = FactorY;
-
-		if (clickable == false && draggable == false)
-		{
-			clickable = true;
-		}
 	}
 
 	/**
@@ -375,11 +355,6 @@ class FlxExtendedSprite extends FlxSprite
 	public function enableMouseSpring(OnPressed:Bool = true, RetainVelocity:Bool = false, Tension:Float = 0.1, Friction:Float = 0.95,
 			Gravity:Float = 0):FlxMouseSpring
 	{
-		if (FlxG.plugins.get(FlxMouseControl) == null)
-		{
-			throw "FlxExtendedSprite.enableMouseSpring called but FlxMouseControl plugin not activated";
-		}
-
 		hasMouseSpring = true;
 		springOnPressed = OnPressed;
 
@@ -392,11 +367,6 @@ class FlxExtendedSprite extends FlxSprite
 			mouseSpring.tension = Tension;
 			mouseSpring.friction = Friction;
 			mouseSpring.gravity = Gravity;
-		}
-
-		if (clickable == false && draggable == false)
-		{
-			clickable = true;
 		}
 
 		return mouseSpring;
@@ -430,22 +400,17 @@ class FlxExtendedSprite extends FlxSprite
 	override public function update(elapsed:Float):Void
 	{
 		#if FLX_MOUSE
-		if (draggable == true && isDragged == true)
+		if (draggable && isDragged)
 		{
 			updateDrag();
 		}
 
-		if (isPressed == false && FlxG.mouse.justPressed)
-		{
-			checkForClick();
-		}
-
-		if (hasGravity == true)
+		if (hasGravity)
 		{
 			updateGravity();
 		}
 
-		if (hasMouseSpring == true)
+		if (hasMouseSpring)
 		{
 			if (springOnPressed == false)
 			{
@@ -453,7 +418,7 @@ class FlxExtendedSprite extends FlxSprite
 			}
 			else
 			{
-				if (isPressed == true)
+				if (isPressed)
 				{
 					mouseSpring.update(elapsed);
 				}
@@ -463,6 +428,9 @@ class FlxExtendedSprite extends FlxSprite
 				}
 			}
 		}
+		
+		if (FlxG.mouse.justReleased)
+			mouseReleasedHandler();
 		#end
 
 		super.update(elapsed);
@@ -574,14 +542,14 @@ class FlxExtendedSprite extends FlxSprite
 	function updateDrag():Void
 	{
 		// TODO: touch drag
-		if (_allowHorizontalDrag == true)
+		if (_allowHorizontalDrag)
 		{
 			#if FLX_MOUSE
 			x = Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX)) - _dragOffsetX;
 			#end
 		}
 
-		if (_allowVerticalDrag == true)
+		if (_allowVerticalDrag)
 		{
 			#if FLX_MOUSE
 			y = Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY)) - _dragOffsetY;
@@ -605,39 +573,6 @@ class FlxExtendedSprite extends FlxSprite
 		}
 	}
 
-	/**
-	 * Checks if the mouse is over this sprite and pressed, then does a pixel
-	 * perfect check if needed and adds it to the FlxMouseControl check stack.
-	 */
-	function checkForClick():Void
-	{
-		#if FLX_MOUSE
-		if (mouseOver && FlxG.mouse.justPressed)
-		{
-			//	If we don't need a pixel perfect check, then don't bother running one! By this point we know the mouse is over the sprite already
-			if (_clickPixelPerfect == false && _dragPixelPerfect == false)
-			{
-				FlxMouseControl.addToStack(this);
-				return;
-			}
-
-			if (_clickPixelPerfect
-				&& FlxCollision.pixelPerfectPointCheck(Math.floor(FlxG.mouse.x), Math.floor(FlxG.mouse.y), this, _clickPixelPerfectAlpha))
-			{
-				FlxMouseControl.addToStack(this);
-				return;
-			}
-
-			if (_dragPixelPerfect
-				&& FlxCollision.pixelPerfectPointCheck(Math.floor(FlxG.mouse.x), Math.floor(FlxG.mouse.y), this, _dragPixelPerfectAlpha))
-			{
-				FlxMouseControl.addToStack(this);
-				return;
-			}
-		}
-		#end
-	}
-
 	#if FLX_MOUSE
 	/**
 	 * Called by FlxMouseControl when this sprite is clicked. Should not usually be called directly.
@@ -645,16 +580,27 @@ class FlxExtendedSprite extends FlxSprite
 	public function mousePressedHandler():Void
 	{
 		isPressed = true;
-
-		if (clickable == true && _clickOnRelease == false)
+		
+		final mouse = FlxG.mouse.getWorldPosition();
+		if (clickable && isOverPixelPerfect(mouse, _clickPixelPerfect, _clickPixelPerfectAlpha))
 		{
-			_clickCounter++;
+			if (_clickOnRelease == false)
+			{
+				_clickCounter++;
+			}
+			
+			if (mousePressedCallback != null)
+			{
+				mousePressedCallback(this, mouseX, mouseY);
+			}
 		}
-
-		if (mousePressedCallback != null)
+		
+		if (draggable && isOverPixelPerfect(mouse, _dragPixelPerfect, _dragPixelPerfectAlpha))
 		{
-			mousePressedCallback(this, mouseX, mouseY);
+			startDrag();
 		}
+		
+		mouse.put();
 	}
 
 	/**
@@ -662,28 +608,38 @@ class FlxExtendedSprite extends FlxSprite
 	 */
 	public function mouseReleasedHandler():Void
 	{
+		final wasPressed = isPressed;
 		isPressed = false;
 
-		if (isDragged == true)
+		if (isDragged)
 		{
 			stopDrag();
 		}
 
-		if (clickable == true && _clickOnRelease == true)
+		if (wasPressed && throwable)
 		{
-			_clickCounter++;
+			velocity.x = FlxG.mouse.deltaX * _throwXFactor;
+			velocity.y = FlxG.mouse.deltaY * _throwYFactor;
 		}
+		
+		final mouse = FlxG.mouse.getWorldPosition();
+		if (wasPressed && clickable && isOverPixelPerfect(mouse, _clickPixelPerfect, _clickPixelPerfectAlpha))
+		{
+			if (_clickOnRelease)
+			{
+				_clickCounter++;
+			}
 
-		if (throwable == true)
-		{
-			velocity.x = FlxMouseControl.speedX * _throwXFactor;
-			velocity.y = FlxMouseControl.speedY * _throwYFactor;
+			if (mouseReleasedCallback != null)
+			{
+				mouseReleasedCallback(this, mouseX, mouseY);
+			}
 		}
-
-		if (mouseReleasedCallback != null)
-		{
-			mouseReleasedCallback(this, mouseX, mouseY);
-		}
+	}
+	
+	function isOverPixelPerfect(mouse:FlxPoint, pixelPerfect:Bool, alphaThreshold:Int)
+	{
+		return pixelPerfect == false || pixelsOverlapPoint(mouse, alphaThreshold);
 	}
 	#end
 
@@ -905,4 +861,4 @@ class FlxExtendedSprite extends FlxSprite
 	}
 }
 
-typedef MouseCallback = FlxExtendedSprite->Int->Int->Void;
+typedef MouseCallback = (sprite:FlxExtendedSprite, mouseX:Int, mouseY:Int)->Void;
