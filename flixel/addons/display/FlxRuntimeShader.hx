@@ -101,7 +101,6 @@ class FlxRuntimeShader extends FlxShader
 	 */
 	public function setFloat(name:String, value:Float):Void
 	{
-<<<<<<< HEAD
 		var prop:ShaderParameter<Float> = Reflect.field(this.data, name);
 		@:privateAccess
 		if (prop == null)
@@ -109,22 +108,10 @@ class FlxRuntimeShader extends FlxShader
 			trace('[WARN] Shader float property ${name} not found.');
 			return;
 		}
-=======
-		var prop:ShaderParameter<Float> = Reflect.field(data, name);
-
-		if (prop == null)
-		{
-			FlxG.log.warn('Shader float property "$name" not found.');
-			return;
-		}
-
->>>>>>> flixel/dev
 		prop.value = [value];
 	}
 
 	/**
-<<<<<<< HEAD
-=======
 	 * Retrieve a float parameter of the shader.
 	 *
 	 * @param name The name of the parameter to retrieve.
@@ -143,7 +130,6 @@ class FlxRuntimeShader extends FlxShader
 	}
 
 	/**
->>>>>>> flixel/dev
 	 * Modify a float array parameter of the shader.
 	 *
 	 * @param name The name of the parameter to modify.
@@ -151,14 +137,6 @@ class FlxRuntimeShader extends FlxShader
 	 */
 	public function setFloatArray(name:String, value:Array<Float>):Void
 	{
-<<<<<<< HEAD
-		var prop:ShaderParameter<Float> = Reflect.field(this.data, name);
-		if (prop == null)
-		{
-			trace('[WARN] Shader float[] property ${name} not found.');
-			return;
-		}
-=======
 		var prop:ShaderParameter<Float> = Reflect.field(data, name);
 
 		if (prop == null)
@@ -167,13 +145,10 @@ class FlxRuntimeShader extends FlxShader
 			return;
 		}
 
->>>>>>> flixel/dev
 		prop.value = value;
 	}
 
 	/**
-<<<<<<< HEAD
-=======
 	 * Retrieve a float array parameter of the shader.
 	 *
 	 * @param name The name of the parameter to retrieve.
@@ -192,7 +167,6 @@ class FlxRuntimeShader extends FlxShader
 	}
 
 	/**
->>>>>>> flixel/dev
 	 * Modify an integer parameter of the shader.
 	 *
 	 * @param name The name of the parameter to modify.
@@ -200,14 +174,6 @@ class FlxRuntimeShader extends FlxShader
 	 */
 	public function setInt(name:String, value:Int):Void
 	{
-<<<<<<< HEAD
-		var prop:ShaderParameter<Int> = Reflect.field(this.data, name);
-		if (prop == null)
-		{
-			trace('[WARN] Shader int property ${name} not found.');
-			return;
-		}
-=======
 		var prop:ShaderParameter<Int> = Reflect.field(data, name);
 
 		if (prop == null)
@@ -216,13 +182,10 @@ class FlxRuntimeShader extends FlxShader
 			return;
 		}
 
->>>>>>> flixel/dev
 		prop.value = [value];
 	}
 
 	/**
-<<<<<<< HEAD
-=======
 	 * Retrieve an integer parameter of the shader.
 	 *
 	 * @param name The name of the parameter to retrieve.
@@ -241,7 +204,6 @@ class FlxRuntimeShader extends FlxShader
 	}
 
 	/**
->>>>>>> flixel/dev
 	 * Modify an integer array parameter of the shader.
 	 *
 	 * @param name The name of the parameter to modify.
@@ -249,14 +211,6 @@ class FlxRuntimeShader extends FlxShader
 	 */
 	public function setIntArray(name:String, value:Array<Int>):Void
 	{
-<<<<<<< HEAD
-		var prop:ShaderParameter<Int> = Reflect.field(this.data, name);
-		if (prop == null)
-		{
-			trace('[WARN] Shader int[] property ${name} not found.');
-			return;
-		}
-=======
 		var prop:ShaderParameter<Int> = Reflect.field(data, name);
 
 		if (prop == null)
@@ -265,14 +219,10 @@ class FlxRuntimeShader extends FlxShader
 			return;
 		}
 
->>>>>>> flixel/dev
 		prop.value = value;
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Modify a boolean parameter of the shader.
-=======
 	 * Retrieve an integer array parameter of the shader.
 	 *
 	 * @param name The name of the parameter to retrieve.
@@ -293,20 +243,11 @@ class FlxRuntimeShader extends FlxShader
 	/**
 	 * Modify a bool parameter of the shader.
 	 *
->>>>>>> flixel/dev
 	 * @param name The name of the parameter to modify.
 	 * @param value The new value to use.
 	 */
 	public function setBool(name:String, value:Bool):Void
 	{
-<<<<<<< HEAD
-		var prop:ShaderParameter<Bool> = Reflect.field(this.data, name);
-		if (prop == null)
-		{
-			trace('[WARN] Shader bool property ${name} not found.');
-			return;
-		}
-=======
 		var prop:ShaderParameter<Bool> = Reflect.field(data, name);
 
 		if (prop == null)
@@ -315,14 +256,10 @@ class FlxRuntimeShader extends FlxShader
 			return;
 		}
 
->>>>>>> flixel/dev
 		prop.value = [value];
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Modify a boolean array parameter of the shader.
-=======
 	 * Retrieve a bool parameter of the shader.
 	 *
 	 * @param name The name of the parameter to retrieve.
@@ -343,20 +280,11 @@ class FlxRuntimeShader extends FlxShader
 	/**
 	 * Modify a bool array parameter of the shader.
 	 *
->>>>>>> flixel/dev
 	 * @param name The name of the parameter to modify.
 	 * @param value The new value to use.
 	 */
 	public function setBoolArray(name:String, value:Array<Bool>):Void
 	{
-<<<<<<< HEAD
-		var prop:ShaderParameter<Bool> = Reflect.field(this.data, name);
-		if (prop == null)
-		{
-			trace('[WARN] Shader bool[] property ${name} not found.');
-			return;
-		}
-=======
 		var prop:ShaderParameter<Bool> = Reflect.field(data, name);
 
 		if (prop == null)
@@ -365,25 +293,10 @@ class FlxRuntimeShader extends FlxShader
 			return;
 		}
 
->>>>>>> flixel/dev
 		prop.value = value;
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Modify a bitmap data parameter of the shader.
-	 * @param name The name of the parameter to modify.
-	 * @param value The new value to use.
-	 */
-	public function setBitmapData(name:String, value:openfl.display.BitmapData):Void
-	{
-		var prop:ShaderInput<openfl.display.BitmapData> = Reflect.field(this.data, name);
-		if (prop == null)
-		{
-			trace('[WARN] Shader sampler2D property ${name} not found.');
-			return;
-		}
-=======
 	 * Retrieve a bool array parameter of the shader.
 	 *
 	 * @param name The name of the parameter to retrieve.
@@ -417,129 +330,10 @@ class FlxRuntimeShader extends FlxShader
 			return;
 		}
 
->>>>>>> flixel/dev
 		prop.input = value;
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Retrieve a float parameter of the shader.
-	 * @param name The name of the parameter to retrieve.
-	 * @return The value of the parameter.
-	 */
-	public function getFloat(name:String):Null<Float>
-	{
-		var prop:ShaderParameter<Float> = Reflect.field(this.data, name);
-		if (prop == null || prop.value.length == 0)
-		{
-			trace('[WARN] Shader float property ${name} not found.');
-			return null;
-		}
-		return prop.value[0];
-	}
-
-	/**
-	 * Retrieve a float array parameter of the shader.
-	 * @param name The name of the parameter to retrieve.
-	 * @return The value of the parameter.
-	 */
-	public function getFloatArray(name:String):Null<Array<Float>>
-	{
-		var prop:ShaderParameter<Float> = Reflect.field(this.data, name);
-		if (prop == null)
-		{
-			trace('[WARN] Shader float[] property ${name} not found.');
-			return null;
-		}
-		return prop.value;
-	}
-
-	/**
-	 * Retrieve an integer parameter of the shader.
-	 * @param name The name of the parameter to retrieve.
-	 * @return The value of the parameter.
-	 */
-	public function getInt(name:String):Null<Int>
-	{
-		var prop:ShaderParameter<Int> = Reflect.field(this.data, name);
-		if (prop == null || prop.value.length == 0)
-		{
-			trace('[WARN] Shader int property ${name} not found.');
-			return null;
-		}
-		return prop.value[0];
-	}
-
-	/**
-	 * Retrieve an integer array parameter of the shader.
-	 * @param name The name of the parameter to retrieve.
-	 * @return The value of the parameter.
-	 */
-	public function getIntArray(name:String):Null<Array<Int>>
-	{
-		var prop:ShaderParameter<Int> = Reflect.field(this.data, name);
-		if (prop == null)
-		{
-			trace('[WARN] Shader int[] property ${name} not found.');
-			return null;
-		}
-		return prop.value;
-	}
-
-	/**
-	 * Retrieve a boolean parameter of the shader.
-	 * @param name The name of the parameter to retrieve.
-	 * @return The value of the parameter.
-	 */
-	public function getBool(name:String):Null<Bool>
-	{
-		var prop:ShaderParameter<Bool> = Reflect.field(this.data, name);
-		if (prop == null || prop.value.length == 0)
-		{
-			trace('[WARN] Shader bool property ${name} not found.');
-			return null;
-		}
-		return prop.value[0];
-	}
-
-	/**
-	 * Retrieve a boolean array parameter of the shader.
-	 * @param name The name of the parameter to retrieve.
-	 * @return The value of the parameter.
-	 */
-	public function getBoolArray(name:String):Null<Array<Bool>>
-	{
-		var prop:ShaderParameter<Bool> = Reflect.field(this.data, name);
-		if (prop == null)
-		{
-			trace('[WARN] Shader bool[] property ${name} not found.');
-			return null;
-		}
-		return prop.value;
-	}
-
-	/**
-	 * Retrieve a bitmap data parameter of the shader.
-	 * @param name The name of the parameter to retrieve.
-	 * @return The value of the parameter.
-	 */
-	public function getBitmapData(name:String):Null<openfl.display.BitmapData>
-	{
-		var prop:ShaderInput<openfl.display.BitmapData> = Reflect.field(this.data, name);
-		if (prop == null)
-		{
-			trace('[WARN] Shader sampler2D property ${name} not found.');
-			return null;
-		}
-		return prop.input;
-	}
-
-	public function toString():String
-	{
-		return 'FlxRuntimeShader';
-	}
-}
-=======
 	 * Retrieve a bitmap data parameter of the shader.
 	 *
 	 * @param name The name of the parameter to retrieve.
@@ -767,4 +561,3 @@ class FlxRuntimeShader extends FlxShader
 	}
 }
 #end
->>>>>>> flixel/dev
