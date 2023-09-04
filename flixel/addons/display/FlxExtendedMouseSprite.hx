@@ -22,6 +22,7 @@ class FlxExtendedMouseSprite extends FlxSprite
 	/**
 	 * Used by FlxMouseControl when multiple sprites overlap and register clicks, and you need to determine which sprite has priority
 	 */
+	@:deprecated("priorityID is deprecated, click priority is now determined by z-order")
 	public var priorityID:Int;
 
 	/**
@@ -216,7 +217,9 @@ class FlxExtendedMouseSprite extends FlxSprite
 	public function new(X:Float = 0, Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset)
 	{
 		super(X, Y, SimpleGraphic);
+		#if FLX_MOUSE
 		FlxMouseEvent.add(this, (_)->mousePressedHandler(), null, null, null, false, true, false);
+		#end
 	}
 
 	#if FLX_MOUSE
