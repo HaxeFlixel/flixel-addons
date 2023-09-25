@@ -71,7 +71,7 @@ class FlxTransitionableState extends FlxState
 		super.destroy();
 		transIn = null;
 		transOut = null;
-		transCam = [];
+		transCam = null;
 		_onExit = null;
 	}
 
