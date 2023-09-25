@@ -71,7 +71,6 @@ class FlxTransitionableState extends FlxState
 		super.destroy();
 		transIn = null;
 		transOut = null;
-		transCams = null;
 		_onExit = null;
 	}
 
@@ -116,7 +115,7 @@ class FlxTransitionableState extends FlxState
 				return;
 			}
 
-			if (transCams == null)
+			if (transCams == null || transCams.length == 0)
 				transCams = [flixel.FlxG.cameras.list[flixel.FlxG.cameras.list.length - 1]];
 
 			var _trans = createTransition(transIn);
@@ -137,7 +136,7 @@ class FlxTransitionableState extends FlxState
 		_onExit = OnExit;
 		if (hasTransOut)
 		{
-			if (transCams == null)
+			if (transCams == null || transCams.length == 0)
 				transCams = [flixel.FlxG.cameras.list[flixel.FlxG.cameras.list.length - 1]];
 
 			var _trans = createTransition(transOut);
