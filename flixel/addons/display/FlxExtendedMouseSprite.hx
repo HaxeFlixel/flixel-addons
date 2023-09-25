@@ -348,28 +348,29 @@ class FlxExtendedMouseSprite extends FlxSprite
 	 * Adds a simple spring between the mouse and this Sprite. The spring can be activated either when the mouse is pressed (default), or enabled all the time.
 	 * Note that nearly always the Spring will over-ride any other motion setting the sprite has (like velocity or gravity)
 	 *
-	 * @param	OnPressed			True if the spring should only be active when the mouse is pressed down on this sprite
-	 * @param	RetainVelocity		True to retain the velocity of the spring when the mouse is released, or false to clear it
-	 * @param	Tension				The tension of the spring, smaller numbers create springs closer to the mouse pointer
-	 * @param	Friction			The friction applied to the spring as it moves
-	 * @param	Gravity				The gravity controls how far "down" the spring hangs (use a negative value for it to hang up!)
-	 * @return	The FlxMouseSpring object if you wish to perform further chaining on it. Also available via FlxExtendedSprite.mouseSpring
+	 * @param   onPressed       True if the spring should only be active when the mouse is pressed down on this sprite
+	 * @param   retainVelocity  True to retain the velocity of the spring when the mouse is released, or false to clear it
+	 * @param   tension         The tension of the spring, smaller numbers create springs closer to the mouse pointer
+	 * @param   friction        The friction applied to the spring as it moves
+	 * @param   gravity         The gravity controls how far "down" the spring hangs (use a negative value for it to hang up!)
+	 * @return  The FlxMouseSpring object if you wish to perform further chaining on it. Also available via FlxExtendedSprite.mouseSpring
 	 */
-	public function enableMouseSpring(OnPressed:Bool = true, RetainVelocity:Bool = false, Tension:Float = 0.1, Friction:Float = 0.95,
-			Gravity:Float = 0):FlxMouseSpring
+	public function enableMouseSpring(onPressed = true, retainVelocity = false, tension = 0.1, friction = 0.95,
+			gravity = 0.0, ?offset:FlxPoint):FlxMouseSpring
 	{
 		hasMouseSpring = true;
-		springOnPressed = OnPressed;
+		springOnPressed = onPressed;
 
 		if (mouseSpring == null)
 		{
-			mouseSpring = new FlxMouseSpring(this, RetainVelocity, Tension, Friction, Gravity);
+			mouseSpring = new FlxMouseSpring(this, retainVelocity, tension, friction, gravity, offset);
 		}
 		else
 		{
-			mouseSpring.tension = Tension;
-			mouseSpring.friction = Friction;
-			mouseSpring.gravity = Gravity;
+			mouseSpring.tension = tension;
+			mouseSpring.friction = friction;
+			mouseSpring.gravity = gravity;
+			mouseSpring.retainVelocity = retainVelocity;
 		}
 
 		return mouseSpring;
