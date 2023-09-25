@@ -36,7 +36,7 @@ class FlxTransitionableState extends FlxState
 
 	public static var skipNextTransIn:Bool = false;
 	public static var skipNextTransOut:Bool = false;
-	public static var transitionCamera:FlxCamera = null;
+	public static var transCam:FlxCamera = null;
 
 	// beginning & ending transitions for THIS state:
 	public var transIn:TransitionData;
@@ -71,7 +71,7 @@ class FlxTransitionableState extends FlxState
 		super.destroy();
 		transIn = null;
 		transOut = null;
-		transitionCamera = null;
+		transCam = null;
 		_onExit = null;
 	}
 
@@ -116,11 +116,11 @@ class FlxTransitionableState extends FlxState
 				return;
 			}
 
-			if (transitionCamera == null)
-				transitionCamera = flixel.FlxG.cameras.list[flixel.FlxG.cameras.list.length - 1];
+			if (transCam == null)
+				transCam = flixel.FlxG.cameras.list[flixel.FlxG.cameras.list.length - 1];
 
 			var _trans = createTransition(transIn);
-			_trans.camera = transitionCamera;
+			_trans.camera = transCam;
 			_trans.setStatus(FULL);
 			openSubState(_trans);
 
@@ -137,11 +137,11 @@ class FlxTransitionableState extends FlxState
 		_onExit = OnExit;
 		if (hasTransOut)
 		{
-			if (transitionCamera == null)
-				transitionCamera = flixel.FlxG.cameras.list[flixel.FlxG.cameras.list.length - 1];
+			if (transCam == null)
+				transCam = flixel.FlxG.cameras.list[flixel.FlxG.cameras.list.length - 1];
 
 			var _trans = createTransition(transOut);
-			_trans.camera = transitionCamera;
+			_trans.camera = transCam;
 			_trans.setStatus(EMPTY);
 			openSubState(_trans);
 
