@@ -72,7 +72,7 @@ class FlxBackdrop extends FlxSprite
 	 * @param   spacingX    Amount of spacing between tiles on the X axis
 	 * @param   spacingY    Amount of spacing between tiles on the Y axis
 	 */
-	public function new(?graphic:FlxGraphicAsset, repeatAxes:FlxAxes = XY, spacingX:Float = 0, spacingY:Float = 0)
+	public function new(?graphic:FlxGraphicAsset, repeatAxes = XY, spacingX = 0.0, spacingY = 0.0)
 	{
 		super(0, 0, graphic);
 		
