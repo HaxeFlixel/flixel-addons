@@ -4,7 +4,7 @@ package flixel.addons.ui;
 import openfl.events.MouseEvent;
 import openfl.geom.Rectangle;
 import openfl.Lib;
-import flixel.addons.display.FlxExtendedSprite;
+import flixel.addons.display.FlxExtendedMouseSprite;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -60,8 +60,8 @@ class FlxButtonPlus extends FlxSpriteGroup
 	 */
 	public var leaveCallback:Void->Void;
 
-	public var buttonNormal(default, set):FlxExtendedSprite;
-	public var buttonHighlight(default, set):FlxExtendedSprite;
+	public var buttonNormal(default, set):FlxExtendedMouseSprite;
+	public var buttonHighlight(default, set):FlxExtendedMouseSprite;
 
 	public var textNormal(default, set):FlxText;
 	public var textHighlight(default, set):FlxText;
@@ -103,7 +103,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		y = Y;
 		onClickCallback = Callback;
 
-		buttonNormal = new FlxExtendedSprite();
+		buttonNormal = new FlxExtendedMouseSprite();
 
 		#if flash
 		buttonNormal.makeGraphic(Width, Height, borderColor);
@@ -116,7 +116,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		buttonNormal.solid = false;
 		buttonNormal.scrollFactor.set();
 
-		buttonHighlight = new FlxExtendedSprite();
+		buttonHighlight = new FlxExtendedMouseSprite();
 
 		#if flash
 		buttonHighlight.makeGraphic(Width, Height, borderColor);
@@ -382,7 +382,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		return NewText;
 	}
 
-	inline function set_buttonNormal(Value:FlxExtendedSprite):FlxExtendedSprite
+	inline function set_buttonNormal(Value:FlxExtendedMouseSprite):FlxExtendedMouseSprite
 	{
 		if (Value == null)
 		{
@@ -401,7 +401,7 @@ class FlxButtonPlus extends FlxSpriteGroup
 		return buttonNormal = Value;
 	}
 
-	inline function set_buttonHighlight(Value:FlxExtendedSprite):FlxExtendedSprite
+	inline function set_buttonHighlight(Value:FlxExtendedMouseSprite):FlxExtendedMouseSprite
 	{
 		if (Value == null)
 		{
