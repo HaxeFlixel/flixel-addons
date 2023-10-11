@@ -128,7 +128,7 @@ class FlxFSM<T> implements IFlxDestroyable
 
 				if (newName != null && !pools.exists(newName))
 				{
-					#if (flixel < "5.4")
+					#if (flixel < version("5.4.0"))
 					final newStateConstructor = newStateClass;
 					#else
 					final newStateConstructor = ()->Type.createInstance(newStateClass, []);
