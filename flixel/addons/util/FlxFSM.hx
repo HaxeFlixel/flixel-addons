@@ -128,7 +128,12 @@ class FlxFSM<T> implements IFlxDestroyable
 
 				if (newName != null && !pools.exists(newName))
 				{
-					pools.set(newName, new FlxPool<FlxFSMState<T>>(newStateClass));
+					#if (flixel < "5.4")
+					final newStateConstructor = newStateClass;
+					#else
+					final newStateConstructor = ()->Type.createInstance(newStateClass, []);
+					#end
+					pools.set(newName, new FlxPool<FlxFSMState<T>>(newStateConstructor));
 				}
 
 				var returnToPool = state;
