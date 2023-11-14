@@ -33,8 +33,8 @@ class Transition extends FlxSubState
 		super(FlxColor.TRANSPARENT);
 
 		var transCamera:FlxCamera = new FlxCamera(0, 0, Std.int(data.region.width), Std.int(data.region.height));
-		transCamera.bgColor = 0x0;
 		FlxG.cameras.add(transCamera, false);
+		transCamera.bgColor.alpha = 0;
 
 		_effect = createEffect(data);
 		_effect.scrollFactor.set(0, 0);
