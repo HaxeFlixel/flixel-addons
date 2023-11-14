@@ -5,6 +5,7 @@ import flixel.addons.transition.TransitionEffect;
 import flixel.addons.transition.TransitionFade;
 import flixel.addons.transition.TransitionTiles;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
@@ -13,6 +14,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxTimer;
 
 /**
@@ -29,16 +31,25 @@ class Transition extends FlxSubState
 	public function new(data:TransitionData)
 	{
 		super(FlxColor.TRANSPARENT);
+
+		var transCamera:FlxCamera = new FlxCamera(0, 0, data.region.width, data.region.height);
+		transCamera.bgColor = 0x0;
+		FlxG.cameras.add(transCamera, false);
+
 		_effect = createEffect(data);
 		_effect.scrollFactor.set(0, 0);
 		add(_effect);
+
+		cameras = [transCamera];
 	}
 
 	public override function destroy():Void
 	{
 		super.destroy();
+
 		finishCallback = null;
-		_effect = null;
+
+		_effect = FlxDestroyUtil.destroy(_effect);
 	}
 
 	public function start(NewStatus:TransitionStatus):Void
@@ -70,6 +81,7 @@ class Transition extends FlxSubState
 		{
 			return _effect.finishCallback;
 		}
+
 		return null;
 	}
 
@@ -80,6 +92,7 @@ class Transition extends FlxSubState
 			_effect.finishCallback = f;
 			return f;
 		}
+
 		return null;
 	}
 }
