@@ -50,7 +50,9 @@ class Transition extends FlxSubState
 
 		if (_effectCamera != null)
 		{
-			FlxG.cameras.remove(_effectCamera, true);
+			// may already be removed via state switching
+			if (FlxG.cameras.list.contains(_effectCamera))
+				FlxG.cameras.remove(_effectCamera, true);
 
 			_effectCamera = null;
 		}
