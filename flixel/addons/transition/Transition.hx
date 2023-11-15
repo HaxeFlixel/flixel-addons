@@ -52,9 +52,10 @@ class Transition extends FlxSubState
 		{
 			// may already be removed via state switching
 			if (FlxG.cameras.list.contains(_effectCamera))
-				FlxG.cameras.remove(_effectCamera, true);
+				FlxG.cameras.remove(_effectCamera, false);
 
-			_effectCamera = null;
+
+			_effectCamera = FlxDestroyUtil.destroy(_effectCamera);
 		}
 	}
 
@@ -64,7 +65,7 @@ class Transition extends FlxSubState
 		
 		FlxG.cameras.add(_effectCamera, false);
 		_effectCamera.bgColor.alpha = 0;
-		cameras = [_effectCamera];
+		_effect.cameras = [_effectCamera];
 	}
 
 	public function setStatus(NewStatus:TransitionStatus):Void
