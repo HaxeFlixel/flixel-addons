@@ -46,26 +46,26 @@ class Transition extends FlxSubState
 		_effect = FlxDestroyUtil.destroy(_effect);
 	}
 	
-	public function start(NewStatus:TransitionStatus):Void
+	public function start(newStatus:TransitionStatus):Void
 	{
-		_effect.start(NewStatus);
+		_effect.start(newStatus);
 	}
 	
-	public function setStatus(NewStatus:TransitionStatus):Void
+	public function setStatus(newStatus:TransitionStatus):Void
 	{
-		_effect.setStatus(NewStatus);
+		_effect.setStatus(newStatus);
 	}
 	
-	function createEffect(Data:TransitionData):TransitionEffect
+	function createEffect(data:TransitionData):TransitionEffect
 	{
-		switch (Data.type)
+		switch (data.type)
 		{
 			case TransitionType.TILES:
-				return new TransitionTiles(Data);
+				return new TransitionTiles(data);
 			case TransitionType.FADE:
-				return new TransitionFade(Data);
-			default:
-				return null;
+				return new TransitionFade(data);
+			case TransitionType.NONE:
+				throw "Unexpected TransitionType: NONE";
 		}
 	}
 	
@@ -79,13 +79,13 @@ class Transition extends FlxSubState
 		return null;
 	}
 	
-	function set_finishCallback(f:Void->Void):Void->Void
+	function set_finishCallback(callback:Void->Void):Void->Void
 	{
 		if (_effect != null)
 		{
-			_effect.finishCallback = f;
+			_effect.finishCallback = callback;
 			
-			return f;
+			return callback;
 		}
 		
 		return null;

@@ -43,11 +43,11 @@ class TransitionEffect extends FlxSpriteGroup
 		}
 	}
 	
-	public function start(NewStatus:TransitionStatus):Void
+	public function start(newStatus:TransitionStatus):Void
 	{
 		_started = true;
 		
-		if (NewStatus == IN)
+		if (newStatus == IN)
 		{
 			_endStatus = FULL;
 		}
@@ -73,7 +73,7 @@ class TransitionEffect extends FlxSpriteGroup
 		}
 	}
 	
-	public function setStatus(NewStatus:TransitionStatus):Void
+	public function setStatus(newStatus:TransitionStatus):Void
 	{
 		// override per subclass
 	}
