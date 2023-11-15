@@ -34,6 +34,7 @@ class Transition extends FlxSubState
 		super(FlxColor.TRANSPARENT);
 
 		_effectCamera = new FlxCamera(0, 0, Std.int(data.region.width), Std.int(data.region.height));
+		_effectCamera.bgColor = 0x0;
 		
 		_effect = createEffect(data);
 		_effect.scrollFactor.set(0, 0);
@@ -64,7 +65,6 @@ class Transition extends FlxSubState
 		_effect.start(NewStatus);
 		
 		FlxG.cameras.add(_effectCamera, false);
-		_effectCamera.bgColor.alpha = 0;
 		_effect.cameras = [_effectCamera];
 	}
 
