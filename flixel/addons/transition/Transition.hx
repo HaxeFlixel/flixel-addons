@@ -38,10 +38,9 @@ class Transition extends FlxSubState
 		_effectCamera.bgColor.alpha = 0;
 
 		_effect = createEffect(data);
-		_effect.scrollFactor.set(0, 0);
+		_effect.scrollFactor.set();
+		_effect.cameras = [_effectCamera];
 		add(_effect);
-
-		cameras = [_effectCamera];
 	}
 
 	public override function destroy():Void
@@ -54,9 +53,10 @@ class Transition extends FlxSubState
 
 		if (_effectCamera != null)
 		{
-			FlxG.cameras.remove(_effectCamera, true);
+			if (FlxG.cameras.list.contains(_effectCamera))
+				FlxG.cameras.remove(_effectCamera, false);
 
-			_effectCamera = null;
+			_effectCamera = FlxDestroyUtil.destroy(_effectCamera);
 		}
 	}
 
