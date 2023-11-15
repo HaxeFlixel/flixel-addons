@@ -55,7 +55,6 @@ class Transition extends FlxSubState
 			if (FlxG.cameras.list.contains(_effectCamera))
 				FlxG.cameras.remove(_effectCamera, true);
 
-
 			_effectCamera = null;
 		}
 	}
@@ -63,8 +62,9 @@ class Transition extends FlxSubState
 	public function start(NewStatus:TransitionStatus):Void
 	{
 		_effect.start(NewStatus);
-		
+
 		FlxG.cameras.add(_effectCamera, false);
+
 		_effect.cameras = [_effectCamera];
 	}
 
@@ -101,6 +101,7 @@ class Transition extends FlxSubState
 		if (_effect != null)
 		{
 			_effect.finishCallback = f;
+
 			return f;
 		}
 
