@@ -34,14 +34,10 @@ class Transition extends FlxSubState
 		super(FlxColor.TRANSPARENT);
 
 		_effectCamera = new FlxCamera(0, 0, Std.int(data.region.width), Std.int(data.region.height));
-		FlxG.cameras.add(_effectCamera, false);
-		_effectCamera.bgColor.alpha = 0;
-
+		
 		_effect = createEffect(data);
 		_effect.scrollFactor.set(0, 0);
 		add(_effect);
-
-		cameras = [transCamera];
 	}
 
 	public override function destroy():Void
@@ -63,6 +59,10 @@ class Transition extends FlxSubState
 	public function start(NewStatus:TransitionStatus):Void
 	{
 		_effect.start(NewStatus);
+		
+		FlxG.cameras.add(_effectCamera, false);
+		_effectCamera.bgColor.alpha = 0;
+		cameras = [_effectCamera];
 	}
 
 	public function setStatus(NewStatus:TransitionStatus):Void
