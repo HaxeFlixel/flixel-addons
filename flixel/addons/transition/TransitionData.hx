@@ -15,10 +15,19 @@ enum abstract TransitionType(String)
 	var FADE = "fade";
 }
 
+/**
+ * Whether this transition will use a new camera, the top camera, or the default camera(s)
+ * @since 5.6.0
+ */
 enum TransitionCameraMode
 {
+	/** The transition will use the current top-most camera, this is the default value */
 	TOP;
+	
+	/** The transition will create and use a new camera above all others */
 	NEW;
+	
+	/** The transition will use the default cameras */
 	DEFAULT;
 }
 
