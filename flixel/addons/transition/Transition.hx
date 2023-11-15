@@ -25,14 +25,14 @@ import flixel.util.FlxTimer;
 class Transition extends FlxSubState
 {
 	public var finishCallback(get, set):Void->Void;
-
+	
 	var _effectCamera:FlxCamera;
 	var _effect:TransitionEffect;
-
+	
 	public function new(data:TransitionData)
 	{
 		super(FlxColor.TRANSPARENT);
-
+		
 		_effectCamera = new FlxCamera(0, 0, Std.int(data.region.width), Std.int(data.region.height));
 		_effectCamera.bgColor = 0x0;
 		
@@ -40,39 +40,39 @@ class Transition extends FlxSubState
 		_effect.scrollFactor.set(0, 0);
 		add(_effect);
 	}
-
+	
 	public override function destroy():Void
 	{
 		super.destroy();
-
+		
 		finishCallback = null;
-
+		
 		_effect = FlxDestroyUtil.destroy(_effect);
-
+		
 		if (_effectCamera != null)
 		{
 			// may already be removed via state switching
 			if (FlxG.cameras.list.contains(_effectCamera))
 				FlxG.cameras.remove(_effectCamera, true);
-
+				
 			_effectCamera = null;
 		}
 	}
-
+	
 	public function start(NewStatus:TransitionStatus):Void
 	{
 		_effect.start(NewStatus);
-
+		
 		FlxG.cameras.add(_effectCamera, false);
-
+		
 		_effect.cameras = [_effectCamera];
 	}
-
+	
 	public function setStatus(NewStatus:TransitionStatus):Void
 	{
 		_effect.setStatus(NewStatus);
 	}
-
+	
 	function createEffect(Data:TransitionData):TransitionEffect
 	{
 		switch (Data.type)
@@ -85,26 +85,26 @@ class Transition extends FlxSubState
 				return null;
 		}
 	}
-
+	
 	function get_finishCallback():Void->Void
 	{
 		if (_effect != null)
 		{
 			return _effect.finishCallback;
 		}
-
+		
 		return null;
 	}
-
+	
 	function set_finishCallback(f:Void->Void):Void->Void
 	{
 		if (_effect != null)
 		{
 			_effect.finishCallback = f;
-
+			
 			return f;
 		}
-
+		
 		return null;
 	}
 }
