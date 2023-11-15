@@ -41,7 +41,7 @@ class Transition extends FlxSubState
 		_effect.scrollFactor.set(0, 0);
 		add(_effect);
 
-		cameras = [transCamera];
+		cameras = [_effectCamera];
 	}
 
 	public override function destroy():Void
