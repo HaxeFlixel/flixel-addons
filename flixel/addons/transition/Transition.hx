@@ -26,15 +26,16 @@ class Transition extends FlxSubState
 {
 	public var finishCallback(get, set):Void->Void;
 
+	var _effectCamera:FlxCamera;
 	var _effect:TransitionEffect;
 
 	public function new(data:TransitionData)
 	{
 		super(FlxColor.TRANSPARENT);
 
-		var transCamera:FlxCamera = new FlxCamera(0, 0, Std.int(data.region.width), Std.int(data.region.height));
-		FlxG.cameras.add(transCamera, false);
-		transCamera.bgColor.alpha = 0;
+		_effectCamera = new FlxCamera(0, 0, Std.int(data.region.width), Std.int(data.region.height));
+		FlxG.cameras.add(_effectCamera, false);
+		_effectCamera.bgColor.alpha = 0;
 
 		_effect = createEffect(data);
 		_effect.scrollFactor.set(0, 0);
@@ -50,6 +51,13 @@ class Transition extends FlxSubState
 		finishCallback = null;
 
 		_effect = FlxDestroyUtil.destroy(_effect);
+
+		if (_effectCamera != null)
+		{
+			FlxG.cameras.remove(_effectCamera, true);
+
+			_effectCamera = null;
+		}
 	}
 
 	public function start(NewStatus:TransitionStatus):Void
