@@ -1,10 +1,10 @@
 package flixel.addons.transition;
 
-import flixel.addons.transition.TransitionData.TransitionType;
+import flixel.addons.transition.TransitionData;
 import flixel.addons.transition.TransitionEffect;
 import flixel.addons.transition.TransitionFade;
 import flixel.addons.transition.TransitionTiles;
-import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
+import flixel.addons.transition.FlxTransitionSprite;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
