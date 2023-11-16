@@ -17,7 +17,7 @@ enum abstract TransitionType(String)
 
 /**
  * Whether this transition will use a new camera, the top camera, or the default camera(s)
- * @since 5.6.0
+ * @since 3.3.0
  */
 enum TransitionCameraMode
 {
@@ -67,7 +67,7 @@ class TransitionData implements IFlxDestroyable
 	
 	/**
 	 * Whether this transition will use a new camera, the top camera, or the default camera
-	 * @since 5.6.0
+	 * @since 3.3.0
 	 */
 	public var cameraMode:TransitionCameraMode = TOP;
 	
