@@ -27,7 +27,7 @@ jobs:
       run: |
         haxelib setup /home/runner/haxe/haxelib/
         haxelib install haxelib 4.0.3
-        haxelib dev flixel .
+        haxelib dev flixel-addons .
     
     - uses: HaxeFlixel/setup-flixel@master
       with:
