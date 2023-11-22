@@ -33,6 +33,5 @@ jobs:
       with:
         haxe-version: current
         flixel-versions: dev
-        test-location: local
         target: ${{matrix.target}}
         run-tests: true
