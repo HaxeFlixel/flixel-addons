@@ -137,6 +137,8 @@ class TransitionFade extends TransitionEffect
 	{
 		final sprite = new FlxSprite(region.x, region.y);
 		final bitmapKey = getBitmapKey(dirX, dirY, _data.color);
+
+		sprite.antialiasing = false;
 		
 		if (dirX == 0 && dirY == 0)
 		{
