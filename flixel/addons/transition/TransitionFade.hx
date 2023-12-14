@@ -73,7 +73,7 @@ class TransitionFade extends TransitionEffect
 		FlxTween.tween(back, endValues, _data.duration, _data.tweenOptions);
 	}
 	
-	function setTweenValues(isIn:Bool, dirX:Float, dirY:Float, sprite:FlxSprite, values:TweenEndValues)
+	function setTweenValues(isIn:Bool, dirX:Float, dirY:Float, sprite:FlxSprite, values:TweenEndValues):Void
 	{
 		final isOut = !isIn;
 		if (dirX == 0 && dirY == 0)
@@ -127,20 +127,30 @@ class TransitionFade extends TransitionEffect
 			}
 		}
 	}
+
+	inline function getBitmapKey(dirX:Float, dirY:Float, color:FlxColor):String
+	{
+		return "transition" + color + "x" + dirX + "y" + dirY;
+	}
 	
 	function makeSprite(dirX:Float, dirY:Float, region:FlxRect):FlxSprite
 	{
 		final sprite = new FlxSprite(region.x, region.y);
+		final bitmapKey = getBitmapKey(dirX, dirY, _data.color);
+
+		sprite.antialiasing = false;
 		
 		if (dirX == 0 && dirY == 0)
 		{
 			// no direction
-			sprite.makeGraphic(Std.int(region.width), Std.int(region.height), _data.color);
+			sprite.makeGraphic(1, 1, _data.color, false, bitmapKey);
+			sprite.scale.set(Std.int(region.width), Std.int(region.height));
+			sprite.updateHitbox();
 		}
 		else if (dirX == 0 && dirY != 0)
 		{
 			// vertical wipe
-			sprite.makeGraphic(1, Std.int(region.height * 2), _data.color);
+			sprite.makeGraphic(1, Std.int(region.height * 2), _data.color, false, bitmapKey);
 			final angle = dirY > 0 ? 90 : 270;
 			final gradient = FlxGradient.createGradientBitmapData(1, Std.int(region.height), [_data.color, FlxColor.TRANSPARENT], 1, angle);
 			final destY = dirY > 0 ? region.height : 0;
@@ -153,7 +163,7 @@ class TransitionFade extends TransitionEffect
 			// horizontal wipe
 			final destX = dirX > 0 ? region.width : 0;
 			final angle = dirX > 0 ? 0 : 180;
-			sprite.makeGraphic(Std.int(region.width * 2), 1, _data.color);
+			sprite.makeGraphic(Std.int(region.width * 2), 1, _data.color, false, bitmapKey);
 			final gradient = FlxGradient.createGradientBitmapData(Std.int(region.width), 1, [_data.color, FlxColor.TRANSPARENT], 1, angle);
 			sprite.pixels.copyPixels(gradient, gradient.rect, new Point(destX, 0));
 			sprite.scale.set(1.0, region.height);
