@@ -1,3 +1,14 @@
+3.2.1 (September 26, 2023)
+------------------------------
+
+#### Changes and improvements:
+- `FlxMouseSpring`: Now works with `FlxSprite` rather than just `FlxExtendedSprite` ([#405](https://github.com/HaxeFlixel/flixel-addons/pull/405))
+- `FlxExtendedSprite`: Deprecated for `FlxExtendedMouseSprite`, no longer uses `FlxMouseControl` ([#405](https://github.com/HaxeFlixel/flixel-addons/pull/405))
+
+
+#### Bugfixes:
+- `FlxBackdrop`: Change spacing constructor args to floats ([#408](https://github.com/HaxeFlixel/flixel-addons/pull/408))
+
 3.2.0 (August 15, 2023)
 ------------------------------
 #### New Features:
