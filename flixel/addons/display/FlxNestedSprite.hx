@@ -259,7 +259,8 @@ class FlxNestedSprite extends FlxSprite
 
 	override public function draw():Void
 	{
-		super.draw();
+		if(_frame != null) 
+			super.draw();
 
 		for (child in children)
 		{
