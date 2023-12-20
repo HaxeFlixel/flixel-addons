@@ -1,10 +1,8 @@
 package flixel.addons.display;
 
-#if nme
-#error "FlxRuntimeShader is not available with nme"
-#elseif flash
-#error "FlxRuntimeShader is not available when targeting flash"
-#else
+#if (FLX_NO_COVERAGE_TEST && (nme || flash))
+#error "FlxRuntimeShader is not available with nme or flash"
+#end
 import flixel.graphics.tile.FlxGraphicsShader;
 #if lime
 import lime.utils.Float32Array;
@@ -652,4 +650,3 @@ class FlxRuntimeShader extends FlxGraphicsShader
 		return __glVertexSource = value;
 	}
 }
-#end
