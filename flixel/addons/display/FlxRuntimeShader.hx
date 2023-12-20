@@ -1,7 +1,9 @@
 package flixel.addons.display;
 
-#if (FLX_NO_COVERAGE_TEST && (nme || flash))
-#error 'FlxRuntimeShader isn\'t available with nme or flash.'
+#if (nme || flash)
+	#if FLX_NO_COVERAGE_TEST
+	#error "FlxRuntimeShader isn't available with nme or flash."
+	#end
 #else
 import flixel.graphics.tile.FlxGraphicsShader;
 #if lime
