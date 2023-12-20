@@ -1,6 +1,10 @@
 package flixel.addons.display;
 
-#if (!nme && !flash)
+#if nme
+    #error "FlxRuntimeShader is not available with nme"
+#elseif flash
+    #error "FlxRuntimeShader is not available when targeting flash"
+#else
 import flixel.graphics.tile.FlxGraphicsShader;
 #if lime
 import lime.utils.Float32Array;
