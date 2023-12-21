@@ -1,6 +1,10 @@
 package flixel.addons.display;
 
-#if (FLX_DRAW_QUADS && !flash)
+#if (nme || flash)
+	#if FLX_NO_COVERAGE_TEST
+	#error "FlxRuntimeShader isn't available with nme or flash."
+	#end
+#else
 import flixel.graphics.tile.FlxGraphicsShader;
 #if lime
 import lime.utils.Float32Array;
