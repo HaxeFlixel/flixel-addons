@@ -1,5 +1,12 @@
 3.2.2 (TBD)
 ------------------------------
+#### Dependencies:
+- Minimum versions allowed:
+	- Flixel: 5.3.0
+	- OpenFl: 9.2.2
+	- Lime: 8.0.2
+	- Haxe: 4.2.5
+
 #### Changes and improvements:
 - `FlxFSM`: Fix `FlxPool` deprecation warnings from Flixel 5.4.0 ([#409](https://github.com/HaxeFlixel/flixel-addons/pull/409))
 - `TransitionData`: add `cameraMode` field to help ensure the transition shows on top ([#410](https://github.com/HaxeFlixel/flixel-addons/pull/410))
