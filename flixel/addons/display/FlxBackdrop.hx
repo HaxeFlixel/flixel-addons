@@ -146,10 +146,8 @@ class FlxBackdrop extends FlxSprite
 			camera = FlxG.camera;
 		
 		var bounds = getScreenBounds(_rect, camera);
-		var view = camera.getViewRect();
-		if (repeatAxes.x) bounds.x = view.x;
-		if (repeatAxes.y) bounds.y = view.y;
-		view.put();
+		if (repeatAxes.x) bounds.x = camera.viewMarginLeft;
+		if (repeatAxes.y) bounds.y = camera.viewMarginTop;
 		
 		return camera.containsRect(bounds);
 	}
@@ -158,20 +156,17 @@ class FlxBackdrop extends FlxSprite
 	{
 		var largest:FlxCamera = null;
 		var largestArea = 0.0;
-		var view = FlxRect.get();
 		for (camera in cameras)
 		{
 			if (!camera.visible || !camera.exists || !isOnScreen(camera))
 				continue;
 			
-			camera.getViewRect(view);
-			if (view.width * view.height > largestArea)
+			if (camera.viewWidth * camera.viewHeight > largestArea)
 			{
 				largest = camera;
-				largestArea = view.width * view.height;
+				largestArea = camera.viewWidth * camera.viewHeight;
 			}
 		}
-		view.put();
 		
 		if (largest != null)
 			regenGraphic(largest);
@@ -208,24 +203,25 @@ class FlxBackdrop extends FlxSprite
 		var tilesY = 1;
 		if (repeatAxes != NONE)
 		{
-			var view = camera.getViewRect();
+			final viewMargins = camera.getViewMarginRect();
 			if (repeatAxes.x)
 			{
-				final left  = modMin(_point.x + frameWidth, tileSize.x, view.left) - frameWidth;
-				final right = modMax(_point.x, tileSize.x, view.right) + tileSize.x;
+				final left  = modMin(_point.x + frameWidth, tileSize.x, viewMargins.left) - frameWidth;
+				final right = modMax(_point.x, tileSize.x, viewMargins.right) + tileSize.x;
 				tilesX = Math.round((right - left) / tileSize.x);
 				final origTileSizeX = frameWidth + spacing.x;
-				_point.x = modMin(_point.x + frameWidth, origTileSizeX, view.left) - frameWidth;
+				_point.x = modMin(_point.x + frameWidth, origTileSizeX, viewMargins.left) - frameWidth;
 			}
 			
 			if (repeatAxes.y)
 			{
-				final top    = modMin(_point.y + frameHeight, tileSize.y, view.top) - frameHeight;
-				final bottom = modMax(_point.y, tileSize.y, view.bottom) + tileSize.y;
+				final top    = modMin(_point.y + frameHeight, tileSize.y, viewMargins.top) - frameHeight;
+				final bottom = modMax(_point.y, tileSize.y, viewMargins.bottom) + tileSize.y;
 				tilesY = Math.round((bottom - top) / tileSize.y);
 				final origTileSizeY = frameHeight + spacing.y;
-				_point.y = modMin(_point.y + frameHeight, origTileSizeY, view.top) - frameHeight;
+				_point.y = modMin(_point.y + frameHeight, origTileSizeY, viewMargins.top) - frameHeight;
 			}
+			viewMargins.put();
 		}
 		
 		if (drawBlit)
@@ -311,13 +307,13 @@ class FlxBackdrop extends FlxSprite
 		var tilesY = 1;
 		if (repeatAxes != NONE)
 		{
-			final view = camera.getViewRect();
+			final viewMargins = camera.getViewMarginRect();
 			final bounds = getScreenBounds(camera);
 			if (repeatAxes.x)
 			{
 				final origTileSizeX = (frameWidth + spacing.x) * scale.x;
-				final left  = modMin(bounds.right, origTileSizeX, view.left) - bounds.width;
-				final right = modMax(bounds.left, origTileSizeX, view.right) + origTileSizeX;
+				final left  = modMin(bounds.right, origTileSizeX, viewMargins.left) - bounds.width;
+				final right = modMax(bounds.left, origTileSizeX, viewMargins.right) + origTileSizeX;
 				tilesX = Math.round((right - left) / tileSize.x);
 				_point.x = left + _point.x - bounds.x;
 			}
@@ -325,12 +321,12 @@ class FlxBackdrop extends FlxSprite
 			if (repeatAxes.y)
 			{
 				final origTileSizeY = (frameHeight + spacing.y) * scale.y;
-				final top    = modMin(bounds.bottom, origTileSizeY, view.top) - bounds.height;
-				final bottom = modMax(bounds.top, origTileSizeY, view.bottom) + origTileSizeY;
+				final top    = modMin(bounds.bottom, origTileSizeY, viewMargins.top) - bounds.height;
+				final bottom = modMax(bounds.top, origTileSizeY, viewMargins.bottom) + origTileSizeY;
 				tilesY = Math.round((bottom - top) / tileSize.y);
 				_point.y = top + _point.y - bounds.y;
 			}
-			view.put();
+			viewMargins.put();
 			bounds.put();
 		}
 		_point.addPoint(origin);
@@ -407,7 +403,7 @@ class FlxBackdrop extends FlxSprite
 			(frameHeight + spacing.y) * scale.y
 		);
 		
-		var view = camera.getViewRect();
+		final viewMargins = camera.getViewMarginRect();
 		var tilesX = 1;
 		var tilesY = 1;
 		if (repeatAxes != NONE)
@@ -416,22 +412,22 @@ class FlxBackdrop extends FlxSprite
 			switch (blitMode)
 			{
 				case AUTO | SPLIT (1):
-					if (repeatAxes.x) tilesX = Math.ceil(view.width  / tileSize.x) + 1;
-					if (repeatAxes.y) tilesY = Math.ceil(view.height / tileSize.y) + 1;
+					if (repeatAxes.x) tilesX = Math.ceil(viewMargins.width  / tileSize.x) + 1;
+					if (repeatAxes.y) tilesY = Math.ceil(viewMargins.height / tileSize.y) + 1;
 				case MAX_TILES(1) | MAX_TILES_XY(1, 1):
 				case MAX_TILES(max):
-					if (repeatAxes.x) tilesX = min(max, Math.ceil(view.width  / tileSize.x) + 1);
-					if (repeatAxes.y) tilesY = min(max, Math.ceil(view.height / tileSize.y) + 1);
+					if (repeatAxes.x) tilesX = min(max, Math.ceil(viewMargins.width  / tileSize.x) + 1);
+					if (repeatAxes.y) tilesY = min(max, Math.ceil(viewMargins.height / tileSize.y) + 1);
 				case MAX_TILES_XY(maxX, maxY):
-					if (repeatAxes.x) tilesX = min(maxX, Math.ceil(view.width  / tileSize.x) + 1);
-					if (repeatAxes.y) tilesY = min(maxY, Math.ceil(view.height / tileSize.y) + 1);
+					if (repeatAxes.x) tilesX = min(maxX, Math.ceil(viewMargins.width  / tileSize.x) + 1);
+					if (repeatAxes.y) tilesY = min(maxY, Math.ceil(viewMargins.height / tileSize.y) + 1);
 				case SPLIT(portions):
-					if (repeatAxes.x) tilesX = repeatAxes.x ? Math.ceil(view.width  / tileSize.x / portions + 1) : 1;
-					if (repeatAxes.y) tilesY = repeatAxes.y ? Math.ceil(view.height / tileSize.y / portions + 1) : 1;
+					if (repeatAxes.x) tilesX = repeatAxes.x ? Math.ceil(viewMargins.width  / tileSize.x / portions + 1) : 1;
+					if (repeatAxes.y) tilesY = repeatAxes.y ? Math.ceil(viewMargins.height / tileSize.y / portions + 1) : 1;
 			}
 		}
 		
-		view.put();
+		viewMargins.put();
 		
 		if (matchPrevDrawParams(tilesX, tilesY))
 		{
