@@ -1,4 +1,4 @@
-3.2.2 (TBD)
+3.2.2 (March 10, 2024)
 ------------------------------
 #### Dependencies:
 - Minimum versions allowed:
