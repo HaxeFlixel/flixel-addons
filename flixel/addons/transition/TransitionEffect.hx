@@ -3,14 +3,14 @@ package flixel.addons.transition;
 import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
 import flixel.addons.transition.TransitionData;
 import flixel.group.FlxGroup;
-import flixel.group.FlxSpriteGroup;
+import flixel.group.*;
 import flixel.util.FlxTimer;
 
 /**
  * @author larsiusprime
  */
 @:allow(flixel.addons.transition.Transition)
-class TransitionEffect extends FlxSpriteGroup
+class TransitionEffect extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteContainer #end
 {
 	public var finishCallback:Void->Void;
 	public var finished(default, null):Bool = false;

@@ -9,7 +9,7 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
-import flixel.group.FlxSpriteGroup;
+import flixel.group.*;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
@@ -24,7 +24,7 @@ import flixel.math.FlxMath;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
-class FlxButtonPlus extends FlxSpriteGroup
+class FlxButtonPlus extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteContainer #end
 {
 	public static inline var NORMAL:Int = 0;
 	public static inline var HIGHLIGHT:Int = 1;

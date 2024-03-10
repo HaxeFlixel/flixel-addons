@@ -127,6 +127,9 @@ class FlxClickArea extends FlxObject
 		if (continueUpdate)
 		{
 			var offAll:Bool = true;
+			#if (flixel >= "5.7.0")
+			final cameras = getCameras(); // else use this.cameras
+			#end
 			for (camera in cameras)
 			{
 				#if FLX_MOUSE
