@@ -8,6 +8,7 @@ import flixel.math.FlxMath;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
+import flixel.math.FlxRect;
 import flixel.util.FlxSpriteUtil;
 
 /**
@@ -104,6 +105,14 @@ class FlxTiledSprite extends FlxStrip
 	{
 		graphic = FlxGraphic.fromFrame(Frame);
 		return this;
+	}
+
+	override function set_clipRect(Value:FlxRect):FlxRect
+	{
+		if (Value != clipRect)
+			regen = true;
+
+		return super.set_clipRect(Value);
 	}
 
 	override function set_graphic(Value:FlxGraphic):FlxGraphic
@@ -216,51 +225,47 @@ class FlxTiledSprite extends FlxStrip
 		var frame:FlxFrame = graphic.imageFrame.frame;
 		graphicVisible = true;
 
-		if (repeatX)
-		{
-			vertices[0] = vertices[6] = 0.0;
-			vertices[2] = vertices[4] = width;
+		var rectX:Float = (repeatX ? 0 : scrollX);
+		rectX = FlxMath.bound(rectX, 0, width);
+		if (clipRect != null) rectX += clipRect.x;
 
-			uvtData[0] = uvtData[6] = -scrollX / frame.sourceSize.x;
-			uvtData[2] = uvtData[4] = uvtData[0] + width / frame.sourceSize.x;
-		}
-		else
-		{
-			vertices[0] = vertices[6] = FlxMath.bound(scrollX, 0, width);
-			vertices[2] = vertices[4] = FlxMath.bound(scrollX + frame.sourceSize.x, 0, width);
+		var rectWidth:Float = (repeatX ? rectX + width : scrollX + frame.sourceSize.x);
+		if (clipRect != null) rectWidth = FlxMath.bound(rectWidth, clipRect.x, clipRect.x + clipRect.width);
 
-			if (vertices[2] - vertices[0] <= 0)
-			{
-				graphicVisible = false;
-				return;
-			}
+		// Texture coordinates (UVs)
+		var rectUX:Float = (rectX - scrollX) / frame.sourceSize.x;
+		var rectVX:Float = rectUX + (rectWidth-rectX) / frame.sourceSize.x;
 
-			uvtData[0] = uvtData[6] = (vertices[0] - scrollX) / frame.sourceSize.x;
-			uvtData[2] = uvtData[4] = uvtData[0] + (vertices[2] - vertices[0]) / frame.sourceSize.x;
-		}
+		vertices[0] = rectX;
+		vertices[2] = rectWidth;
+		vertices[4] = rectWidth;
+		vertices[6] = rectX;
 
-		if (repeatY)
-		{
-			vertices[1] = vertices[3] = 0.0;
-			vertices[5] = vertices[7] = height;
+		uvtData[0] = rectUX;
+		uvtData[2] = rectVX;
+		uvtData[4] = rectVX;
+		uvtData[6] = rectUX;
 
-			uvtData[1] = uvtData[3] = -scrollY / frame.sourceSize.y;
-			uvtData[5] = uvtData[7] = uvtData[1] + height / frame.sourceSize.y;
-		}
-		else
-		{
-			vertices[1] = vertices[3] = FlxMath.bound(scrollY, 0, height);
-			vertices[5] = vertices[7] = FlxMath.bound(scrollY + frame.sourceSize.y, 0, height);
+		var rectY:Float = (repeatY ? 0 : scrollY);
+		rectY = FlxMath.bound(rectY, 0, height);
+		if (clipRect != null) rectY += clipRect.y;
 
-			if (vertices[5] - vertices[1] <= 0)
-			{
-				graphicVisible = false;
-				return;
-			}
+		var rectHeight:Float = (repeatY ? rectY + height : scrollY + frame.sourceSize.y);
+		if (clipRect != null) rectHeight = FlxMath.bound(rectHeight, clipRect.y, clipRect.y + clipRect.height);
 
-			uvtData[1] = uvtData[3] = (vertices[1] - scrollY) / frame.sourceSize.y;
-			uvtData[5] = uvtData[7] = uvtData[1] + (vertices[5] - vertices[1]) / frame.sourceSize.y;
-		}
+		// Texture coordinates (UVs)
+		var rectUY:Float = (rectY - scrollY) / frame.sourceSize.y;
+		var rectVY:Float = rectUY + (rectHeight-rectY) / frame.sourceSize.y;
+
+		vertices[1] = rectY;
+		vertices[3] = rectY;
+		vertices[5] = rectHeight;
+		vertices[7] = rectHeight;
+
+		uvtData[1] = rectUY;
+		uvtData[3] = rectUY;
+		uvtData[5] = rectVY;
+		uvtData[7] = rectVY;
 	}
 
 	override function set_width(Width:Float):Float
