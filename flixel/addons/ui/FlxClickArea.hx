@@ -9,6 +9,12 @@ import flixel.FlxObject;
 import flixel.ui.FlxButton;
 import flixel.math.FlxPoint;
 
+#if (flixel < version("5.7.0"))
+import flixel.ui.FlxButton.NORMAL;
+import flixel.ui.FlxButton.HIGHLIGHT;
+import flixel.ui.FlxButton.PRESSED;
+#end
+
 /**
  * Trimmed-down button, invisible click area, only responds to onUP
  */
@@ -56,7 +62,7 @@ class FlxClickArea extends FlxObject
 
 		onUp = OnUp;
 
-		status = FlxButton.NORMAL;
+		status = NORMAL;
 		_pressed = false;
 		_initialized = false;
 
@@ -151,7 +157,7 @@ class FlxClickArea extends FlxObject
 			}
 			if (offAll)
 			{
-				status = FlxButton.NORMAL;
+				status = NORMAL;
 			}
 		}
 	}
@@ -169,11 +175,11 @@ class FlxClickArea extends FlxObject
 
 			if (JustPressed)
 			{
-				status = FlxButton.PRESSED;
+				status = PRESSED;
 			}
-			if (status == FlxButton.NORMAL)
+			if (status == NORMAL)
 			{
-				status = FlxButton.HIGHLIGHT;
+				status = HIGHLIGHT;
 			}
 		}
 
@@ -185,7 +191,7 @@ class FlxClickArea extends FlxObject
 	 */
 	function onMouseUp(event:Event):Void
 	{
-		if (!exists || !visible || !active || (status != FlxButton.PRESSED))
+		if (!exists || !visible || !active || (status != PRESSED))
 		{
 			return;
 		}
@@ -193,6 +199,6 @@ class FlxClickArea extends FlxObject
 		{
 			onUp();
 		}
-		status = FlxButton.NORMAL;
+		status = NORMAL;
 	}
 }
