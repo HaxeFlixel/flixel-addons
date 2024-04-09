@@ -275,7 +275,7 @@ class FlxBackdrop extends FlxSprite
 		_matrix.translate(-origin.x, -origin.y);
 		
 		// The distance between repeated sprites, in screen space
-		var tileSize = FlxPoint.get(frame.frame.width, frame.frame.height);
+		final tileSize = FlxPoint.get(frame.frame.width, frame.frame.height);
 		
 		if (drawDirect)
 		{
@@ -365,6 +365,8 @@ class FlxBackdrop extends FlxSprite
 				}
 			}
 		}
+		
+		tileSize.put();
 		
 		if (FlxG.renderBlit)
 			camera.buffer.unlock();
