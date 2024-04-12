@@ -204,9 +204,9 @@ class FlxBackdrop extends FlxSprite
 		final frame = drawBlit ? _blitGraphic.imageFrame.frame : _frame;
 		
 		// The distance between repeated sprites, in screen space
-		var tileSize = FlxPoint.get(frame.frame.width, frame.frame.height);
+		_tileSize.set(frame.frame.width, frame.frame.height);
 		if (drawDirect)
-			tileSize.addPoint(spacing);
+			_tileSize.addPoint(spacing);
 		
 		getScreenPosition(_point, camera).subtractPoint(offset);
 		var tilesX = 1;
@@ -216,18 +216,18 @@ class FlxBackdrop extends FlxSprite
 			final viewMargins = camera.getViewMarginRect();
 			if (repeatAxes.x)
 			{
-				final left  = modMin(_point.x + frameWidth, tileSize.x, viewMargins.left) - frameWidth;
-				final right = modMax(_point.x, tileSize.x, viewMargins.right) + tileSize.x;
-				tilesX = Math.round((right - left) / tileSize.x);
+				final left = modMin(_point.x + frameWidth, _tileSize.x, viewMargins.left) - frameWidth;
+				final right = modMax(_point.x, _tileSize.x, viewMargins.right) + _tileSize.x;
+				tilesX = Math.round((right - left) / _tileSize.x);
 				final origTileSizeX = frameWidth + spacing.x;
 				_point.x = modMin(_point.x + frameWidth, origTileSizeX, viewMargins.left) - frameWidth;
 			}
 			
 			if (repeatAxes.y)
 			{
-				final top    = modMin(_point.y + frameHeight, tileSize.y, viewMargins.top) - frameHeight;
-				final bottom = modMax(_point.y, tileSize.y, viewMargins.bottom) + tileSize.y;
-				tilesY = Math.round((bottom - top) / tileSize.y);
+				final top = modMin(_point.y + frameHeight, _tileSize.y, viewMargins.top) - frameHeight;
+				final bottom = modMax(_point.y, _tileSize.y, viewMargins.bottom) + _tileSize.y;
+				tilesY = Math.round((bottom - top) / _tileSize.y);
 				final origTileSizeY = frameHeight + spacing.y;
 				_point.y = modMin(_point.y + frameHeight, origTileSizeY, viewMargins.top) - frameHeight;
 			}
@@ -247,7 +247,7 @@ class FlxBackdrop extends FlxSprite
 			for (tileY in 0...tilesY)
 			{
 				// _point.copyToFlash(_flashPoint);
-				_flashPoint.setTo(_point.x + tileSize.x * tileX, _point.y + tileSize.y * tileY);
+				_flashPoint.setTo(_point.x + _tileSize.x * tileX, _point.y + _tileSize.y * tileY);
 				
 				if (isPixelPerfectRender(camera))
 				{
@@ -281,7 +281,7 @@ class FlxBackdrop extends FlxSprite
 		if (drawDirect)
 		{
 			// The distance between repeated sprites, in screen space
-			tileSize.set(
+			_tileSize.set(
 				(frame.frame.width  + spacing.x) * scale.x,
 				(frame.frame.height + spacing.y) * scale.y
 			);
@@ -323,7 +323,7 @@ class FlxBackdrop extends FlxSprite
 			final origTileSizeX = (frameWidth + spacing.x) * scale.x;
 			final left = modMin(bounds.right, origTileSizeX, viewMargins.left) - bounds.width;
 			final right = modMax(bounds.left, origTileSizeX, viewMargins.right) + origTileSizeX;
-			tilesX = Math.round((right - left) / tileSize.x);
+			tilesX = Math.round((right - left) / _tileSize.x);
 			_point.x = left + _point.x - bounds.x;
 		}
 			
@@ -332,7 +332,7 @@ class FlxBackdrop extends FlxSprite
 			final origTileSizeY = (frameHeight + spacing.y) * scale.y;
 			final top = modMin(bounds.bottom, origTileSizeY, viewMargins.top) - bounds.height;
 			final bottom = modMax(bounds.top, origTileSizeY, viewMargins.bottom) + origTileSizeY;
-			tilesY = Math.round((bottom - top) / tileSize.y);
+			tilesY = Math.round((bottom - top) / _tileSize.y);
 			_point.y = top + _point.y - bounds.y;
 		}
 		viewMargins.put();
@@ -348,7 +348,7 @@ class FlxBackdrop extends FlxSprite
 			{
 				_tileMatrix.copyFrom(_matrix);
 				
-				_tileMatrix.translate(_point.x + (tileSize.x * tileX), _point.y + (tileSize.y * tileY));
+				_tileMatrix.translate(_point.x + (_tileSize.x * tileX), _point.y + (_tileSize.y * tileY));
 				
 				if (isPixelPerfectRender(camera))
 				{
