@@ -49,6 +49,8 @@ class FlxBackdrop extends FlxSprite
 	 */
 	public var blitMode:BackdropBlitMode = AUTO;
 	
+	var _tileSize:FlxPoint = FlxPoint.get();
+	var _tileMatrix:FlxMatrix = new FlxMatrix();
 	var _blitOffset:FlxPoint = FlxPoint.get();
 	var _blitGraphic:FlxGraphic = null;
 	var _prevDrawParams:BackdropDrawParams =
@@ -82,9 +84,11 @@ class FlxBackdrop extends FlxSprite
 
 	override function destroy():Void
 	{
-		spacing = FlxDestroyUtil.destroy(spacing);
-		_blitOffset = FlxDestroyUtil.destroy(_blitOffset);
+		spacing = FlxDestroyUtil.put(spacing);
+		_tileSize = FlxDestroyUtil.put(_tileSize);
+		_blitOffset = FlxDestroyUtil.put(_blitOffset);
 		_blitGraphic = FlxDestroyUtil.destroy(_blitGraphic);
+		_tileMatrix = null;
 		
 		super.destroy();
 	}
@@ -273,14 +277,11 @@ class FlxBackdrop extends FlxSprite
 		
 		frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
 		_matrix.translate(-origin.x, -origin.y);
-		
-		// The distance between repeated sprites, in screen space
-		var tileSize = FlxPoint.get(frame.frame.width, frame.frame.height);
-		
+
 		if (drawDirect)
 		{
-			tileSize.set
-			(
+			// The distance between repeated sprites, in screen space
+			tileSize.set(
 				(frame.frame.width  + spacing.x) * scale.x,
 				(frame.frame.height + spacing.y) * scale.y
 			);
@@ -294,6 +295,10 @@ class FlxBackdrop extends FlxSprite
 				if (angle != 0)
 					_matrix.rotateWithTrig(_cosAngle, _sinAngle);
 			}
+		}
+		else
+		{
+			_tileSize.set(frame.frame.width, frame.frame.height);
 		}
 		
 		var drawItem = null;
@@ -311,57 +316,54 @@ class FlxBackdrop extends FlxSprite
 		getScreenPosition(_point, camera).subtractPoint(offset);
 		var tilesX = 1;
 		var tilesY = 1;
-		if (repeatAxes != NONE)
+		final viewMargins = camera.getViewMarginRect();
+		final bounds = getScreenBounds(camera);
+		if (repeatAxes.x)
 		{
-			final viewMargins = camera.getViewMarginRect();
-			final bounds = getScreenBounds(camera);
-			if (repeatAxes.x)
-			{
-				final origTileSizeX = (frameWidth + spacing.x) * scale.x;
-				final left  = modMin(bounds.right, origTileSizeX, viewMargins.left) - bounds.width;
-				final right = modMax(bounds.left, origTileSizeX, viewMargins.right) + origTileSizeX;
-				tilesX = Math.round((right - left) / tileSize.x);
-				_point.x = left + _point.x - bounds.x;
-			}
-			
-			if (repeatAxes.y)
-			{
-				final origTileSizeY = (frameHeight + spacing.y) * scale.y;
-				final top    = modMin(bounds.bottom, origTileSizeY, viewMargins.top) - bounds.height;
-				final bottom = modMax(bounds.top, origTileSizeY, viewMargins.bottom) + origTileSizeY;
-				tilesY = Math.round((bottom - top) / tileSize.y);
-				_point.y = top + _point.y - bounds.y;
-			}
-			viewMargins.put();
-			bounds.put();
+			final origTileSizeX = (frameWidth + spacing.x) * scale.x;
+			final left = modMin(bounds.right, origTileSizeX, viewMargins.left) - bounds.width;
+			final right = modMax(bounds.left, origTileSizeX, viewMargins.right) + origTileSizeX;
+			tilesX = Math.round((right - left) / tileSize.x);
+			_point.x = left + _point.x - bounds.x;
 		}
+			
+		if (repeatAxes.y)
+		{
+			final origTileSizeY = (frameHeight + spacing.y) * scale.y;
+			final top = modMin(bounds.bottom, origTileSizeY, viewMargins.top) - bounds.height;
+			final bottom = modMax(bounds.top, origTileSizeY, viewMargins.bottom) + origTileSizeY;
+			tilesY = Math.round((bottom - top) / tileSize.y);
+			_point.y = top + _point.y - bounds.y;
+		}
+		viewMargins.put();
+		bounds.put();
+
 		_point.addPoint(origin);
 		if (drawBlit)
 			_point.addPoint(_blitOffset);
-		
-		final mat = new FlxMatrix();
+
 		for (tileX in 0...tilesX)
 		{
 			for (tileY in 0...tilesY)
 			{
-				mat.copyFrom(_matrix);
+				_tileMatrix.copyFrom(_matrix);
 				
-				mat.translate(_point.x + (tileSize.x * tileX), _point.y + (tileSize.y * tileY));
+				_tileMatrix.translate(_point.x + (tileSize.x * tileX), _point.y + (tileSize.y * tileY));
 				
 				if (isPixelPerfectRender(camera))
 				{
-					mat.tx = Math.floor(mat.tx);
-					mat.ty = Math.floor(mat.ty);
+					_tileMatrix.tx = Math.floor(_tileMatrix.tx);
+					_tileMatrix.ty = Math.floor(_tileMatrix.ty);
 				}
 				
 				if (FlxG.renderBlit)
 				{
 					final pixels = drawBlit ? _blitGraphic.bitmap: framePixels;
-					camera.drawPixels(frame, pixels, mat, colorTransform, blend, antialiasing, shader);
+					camera.drawPixels(frame, pixels, _tileMatrix, colorTransform, blend, antialiasing, shader);
 				}
 				else
 				{
-					drawItem.addQuad(frame, mat, colorTransform);
+					drawItem.addQuad(frame, _tileMatrix, colorTransform);
 				}
 			}
 		}
