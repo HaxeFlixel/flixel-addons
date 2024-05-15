@@ -1,3 +1,13 @@
+3.2.3 (May 15, 2024)
+------------------------------
+
+#### Changes and improvements:
+- `FlxClickArea`: Compatibility with Flixel 5.7.0 ([425](https://github.com/HaxeFlixel/flixel-addons/pull/425))
+
+#### Bugfixes:
+- `FlxBackdrop`: fix matrix leaks ([426](https://github.com/HaxeFlixel/flixel-addons/pull/426))
+- `FlxRuntimeShader`: Fix errors with flixel-docs CI ([429](https://github.com/HaxeFlixel/flixel-addons/pull/429))
+
 3.2.2 (March 10, 2024)
 ------------------------------
 #### Dependencies:
