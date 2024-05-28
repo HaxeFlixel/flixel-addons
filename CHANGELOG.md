@@ -1,10 +1,36 @@
-3.2.1 (September 26, 2023)
+3.2.3 (May 15, 2024)
 ------------------------------
 
 #### Changes and improvements:
+- `FlxClickArea`: Compatibility with Flixel 5.7.0 ([425](https://github.com/HaxeFlixel/flixel-addons/pull/425))
+
+#### Bugfixes:
+- `FlxBackdrop`: fix matrix leaks ([426](https://github.com/HaxeFlixel/flixel-addons/pull/426))
+- `FlxRuntimeShader`: Fix errors with flixel-docs CI ([429](https://github.com/HaxeFlixel/flixel-addons/pull/429))
+
+3.2.2 (March 10, 2024)
+------------------------------
+#### Dependencies:
+- Minimum versions allowed:
+	- Flixel: 5.3.0
+	- OpenFl: 9.2.2
+	- Lime: 8.0.2
+	- Haxe: 4.2.5
+
+#### Changes and improvements:
+- `FlxFSM`: Fix `FlxPool` deprecation warnings from Flixel 5.4.0 ([#409](https://github.com/HaxeFlixel/flixel-addons/pull/409))
+- `TransitionData`: add `cameraMode` field to help ensure the transition shows on top ([#410](https://github.com/HaxeFlixel/flixel-addons/pull/410))
+- `FlxRuntimeShader`: Throw incompatibility error on nme or flash ([#414](https://github.com/HaxeFlixel/flixel-addons/pull/414))
+- `FlxNestedSprite`: Prevent drawing default png ([#412](https://github.com/HaxeFlixel/flixel-addons/pull/412))
+
+#### Bugfixes:
+- `TransitionFade`: Fix bug with persistent images ([#415](https://github.com/HaxeFlixel/flixel-addons/pull/415))
+
+3.2.1 (September 26, 2023)
+------------------------------
+#### Changes and improvements:
 - `FlxMouseSpring`: Now works with `FlxSprite` rather than just `FlxExtendedSprite` ([#405](https://github.com/HaxeFlixel/flixel-addons/pull/405))
 - `FlxExtendedSprite`: Deprecated for `FlxExtendedMouseSprite`, no longer uses `FlxMouseControl` ([#405](https://github.com/HaxeFlixel/flixel-addons/pull/405))
-
 
 #### Bugfixes:
 - `FlxBackdrop`: Change spacing constructor args to floats ([#408](https://github.com/HaxeFlixel/flixel-addons/pull/408))

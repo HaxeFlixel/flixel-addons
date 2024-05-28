@@ -3,20 +3,20 @@ package flixel.addons.ui;
 #if FLX_MOUSE
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.group.FlxSpriteGroup;
-import flixel.text.FlxText;
-import flixel.util.FlxDestroyUtil;
+import flixel.group.*;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import flixel.util.FlxSpriteUtil;
+import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxSpriteUtil;
 
 /**
  * A slider GUI element for float and integer manipulation.
  * @author Gama11
  */
-class FlxSlider extends FlxSpriteGroup
+class FlxSlider extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteContainer #end
 {
 	/**
 	 * The horizontal line in the background.
@@ -271,7 +271,11 @@ class FlxSlider extends FlxSpriteGroup
 	override public function update(elapsed:Float):Void
 	{
 		// Clicking and sound logic
-		if (FlxMath.mouseInFlxRect(false, _bounds))
+		#if (flixel >= "5.7.0")
+		final camera = getCameras()[0];// else use this.camera
+		#end
+		final mouse = FlxG.mouse.getScreenPosition(camera);
+		if (FlxMath.pointInFlxRect(mouse.x, mouse.y, _bounds))
 		{
 			if (hoverAlpha != 1)
 			{

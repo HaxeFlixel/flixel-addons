@@ -1,6 +1,15 @@
 package flixel.addons.display;
 
-import flixel.system.FlxAssets.FlxShader;
+#if (nme || flash)
+	#if (FLX_NO_COVERAGE_TEST && !(doc_gen))
+		#error "FlxRuntimeShader isn't available with nme or flash."
+	#end
+#else
+import flixel.graphics.tile.FlxGraphicsShader;
+#end
+#if lime
+import lime.utils.Float32Array;
+#end
 import openfl.display.BitmapData;
 import openfl.display.ShaderInput;
 import openfl.display.ShaderParameter;

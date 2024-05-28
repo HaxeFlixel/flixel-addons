@@ -153,7 +153,7 @@ class FlxTiledSprite extends FlxStrip
 			renderSprite.x = x;
 			renderSprite.y = y;
 			renderSprite.scrollFactor.set(scrollFactor.x, scrollFactor.y);
-			renderSprite.cameras = cameras;
+			renderSprite._cameras = _cameras;
 			renderSprite.draw();
 		}
 		else

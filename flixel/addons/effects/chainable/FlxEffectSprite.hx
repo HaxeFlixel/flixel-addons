@@ -1,5 +1,11 @@
 package flixel.addons.effects.chainable;
 
+// TODO: remove this check when min flixel version is 5.6.0,
+// So that FlxAddonDefines will handle this
+#if (flixel < "5.3.0")
+#error "Flixel-Addons is not compatible with flixel versions older than 5.3.0";
+#end
+
 import flixel.FlxCamera;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
