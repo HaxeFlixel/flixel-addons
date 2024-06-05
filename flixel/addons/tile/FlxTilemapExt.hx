@@ -322,6 +322,7 @@ class FlxTilemapExt extends FlxTilemap
 		}
 	}
 
+	#if (flixel < "5.9.0")
 	/**
 	 * THIS IS A COPY FROM FlxTilemap BUT IT SOLVES SLOPE COLLISION TOO
 	 * Checks if the Object overlaps any tiles with any collision flags set,
@@ -334,7 +335,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * @param   position            Optional, specify a custom position for the tilemap (useful for overlapsAt()-type functionality).
 	 * @return  Whether there were overlaps, or if a callback was specified, whatever the return value of the callback was.
 	 */
-	override public function overlapsWithCallback(object:FlxObject, ?callback:FlxObject->FlxObject->Bool, flipCallbackParams:Bool = false,
+	override function overlapsWithCallback(object:FlxObject, ?callback:FlxObject->FlxObject->Bool, flipCallbackParams:Bool = false,
 			?position:FlxPoint):Bool
 	{
 		var results:Bool = false;
@@ -375,8 +376,7 @@ class FlxTilemapExt extends FlxTilemap
 					continue;
 
 				final tile = _tileObjects[dataIndex];
-
-				if (tile.allowCollisions != NONE)
+				if (tile.solid)
 				{
 					var overlapFound = false;
 
@@ -400,7 +400,10 @@ class FlxTilemapExt extends FlxTilemap
 					}
 					else
 					{
-						overlapFound = (object.x + object.width > tile.x) && (object.x < tile.x + tile.width) && (object.y + object.height > tile.y)
+						overlapFound
+							=  (object.x + object.width > tile.x)
+							&& (object.x < tile.x + tile.width)
+							&& (object.y + object.height > tile.y)
 							&& (object.y < tile.y + tile.height);
 					}
 
@@ -425,6 +428,88 @@ class FlxTilemapExt extends FlxTilemap
 
 		return results;
 	}
+	#else
+	/**
+	 * Hacky fix for `FlxTilemapExt`, with all the new changes to 5.9.0 it's better to perfectly
+	 * recreate the old behavior, here and then make a new tilemap with slopes that uses the new
+	 * features to eventually replace it
+	 */
+	override function processOverlaps<TObj:FlxObject>(object:TObj, ?processCallback:(FlxTile, TObj)->Bool, ?position:FlxPoint, isCollision = true):Bool
+	{
+		var results:Bool = false;
+
+		var xPos:Float = x;
+		var yPos:Float = y;
+
+		if (position != null)
+		{
+			xPos = position.x;
+			yPos = position.y;
+			position.putWeak();
+		}
+		
+		inline function bindInt(value:Int, min:Int, max:Int)
+		{
+			return Std.int(FlxMath.bound(value, min, max));
+		}
+
+		// Figure out what tiles we need to check against, and bind them by the map edges
+		final minTileX:Int = bindInt(Math.floor((object.x - xPos) / scaledTileWidth), 0, widthInTiles);
+		final minTileY:Int = bindInt(Math.floor((object.y - yPos) / scaledTileHeight), 0, heightInTiles);
+		final maxTileX:Int = bindInt(Math.ceil((object.x + object.width - xPos) / scaledTileWidth), 0, widthInTiles);
+		final maxTileY:Int = bindInt(Math.ceil((object.y + object.height - yPos) / scaledTileHeight), 0, heightInTiles);
+
+		// Cache tilemap movement
+		final deltaX:Float = xPos - last.x;
+		final deltaY:Float = yPos - last.y;
+
+		// Loop through the range of tiles and call the callback on them, accordingly
+		for (row in minTileY...maxTileY)
+		{
+			for (column in minTileX...maxTileX)
+			{
+				final mapIndex:Int = (row * widthInTiles) + column;
+				final dataIndex:Int = _data[mapIndex];
+				if (dataIndex < 0)
+					continue;
+
+				final tile = _tileObjects[dataIndex];
+				tile.orientAt(xPos, yPos, column, row);
+
+				if (tile.solid)
+				{
+					var overlapFound = false;
+					if (processCallback != null)
+					{
+						overlapFound = processCallback(tile, object);
+					}
+					else
+					{
+						overlapFound = tile.overlapsObject(object);
+					}
+
+					// New generalized slope collisions
+					if (overlapFound || checkArrays(tile.index))
+					{
+						if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.isOfType(object, tile.filter)))
+						{
+							tile.callbackFunction(tile, object);
+							tile.onCollide.dispatch(tile, object);
+						}
+						results = true;
+					}
+				}
+				else if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.isOfType(object, tile.filter)))
+				{
+					tile.callbackFunction(tile, object);
+					tile.onCollide.dispatch(tile, object);
+				}
+			}
+		}
+		
+		return results;
+	}
+	#end
 
 	/**
 	 * Set glue to force contact with slopes and a slow down factor while climbing
