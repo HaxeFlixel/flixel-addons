@@ -434,78 +434,42 @@ class FlxTilemapExt extends FlxTilemap
 	 * recreate the old behavior, here and then make a new tilemap with slopes that uses the new
 	 * features to eventually replace it
 	 */
-	override function processOverlaps<TObj:FlxObject>(object:TObj, ?processCallback:(FlxTile, TObj)->Bool, ?position:FlxPoint, isCollision = true):Bool
+	override function objectOverlapsTiles<TObj:FlxObject>(object:TObj, ?callback:(FlxTile, TObj)->Bool, ?position:FlxPoint, isCollision = true):Bool
 	{
-		var results:Bool = false;
-
-		var xPos:Float = x;
-		var yPos:Float = y;
-
-		if (position != null)
+		var results = false;
+		function each(tile:FlxTile)
 		{
-			xPos = position.x;
-			yPos = position.y;
-			position.putWeak();
-		}
-		
-		inline function bindInt(value:Int, min:Int, max:Int)
-		{
-			return Std.int(FlxMath.bound(value, min, max));
-		}
-
-		// Figure out what tiles we need to check against, and bind them by the map edges
-		final minTileX:Int = bindInt(Math.floor((object.x - xPos) / scaledTileWidth), 0, widthInTiles);
-		final minTileY:Int = bindInt(Math.floor((object.y - yPos) / scaledTileHeight), 0, heightInTiles);
-		final maxTileX:Int = bindInt(Math.ceil((object.x + object.width - xPos) / scaledTileWidth), 0, widthInTiles);
-		final maxTileY:Int = bindInt(Math.ceil((object.y + object.height - yPos) / scaledTileHeight), 0, heightInTiles);
-
-		// Cache tilemap movement
-		final deltaX:Float = xPos - last.x;
-		final deltaY:Float = yPos - last.y;
-
-		// Loop through the range of tiles and call the callback on them, accordingly
-		for (row in minTileY...maxTileY)
-		{
-			for (column in minTileX...maxTileX)
+			if (tile.solid)
 			{
-				final mapIndex:Int = (row * widthInTiles) + column;
-				final dataIndex:Int = _data[mapIndex];
-				if (dataIndex < 0)
-					continue;
-
-				final tile = _tileObjects[dataIndex];
-				tile.orientAt(xPos, yPos, column, row);
-
-				if (tile.solid)
+				var overlapFound = false;
+				if (callback != null)
 				{
-					var overlapFound = false;
-					if (processCallback != null)
-					{
-						overlapFound = processCallback(tile, object);
-					}
-					else
-					{
-						overlapFound = tile.overlapsObject(object);
-					}
-
-					// New generalized slope collisions
-					if (overlapFound || checkArrays(tile.index))
-					{
-						if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.isOfType(object, tile.filter)))
-						{
-							tile.callbackFunction(tile, object);
-							tile.onCollide.dispatch(tile, object);
-						}
-						results = true;
-					}
+					overlapFound = callback(tile, object);
 				}
-				else if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.isOfType(object, tile.filter)))
+				else
 				{
-					tile.callbackFunction(tile, object);
-					tile.onCollide.dispatch(tile, object);
+					overlapFound = tile.overlapsObject(object);
+				}
+
+				// New generalized slope collisions
+				if (overlapFound || checkArrays(tile.index))
+				{
+					if (tile.callbackFunction != null)
+					{
+						tile.callbackFunction(tile, object);
+						tile.onCollide.dispatch(tile, object);
+					}
+					results = true;
 				}
 			}
+			else if ((tile.callbackFunction != null) && ((tile.filter == null) || Std.isOfType(object, tile.filter)))
+			{
+				tile.callbackFunction(tile, object);
+				tile.onCollide.dispatch(tile, object);
+			}
 		}
+		
+		forEachOverlappingTile(object, each, position);
 		
 		return results;
 	}
