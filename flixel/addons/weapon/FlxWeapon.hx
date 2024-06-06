@@ -442,7 +442,7 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 			#if (flixel < "5.9.0")
 			return cast(object, FlxTilemap).overlapsWithCallback(bullet);
 			#else
-			return cast(object, FlxTilemap).processOverlaps(bullet);
+			return cast(object, FlxTilemap).objectOverlapsTiles(bullet);
 			#end
 		}
 		else
