@@ -434,7 +434,7 @@ class FlxTilemapExt extends FlxTilemap
 	 * recreate the old behavior, here and then make a new tilemap with slopes that uses the new
 	 * features to eventually replace it
 	 */
-	override function processOverlaps<TObj:FlxObject>(object:TObj, ?callback:(FlxTile, TObj)->Bool, ?position:FlxPoint, isCollision = true):Bool
+	override function objectOverlapsTiles<TObj:FlxObject>(object:TObj, ?callback:(FlxTile, TObj)->Bool, ?position:FlxPoint, isCollision = true):Bool
 	{
 		var results = false;
 		function each(tile:FlxTile)
