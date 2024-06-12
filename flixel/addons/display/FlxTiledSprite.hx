@@ -22,44 +22,44 @@ class FlxTiledSprite extends FlxStrip
 	 * The x-offset of the texture
 	 */
 	public var scrollX(default, set):Float = 0;
-
+	
 	/**
 	 * The y-offset of the texture.
 	 */
 	public var scrollY(default, set):Float = 0;
-
+	
 	/**
 	 * Repeat texture on x axis. Default is true
 	 */
 	public var repeatX(default, set):Bool = true;
-
+	
 	/**
 	 * Repeat texture on y axis. Default is true
 	 */
 	public var repeatY(default, set):Bool = true;
-
+	
 	/**
 	 * Helper sprite, which does actual rendering in blit render mode.
 	 */
 	var renderSprite:FlxSprite;
-
+	
 	var regen:Bool = true;
-
+	
 	var graphicVisible:Bool = true;
-
-	public function new(?Graphic:FlxGraphicAsset, Width:Float, Height:Float, RepeatX:Bool = true, RepeatY:Bool = true)
+	
+	public function new(?graphic:FlxGraphicAsset, width:Float, height:Float, repeatX = true, repeatY = true)
 	{
 		super();
-
+		
 		repeat = true;
-
+		
 		indices[0] = 0;
 		indices[1] = 1;
 		indices[2] = 2;
 		indices[3] = 2;
 		indices[4] = 3;
 		indices[5] = 0;
-
+		
 		uvtData[0] = 0;
 		uvtData[1] = 0;
 		uvtData[2] = 1;
@@ -68,65 +68,64 @@ class FlxTiledSprite extends FlxStrip
 		uvtData[5] = 1;
 		uvtData[6] = 0;
 		uvtData[7] = 1;
-
+		
 		vertices[0] = 0;
 		vertices[1] = 0;
-		vertices[2] = Width;
+		vertices[2] = width;
 		vertices[3] = 0;
-		vertices[4] = Width;
-		vertices[5] = Height;
+		vertices[4] = width;
+		vertices[5] = height;
 		vertices[6] = 0;
-		vertices[7] = Height;
-
-		width = Width;
-		height = Height;
-
-		repeatX = RepeatX;
-		repeatY = RepeatY;
-
-		if (Graphic != null)
-			loadGraphic(Graphic);
+		vertices[7] = height;
+		
+		this.width = width;
+		this.height = height;
+		
+		this.repeatX = repeatX;
+		this.repeatY = repeatY;
+		
+		if (graphic != null)
+			loadGraphic(graphic);
 	}
-
-	override public function destroy():Void
+	
+	override function destroy():Void
 	{
 		renderSprite = FlxDestroyUtil.destroy(renderSprite);
 		super.destroy();
 	}
-
-	override public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false,
-			?Key:String):FlxSprite
+	
+	override function loadGraphic(graphic, animated = false, width = 0, height = 0, unique = false, ?key:String):FlxSprite
 	{
-		graphic = FlxG.bitmap.add(Graphic);
+		this.graphic = FlxG.bitmap.add(graphic);
 		return this;
 	}
-
-	public function loadFrame(Frame:FlxFrame):FlxTiledSprite
+	
+	public function loadFrame(frame:FlxFrame):FlxTiledSprite
 	{
-		graphic = FlxGraphic.fromFrame(Frame);
+		graphic = FlxGraphic.fromFrame(frame);
 		return this;
 	}
-
+	
 	override function set_clipRect(value:FlxRect):FlxRect
 	{
 		regen = true;
-
+		
 		return super.set_clipRect(value);
 	}
-
-	override function set_graphic(Value:FlxGraphic):FlxGraphic
+	
+	override function set_graphic(value:FlxGraphic):FlxGraphic
 	{
-		if (graphic != Value)
+		if (graphic != value)
 			regen = true;
-
-		return super.set_graphic(Value);
+		
+		return super.set_graphic(value);
 	}
-
+	
 	function regenGraphic():Void
 	{
 		if (!regen || graphic == null)
 			return;
-
+		
 		if (FlxG.renderBlit)
 		{
 			updateRenderSprite();
@@ -135,11 +134,11 @@ class FlxTiledSprite extends FlxStrip
 		{
 			updateVerticesData();
 		}
-
+		
 		regen = false;
 	}
-
-	override public function draw():Void
+	
+	override function draw():Void
 	{
 		if (regen)
 			regenGraphic();
@@ -325,57 +324,57 @@ class FlxTiledSprite extends FlxStrip
 		return result;
 	}
 	
-	override function set_width(Width:Float):Float
+	override function set_width(value:Float):Float
 	{
-		if (Width <= 0)
-			return Width;
-
-		if (Width != width)
+		if (value <= 0)
+			return value;
+		
+		if (value != width)
 			regen = true;
-
-		return super.set_width(Width);
+		
+		return super.set_width(value);
 	}
-
-	override function set_height(Height:Float):Float
+	
+	override function set_height(value:Float):Float
 	{
-		if (Height <= 0)
-			return Height;
-
-		if (Height != height)
+		if (value <= 0)
+			return value;
+		
+		if (value != height)
 			regen = true;
-
-		return super.set_height(Height);
+		
+		return super.set_height(value);
 	}
-
-	function set_scrollX(Value:Float):Float
+	
+	function set_scrollX(value:Float):Float
 	{
-		if (Value != scrollX)
+		if (value != scrollX)
 			regen = true;
-
-		return scrollX = Value;
+		
+		return scrollX = value;
 	}
-
-	function set_scrollY(Value:Float):Float
+	
+	function set_scrollY(value:Float):Float
 	{
-		if (Value != scrollY)
+		if (value != scrollY)
 			regen = true;
-
-		return scrollY = Value;
+		
+		return scrollY = value;
 	}
-
-	function set_repeatX(Value:Bool):Bool
+	
+	function set_repeatX(value:Bool):Bool
 	{
-		if (Value != repeatX)
+		if (value != repeatX)
 			regen = true;
-
-		return repeatX = Value;
+		
+		return repeatX = value;
 	}
-
-	function set_repeatY(Value:Bool):Bool
+	
+	function set_repeatY(value:Bool):Bool
 	{
-		if (Value != repeatY)
+		if (value != repeatY)
 			regen = true;
-
-		return repeatY = Value;
+		
+		return repeatY = value;
 	}
 }
