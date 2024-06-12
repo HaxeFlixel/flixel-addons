@@ -107,12 +107,11 @@ class FlxTiledSprite extends FlxStrip
 		return this;
 	}
 
-	override function set_clipRect(Value:FlxRect):FlxRect
+	override function set_clipRect(value:FlxRect):FlxRect
 	{
-		if (Value != clipRect)
-			regen = true;
+		regen = true;
 
-		return super.set_clipRect(Value);
+		return super.set_clipRect(value);
 	}
 
 	override function set_graphic(Value:FlxGraphic):FlxGraphic
