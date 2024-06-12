@@ -1,3 +1,10 @@
+3.2.4 (TBD)
+------------------------------
+#### Changes and improvements:
+- Compatibility with Flixel 5.9.0 ([431](https://github.com/HaxeFlixel/flixel-addons/pull/431))
+  - Deprecated `FlxRayCastTilemap`
+  - Minor upkeep for `FlxTilemapExt`, `FlxOgmo3Loader`, `FlxOgmo3Loader`
+
 3.2.3 (May 15, 2024)
 ------------------------------
 

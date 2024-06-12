@@ -6,6 +6,7 @@ import flixel.math.FlxPoint;
 /**
  * @author greglieberman
  */
+@:deprecated("FlxRayCastTilemap is deprecated, use FlxTilemap.ray or rayStep, instead")// for flixel 5.9.0
 class FlxRayCastTilemap extends FlxTilemap
 {
 	/**
@@ -219,11 +220,6 @@ class FlxRayCastTilemap extends FlxTilemap
 		var X:Int = Std.int((CoordX - x) / scaledTileWidth);
 		var Y:Int = Std.int((CoordY - y) / scaledTileHeight);
 
-		return Y * widthInTiles + X;
-	}
-
-	public function getTileIndex(X:Int, Y:Int):Int
-	{
 		return Y * widthInTiles + X;
 	}
 

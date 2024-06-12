@@ -430,16 +430,20 @@ class FlxTypedWeapon<TBullet:FlxBullet>
 		}
 	}
 
-	function shouldBulletHit(Object:FlxObject, Bullet:FlxObject):Bool
+	function shouldBulletHit(object:FlxObject, bullet:FlxObject):Bool
 	{
-		if (parent == Object && skipParentCollision)
+		if (parent == object && skipParentCollision)
 		{
 			return false;
 		}
 
-		if ((Object is FlxTilemap))
+		if ((object is FlxTilemap))
 		{
-			return cast(Object, FlxTilemap).overlapsWithCallback(Bullet);
+			#if (flixel < "5.9.0")
+			return cast(object, FlxTilemap).overlapsWithCallback(bullet);
+			#else
+			return cast(object, FlxTilemap).objectOverlapsTiles(bullet);
+			#end
 		}
 		else
 		{
