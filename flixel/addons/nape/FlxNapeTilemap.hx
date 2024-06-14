@@ -42,7 +42,7 @@ class FlxNapeTilemap extends FlxTilemap
 	{
 		super.loadMapFromCSV(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
 		_binaryData = new Array<Int>();
-		FlxArrayUtil.setLength(_binaryData, _data.length);
+		_binaryData.resize(_data.length);
 		return this;
 	}
 
@@ -51,7 +51,7 @@ class FlxNapeTilemap extends FlxTilemap
 	{
 		super.loadMapFromArray(MapData, WidthInTiles, HeightInTiles, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
 		_binaryData = new Array<Int>();
-		FlxArrayUtil.setLength(_binaryData, _data.length);
+		_binaryData.resize(_data.length);
 		return this;
 	}
 
@@ -60,7 +60,7 @@ class FlxNapeTilemap extends FlxTilemap
 	{
 		super.loadMapFrom2DArray(MapData, TileGraphic, TileWidth, TileHeight, AutoTile, StartingIndex, DrawIndex, CollideIndex);
 		_binaryData = new Array<Int>();
-		FlxArrayUtil.setLength(_binaryData, _data.length);
+		_binaryData.resize(_data.length);
 		return this;
 	}
 
