@@ -1,13 +1,13 @@
 package flixel.addons.nape;
 
-import flixel.addons.nape.FlxNapeSpace;
 import flixel.FlxG;
+import flixel.addons.nape.FlxNapeSpace;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.system.FlxAssets;
+import flixel.tile.FlxBaseTilemap;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxArrayUtil;
-import flixel.tile.FlxBaseTilemap;
-import flixel.system.FlxAssets;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -100,11 +100,12 @@ class FlxNapeTilemap extends FlxTilemap
 		var polygon:Polygon;
 		for (index in tileIndices)
 		{
-			var coords:Array<FlxPoint> = getTileCoords(index, false);
-			if (coords == null)
-				continue;
-
-			for (point in coords)
+			#if (flixel >= "5.9.0")
+			final points = getAllTilePos(index);
+			#else
+			final points = getTileCoords(index, false);
+			#end
+			for (point in points)
 			{
 				polygon = new Polygon(vertices, mat);
 				polygon.translate(Vec2.get(point.x, point.y));
