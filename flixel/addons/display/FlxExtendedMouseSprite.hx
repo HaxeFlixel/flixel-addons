@@ -183,6 +183,8 @@ class FlxExtendedMouseSprite extends FlxSprite
 	 * Returns how many vertical pixels the mouse pointer is inside this sprite from the top left corner. Returns -1 if outside.
 	 */
 	public var mouseY(get, never):Int;
+	var viewX(get, never):Int;
+	var viewY(get, never):Int;
 	#end
 
 	var _snapOnDrag:Bool = false;
@@ -549,14 +551,14 @@ class FlxExtendedMouseSprite extends FlxSprite
 		if (_allowHorizontalDrag)
 		{
 			#if FLX_MOUSE
-			x = Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX)) - _dragOffsetX;
+			x = Math.floor(viewX + scrollFactor.x * (FlxG.mouse.x - viewX)) - _dragOffsetX;
 			#end
 		}
 
 		if (_allowVerticalDrag)
 		{
 			#if FLX_MOUSE
-			y = Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY)) - _dragOffsetY;
+			y = Math.floor(viewY + scrollFactor.y * (FlxG.mouse.y - viewY)) - _dragOffsetY;
 			#end
 		}
 
@@ -657,8 +659,8 @@ class FlxExtendedMouseSprite extends FlxSprite
 		#if FLX_MOUSE
 		if (_dragFromPoint == false)
 		{
-			_dragOffsetX = Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX) - x);
-			_dragOffsetY = Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY) - y);
+			_dragOffsetX = Math.floor(viewX + scrollFactor.x * (FlxG.mouse.x - viewX) - x);
+			_dragOffsetY = Math.floor(viewY + scrollFactor.y * (FlxG.mouse.y - viewY) - y);
 		}
 		else
 		{
@@ -828,8 +830,8 @@ class FlxExtendedMouseSprite extends FlxSprite
 	#if FLX_MOUSE
 	function get_mouseOver():Bool
 	{
-		return FlxMath.pointInCoordinates(Math.floor(FlxG.mouse.screenX + scrollFactor.x * (FlxG.mouse.x - FlxG.mouse.screenX)),
-			Math.floor(FlxG.mouse.screenY + scrollFactor.y * (FlxG.mouse.y - FlxG.mouse.screenY)), Math.floor(x), Math.floor(y), Math.floor(width),
+		return FlxMath.pointInCoordinates(Math.floor(viewX + scrollFactor.x * (FlxG.mouse.x - viewX)),
+			Math.floor(viewY + scrollFactor.y * (FlxG.mouse.y - viewY)), Math.floor(x), Math.floor(y), Math.floor(width),
 			Math.floor(height));
 	}
 
@@ -851,6 +853,15 @@ class FlxExtendedMouseSprite extends FlxSprite
 		}
 
 		return -1;
+	}
+	inline function get_viewX():Int
+	{
+		return #if (flixel < version("5.9.0")) FlxG.mouse.screenX #else FlxG.mouse.viewX #end;
+	}
+	
+	inline function get_viewY():Int
+	{
+		return #if (flixel < version("5.9.0")) FlxG.mouse.screenY #else FlxG.mouse.viewY #end;
 	}
 	#end
 
