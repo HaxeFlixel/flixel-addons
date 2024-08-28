@@ -313,7 +313,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 	}
 
 	/**
-	 * Convert shader to a readable string name. Useful for debugging.
+	 * Convert the shader to a readable string name. Useful for debugging.
 	 */
 	public function toString():String
 	{
