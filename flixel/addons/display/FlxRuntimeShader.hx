@@ -68,7 +68,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 			return;
 		}
 
-		prop.value = [value];
+		shaderParameter.value = [value];
 	}
 
 	/**
@@ -86,7 +86,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 			return null;
 		}
 
-		return prop.value[0];
+		return shaderParameter.value[0];
 	}
 
 	/**
@@ -142,7 +142,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 			return;
 		}
 
-		prop.value = [value];
+		shaderParameter.value = [value];
 	}
 
 	/**
@@ -160,7 +160,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 			return null;
 		}
 
-		return prop.value[0];
+		return shaderParameter.value[0];
 	}
 
 	/**
@@ -216,7 +216,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 			return;
 		}
 
-		prop.value = [value];
+		shaderParameter.value = [value];
 	}
 
 	/**
@@ -234,7 +234,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 			return null;
 		}
 
-		return prop.value[0];
+		return shaderParameter.value[0];
 	}
 
 	/**
@@ -282,7 +282,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 	 */
 	public function setSampler2D(name:String, value:BitmapData):Void
 	{
-		var shaderInput:ShaderInput<BitmapData> = Reflect.field(data, name);
+		final shaderInput:ShaderInput<BitmapData> = Reflect.field(data, name);
 
 		if (shaderInput == null)
 		{
@@ -301,7 +301,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 	 */
 	public function getSampler2D(name:String):Null<BitmapData>
 	{
-		var shaderInput:ShaderInput<BitmapData> = Reflect.field(data, name);
+		final shaderInput:ShaderInput<BitmapData> = Reflect.field(data, name);
 
 		if (shaderInput == null)
 		{
