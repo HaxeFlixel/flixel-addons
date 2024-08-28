@@ -317,19 +317,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 	 */
 	public function toString():String
 	{
-		final labelValuePairs:Array<LabelValuePair> = [];
-
-		for (field in Reflect.fields(data))
-		{
-			final fieldValue:Dynamic = Reflect.field(data, field);
-
-			if (Reflect.hasField(fieldValue, 'value'))
-				labelValuePairs.push(LabelValuePair.weak(field, fieldValue.value));
-			else
-				labelValuePairs.push(LabelValuePair.weak(field, fieldValue));
-		}
-
-		return FlxStringUtil.getDebugString(labelValuePairs);
+		return FlxStringUtil.getDebugString([for (field in Reflect.fields(data)) LabelValuePair.weak(field, Reflect.field(data, field))]);
 	}
 
 	@:noCompletion
