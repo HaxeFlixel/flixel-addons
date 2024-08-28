@@ -105,7 +105,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 			return;
 		}
 
-		prop.value = value;
+		shaderParameter.value = value;
 	}
 
 	/**
@@ -179,7 +179,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 			return;
 		}
 
-		prop.value = value;
+		shaderParameter.value = value;
 	}
 
 	/**
@@ -253,7 +253,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 			return;
 		}
 
-		prop.value = value;
+		shaderParameter.value = value;
 	}
 
 	/**
