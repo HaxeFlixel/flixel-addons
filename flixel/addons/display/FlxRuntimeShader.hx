@@ -320,7 +320,14 @@ class FlxRuntimeShader extends FlxGraphicsShader
 		final labelValuePairs:Array<LabelValuePair> = [];
 
 		for (field in Reflect.fields(data))
-			labelValuePairs.push(LabelValuePair.weak(field, Reflect.field(data, field)));
+		{
+			final fieldValue:Dynamic = Reflect.field(data, field);
+
+			if (Reflect.hasField(fieldValue, 'value'))
+				labelValuePairs.push(LabelValuePair.weak(field, fieldValue.value));
+			else
+				labelValuePairs.push(LabelValuePair.weak(field, fieldValue));
+		}
 
 		return FlxStringUtil.getDebugString(labelValuePairs);
 	}
