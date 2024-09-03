@@ -42,12 +42,12 @@ class FlxRuntimeShader extends FlxGraphicsShader
 		if (fragmentSource != null && fragmentSource.length > 0)
 			glFragmentSource = fragmentSource;
 		else
-			glFragmentSource = FlxRuntimeShaderMacro.retriveMetadata('glFragmentSource', false);
+			glFragmentSource = FlxRuntimeShaderMacro.retrieveMetadata('glFragmentSource', false);
 
 		if (vertexSource != null && vertexSource.length > 0)
 			glVertexSource = vertexSource;
 		else
-			glVertexSource = FlxRuntimeShaderMacro.retriveMetadata('glVertexSource', false);
+			glVertexSource = FlxRuntimeShaderMacro.retrieveMetadata('glVertexSource', false);
 
 		super();
 	}
@@ -510,7 +510,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 	private override function set_glFragmentSource(value:String):String
 	{
 		if (value != null)
-			value = value.replace("#pragma header", FlxRuntimeShaderMacro.retriveMetadata('glFragmentHeader')).replace("#pragma body", FlxRuntimeShaderMacro.retriveMetadata('glFragmentBody'));
+			value = value.replace("#pragma header", FlxRuntimeShaderMacro.retrieveMetadata('glFragmentHeader')).replace("#pragma body", FlxRuntimeShaderMacro.retrieveMetadata('glFragmentBody'));
 
 		if (value != __glFragmentSource)
 			__glSourceDirty = true;
@@ -522,7 +522,7 @@ class FlxRuntimeShader extends FlxGraphicsShader
 	private override function set_glVertexSource(value:String):String
 	{
 		if (value != null)
-			value = value.replace("#pragma header", FlxRuntimeShaderMacro.retriveMetadata('glVertexHeader')).replace("#pragma body", FlxRuntimeShaderMacro.retriveMetadata('glVertexBody'));
+			value = value.replace("#pragma header", FlxRuntimeShaderMacro.retrieveMetadata('glVertexHeader')).replace("#pragma body", FlxRuntimeShaderMacro.retrieveMetadata('glVertexBody'));
 
 		if (value != __glVertexSource)
 			__glSourceDirty = true;
