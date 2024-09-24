@@ -56,7 +56,7 @@ class FlxPieGuage extends FlxSprite
 		this.amount = 1;
 	}
 	
-	public function createPieDialGraphic(shape:FlxPieDialShape, radius:Int, innerRadius = 0, color = FlxColor.WHITE)
+	public function makePieDialGraphic(shape:FlxPieGuageShape, radius:Int, innerRadius = 0, color = FlxColor.WHITE)
 	{
 		final graphic = FlxPieDialUtils.getPieGuageGraphic(shape, radius, innerRadius, color);
 		loadGraphic(graphic, true, radius * 2, radius * 2);
@@ -68,6 +68,8 @@ class FlxPieGuage extends FlxSprite
 		this.end = end;
 	}
 }
+
+typedef FlxPieGuageShape = FlxPieDialShape;
 
 class FlxPieGuageShader extends flixel.graphics.tile.FlxGraphicsShader
 {
