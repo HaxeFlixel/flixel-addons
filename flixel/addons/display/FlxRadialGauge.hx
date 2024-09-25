@@ -4,14 +4,14 @@ import flixel.FlxSprite;
 import flixel.addons.display.FlxPieDial;
 import flixel.util.FlxColor;
 
-#if shaders_supported
+#if !flash
 /**
- * A dynamic shape that fills up the way a pie chart does. Useful for timers and other things.
- * `FlxPieGuage` uses a shader to fill the bar portion, where `FlxPieDial` creates an animation.
+ * A dynamic shape that fills up radially (like a pie chart). Useful for timers and other things.
+ * `FlxRadialGauge` uses a shader to fill the bar portion, where `FlxPieDial` creates an animation.
  * This also works with any graphic, unlike `FlxPieDial`
  * @since 5.9.0
  */
-class FlxPieGuage extends FlxSprite
+class FlxRadialGauge extends FlxSprite
 {
 	/** A value between 0.0 (empty) and 1.0 (full) */
 	public var amount(get, set):Float;
@@ -46,20 +46,20 @@ class FlxPieGuage extends FlxSprite
 		return _sweepShader.end = value;
 	}
 	
-	var _sweepShader(get, never):FlxPieGuageShader;
+	var _sweepShader(get, never):FlxRadialWipeShader;
 	inline function get__sweepShader() return cast shader;
 	
 	public function new(x = 0.0, y = 0.0, ?simpleGraphic)
 	{
 		super(x, y, simpleGraphic);
 		
-		shader = new FlxPieGuageShader();
+		shader = new FlxRadialWipeShader();
 		this.amount = 1;
 	}
 	
-	public function makePieDialGraphic(shape:FlxPieGuageShape, radius:Int, innerRadius = 0, color = FlxColor.WHITE)
+	public function makePieDialGraphic(shape:FlxRadialGaugeShape, radius:Int, innerRadius = 0, color = FlxColor.WHITE)
 	{
-		final graphic = FlxPieDialUtils.getPieGuageGraphic(shape, radius, innerRadius, color);
+		final graphic = FlxPieDialUtils.getRadialGaugeGraphic(shape, radius, innerRadius, color);
 		loadGraphic(graphic, true, radius * 2, radius * 2);
 	}
 	
@@ -70,9 +70,9 @@ class FlxPieGuage extends FlxSprite
 	}
 }
 
-typedef FlxPieGuageShape = FlxPieDialShape;
+typedef FlxRadialGaugeShape = FlxPieDialShape;
 
-class FlxPieGuageShader extends flixel.system.FlxAssets.FlxShader
+class FlxRadialWipeShader extends flixel.system.FlxAssets.FlxShader
 {
 	/** The current fill amount, where `0.0` is empty and `1.0` is full */
 	public var amount(get, set):Float;
@@ -147,4 +147,6 @@ class FlxPieGuageShader extends flixel.system.FlxAssets.FlxShader
 		end = 270;
 	}
 }
+#elseif FLX_NO_COVERAGE_TEST
+#error "FlxRadialGauge is not supported on flash targets"
 #end

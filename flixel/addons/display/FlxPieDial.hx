@@ -93,13 +93,13 @@ class FlxPieDialUtils
 		return FlxG.bitmap.get(key);
 	}
 	
-	public static function getPieGuageGraphic(shape:FlxPieDialShape, radius:Int, innerRadius = 0, color = FlxColor.WHITE)
+	public static function getRadialGaugeGraphic(shape:FlxPieDialShape, radius:Int, innerRadius = 0, color = FlxColor.WHITE)
 	{
-		final key = 'pie_guage_${shape}_${color.toHexString()}_${radius}_$innerRadius';
+		final key = 'radial_gauge_${shape}_${color.toHexString()}_${radius}_$innerRadius';
 		
 		if (!FlxG.bitmap.checkCache(key))
 		{
-			final bmp = renderPieGuage(shape, radius, innerRadius, color);
+			final bmp = renderRadialGauge(shape, radius, innerRadius, color);
 			FlxG.bitmap.add(bmp, true, key);
 		}
 		
@@ -108,27 +108,27 @@ class FlxPieDialUtils
 	
 	/**
 	 * Draws an animated pie dial graphic where each frame shows a more full amount,
-	 * however the full guage frame is on frame 0
+	 * however the full gauge frame is on frame 0
 	 * 
 	 * @param radius       The radius of the shape
 	 * @param color        The color of the shape
 	 * @param shape        The shape, Either `SQUARE` or `CIRCLE`
 	 * @param innerRadius  The radius of the inner hollow portion, where `0` means completely filled
 	 */
-	public static function renderPieGuage(shape:FlxPieDialShape, radius:Int, innerRadius = 0, color = FlxColor.WHITE):BitmapData
+	public static function renderRadialGauge(shape:FlxPieDialShape, radius:Int, innerRadius = 0, color = FlxColor.WHITE):BitmapData
 	{
 		return renderPieDial(shape, radius, innerRadius, 1, true, color);
 	}
 	
 	/**
 	 * Draws an animated pie dial graphic where each frame shows a more full amount,
-	 * however the full guage frame is on frame 0
+	 * however the full gauge frame is on frame 0
 	 * 
 	 * @param radius       The radius of the shape
 	 * @param color        The color of the shape
 	 * @param frames       
 	 * @param shape        The shape, Either `SQUARE` or `CIRCLE`
-	 * @param clockwise    The direction the guage
+	 * @param clockwise    The direction the gauge
 	 * @param innerRadius  The radius of the inner hollow portion, where `0` means completely filled
 	 */
 	public static function renderPieDial(shape:FlxPieDialShape, radius:Int, innerRadius:Int, frames:Int, clockwise = true, color = FlxColor.WHITE):BitmapData
