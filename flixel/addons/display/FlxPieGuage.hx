@@ -4,6 +4,7 @@ import flixel.FlxSprite;
 import flixel.addons.display.FlxPieDial;
 import flixel.util.FlxColor;
 
+#if shaders_supported
 /**
  * A dynamic shape that fills up the way a pie chart does. Useful for timers and other things.
  * `FlxPieGuage` uses a shader to fill the bar portion, where `FlxPieDial` creates an animation.
@@ -71,7 +72,7 @@ class FlxPieGuage extends FlxSprite
 
 typedef FlxPieGuageShape = FlxPieDialShape;
 
-class FlxPieGuageShader extends flixel.graphics.tile.FlxGraphicsShader
+class FlxPieGuageShader extends flixel.system.FlxAssets.FlxShader
 {
 	/** The current fill amount, where `0.0` is empty and `1.0` is full */
 	public var amount(get, set):Float;
@@ -146,3 +147,4 @@ class FlxPieGuageShader extends flixel.graphics.tile.FlxGraphicsShader
 		end = 270;
 	}
 }
+#end
