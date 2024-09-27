@@ -57,7 +57,7 @@ class FlxRadialGauge extends FlxSprite
 		this.amount = 1;
 	}
 	
-	public function makePieDialGraphic(shape:FlxRadialGaugeShape, radius:Int, innerRadius = 0, color = FlxColor.WHITE)
+	public function makeShapeGraphic(shape:FlxRadialGaugeShape, radius:Int, innerRadius = 0, color = FlxColor.WHITE)
 	{
 		final graphic = FlxPieDialUtils.getRadialGaugeGraphic(shape, radius, innerRadius, color);
 		loadGraphic(graphic, true, radius * 2, radius * 2);
