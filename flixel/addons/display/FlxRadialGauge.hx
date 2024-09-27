@@ -63,7 +63,7 @@ class FlxRadialGauge extends FlxSprite
 		loadGraphic(graphic, true, radius * 2, radius * 2);
 	}
 	
-	public function setOrientation(start = -90, end = 270)
+	public function setOrientation(start = -90.0, end = 270.0)
 	{
 		this.start = start;
 		this.end = end;
