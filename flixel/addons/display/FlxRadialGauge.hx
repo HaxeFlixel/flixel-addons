@@ -7,8 +7,8 @@ import flixel.util.FlxColor;
 #if !flash
 /**
  * A dynamic shape that fills up radially (like a pie chart). Useful for timers and other things.
- * `FlxRadialGauge` uses a shader to fill the bar portion, where `FlxPieDial` creates an animation.
- * This also works with any graphic, unlike `FlxPieDial`
+ * `FlxRadialGauge` uses `FlxRadialWipeShader` to fill the gauge portion, where `FlxPieDial`
+ *  creates an animation. This also works with any graphic, unlike `FlxPieDial`
  * @since 5.9.0
  */
 class FlxRadialGauge extends FlxSprite
@@ -72,6 +72,9 @@ class FlxRadialGauge extends FlxSprite
 
 typedef FlxRadialGaugeShape = FlxPieDialShape;
 
+/**
+ * A shader that masks a static sprite radially, based on the `start` and `end` angles
+ */
 class FlxRadialWipeShader extends flixel.system.FlxAssets.FlxShader
 {
 	/** The current fill amount, where `0.0` is empty and `1.0` is full */
@@ -83,7 +86,7 @@ class FlxRadialWipeShader extends flixel.system.FlxAssets.FlxShader
 		return value;
 	}
 	
-	/** the angle in degrees to start the dial fill */
+	/** The angle in degrees to start the dial fill */
 	public var start(get, set):Float;
 	inline function get_start():Float return _start.value[0];
 	inline function set_start(value:Float):Float
@@ -92,7 +95,7 @@ class FlxRadialWipeShader extends flixel.system.FlxAssets.FlxShader
 		return value;
 	}
 	
-	/** the angle in degrees to end the dial fill */
+	/** The angle in degrees to end the dial fill */
 	public var end(get, set):Float;
 	inline function get_end():Float return _end.value[0];
 	inline function set_end(value:Float):Float
