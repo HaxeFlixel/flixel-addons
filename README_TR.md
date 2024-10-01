@@ -1,6 +1,6 @@
 ![](https://raw.github.com/HaxeFlixel/haxeflixel.com/master/src/files/images/flixel-logos/flixel-addons.png)
 
-[flixel](https://github.com/HaxeFlixel/flixel) | [uzantılar](https://github.com/HaxeFlixel/flixel-addons) | [ui](https://github.com/HaxeFlixel/flixel-ui) | [demolar](https://github.com/HaxeFlixel/flixel-demos) | [araçlar](https://github.com/HaxeFlixel/flixel-tools) | [şablonlar](https://github.com/HaxeFlixel/flixel-templates) | [dökümanlar](https://github.com/HaxeFlixel/flixel-docs) | [haxeflixel.com](https://github.com/HaxeFlixel/haxeflixel.com) | [orijinal] (/README.md)
+[flixel](https://github.com/HaxeFlixel/flixel) | [uzantılar](https://github.com/HaxeFlixel/flixel-addons) | [ui](https://github.com/HaxeFlixel/flixel-ui) | [demolar](https://github.com/HaxeFlixel/flixel-demos) | [araçlar](https://github.com/HaxeFlixel/flixel-tools) | [şablonlar](https://github.com/HaxeFlixel/flixel-templates) | [dökümanlar](https://github.com/HaxeFlixel/flixel-docs) | [haxeflixel.com](https://github.com/HaxeFlixel/haxeflixel.com) | [orijinal](/README.md)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/HaxeFlixel/flixel-addons/main.yml?branch=dev&logo=github)](https://github.com/HaxeFlixel/flixel/actions?query=workflow%3ACI)
 [![Discord](https://img.shields.io/discord/162395145352904705.svg?logo=discord)](https://discordapp.com/invite/rqEBAgF)
