@@ -11,18 +11,18 @@
 
 
 
-## About
+## Hakkında
 
-A set of useful, but optional classes for [HaxeFlixel](https://github.com/HaxeFlixel/flixel) created by the community. Includes some classes from the [Flixel Power Tools](https://github.com/photonstorm/Flixel-Power-Tools).
+[HaxeFlixel](https://github.com/HaxeFlixel/flixel) | [HaxeFlixel](https://github.com/HaxeFlixel/flixel) için kullanışlı ancak isteğe bağlı, topluluk tarafından oluşturulan bir takım sınıf seti.  [Flixel Power Tools](https://github.com/photonstorm/Flixel-Power-Tools)'tan bazı sınıflar dahildir.
 
-## For Developers
+## Geliştiriciler için
 
-If you are wanting to contribute code, please review the follwing documentation:
+Eğer katkıda bulunmak isterseniz, aşağıdaki dökümanları inceleyin (İngilizce):
 
-- [Code Contributions](http://haxeflixel.com/documentation/code-contributions)
-- [Code Style](http://haxeflixel.com/documentation/code-style)
-- [Install development flixel](http://haxeflixel.com/documentation/install-development-flixel/)
+- [Kod katkıları](http://haxeflixel.com/documentation/code-contributions)
+- [Kod Tarzı](http://haxeflixel.com/documentation/code-style)
+- [Geliştirici flixel'i indirin](http://haxeflixel.com/documentation/install-development-flixel/)
 
-If you have a question or have not contributed on github before, there are friendly people in the community that help out in the [forums](http://haxeflixel.com/documentation/community/).
+Eğer bir sorunuz varsa veya daha önce hiç Github'dan katkıda bulunmadıysanız, toplulukta [forumlarda](http://haxeflixel.com/documentation/community/) yardım edecek arkadaş canlısı insanlar var.
 
-For using git with github we recommended using a GUI application to manage your changes, for example [SourceTree](http://www.sourcetreeapp.com/).
+Git'i Github ile kullanmak için, değişikliklerinizi yönetebileceğiniz [SourceTree](http://www.sourcetreeapp.com/) gibi bir GUI kullanmanızı öneririz.
