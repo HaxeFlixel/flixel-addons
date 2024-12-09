@@ -1,5 +1,6 @@
 package flixel.addons.display;
 
+import flixel.util.FlxDirectionFlags;
 import openfl.geom.ColorTransform;
 import flixel.FlxBasic;
 import flixel.FlxG;
@@ -401,7 +402,7 @@ class FlxNestedSprite extends FlxSprite
 		return color;
 	}
 
-	override function set_facing(Direction:Int):Int
+	override function set_facing(Direction:FlxDirectionFlags):FlxDirectionFlags
 	{
 		super.set_facing(Direction);
 		if (children != null)
