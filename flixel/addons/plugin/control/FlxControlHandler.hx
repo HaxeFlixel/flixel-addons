@@ -12,6 +12,7 @@ import flixel.sound.FlxSound;
 #else
 import flixel.system.FlxSound;
 #end
+import flixel.util.FlxDirectionFlags;
 
 /**
  *
@@ -173,7 +174,7 @@ class FlxControlHandler
 	// Internal time of when they last collided with a valid jumpSurface
 	var _extraSurfaceTime:Int;
 	// The surfaces they can jump from (i.e. FLOOR)
-	var _jumpSurface:Int;
+	var _jumpSurface:FlxDirectionFlags;
 	// A function to call every time they jump
 	var _jumpCallback:Void->Void;
 
@@ -612,7 +613,8 @@ class FlxControlHandler
 	 * @param	callback		A user defined function to call when the Sprite jumps
 	 * @param	altKey			Specify an alternative jump key that works AS WELL AS the primary jump key (TODO)
 	 */
-	public function setJumpButton(key:String, keymode:Int, height:Int, surface:Int, repeatDelay:Int = 250, jumpFromFall:Int = 0, ?callback:Void->Void,
+	public function setJumpButton(key:String, keymode:Int, height:Int, surface:FlxDirectionFlags, repeatDelay:Int = 250, jumpFromFall:Int = 0,
+			?callback:Void->Void,
 			altKey:String = ""):Void
 	{
 		_jumpKey = key;

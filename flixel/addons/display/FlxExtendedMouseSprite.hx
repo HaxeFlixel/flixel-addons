@@ -455,11 +455,11 @@ class FlxExtendedMouseSprite extends FlxSprite
 			if (acceleration.x < 0)
 			{
 				//	Gravity is pulling them left
-				if ((touching & WALL) != 0)
+				if (touching.has(WALL))
 				{
 					drag.y = frictionY;
 
-					if ((wasTouching & WALL) == 0)
+					if (!wasTouching.has(WALL))
 					{
 						if (velocity.x < toleranceX)
 						{
@@ -475,12 +475,12 @@ class FlxExtendedMouseSprite extends FlxSprite
 			else if (acceleration.x > 0)
 			{
 				//	Gravity is pulling them right
-				if ((touching & WALL) != 0)
+				if (touching.has(WALL))
 				{
 					//	Stop them sliding like on ice
 					drag.y = frictionY;
 
-					if ((wasTouching & WALL) == 0)
+					if (!wasTouching.has(WALL))
 					{
 						if (velocity.x > -toleranceX)
 						{
@@ -501,11 +501,11 @@ class FlxExtendedMouseSprite extends FlxSprite
 			if (acceleration.y < 0)
 			{
 				//	Gravity is pulling them up (velocity is negative)
-				if ((touching & CEILING) != 0)
+				if (touching.has(CEILING))
 				{
 					drag.x = frictionX;
 
-					if ((wasTouching & CEILING) == 0)
+					if (!wasTouching.has(CEILING))
 					{
 						if (velocity.y < toleranceY)
 						{
@@ -521,12 +521,12 @@ class FlxExtendedMouseSprite extends FlxSprite
 			else if (acceleration.y > 0)
 			{
 				//	Gravity is pulling them down (velocity is positive)
-				if ((touching & FLOOR) != 0)
+				if (touching.has(FLOOR))
 				{
 					//	Stop them sliding like on ice
 					drag.x = frictionX;
 
-					if ((wasTouching & FLOOR) == 0)
+					if (!wasTouching.has(FLOOR))
 					{
 						if (velocity.y > -toleranceY)
 						{

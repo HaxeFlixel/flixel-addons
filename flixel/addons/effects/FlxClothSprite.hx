@@ -303,10 +303,10 @@ class FlxClothSprite extends FlxSprite
 					y: r * heightInTiles,
 					oldx: c * widthInTiles,
 					oldy: r * heightInTiles,
-					pinned: ((r == 0 && pinnedSide & UP != 0)
-						|| (r == rows - 1 && pinnedSide & DOWN != 0)
-						|| (c == 0 && pinnedSide & LEFT != 0)
-						|| (c == columns - 1 && pinnedSide & RIGHT != 0))
+					pinned: ((r == 0 && pinnedSide.has(UP))
+						|| (r == rows - 1 && pinnedSide.has(DOWN))
+						|| (c == 0 && pinnedSide.has(LEFT))
+						|| (c == columns - 1 && pinnedSide.has(RIGHT)))
 				});
 
 				_vertices.push(c * widthInTiles);
