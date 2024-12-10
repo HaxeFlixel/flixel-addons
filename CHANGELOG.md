@@ -1,9 +1,22 @@
-3.2.4 (TBD)
+3.3.0 (TBD)
 ------------------------------
 #### Changes and improvements:
-- Compatibility with Flixel 5.9.0 ([431](https://github.com/HaxeFlixel/flixel-addons/pull/431))
+- Compatibility with Flixel 5.9.0 ([431](https://github.com/HaxeFlixel/flixel-addons/pull/431))([432](https://github.com/HaxeFlixel/flixel-addons/pull/432))([433](https://github.com/HaxeFlixel/flixel-addons/pull/433))([436](https://github.com/HaxeFlixel/flixel-addons/pull/436))([437](https://github.com/HaxeFlixel/flixel-addons/pull/437))([440](https://github.com/HaxeFlixel/flixel-addons/pull/440))([441](https://github.com/HaxeFlixel/flixel-addons/pull/441))
   - Deprecated `FlxRayCastTilemap`
-  - Minor upkeep for `FlxTilemapExt`, `FlxOgmo3Loader`, `FlxOgmo3Loader`
+  - Minor upkeep for `FlxTilemapExt`, `FlxOgmo3Loader`, `FlxOgmo3Loader`, `FlxWeapon`, `FlxNapeTilemap`, `FlxTrail`, `FlxExtendedMouseSprite`, `FlxSlider`, `FlxTransitionSprite`
+- `FlxTiledSprite`: Honor `clipRect` ([435](https://github.com/HaxeFlixel/flixel-addons/pull/435))
+- `FlxRuntimeShader`: Refactor and improve readibility ([442](https://github.com/HaxeFlixel/flixel-addons/pull/442))
+- Assets: Ran oxipng on all images ([445](https://github.com/HaxeFlixel/flixel-addons/pull/445))
+- `FlxTrail`: Organize logic into various methods to allow overriding particular behavior ([447](https://github.com/HaxeFlixel/flixel-addons/pull/447))
+- `TiledObject`: Add `POINT` type ([448](https://github.com/HaxeFlixel/flixel-addons/pull/448))
+- `TiledLayer`: Add `parallaxX` and `parallaxY` ([449](https://github.com/HaxeFlixel/flixel-addons/pull/449))
+- Remove all implicit `Int` casts from/to `FlxDirectionFlags` ([451](https://github.com/HaxeFlixel/flixel-addons/pull/451))
+
+#### New Features:
+- `FlxRadialGauge`: Refactor `FlxPieDial` add replacement ([444](https://github.com/HaxeFlixel/flixel-addons/pull/444))
+  - `FlxRadialWipeShader`: Shader that masks sprite radially, can be applied to of any static sprite (doesn't work with animations, yet, but neither did FlxPieDial). Shaders only work on non-Flash targets
+  - `FlxRadialGauge`: Same as `FlxPieDial` but uses less memory, shows more percentages, and performs better
+  - `FlxPieDialUtils`: Moved all logic from `FlxPieDial` to a shared util
 
 3.2.3 (May 15, 2024)
 ------------------------------

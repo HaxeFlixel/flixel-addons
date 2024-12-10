@@ -1,7 +1,7 @@
 package flixel.addons.editors.tiled;
 
-import openfl.utils.ByteArray;
 import haxe.xml.Access;
+import openfl.utils.ByteArray;
 
 /**
  * Base class for Tiled object and tile layers
@@ -24,6 +24,9 @@ class TiledLayer
 	/** @since 2.1.0 */
 	public var offsetY:Float;
 
+	public var parallaxX:Float;
+	public var parallaxY:Float;
+
 	function new(source:Access, parent:TiledMap)
 	{
 		properties = new TiledPropertySet();
@@ -33,6 +36,8 @@ class TiledLayer
 		opacity = (source.has.opacity) ? Std.parseFloat(source.att.opacity) : 1.0;
 		offsetX = (source.has.offsetx) ? Std.parseFloat(source.att.offsetx) : 0.0;
 		offsetY = (source.has.offsety) ? Std.parseFloat(source.att.offsety) : 0.0;
+		parallaxX = (source.has.parallaxx) ? Std.parseFloat(source.att.parallaxx) : 1.0;
+		parallaxY = (source.has.parallaxy) ? Std.parseFloat(source.att.parallaxy) : 1.0;
 
 		loadProperties(source);
 	}
