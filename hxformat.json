@@ -12,8 +12,7 @@
 		"tryBody": "next",
 		"tryCatch": "next"
 	},
-	"indentation":
-	{
+	"indentation":{
 		"trailingWhitespace": true
 	}
 }

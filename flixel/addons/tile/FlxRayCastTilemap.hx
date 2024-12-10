@@ -6,6 +6,7 @@ import flixel.math.FlxPoint;
 /**
  * @author greglieberman
  */
+@:deprecated("FlxRayCastTilemap is deprecated, use FlxTilemap.ray or rayStep, instead")// for flixel 5.9.0
 class FlxRayCastTilemap extends FlxTilemap
 {
 	/**
@@ -27,7 +28,7 @@ class FlxRayCastTilemap extends FlxTilemap
 	 * @param 	Result   			Where the resulting point is stored, in (x,y) coordinates
 	 * @param 	ResultInTiles  		A point containing the tile that was hit, in tile coordinates (optional)
 	 * @param 	MaxTilesToCheck 	The maximum number of tiles you want the ray to pass. -1 means go across the entire tilemap. Only change this if you know what you're doing!
-	 * @return   true if hit a filled tile, false if it hit the end of the tilemap
+	 * @return   True if hit a filled tile, false if it hit the end of the tilemap
 	 *
 	 */
 	public function rayCast(Start:FlxPoint, Direction:FlxPoint, ?Result:FlxPoint, ?ResultInTiles:FlxPoint, MaxTilesToCheck:Int = -1):Bool
@@ -219,11 +220,6 @@ class FlxRayCastTilemap extends FlxTilemap
 		var X:Int = Std.int((CoordX - x) / scaledTileWidth);
 		var Y:Int = Std.int((CoordY - y) / scaledTileHeight);
 
-		return Y * widthInTiles + X;
-	}
-
-	public function getTileIndex(X:Int, Y:Int):Int
-	{
 		return Y * widthInTiles + X;
 	}
 

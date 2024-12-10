@@ -1,7 +1,7 @@
 package flixel.addons.display.shapes;
 
-import flash.display.BlendMode;
-import flash.geom.Matrix;
+import openfl.display.BlendMode;
+import openfl.geom.Matrix;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil.DrawStyle;
@@ -32,7 +32,7 @@ class FlxShape extends FlxSprite
 	 * @param	Y				Y location
 	 * @param	CanvasWidth		Width of pixel canvas
 	 * @param	CanvasHeight	Height of pixel canvas
-	 * @param	LineStyle_		Drawing style for strokes -- see flixel.util.FlxSpriteUtil.LineStyle
+	 * @param	LineStyle_		Drawing style for strokes -- see `flixel.util.FlxSpriteUtil.LineStyle`
 	 * @param	FillColor		Color of the fill. FlxColor.TRANSPARENT means no fill.
 	 * @param	TrueWidth		Width of raw unstyled geometric object, ignoring line thickness, filters, etc
 	 * @param	TrueHeight		Height of raw unstyled geometric object, ignoring line thickness, filters, etc

@@ -7,7 +7,7 @@
 		"editor.formatOnSaveMode":"modifications",
 		"editor.formatOnPaste": false,
 		"editor.codeActionsOnSave": {
-			"source.sortImports": true
+			"source.sortImports":"explicit"
 		}
 	},
 	"haxe.enableExtendedIndentation": true

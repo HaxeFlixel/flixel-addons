@@ -1,8 +1,8 @@
 package flixel.addons.tile;
 
-import flash.display.BitmapData;
-import flash.geom.Point;
-import flash.geom.Rectangle;
+import openfl.display.BitmapData;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 import flixel.animation.FlxAnimation;
 import flixel.FlxBasic;
 import flixel.FlxG;
@@ -159,6 +159,7 @@ class FlxTileSpecial extends FlxBasic
 	 * Add an animation to this special tile
 	 * @param	tiles		An array with the tilesetID of each frame
 	 * @param	frameRate	The speed of the animation in frames per second (Default: 30)
+	 * @param	framesData	An optional array of animation parameters for each frame
 	 */
 	public function addAnimation(tiles:Array<Int>, frameRate:Float = 30, ?framesData:Array<AnimParams>):Void
 	{
@@ -176,8 +177,6 @@ class FlxTileSpecial extends FlxBasic
 
 	/**
 	 * Calculates and return the matrix
-	 * @param	width	the tile width
-	 * @param	height	the tile height
 	 * @return	The matrix calculated
 	 */
 	public function getMatrix():FlxMatrix

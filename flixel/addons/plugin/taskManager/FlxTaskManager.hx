@@ -167,7 +167,7 @@ class FlxTaskManager extends FlxBasic
 	 * Method-task for a pause between tasks
 	 *
 	 * @param	Delay	 Delay
-	 * @return	Returns true when the task is completed
+	 * @return	True if the task completed successfully, false otherwise
 	 */
 	function taskPause(Delay:Float):Bool
 	{
@@ -186,7 +186,7 @@ class FlxTaskManager extends FlxBasic
 	 * Adds the specified object to the end of the list
 	 *
 	 * @param	Task	The FlxTask to be added.
-	 * @return	Returns a pointer to the added FlxTask.
+	 * @return	A pointer to the added FlxTask.
 	 */
 	function push(Task:FlxTask):FlxTask
 	{
@@ -218,7 +218,7 @@ class FlxTaskManager extends FlxBasic
 	 * Adds task to the top of task list
 	 *
 	 * @param	Task	The FlxTask to be added.
-	 * @return	Returns a pointer to the added FlxTask
+	 * @return	A pointer to the added FlxTask.
 	 */
 	function unshift(Task:FlxTask):FlxTask
 	{

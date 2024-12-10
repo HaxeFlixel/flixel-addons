@@ -40,7 +40,7 @@ class FlxCaveGenerator
 	 * @param	Rows					Number of rows for the matrix
 	 * @param	SmoothingIterations 	How many times do you want to "smooth" the caev - the higher the smoother, but slower
 	 * @param	WallRatio 				Chance for a tile to become a wall - the closer the value is to 1.0, the more walls there are
-	 * @return	Returns a matrix of a cave!
+	 * @return	A matrix of a cave!
 	 */
 	public static function generateCaveMatrix(Columns:Int, Rows:Int, SmoothingIterations:Int = 6, WallRatio:Float = 0.5):Array<Array<Int>>
 	{
@@ -92,7 +92,7 @@ class FlxCaveGenerator
 	 *
 	 * @param	Columns 	Number of columns for the matrix
 	 * @param	Rows		Number of rows for the matrix
-	 * @return 	Spits out a matrix that is columns * rows big, initiated with zeros
+	 * @return 	A matrix that is columns * rows big, initiated with zeros
 	 */
 	static function generateInitialMatrix(Columns:Int, Rows:Int):Array<Array<Int>>
 	{

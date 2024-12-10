@@ -1,6 +1,6 @@
 package flixel.addons.effects;
 
-import flash.geom.Rectangle;
+import openfl.geom.Rectangle;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
@@ -109,12 +109,13 @@ class FlxClothSprite extends FlxSprite
 	 * Creates a FlxClothSprite at a specified position with a specified one-frame graphic.
 	 * If none is provided, a 16x16 image of the HaxeFlixel logo is used.
 	 *
-	 * @param	X				The initial X position of the sprite.
-	 * @param	Y				The initial Y position of the sprite.
-	 * @param	SimpleGraphic	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
-	 * @param	Columns			Number of columns of the created mesh.
-	 * @param	Rows			Number of rows of the created mesh.
-	 * @param	PinnedSide		The pinned side that points are not affected by wind or velocity. Use UP, DOWN, LEFT, RIGHT, NONE, ANY, etc.
+	 * @param	X					The initial X position of the sprite.
+	 * @param	Y					The initial Y position of the sprite.
+	 * @param	SimpleGraphic		The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
+	 * @param	Columns				Number of columns of the created mesh.
+	 * @param	Rows				Number of rows of the created mesh.
+	 * @param	PinnedSide			The pinned side that points are not affected by wind or velocity. Use UP, DOWN, LEFT, RIGHT, NONE, ANY, etc.
+	 * @param	CrossingConstraints Whether to add two extra constraints crossing the squares to make the mesh more rigid. Defaults to false.
 	 */
 	public function new(?X:Float = 0, ?Y:Float = 0, ?SimpleGraphic:FlxGraphicAsset, Columns:Int = 0, Rows:Int = 0, PinnedSide:FlxDirectionFlags = UP,
 			CrossingConstraints:Bool = false)
@@ -302,10 +303,10 @@ class FlxClothSprite extends FlxSprite
 					y: r * heightInTiles,
 					oldx: c * widthInTiles,
 					oldy: r * heightInTiles,
-					pinned: ((r == 0 && pinnedSide & UP != 0)
-						|| (r == rows - 1 && pinnedSide & DOWN != 0)
-						|| (c == 0 && pinnedSide & LEFT != 0)
-						|| (c == columns - 1 && pinnedSide & RIGHT != 0))
+					pinned: ((r == 0 && pinnedSide.has(UP))
+						|| (r == rows - 1 && pinnedSide.has(DOWN))
+						|| (c == 0 && pinnedSide.has(LEFT))
+						|| (c == columns - 1 && pinnedSide.has(RIGHT)))
 				});
 
 				_vertices.push(c * widthInTiles);

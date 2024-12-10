@@ -1,10 +1,11 @@
 package flixel.addons.transition;
 
-import flixel.addons.transition.TransitionData.TransitionType;
+import flixel.addons.transition.TransitionData;
 import flixel.addons.transition.TransitionEffect;
 import flixel.addons.transition.TransitionFade;
 import flixel.addons.transition.TransitionTiles;
-import flixel.addons.transition.FlxTransitionSprite.TransitionStatus;
+import flixel.addons.transition.FlxTransitionSprite;
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
@@ -13,6 +14,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxTimer;
 
 /**
@@ -23,70 +25,69 @@ import flixel.util.FlxTimer;
 class Transition extends FlxSubState
 {
 	public var finishCallback(get, set):Void->Void;
-
+	
 	var _effect:TransitionEffect;
-
+	
 	public function new(data:TransitionData)
 	{
 		super(FlxColor.TRANSPARENT);
+		
 		_effect = createEffect(data);
 		_effect.scrollFactor.set(0, 0);
 		add(_effect);
 	}
-
-	override public function update(elapsed:Float):Void
-	{
-		super.update(elapsed);
-		_effect.update(elapsed);
-	}
-
+	
 	public override function destroy():Void
 	{
 		super.destroy();
+		
 		finishCallback = null;
-		_effect.destroy();
-		_effect = null;
+		
+		_effect = FlxDestroyUtil.destroy(_effect);
 	}
-
-	public function start(NewStatus:TransitionStatus):Void
+	
+	public function start(newStatus:TransitionStatus):Void
 	{
-		_effect.start(NewStatus);
+		_effect.start(newStatus);
 	}
-
-	public function setStatus(NewStatus:TransitionStatus):Void
+	
+	public function setStatus(newStatus:TransitionStatus):Void
 	{
-		_effect.setStatus(NewStatus);
+		_effect.setStatus(newStatus);
 	}
-
-	function createEffect(Data:TransitionData):TransitionEffect
+	
+	function createEffect(data:TransitionData):TransitionEffect
 	{
-		switch (Data.type)
+		switch (data.type)
 		{
 			case TransitionType.TILES:
-				return new TransitionTiles(Data);
+				return new TransitionTiles(data);
 			case TransitionType.FADE:
-				return new TransitionFade(Data);
-			default:
-				return null;
+				return new TransitionFade(data);
+			case TransitionType.NONE:
+				throw "Unexpected TransitionType: NONE";
 		}
 	}
-
+	
 	function get_finishCallback():Void->Void
 	{
 		if (_effect != null)
 		{
 			return _effect.finishCallback;
 		}
+		
 		return null;
 	}
-
-	function set_finishCallback(f:Void->Void):Void->Void
+	
+	function set_finishCallback(callback:Void->Void):Void->Void
 	{
 		if (_effect != null)
 		{
-			_effect.finishCallback = f;
-			return f;
+			_effect.finishCallback = callback;
+			
+			return callback;
 		}
+		
 		return null;
 	}
 }

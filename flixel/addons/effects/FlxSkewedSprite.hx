@@ -1,6 +1,6 @@
 package flixel.addons.effects;
 
-import flash.geom.Matrix;
+import openfl.geom.Matrix;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -77,7 +77,7 @@ class FlxSkewedSprite extends FlxSprite
 			_point.floor();
 
 		_matrix.translate(_point.x, _point.y);
-		camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing);
+		camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing, shader);
 	}
 
 	function updateSkewMatrix():Void

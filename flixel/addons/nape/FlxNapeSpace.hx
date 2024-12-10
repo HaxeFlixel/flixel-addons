@@ -1,6 +1,6 @@
 package flixel.addons.nape;
 
-import flash.display.BitmapData;
+import openfl.display.BitmapData;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.system.ui.FlxSystemButton;
@@ -64,7 +64,11 @@ class FlxNapeSpace extends FlxBasic
 	 */
 	public static function init():Void
 	{
+		#if (flixel < "5.6.0")
 		FlxG.plugins.add(new FlxNapeSpace());
+		#else
+		FlxG.plugins.addPlugin(new FlxNapeSpace());
+		#end
 
 		if (space == null)
 			space = new Space(new Vec2());
