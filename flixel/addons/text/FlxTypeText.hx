@@ -325,7 +325,7 @@ class FlxTypeText extends FlxText
 	 */
 	public function resetText(Text:String):Void
 	{
-		text = "";
+		text = prefix;
 		_finalText = Text;
 		_typing = false;
 		_erasing = false;
