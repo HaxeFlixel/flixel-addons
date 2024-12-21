@@ -6,5 +6,8 @@
 	"description": "flixel-addons is a set of useful, additional classes for HaxeFlixel.",
 	"version": "3.3.0",
 	"releasenote": "Compatibility with flixel 5.9.0",
-	"contributors": ["haxeflixel", "Gama11", "GeoKureli"]
+	"contributors": ["haxeflixel", "Gama11", "GeoKureli"],
+	"dependencies": {
+		"flixel": ""
+	}
 }
