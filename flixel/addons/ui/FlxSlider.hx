@@ -7,10 +7,12 @@ import flixel.group.*;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxSpriteUtil;
+
 
 /**
  * A slider GUI element for float and integer manipulation.
@@ -71,13 +73,15 @@ class FlxSlider extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteCon
 
 	/**
 	 * Sound that's played whenever the slider is clicked.
+	 * No sound is set by default, you must call one of the load methods from `FlxSound` to set it (e.g. `clickSound.loadEmbedded()`).
 	 */
-	public var clickSound:String;
+	public var clickSound:FlxSound;
 
 	/**
 	 * Sound that's played whenever the slider is hovered over.
+	 * No sound is set by default, you must call one of the load methods from `FlxSound` to set it (e.g. `clickSound.loadEmbedded()`).
 	 */
-	public var hoverSound:String;
+	public var hoverSound:FlxSound;
 
 	/**
 	 * The alpha value the slider uses when it's hovered over. 1 to turn the effect off.
@@ -213,6 +217,12 @@ class FlxSlider extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteCon
 		_color = Color;
 		_handleColor = HandleColor;
 
+		clickSound = new FlxSound();
+		hoverSound = new FlxSound();
+
+		FlxG.sound.defaultSoundGroup.add(clickSound);
+		FlxG.sound.defaultSoundGroup.add(hoverSound);
+
 		// Create the slider
 		createSlider();
 	}
@@ -291,7 +301,7 @@ class FlxSlider extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteCon
 			#if FLX_SOUND_SYSTEM
 			if (hoverSound != null && !_justHovered)
 			{
-				FlxG.sound.play(hoverSound);
+				hoverSound.play();
 			}
 			#end
 
@@ -305,7 +315,7 @@ class FlxSlider extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteCon
 				#if FLX_SOUND_SYSTEM
 				if (clickSound != null && !_justClicked)
 				{
-					FlxG.sound.play(clickSound);
+					clickSound.play();
 					_justClicked = true;
 				}
 				#end
@@ -437,6 +447,9 @@ class FlxSlider extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteCon
 		valueLabel = FlxDestroyUtil.destroy(valueLabel);
 
 		_bounds = FlxDestroyUtil.put(_bounds);
+
+		clickSound = FlxDestroyUtil.destroy(clickSound);
+		hoverSound = FlxDestroyUtil.destroy(hoverSound);
 
 		super.destroy();
 	}
