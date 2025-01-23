@@ -64,7 +64,7 @@ class FlxNapeSpace extends FlxBasic
 	 */
 	public static function init():Void
 	{
-		#if (flixel < "5.6.0")
+		#if (flixel < version("5.6.0"))
 		FlxG.plugins.add(new FlxNapeSpace());
 		#else
 		FlxG.plugins.addPlugin(new FlxNapeSpace());

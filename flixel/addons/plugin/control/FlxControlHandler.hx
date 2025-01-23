@@ -7,7 +7,7 @@ import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVelocity;
-#if (flixel >= "5.3.0")
+#if (flixel >= version("5.3.0"))
 import flixel.sound.FlxSound;
 #else
 import flixel.system.FlxSound;

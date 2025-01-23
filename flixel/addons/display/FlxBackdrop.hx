@@ -115,7 +115,7 @@ class FlxBackdrop extends FlxSprite
 			drawToLargestCamera();
 		}
 		
-		#if (flixel >= "5.7.0")
+		#if (flixel >= version("5.7.0"))
 		final cameras = getCamerasLegacy();
 		#end
 		for (camera in cameras)
@@ -161,7 +161,7 @@ class FlxBackdrop extends FlxSprite
 	{
 		var largest:FlxCamera = null;
 		var largestArea = 0.0;
-		#if (flixel >= "5.7.0")
+		#if (flixel >= version("5.7.0"))
 		final cameras = getCamerasLegacy(); // else use this.cameras
 		#end
 		for (camera in cameras)

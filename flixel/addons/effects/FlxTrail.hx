@@ -17,7 +17,7 @@ import flixel.math.FlxPoint;
  * Feel free to use this class and adjust it to your needs.
  * @author Gama11
  */
-class FlxTrail extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteContainer #end
+class FlxTrail extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else FlxSpriteContainer #end
 {
 	/**
 	 * Stores the FlxSprite the trail is attached to.

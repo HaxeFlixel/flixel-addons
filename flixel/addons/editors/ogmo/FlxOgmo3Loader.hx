@@ -284,7 +284,7 @@ class FlxOgmo3Loader
 		for (i in 0...tileFlags.length)
 		{
 			var flag = tileFlags[i];
-			#if (flixel < "5.9.0")
+			#if (flixel <version( "5.9.0"))
 			var specialTile = new FlxTileSpecial(tilemap.getTileByIndex(i), false, false, 0);
 			#else
 			var specialTile = new FlxTileSpecial(tilemap.getTileIndex(i), false, false, 0);
