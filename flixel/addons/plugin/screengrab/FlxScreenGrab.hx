@@ -10,6 +10,9 @@ import flixel.addons.util.PNGEncoder;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
 #if sys
+import lime.ui.FileDialog;
+import lime.ui.FileDialogType;
+import openfl.display.PNGEncoderOptions;
 #else
 import openfl.net.FileReference;
 #end
