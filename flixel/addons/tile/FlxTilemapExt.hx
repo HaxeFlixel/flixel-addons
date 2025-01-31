@@ -139,7 +139,7 @@ class FlxTilemapExt extends FlxTilemap
 		}
 
 		// Copy tile images into the tile buffer
-		#if (flixel < "5.2.0")
+		#if (flixel < version("5.2.0"))
 		_point.x = (camera.scroll.x * scrollFactor.x) - x - offset.x + camera.viewOffsetX; // modified from getScreenPosition()
 		_point.y = (camera.scroll.y * scrollFactor.y) - y - offset.y + camera.viewOffsetY;
 		#else
@@ -322,7 +322,7 @@ class FlxTilemapExt extends FlxTilemap
 		}
 	}
 
-	#if (flixel < "5.9.0")
+	#if (flixel < version("5.9.0"))
 	/**
 	 * THIS IS A COPY FROM FlxTilemap BUT IT SOLVES SLOPE COLLISION TOO
 	 * Checks if the Object overlaps any tiles with any collision flags set,

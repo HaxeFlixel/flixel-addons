@@ -16,7 +16,7 @@ import flixel.util.FlxSpriteUtil;
  * A slider GUI element for float and integer manipulation.
  * @author Gama11
  */
-class FlxSlider extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteContainer #end
+class FlxSlider extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else FlxSpriteContainer #end
 {
 	/**
 	 * The horizontal line in the background.

@@ -24,7 +24,7 @@ import flixel.math.FlxMath;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
-class FlxButtonPlus extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteContainer #end
+class FlxButtonPlus extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else FlxSpriteContainer #end
 {
 	public static inline var NORMAL:Int = 0;
 	public static inline var HIGHLIGHT:Int = 1;

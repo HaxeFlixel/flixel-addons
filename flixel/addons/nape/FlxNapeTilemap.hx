@@ -100,7 +100,7 @@ class FlxNapeTilemap extends FlxTilemap
 		var polygon:Polygon;
 		for (index in tileIndices)
 		{
-			#if (flixel >= "5.9.0")
+			#if (flixel >= version("5.9.0"))
 			final points = getAllTilePos(index);
 			#else
 			final points = getTileCoords(index, false);
