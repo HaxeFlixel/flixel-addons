@@ -150,6 +150,6 @@ class FlxRadialWipeShader extends flixel.system.FlxAssets.FlxShader
 		end = 270;
 	}
 }
-#elseif FLX_NO_COVERAGE_TEST
+#elseif (FLX_NO_COVERAGE_TEST && !dox)
 #error "FlxRadialGauge is not supported on flash targets"
 #end
