@@ -10,7 +10,7 @@ import flixel.util.FlxTimer;
  * @author larsiusprime
  */
 @:allow(flixel.addons.transition.Transition)
-class TransitionEffect extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteContainer #end
+class TransitionEffect extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else FlxSpriteContainer #end
 {
 	public var finishCallback:Void->Void;
 	public var finished(default, null):Bool = false;
