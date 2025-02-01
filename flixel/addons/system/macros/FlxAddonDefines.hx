@@ -41,8 +41,8 @@ class FlxAddonDefines
 		 * When the minimum version of flixel is changed to 5.6.0 or greater, remove the above
 		 * checks and this comment.
 		 */
-		#if (flixel < version("6.0.0"))
-		FlxDefines.abortVersion("Flixel", "6.0.0 or newer", "flixel", (macro null).pos);
+		#if (flixel < version("5.3.0"))
+		FlxDefines.abortVersion("Flixel", "5.3.0 or newer", "flixel", (macro null).pos);
 		#end
 	}
 	

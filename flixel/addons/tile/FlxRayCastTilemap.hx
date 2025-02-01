@@ -3,10 +3,11 @@ package flixel.addons.tile;
 import flixel.tile.FlxTilemap;
 import flixel.math.FlxPoint;
 
+#if (flixel < version("5.9.0"))
 /**
  * @author greglieberman
  */
-@:deprecated("FlxRayCastTilemap is deprecated, use FlxTilemap.ray or rayStep, instead")// for flixel 5.9.0
+@:deprecated("FlxRayCastTilemap is deprecated, use FlxTilemap.ray or rayStep, instead")
 class FlxRayCastTilemap extends FlxTilemap
 {
 	/**
@@ -246,3 +247,6 @@ class FlxRayCastTilemap extends FlxTilemap
 		return getRowPos(getRow(mapIndex));
 	}
 }
+#elseif FLX_NO_COVERAGE_TEST
+#error "FlxRayCastTilemap has been removed in flixel-addons 4.0.0, use FlxTilemap.ray or rayStep, instead"
+#end
