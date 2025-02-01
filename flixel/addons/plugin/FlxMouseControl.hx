@@ -148,11 +148,11 @@ class FlxMouseControl extends FlxBasic
 	override public function update(elapsed:Float):Void
 	{
 		// Update mouse speed
-		speedX = FlxG.mouse.screenX - _oldX;
-		speedY = FlxG.mouse.screenY - _oldY;
+		speedX = FlxG.mouse.viewX - _oldX;
+		speedY = FlxG.mouse.viewY - _oldY;
 
-		_oldX = FlxG.mouse.screenX;
-		_oldY = FlxG.mouse.screenY;
+		_oldX = FlxG.mouse.viewX;
+		_oldY = FlxG.mouse.viewY;
 
 		// Is the mouse currently pressed down on a target?
 		if (_hasClickTarget)

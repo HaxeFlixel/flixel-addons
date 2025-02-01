@@ -74,8 +74,8 @@ class FlxRayCastTilemap extends FlxTilemap
 		}
 
 		// Find the tile at the start position of the ray
-		cx = coordsToTileX(Start.x);
-		cy = coordsToTileY(Start.y);
+		cx = getColumnAt(Start.x);
+		cy = getRowAt(Start.y);
 
 		if (!inTileRange(cx, cy))
 		{
@@ -86,7 +86,7 @@ class FlxRayCastTilemap extends FlxTilemap
 			return false;
 		}
 
-		if (getTile(Std.int(cx), Std.int(cy)) > 0)
+		if (getTileIndex(Std.int(cx), Std.int(cy)) > 0)
 		{
 			// start point is inside a block
 			Result.x = Start.x;
@@ -155,7 +155,7 @@ class FlxRayCastTilemap extends FlxTilemap
 			if (tMaxX < tMaxY)
 			{
 				cx = cx + stepX;
-				if (getTile(Std.int(cx), Std.int(cy)) > 0)
+				if (getTileIndex(Std.int(cx), Std.int(cy)) > 0)
 				{
 					hitTile = true;
 					break;
@@ -173,7 +173,7 @@ class FlxRayCastTilemap extends FlxTilemap
 			{
 				cy = cy + stepY;
 
-				if (getTile(Std.int(cx), Std.int(cy)) > 0)
+				if (getTileIndex(Std.int(cx), Std.int(cy)) > 0)
 				{
 					hitTile = true;
 					break;
@@ -210,36 +210,39 @@ class FlxRayCastTilemap extends FlxTilemap
 		return (TileX >= 0 && TileX < widthInTiles && TileY >= 0 && TileY < heightInTiles);
 	}
 
-	public function tileAt(CoordX:Float, CoordY:Float):Int
+	@:deprecated("tileAt is deprecated, use getTileIndexAt, instead")
+	public function tileAt(worldX:Float, worldY:Float):Int
 	{
-		return getTile(Std.int((CoordX - x) / scaledTileWidth), Std.int((CoordY - y) / scaledTileHeight));
+		return getTileIndexAt(worldX, worldY);
 	}
 
-	public function tileIndexAt(CoordX:Float, CoordY:Float):Int
+	@:deprecated("tileIndexAt is deprecated, use getMapIndexAt, instead")
+	public function tileIndexAt(worldX:Float, worldY:Float):Int
 	{
-		var X:Int = Std.int((CoordX - x) / scaledTileWidth);
-		var Y:Int = Std.int((CoordY - y) / scaledTileHeight);
-
-		return Y * widthInTiles + X;
+		return getMapIndexAt(worldX, worldY);
 	}
 
-	public function coordsToTileX(CoordX:Float):Float
+	@:deprecated("coordsToTileX is deprecated, use getColumnAt, instead")
+	public function coordsToTileX(worldX:Float):Float
 	{
-		return Std.int((CoordX - x) / scaledTileWidth);
+		return getColumnAt(worldX);
 	}
 
-	public function coordsToTileY(CoordY:Float):Float
+	@:deprecated("coordsToTileY is deprecated, use getRowAt, instead")
+	public function coordsToTileY(worldY:Float):Float
 	{
-		return Std.int((CoordY - y) / scaledTileHeight);
+		return getRowAt(worldY);
 	}
 
-	public function indexToCoordX(Index:Int):Float
+	@:deprecated("indexToCoordX is deprecated, use getColumnPos(getColumn(mapIndex)), instead")
+	public function indexToCoordX(mapIndex:Int):Float
 	{
-		return (Index % widthInTiles) * scaledTileWidth + scaledTileWidth / 2;
+		return getColumnPos(getColumn(mapIndex));
 	}
 
-	public function indexToCoordY(Index:Int):Float
+	@:deprecated("indexToCoordY is deprecated, use getRowPos(getRow(mapIndex)), instead")
+	public function indexToCoordY(mapIndex:Int):Float
 	{
-		return Std.int(Index / widthInTiles) * scaledTileHeight + scaledTileHeight / 2;
+		return getRowPos(getRow(mapIndex));
 	}
 }
