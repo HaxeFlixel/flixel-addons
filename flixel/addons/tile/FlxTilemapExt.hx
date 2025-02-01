@@ -203,7 +203,7 @@ class FlxTilemapExt extends FlxTilemap
 					{
 						if (tile != null)
 						{
-							if (tile.allowCollisions <= NONE)
+							if (tile.allowCollisions == NONE)
 							{
 								debugTile = _debugTileNotSolid;
 							}
