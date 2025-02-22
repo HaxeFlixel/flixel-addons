@@ -76,7 +76,7 @@ class FlxWaveEffect implements IFlxEffect
 	var _pixels:BitmapData;
 
 	/**
-	 * Creates a new FlxEffectWave, which applies a wave-distortion effect.
+	 * Creates a new FlxWaveEffect, which applies a wave-distortion effect.
 	 *
 	 * @param	Mode			Which Mode you would like to use for the effect. ALL = applies a constant distortion throughout the image, END = makes the effect get stronger towards the bottom of the image, and START = the reverse of END.
 	 * @param	Strength		How strong you want the effect.
