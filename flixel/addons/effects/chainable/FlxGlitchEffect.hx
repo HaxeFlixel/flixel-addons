@@ -59,7 +59,7 @@ class FlxGlitchEffect implements IFlxEffect
 	var _pixels:BitmapData;
 
 	/**
-	 * Creates a new FlxGlitchSprite, which applies a Glitch-distortion effect.
+	 * Creates a new FlxGlitchEffect, which applies a Glitch-distortion effect.
 	 * This effect is non-destructive to the target's pixels, and can be used on animated FlxSprites.
 	 *
 	 * @param	Strength	How strong you want the effect.
