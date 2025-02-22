@@ -54,7 +54,7 @@ class FlxRainbowEffect implements IFlxEffect
 	var _pixels:BitmapData;
 
 	/**
-	 * Creates a new FlxEffectRainbow, which applies a color-cycling effect, using the target's bitmap as a mask.
+	 * Creates a new FlxRainbowEffect, which applies a color-cycling effect, using the target's bitmap as a mask.
 	 *
 	 * @param	Alpha		A number between 0 and 1 to change the opacity of the effect.
 	 * @param	Brightness	A number between 0 and 1, indicating how bright the color should be.
