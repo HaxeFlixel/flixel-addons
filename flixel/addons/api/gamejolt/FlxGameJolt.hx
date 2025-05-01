@@ -185,7 +185,7 @@ class FlxGameJolt
 
 	/**
 	 * Retrieves date and time registered in your game's server.
-	 * @see 	https://gamejolt.com/api/doc/game/time/
+	 * @see 	https://gamejolt.com/game-api/doc/time/
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
 	 * @param	onProgress	Callback that will be called while the request is loading results.
@@ -197,23 +197,28 @@ class FlxGameJolt
 
 	/**
 	 * Sends multiple calls in a single request to the GameJolt API to process.
-	 * @see 	https://gamejolt.com/api/doc/game/batch/
+	 * @see 	https://gamejolt.com/game-api/doc/batch/
 	 * @param	calls The list of calls to send to the batch. You can set up to 50 calls per batch. NOTE: Use `buildURLSection()` with its parameter `encode` set to `true` for the creation of every call you want to add here.
+	 * @param	parallel Whether to run every call at once (true) or in the order they were set (false).
+	 * @param	break_on_error Whether to return an error message in the main response body if one or more calls fail or not.
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
 	 * @param	onProgress	Callback that will be called while the request is loading results.
 	 * @return The request instance.
 	 */
-	public static function requestBatch(calls:Array<String>, ?onComplete:Array<FlxGameJoltResponse>->Void, ?onError:String->Void,
+	public static function requestBatch(calls:Array<String>, parallel:Bool = false, break_on_error:Bool = true, ?onComplete:Array<FlxGameJoltResponse>->Void,
+			?onError:String->Void,
 			?onProgress:Float->Float->Void):URLLoader
 	{
-		return initRequest(buildURL("batch", calls.map(c -> {key: "responses[]", value: c.urlEncode()})), data -> data.responses, onComplete, onError,
-			onProgress);
+		var params:Array<Param> = calls.map(c -> {key: "responses[]", value: c.urlEncode()});
+		params.push({key: "parallel", value: '$parallel'});
+		params.push({key: "break_on_error", value: '$break_on_error'});
+		return initRequest(buildURL("batch", params), data -> data.responses, onComplete, onError, onProgress);
 	}
 
 	/**
 	 * Retrieves the list of the registered user's friends' IDs.
-	 * @see 	https://gamejolt.com/api/doc/game/friends/
+	 * @see 	https://gamejolt.com/game-api/doc/friends/
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
 	 * @param	onProgress	Callback that will be called while the request is loading results.
@@ -225,7 +230,7 @@ class FlxGameJolt
 
 	/**
 	 * Fetch users data by a given username.
-	 * @see 	https://gamejolt.com/api/doc/game/users/fetch/
+	 * @see 	https://gamejolt.com/game-api/doc/users/fetch/
 	 * @param	username	The username of the user whose data will be obtained from. If you leave this blank, `username` will be used instead.
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
@@ -239,7 +244,7 @@ class FlxGameJolt
 
 	/**
 	 * Fetch users data by a given user IDs list.
-	 * @see 	https://gamejolt.com/api/doc/game/users/fetch/
+	 * @see 	https://gamejolt.com/game-api/doc/users/fetch/
 	 * @param	userIDs	The user IDs list of the users whose data will be obtained from.
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
@@ -253,7 +258,7 @@ class FlxGameJolt
 
 	/**
 	 * Verify user data set on `username` and `usertoken`.
-	 * @see 	https://gamejolt.com/api/doc/game/users/auth/
+	 * @see 	https://gamejolt.com/game-api/doc/users/auth/
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
 	 * @return The request instance.
@@ -264,7 +269,7 @@ class FlxGameJolt
 
 	/**
 	 * Begin a new session. Sessions that are not pinged using `pingSession()` at most every 120 seconds will be closed.
-	 * @see 	https://gamejolt.com/api/doc/game/sessions/open/
+	 * @see 	https://gamejolt.com/game-api/doc/sessions/open/
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
 	 * @return The request instance.
@@ -275,7 +280,7 @@ class FlxGameJolt
 
 	/**
 	 * Checks if the registered user has an active session in your game or not.
-	 * @see 	https://gamejolt.com/api/doc/game/sessions/check/
+	 * @see 	https://gamejolt.com/game-api/doc/sessions/check/
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
 	 * @return The request instance.
@@ -287,7 +292,7 @@ class FlxGameJolt
 	/**
 	 * Ping the current session. The API states that a session will be closed after 120 seconds without a ping, so it's recommended to call this frequently.
 	 * Better to put it in a place where it runs all the time.
-	 * @see 	https://gamejolt.com/api/doc/game/sessions/ping/
+	 * @see 	https://gamejolt.com/game-api/doc/sessions/ping/
 	 * @param	active		Leave true to set the session to active, or set to false to set the session to idle.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
 	 * @return The request instance.
@@ -301,7 +306,7 @@ class FlxGameJolt
 
 	/**
 	 * Close the current session, if there's one active.
-	 * @see 	https://gamejolt.com/api/doc/game/sessions/close/
+	 * @see 	https://gamejolt.com/game-api/doc/sessions/close/
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
 	 * @return The request instance.
@@ -312,7 +317,7 @@ class FlxGameJolt
 
 	/**
 	 * Retrieve the list of trophies of your game, and their achievement status according to the registered user.
-	 * @see 	https://gamejolt.com/api/doc/game/trophies/fetch/
+	 * @see 	https://gamejolt.com/game-api/doc/trophies/fetch/
 	 * @param	achieved	Whether if you want to retrieve only the achieved trophies (true) or the unachieved ones (false). Leave `null` to retrieve every trophy.
 	 * @param	trophy_id	If you want to set an specific trophy to retrieve, you can set it here. If set, `achieved` will be not taken in count.
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
@@ -333,7 +338,7 @@ class FlxGameJolt
 
 	/**
 	 * Unlock a trophy for the registered user.
-	 * @see 	https://gamejolt.com/api/doc/game/trophies/add-achieved/
+	 * @see 	https://gamejolt.com/game-api/doc/trophies/add-achieved/
 	 * @param	trophy_id	The unique ID number for this trophy. Can be seen at https://gamejolt.com/dashboard/developer/games/achievements/GAME_ID/ in the right-hand column.
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
@@ -348,7 +353,7 @@ class FlxGameJolt
 
 	/**
 	 * Locks a trophy for the registered user. Useful for trophy testing and such.
-	 * @see 	https://gamejolt.com/api/doc/game/trophies/remove-achieved/
+	 * @see 	https://gamejolt.com/game-api/doc/trophies/remove-achieved/
 	 * @param	trophy_id	The unique ID number for this trophy. Can be seen at https://gamejolt.com/dashboard/developer/games/achievements/GAME_ID/ in the right-hand column.
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
@@ -363,7 +368,7 @@ class FlxGameJolt
 
 	/**
 	 * Retrieve the high scores from a certain score table in your game.
-	 * @see		https://gamejolt.com/api/doc/game/scores/fetch/
+	 * @see		https://gamejolt.com/game-api/doc/scores/fetch/
 	 * @param 	table_id	The ID of the table you want to pull data from. Leave blank to fetch from the primary score table.
 	 * @param	guest		The name of the "guest" whose scores are gonna be retrieved. If you set an empty string, it will include `username` and `usertoken` instead. Leave `null` to retrieve every score.
 	 * @param	limit		The maximum number of scores to retrieve. Must be a value between 1-100 according to the API documentation. Default value is 10.
@@ -403,7 +408,7 @@ class FlxGameJolt
 
 	/**
 	 * Set a new high score, either globally or for this particular user.
-	 * @see		https://gamejolt.com/api/doc/game/scores/add/
+	 * @see		https://gamejolt.com/game-api/doc/scores/add/
 	 * @param	score		A string representation of the score, such as "234 Jumps".
 	 * @param	sort		A numerical representation of the score, such as 234. Used for sorting of data.
 	 * @param 	table_id	The ID of the table you'd like to send data to. If `null`, score will be sent to the primary high score table.
@@ -441,7 +446,7 @@ class FlxGameJolt
 
 	/**
 	 * Retrieve the rank of the score passed in.
-	 * @see 	https://gamejolt.com/api/doc/game/scores/get-rank/
+	 * @see 	https://gamejolt.com/game-api/doc/scores/get-rank/
 	 * @param	sort		A numerical representation of the score whose rank is gonna be retrieved from.
 	 * @param 	table_id	The ID of the table you'd like to retrieve the rank from. If `null`, score will be retrieved from the primary high score table.
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
@@ -459,7 +464,7 @@ class FlxGameJolt
 
 	/**
 	 * Retrieve a list of high score tables for this game.
-	 * @see 	https://gamejolt.com/api/doc/game/scores/tables/
+	 * @see 	https://gamejolt.com/game-api/doc/scores/tables/
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
 	 * @return The request instance.
@@ -469,7 +474,7 @@ class FlxGameJolt
 
 	/**
 	 * Get data from the remote data store.
-	 * @see 	https://gamejolt.com/api/doc/game/data-store/fetch/
+	 * @see 	https://gamejolt.com/game-api/doc/data-store/fetch/
 	 * @param	Key			The key for the data to retrieve.
 	 * @param	User		Whether or not to get the data associated with this user.
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
@@ -490,7 +495,7 @@ class FlxGameJolt
 
 	/**
 	 * Set data in the remote data store.
-	 * @see 	https://gamejolt.com/api/doc/game/data-store/set/
+	 * @see 	https://gamejolt.com/game-api/doc/data-store/set/
 	 * @param	Key			The key for this data.
 	 * @param	Value		The key value.
 	 * @param	User		Whether or not to associate this with this user.
@@ -511,7 +516,7 @@ class FlxGameJolt
 
 	/**
 	 * Update data which is in the data store.
-	 * @see		https://gamejolt.com/api/doc/game/data-store/update/
+	 * @see		https://gamejolt.com/game-api/doc/data-store/update/
 	 * @param	Key			The key of the data you'd like to manipulate.
 	 * @param	Operation	The type of operation. Acceptable values: "add", "subtract", "multiply", "divide", "append", "prepend". The former four are only valid on numerical values, the latter two only on strings.
 	 * @param	Value		The value that you'd like to work with on the data store.
@@ -537,7 +542,7 @@ class FlxGameJolt
 
 	/**
 	 * Remove data from the remote data store.
-	 * @see 	https://gamejolt.com/api/doc/game/data-store/remove/
+	 * @see 	https://gamejolt.com/game-api/doc/data-store/remove/
 	 * @param	Key			The key for the data to remove.
 	 * @param	User		Whether or not to remove the data associated with this user.
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
@@ -557,7 +562,7 @@ class FlxGameJolt
 
 	/**
 	 * Get all keys in the data store.
-	 * @see 	https://gamejolt.com/api/doc/game/data-store/get-keys/
+	 * @see 	https://gamejolt.com/game-api/doc/data-store/get-keys/
 	 * @param	User		Whether or not to get the keys associated with this user.
 	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
 	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
