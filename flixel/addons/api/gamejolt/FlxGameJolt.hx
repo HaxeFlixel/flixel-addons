@@ -68,11 +68,11 @@ class FlxGameJolt
 
 	/**
 	 * Creates a new section for URL creation. The `requestBatch()` function requires this for its entries to work correctly.
-	 * @param command The command of the call section.
-	 * @param action The action (if there's any) of the call section.
-	 * @param params The parameters the call will take in count when requested.
-	 * @param encode Whether to encode along with a signature at its end or not.
-	 * @return The resulting section.
+	 * @param   command  The command of the call section.
+	 * @param   action   The action (if there's any) of the call section.
+	 * @param   params   The parameters the call will take in count when requested.
+	 * @param   encode   Whether to encode along with a signature at its end or not.
+	 * @return  The resulting section.
 	 */
 	public static function buildURLSection(command:String, action:String = "", params:Array<Param>, encode:Bool):String
 	{
