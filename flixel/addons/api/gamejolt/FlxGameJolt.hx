@@ -14,14 +14,7 @@ import openfl.net.URLLoader;
 import openfl.net.URLRequest;
 
 using Lambda;
-using Reflect;
 using StringTools;
-
-typedef Param =
-{
-	key:String,
-	value:String
-}
 
 /**
  * This allows access to the GameJolt API. Based on the GameJolt Workspace in Postman made by Pablo Gálvez (GamerPablito).
@@ -67,38 +60,207 @@ class FlxGameJolt
 	public static var usingMd5:Bool = true;
 
 	/**
-	 * Creates a new section for URL creation. The `requestBatch()` function requires this for its entries to work correctly.
-	 * @param   command  The command of the call section.
-	 * @param   action   The action (if there's any) of the call section.
-	 * @param   params   The parameters the call will take in count when requested.
-	 * @param   encode   Whether to encode along with a signature at its end or not.
-	 * @return  The resulting section.
+	 * Converts a `FlxGameJoltRequest` instance into a piece of stringified URL.
+	 * @param	request	The `FlxGameJoltRequest` that will be converted to String.
+	 * @param	segment	Whether if the request will be parse like an URL segment or not (internal use only, keep it `false`).
+	 * @return	The new URL piece.
 	 */
-	public static function buildURLSection(command:String, action:String = "", params:Array<Param>, encode:Bool):String
+	private static function buildURL(request:FlxGameJoltRequest, segment:Bool = false):String
 	{
-		var section:String = '/$command';
-		if (action != "")
-			section += '$action/';
-		section += '?game_id=$gameID';
+		var command:String = "";
+		var action:String = "";
+		var params:Array<{name:String, value:String}> = [];
 
-		for (f in params)
-			section += '&${f.key}=${f.value}';
-		if (encode)
+		switch (request)
 		{
-			section += '&signature=${encryptURL(section)}';
-			return section.urlEncode();
+			case BATCH(parallel, breakOnError, requests):
+				command = "batch";
+				params.push({name: "parallel", value: '$parallel'});
+				params.push({name: "break_on_error", value: '$breakOnError'});
+				for (req in requests)
+					params.push({name: "requests[]", value: buildURL(req, true)});
+			case DATA_FETCH(key, fromUser):
+				command = "data-store";
+				params.push({name: "key", value: key.urlEncode()});
+				if (fromUser)
+				{
+					params.push({name: "username", value: FlxGameJolt.username});
+					params.push({name: "user_token", value: FlxGameJolt.usertoken});
+				}
+			case DATA_GETKEYS(fromUser, pattern):
+				command = "data-store";
+				action = "get-keys";
+				if (pattern != null && pattern != "")
+					params.push({name: "pattern", value: pattern.urlEncode()});
+				if (fromUser)
+				{
+					params.push({name: "username", value: FlxGameJolt.username});
+					params.push({name: "user_token", value: FlxGameJolt.usertoken});
+				}
+			case DATA_REMOVE(key, fromUser):
+				command = "data-store";
+				action = "remove";
+				params.push({name: "key", value: key.urlEncode()});
+				if (fromUser)
+				{
+					params.push({name: "username", value: FlxGameJolt.username});
+					params.push({name: "user_token", value: FlxGameJolt.usertoken});
+				}
+			case DATA_SET(key, data, toUser):
+				command = "data-store";
+				action = "set";
+				params.push({name: "key", value: key.urlEncode()});
+				params.push({name: "data", value: data.urlEncode()});
+				if (toUser)
+				{
+					params.push({name: "username", value: FlxGameJolt.username});
+					params.push({name: "user_token", value: FlxGameJolt.usertoken});
+				}
+			case DATA_UPDATE(key, operation, toUser):
+				command = "data-store";
+				action = "update";
+				params.push({name: "key", value: key.urlEncode()});
+				if (toUser)
+				{
+					params.push({name: "username", value: FlxGameJolt.username});
+					params.push({name: "user_token", value: FlxGameJolt.usertoken});
+				}
+				switch (operation)
+				{
+					case Add(n):
+						params.push({name: 'operation', value: 'add'});
+						params.push({name: 'value', value: '$n'});
+					case Substract(n):
+						params.push({name: 'operation', value: 'substract'});
+						params.push({name: 'value', value: '$n'});
+					case Multiply(n):
+						params.push({name: 'operation', value: 'multiply'});
+						params.push({name: 'value', value: '$n'});
+					case Divide(n):
+						params.push({name: 'operation', value: 'divide'});
+						params.push({name: 'value', value: '$n'});
+					case Append(t):
+						params.push({name: 'operation', value: 'append'});
+						params.push({name: 'value', value: t.urlEncode()});
+					case Prepend(t):
+						params.push({name: 'operation', value: 'prepend'});
+						params.push({name: 'value', value: t.urlEncode()});
+				}
+			case FRIENDS:
+				command = "friends";
+				params.push({name: "username", value: FlxGameJolt.username});
+				params.push({name: "user_token", value: FlxGameJolt.usertoken});
+			case TIME:
+				command = "time";
+			case USER_AUTH:
+				command = "users";
+				action = "auth";
+				params.push({name: "username", value: FlxGameJolt.username});
+				params.push({name: "user_token", value: FlxGameJolt.usertoken});
+			case USER_FETCH(userOrID):
+				command = "users";
+				var letters:Array<String> = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ_-".split("");
+				if (letters.exists(l -> userOrID.contains(l.toUpperCase()) || userOrID.contains(l.toLowerCase())))
+					params.push({name: "username", value: userOrID});
+				else
+					params.push({name: "user_id", value: userOrID.replace(",", "%2C")});
+			case SESSION_OPEN:
+				command = "sessions";
+				action = "open";
+				params.push({name: "username", value: FlxGameJolt.username});
+				params.push({name: "user_token", value: FlxGameJolt.usertoken});
+			case SESSION_PING(active):
+				command = "sessions";
+				action = "ping";
+				params.push({name: "status", value: active ? "active" : "idle"});
+				params.push({name: "username", value: FlxGameJolt.username});
+				params.push({name: "user_token", value: FlxGameJolt.usertoken});
+			case SESSION_CHECK:
+				command = "sessions";
+				action = "check";
+				params.push({name: "username", value: FlxGameJolt.username});
+				params.push({name: "user_token", value: FlxGameJolt.usertoken});
+			case SESSION_CLOSE:
+				command = "sessions";
+				action = "close";
+				params.push({name: "username", value: FlxGameJolt.username});
+				params.push({name: "user_token", value: FlxGameJolt.usertoken});
+			case SCORES_ADD(score, sort, extra_data, table_id):
+				command = "scores";
+				action = "add";
+				params.push({name: "score", value: score});
+				params.push({name: "sort", value: '$sort'});
+				if (extra_data != null && extra_data != "")
+					params.push({name: "extra_data", value: extra_data.urlEncode()});
+				if (table_id != null)
+					params.push({name: "table_id", value: '$table_id'});
+				if (FlxGameJolt.usertoken != "")
+				{
+					params.push({name: "username", value: FlxGameJolt.username});
+					params.push({name: "user_token", value: FlxGameJolt.usertoken});
+				}
+				else
+					params.push({name: "guest", value: FlxGameJolt.username});
+			case SCORES_GETRANK(sort, table_id):
+				command = "scores";
+				action = "get-rank";
+				params.push({name: "sort", value: '$sort'});
+				if (table_id != null)
+					params.push({name: "table_id", value: '$table_id'});
+			case SCORES_FETCH(fromUser, table_id, limit, betterThan):
+				command = "scores";
+				if (table_id != null)
+					params.push({name: "table_id", value: '$table_id'});
+				if (limit != null)
+					params.push({name: "limit", value: '$limit'});
+				if (betterThan != null)
+					params.push({name: betterThan < 0 ? "worse_than" : "better_than", value: '${Math.abs(betterThan)}'});
+				if (fromUser)
+				{
+					if (FlxGameJolt.usertoken != "")
+					{
+						params.push({name: "username", value: FlxGameJolt.username});
+						params.push({name: "user_token", value: FlxGameJolt.usertoken});
+					}
+					else
+						params.push({name: "guest", value: FlxGameJolt.username});
+				}
+			case SCORES_TABLES:
+				command = "scores";
+				action = "tables";
+			case TROPHIES_FETCH(achieved, trophy_id):
+				command = "trophies";
+				if (achieved != null)
+					params.push({name: "achieved", value: '$achieved'});
+				if (trophy_id != null)
+					params.push({name: "trophy_id", value: '$trophy_id'});
+				params.push({name: "username", value: FlxGameJolt.username});
+				params.push({name: "user_token", value: FlxGameJolt.usertoken});
+			case TROPHIES_ADD(trophy_id):
+				command = "trophies";
+				action = "add";
+				params.push({name: "trophy_id", value: '$trophy_id'});
+				params.push({name: "username", value: FlxGameJolt.username});
+				params.push({name: "user_token", value: FlxGameJolt.usertoken});
+			case TROPHIES_REMOVE(trophy_id):
+				command = "trophies";
+				action = "remove";
+				params.push({name: "trophy_id", value: '$trophy_id'});
+				params.push({name: "username", value: FlxGameJolt.username});
+				params.push({name: "user_token", value: FlxGameJolt.usertoken});
 		}
-		return section;
+
+		var urlSection:String = '/$command${action != "" ? '/$action' : ""}?game_id=${FlxGameJolt.gameID}${[for (p in params) '&${p.name}=${p.value}'].join("")}';
+		if (segment)
+			return sign(urlSection).urlEncode();
+		return sign('https://api.gamejolt.com/api/game/v1_2$urlSection');
 	}
 
-	private static function buildURL(command:String, action:String = "", params:Array<Param>):URLRequest
-	{
-		var url:String = 'https://api.gamejolt.com/api/game/v1_2';
-		url += buildURLSection(command, action, params, false);
-		url += '&signature=${encryptURL(url)}';
-		return new URLRequest(url);
-	}
-
+	/**
+	 * Corrects the image links in order to make them look with better resolution when fetched,
+	 * @param	res	The response with the image link to improve
+	 * @return	The passed-in response with the improved image links.
+	 */
 	private static function formatImages(res:FlxGameJoltResponse):FlxGameJoltResponse
 	{
 		if (res.users != null)
@@ -130,26 +292,45 @@ class FlxGameJolt
 		return res;
 	}
 
-	private static function initRequest<F>(request:URLRequest, field:FlxGameJoltResponse->F, ?onComplete:F->Void, ?onError:String->Void,
-			?onProgress:Float->Float->Void):URLLoader
+	/**
+	 * Sends a request to the GameJolt API.
+	 * The response may vary according to the request you pass in.
+	 * Check out the GameJolt API docs for more info.
+	 * @param	request		The request to send.
+	 * @param	onResponse	Optional callback for the response obtained from the request processing.
+	 * @param	onProgress	Optional callback to be executed while a response is obtained.
+	 * @return	The `URLLoader` object that represents the request.
+	 */
+	public static function sendRequest(request:FlxGameJoltRequest, ?onResponse:FlxGameJoltResponse->Void, ?onProgress:Float->Float->Void):URLLoader
 	{
+		var url:String = buildURL(request);
 		var loader:URLLoader = new URLLoader();
+
 		loader.addEventListener(COMPLETE, function(_)
 		{
-			var data:FlxGameJoltResponse = parse(loader.data).response;
+			var data:FlxGameJoltResponse = formatImages(cast parse(loader.data).response);
 			if (data.message != null)
 			{
+				data.message = 'Request Error: ${data.message}';
 				if (verbose)
-					log.warn('${request.url}\nRequest Error: ${data.message}');
-				if (onError != null)
-					onError(data.message);
+					log.warn('$url\n${data.message}');
+				if (onResponse != null)
+					onResponse(data);
 				return;
 			}
 
+			if (data.responses != null)
+				for (i in 0...data.responses.length)
+					if (data.responses[i].message != null && verbose)
+						log.warn('$url\nError at Subrequest #$i -> ${data.responses[i].message}');
+
 			if (verbose)
+			{
+				log.notice('Request Finished: $url');
 				log.add(data);
-			if (onComplete != null)
-				onComplete(field(formatImages(data)));
+			}
+			if (onResponse != null)
+				onResponse(data);
 		});
 		loader.addEventListener(PROGRESS, function(p)
 		{
@@ -157,7 +338,7 @@ class FlxGameJolt
 			var t:Float = roundDecimal(p.bytesTotal, 3);
 
 			if (verbose)
-				log.add('${request.url}\nLoading... ${formatBytes(l)}/${formatBytes(t)} (${roundDecimal(l / t, 1)}%)');
+				log.add('$url\nLoading... ${formatBytes(l)}/${formatBytes(t)} (${roundDecimal(l / t, 1)}%)');
 			if (onProgress != null)
 				onProgress(l, t);
 		});
@@ -165,421 +346,32 @@ class FlxGameJolt
 		{
 			var message:String = 'IO Error: ${e.text}';
 			if (verbose)
-				log.warn('${request.url}\n$message');
-			if (onError != null)
-				onError(message);
+				log.warn('$url\n$message');
+			if (onResponse != null)
+				onResponse({success: false, message: message});
 		});
 		loader.addEventListener(SECURITY_ERROR, function(e)
 		{
 			var message:String = 'Security Error: ${e.text}';
 			if (verbose)
-				log.warn('${request.url}\n$message');
-			if (onError != null)
-				onError(message);
+				log.warn('$url\n$message');
+			if (onResponse != null)
+				onResponse({success: false, message: message});
 		});
 
-		log.notice('Starting Request: ${request.url}');
-		loader.load(request);
+		log.notice('Starting Request: $url');
+		loader.load(new URLRequest(url));
 		return loader;
 	}
 
 	/**
-	 * Retrieves date and time registered in your game's server.
-	 * @see 	https://gamejolt.com/game-api/doc/time/
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @param	onProgress	Callback that will be called while the request is loading results.
-	 * @return The request instance.
+	 * Adds the respective signature to an URL piece, according to `usingMd5`.
+	 * @param	url	The URL piece to generate and add the signature to.
+	 * @return	The URL with the signature included.
 	 */
-	public static function fetchServerTime(?onComplete:Date->Void, ?onError:String->Void, ?onProgress:Float->Float->Void):URLLoader
-		return initRequest(buildURL("time", []), data -> Date.fromString('${data.year}-${data.month}-${data.day} ${data.hour}:${data.minute}:${data.second}'),
-			onComplete, onError, onProgress);
-
-	/**
-	 * Sends multiple calls in a single request to the GameJolt API to process.
-	 * @see 	https://gamejolt.com/game-api/doc/batch/
-	 * @param	calls The list of calls to send to the batch. You can set up to 50 calls per batch. NOTE: Use `buildURLSection()` with its parameter `encode` set to `true` for the creation of every call you want to add here.
-	 * @param	parallel Whether to run every call at once (true) or in the order they were set (false).
-	 * @param	break_on_error Whether to return an error message in the main response body if one or more calls fail or not.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @param	onProgress	Callback that will be called while the request is loading results.
-	 * @return The request instance.
-	 */
-	public static function requestBatch(calls:Array<String>, parallel:Bool = false, break_on_error:Bool = true, ?onComplete:Array<FlxGameJoltResponse>->Void,
-			?onError:String->Void,
-			?onProgress:Float->Float->Void):URLLoader
+	private static function sign(url:String):String
 	{
-		var params:Array<Param> = calls.map(c -> {key: "responses[]", value: c.urlEncode()});
-		params.push({key: "parallel", value: '$parallel'});
-		params.push({key: "break_on_error", value: '$break_on_error'});
-		return initRequest(buildURL("batch", params), data -> data.responses, onComplete, onError, onProgress);
+		var urlToEncode:String = url + gameKey;
+		return '$url&signature=${usingMd5 ? Md5.encode(urlToEncode) : Sha1.encode(urlToEncode)}';
 	}
-
-	/**
-	 * Retrieves the list of the registered user's friends' IDs.
-	 * @see 	https://gamejolt.com/game-api/doc/friends/
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @param	onProgress	Callback that will be called while the request is loading results.
-	 * @return The request instance.
-	 */
-	public static function fetchFriends(?onComplete:Array<Int>->Void, ?onError:String->Void, ?onProgress:Float->Float->Void):URLLoader
-		return initRequest(buildURL("friends", [{key: "username", value: username}, {key: "user_token", value: usertoken}]),
-			data -> data.friends.map(f -> f.friend_id), onComplete, onError, onProgress);
-
-	/**
-	 * Fetch users data by a given username.
-	 * @see 	https://gamejolt.com/game-api/doc/users/fetch/
-	 * @param	username	The username of the user whose data will be obtained from. If you leave this blank, `username` will be used instead.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @param	onProgress	Callback that will be called while the request is loading results.
-	 * @return The request instance.
-	 */
-	public static function fetchUserByUsername(username:String, onComplete:FlxGameJoltUser->Void, onError:String->Void,
-			?onProgress:Float->Float->Void):URLLoader
-		return initRequest(buildURL("users", "fetch", [{key: "username", value: username != "" ? username : FlxGameJolt.username}]), data -> data.users[0],
-			onComplete, onError, onProgress);
-
-	/**
-	 * Fetch users data by a given user IDs list.
-	 * @see 	https://gamejolt.com/game-api/doc/users/fetch/
-	 * @param	userIDs	The user IDs list of the users whose data will be obtained from.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @param	onProgress	Callback that will be called while the request is loading results.
-	 * @return The request instance.
-	 */
-	public static function fetchUsersByIDs(userIDs:Array<Int>, onComplete:Array<FlxGameJoltUser>->Void, onError:String->Void,
-			?onProgress:Float->Float->Void):URLLoader
-		return initRequest(buildURL("users", "fetch", [{key: "user_id", value: userIDs.map(id -> '$id').join("%2C")}]), data -> data.users, onComplete,
-			onError, onProgress);
-
-	/**
-	 * Verify user data set on `username` and `usertoken`.
-	 * @see 	https://gamejolt.com/game-api/doc/users/auth/
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function authUser(?onComplete:(Void) -> Void, ?onError:String->Void):URLLoader
-		return initRequest(buildURL("users", "auth", [{key: "username", value: username}, {key: "user_token", value: usertoken}]), data -> {}, onComplete,
-			onError);
-
-	/**
-	 * Begin a new session. Sessions that are not pinged using `pingSession()` at most every 120 seconds will be closed.
-	 * @see 	https://gamejolt.com/game-api/doc/sessions/open/
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function openSession(?onComplete:(Void) -> Void, ?onError:String->Void):URLLoader
-		return initRequest(buildURL("sessions", "open", [{key: "username", value: username}, {key: "user_token", value: usertoken}]), data -> {}, onComplete,
-			onError);
-
-	/**
-	 * Checks if the registered user has an active session in your game or not.
-	 * @see 	https://gamejolt.com/game-api/doc/sessions/check/
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function checkSession(?onComplete:Bool->Void, ?onError:String->Void):URLLoader
-		return initRequest(buildURL("sessions", "check", [{key: "username", value: username}, {key: "user_token", value: usertoken}]), data -> data.success,
-			onComplete, onError);
-
-	/**
-	 * Ping the current session. The API states that a session will be closed after 120 seconds without a ping, so it's recommended to call this frequently.
-	 * Better to put it in a place where it runs all the time.
-	 * @see 	https://gamejolt.com/game-api/doc/sessions/ping/
-	 * @param	active		Leave true to set the session to active, or set to false to set the session to idle.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function pingSession(active:Bool = true, ?onComplete:(Void) -> Void, ?onError:String->Void):URLLoader
-		return initRequest(buildURL("sessions", "ping", [
-			{key: "username", value: username},
-			{key: "user_token", value: usertoken},
-			{key: "active", value: active ? "active" : "idle"}
-		]), data -> {}, onComplete, onError);
-
-	/**
-	 * Close the current session, if there's one active.
-	 * @see 	https://gamejolt.com/game-api/doc/sessions/close/
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function closeSession(?onComplete:(Void) -> Void, ?onError:String->Void):URLLoader
-		return initRequest(buildURL("sessions", "close", [{key: "username", value: username}, {key: "user_token", value: usertoken}]), data -> {}, onComplete,
-			onError);
-
-	/**
-	 * Retrieve the list of trophies of your game, and their achievement status according to the registered user.
-	 * @see 	https://gamejolt.com/game-api/doc/trophies/fetch/
-	 * @param	achieved	Whether if you want to retrieve only the achieved trophies (true) or the unachieved ones (false). Leave `null` to retrieve every trophy.
-	 * @param	trophy_id	If you want to set an specific trophy to retrieve, you can set it here. If set, `achieved` will be not taken in count.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @param	onProgress	Callback that will be called while the request is loading results.
-	 * @return The request instance.
-	 */
-	public static function fetchTrophies(?achieved:Bool, ?trophy_id:Int, ?onComplete:Array<FlxGameJoltTrophy>->Void, ?onError:String->Void,
-			?onProgress:Float->Float->Void):URLLoader
-	{
-		var params:Array<Param> = [{key: "username", value: username}, {key: "user_token", value: usertoken}];
-		if (achieved != null)
-			params.push({key: "achieved", value: '$achieved'});
-		if (trophy_id != null)
-			params.push({key: "trophy_id", value: '$trophy_id'});
-		return initRequest(buildURL("trophies", params), data -> data.trophies, onComplete, onError, onProgress);
-	}
-
-	/**
-	 * Unlock a trophy for the registered user.
-	 * @see 	https://gamejolt.com/game-api/doc/trophies/add-achieved/
-	 * @param	trophy_id	The unique ID number for this trophy. Can be seen at https://gamejolt.com/dashboard/developer/games/achievements/GAME_ID/ in the right-hand column.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function addTrophy(trophy_id:Int, ?onComplete:(Void) -> Void, ?onError:String->Void):URLLoader
-		return initRequest(buildURL("trophies", "add-achieved", [
-			{key: "username", value: username},
-			{key: "user_token", value: usertoken},
-			{key: "trophy_id", value: '$trophy_id'}
-		]), data -> {}, onComplete, onError);
-
-	/**
-	 * Locks a trophy for the registered user. Useful for trophy testing and such.
-	 * @see 	https://gamejolt.com/game-api/doc/trophies/remove-achieved/
-	 * @param	trophy_id	The unique ID number for this trophy. Can be seen at https://gamejolt.com/dashboard/developer/games/achievements/GAME_ID/ in the right-hand column.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function removeTrophy(trophy_id:Int, ?onComplete:(Void) -> Void, ?onError:String->Void):URLLoader
-		return initRequest(buildURL("trophies", "remove-achieved", [
-			{key: "username", value: username},
-			{key: "user_token", value: usertoken},
-			{key: "trophy_id", value: '$trophy_id'}
-		]), data -> {}, onComplete, onError);
-
-	/**
-	 * Retrieve the high scores from a certain score table in your game.
-	 * @see		https://gamejolt.com/game-api/doc/scores/fetch/
-	 * @param 	table_id	The ID of the table you want to pull data from. Leave blank to fetch from the primary score table.
-	 * @param	guest		The name of the "guest" whose scores are gonna be retrieved. If you set an empty string, it will include `username` and `usertoken` instead. Leave `null` to retrieve every score.
-	 * @param	limit		The maximum number of scores to retrieve. Must be a value between 1-100 according to the API documentation. Default value is 10.
-	 * @param 	betterThan Makes this to retrieve only the scores that are HIGHER than its value, if you set a negative value, this will retrieve the scores that are LOWER than its value instead.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @param	onProgress	Callback that will be called while the request is loading results.
-	 * @return The request instance.
-	 */
-	public static function fetchScores(?table_id:Int, ?guest:String, ?limit:Int, ?betterThan:Int, ?onComplete:Array<FlxGameJoltScore>->Void,
-			?onError:String->Void, ?onProgress:Float->Float->Void):URLLoader
-	{
-		var params:Array<Param> = [];
-
-		if (guest == "")
-		{
-			if (usertoken != "")
-			{
-				params.push({key: "username", value: username});
-				params.push({key: "user_token", value: usertoken});
-			}
-			else
-				params.push({key: "guest", value: username});
-		}
-		else if (guest != null)
-			params.push({key: "guest", value: guest});
-
-		if (limit != null)
-			params.push({key: "limit", value: '$limit'});
-		if (table_id != null)
-			params.push({key: "table_id", value: '$table_id'});
-		if (betterThan != null && betterThan != 0)
-			params.push({key: betterThan > 0 ? "better_than" : "worse_than", value: '$betterThan'});
-
-		return initRequest(buildURL("scores", params), data -> data.scores, onComplete, onError, onProgress);
-	}
-
-	/**
-	 * Set a new high score, either globally or for this particular user.
-	 * @see		https://gamejolt.com/game-api/doc/scores/add/
-	 * @param	score		A string representation of the score, such as "234 Jumps".
-	 * @param	sort		A numerical representation of the score, such as 234. Used for sorting of data.
-	 * @param 	table_id	The ID of the table you'd like to send data to. If `null`, score will be sent to the primary high score table.
-	 * @param	guest		The name of the "guest" whose score is gonna be set for. If you set an empty string, it will include `username` and `usertoken` instead..
-	 * @param	extra_data	Optional extra data associated with the score, which will NOT be visible on the site but can be retrieved by the API.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function addScore(score:String, sort:Float, guest:String = "", ?table_id:Int, ?extra_data:String, ?onComplete:(Void) -> Void,
-			?onError:String->Void):URLLoader
-	{
-		var params:Array<Param> = [{key: "score", value: score}, {key: "sort", value: '$sort'}];
-
-		if (guest == "")
-		{
-			if (usertoken != "")
-			{
-				params.push({key: "username", value: username});
-				params.push({key: "user_token", value: usertoken});
-			}
-			else
-				params.push({key: "guest", value: username});
-		}
-		else
-			params.push({key: "guest", value: guest});
-
-		if (table_id != null)
-			params.push({key: "table_id", value: '$table_id'});
-		if (extra_data != null)
-			params.push({key: "extra_data", value: '$extra_data'});
-
-		return initRequest(buildURL("scores", "add", params), data -> {}, onComplete, onError);
-	}
-
-	/**
-	 * Retrieve the rank of the score passed in.
-	 * @see 	https://gamejolt.com/game-api/doc/scores/get-rank/
-	 * @param	sort		A numerical representation of the score whose rank is gonna be retrieved from.
-	 * @param 	table_id	The ID of the table you'd like to retrieve the rank from. If `null`, score will be retrieved from the primary high score table.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @param	onProgress	Callback that will be called while the request is loading results.
-	 * @return The request instance.
-	 */
-	public static function getScoreRank(sort:Int, ?table_id:Int, ?onComplete:Int->Void, ?onError:String->Void, ?onProgress:Float->Float->Void):URLLoader
-	{
-		var params:Array<Param> = [{key: "sort", value: '$sort'}];
-		if (table_id != null)
-			params.push({key: "table_id", value: '$table_id'});
-		return initRequest(buildURL("scores", "get-rank", params), data -> data.rank, onComplete, onError, onProgress);
-	}
-
-	/**
-	 * Retrieve a list of high score tables for this game.
-	 * @see 	https://gamejolt.com/game-api/doc/scores/tables/
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function getScoreTables(?onComplete:Array<FlxGameJoltScoreTable>->Void, ?onError:String->Void):URLLoader
-		return initRequest(buildURL("scores", "tables", []), data -> data.tables, onComplete, onError);
-
-	/**
-	 * Get data from the remote data store.
-	 * @see 	https://gamejolt.com/game-api/doc/data-store/fetch/
-	 * @param	Key			The key for the data to retrieve.
-	 * @param	User		Whether or not to get the data associated with this user.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @param	onProgress	Callback that will be called while the request is loading results.
-	 * @return The request instance.
-	 */
-	public static function fetchData(Key:String, User:Bool, ?onComplete:String->Void, ?onError:String->Void, ?onProgress:Float->Float->Void):URLLoader
-	{
-		var params:Array<Param> = [{key: "key", value: Key}];
-		if (User)
-		{
-			params.push({key: "username", value: username});
-			params.push({key: "user_token", value: usertoken});
-		}
-		return initRequest(buildURL("data-store", "", params), data -> data.data, onComplete, onError, onProgress);
-	}
-
-	/**
-	 * Set data in the remote data store.
-	 * @see 	https://gamejolt.com/game-api/doc/data-store/set/
-	 * @param	Key			The key for this data.
-	 * @param	Value		The key value.
-	 * @param	User		Whether or not to associate this with this user.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function setData(Key:String, Value:String, User:Bool, ?onComplete:(Void) -> Void, ?onError:String->Void):URLLoader
-	{
-		var params:Array<Param> = [{key: "key", value: Key}, {key: "value", value: Value.urlEncode()}];
-		if (User)
-		{
-			params.push({key: "username", value: username});
-			params.push({key: "user_token", value: usertoken});
-		}
-		return initRequest(buildURL("data-store", "set", params), data -> {}, onComplete, onError);
-	}
-
-	/**
-	 * Update data which is in the data store.
-	 * @see		https://gamejolt.com/game-api/doc/data-store/update/
-	 * @param	Key			The key of the data you'd like to manipulate.
-	 * @param	Operation	The type of operation. Acceptable values: "add", "subtract", "multiply", "divide", "append", "prepend". The former four are only valid on numerical values, the latter two only on strings.
-	 * @param	Value		The value that you'd like to work with on the data store.
-	 * @param	User		Whether or not to work with the data associated with this user.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function updateData(Key:String, Operation:String, Value:String, User:Bool, ?onComplete:(Void) -> Void, ?onError:String->Void):URLLoader
-	{
-		var params:Array<Param> = [
-			{key: "key", value: Key},
-			{key: "operation", value: Operation},
-			{key: "value", value: Value.urlEncode()}
-		];
-		if (User)
-		{
-			params.push({key: "username", value: username});
-			params.push({key: "user_token", value: usertoken});
-		}
-		return initRequest(buildURL("data-store", "update", params), data -> {}, onComplete, onError);
-	}
-
-	/**
-	 * Remove data from the remote data store.
-	 * @see 	https://gamejolt.com/game-api/doc/data-store/remove/
-	 * @param	Key			The key for the data to remove.
-	 * @param	User		Whether or not to remove the data associated with this user.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @return The request instance.
-	 */
-	public static function removeData(Key:String, User:Bool, ?onComplete:(Void) -> Void, ?onError:String->Void):URLLoader
-	{
-		var params:Array<Param> = [{key: "key", value: Key}];
-		if (User)
-		{
-			params.push({key: "username", value: username});
-			params.push({key: "user_token", value: usertoken});
-		}
-		return initRequest(buildURL("data-store", "remove", params), data -> {}, onComplete, onError);
-	}
-
-	/**
-	 * Get all keys in the data store.
-	 * @see 	https://gamejolt.com/game-api/doc/data-store/get-keys/
-	 * @param	User		Whether or not to get the keys associated with this user.
-	 * @param	onComplete	Callback that will contain the requested data, if the request ends successfully.
-	 * @param	onError	Callback that will contain the error information of the request, if the request fails.
-	 * @param	onProgress	Callback that will be called while the request is loading results.
-	 * @return The request instance.
-	 */
-	public static function getAllKeys(User:Bool, ?onComplete:Array<String>->Void, ?onError:String->Void, ?onProgress:Float->Float->Void):URLLoader
-	{
-		var params:Array<Param> = [];
-		if (User)
-		{
-			params.push({key: "username", value: username});
-			params.push({key: "user_token", value: usertoken});
-		}
-		return initRequest(buildURL("data-store", "get-keys", params), data -> data.keys.map(k -> k.key), onComplete, onError, onProgress);
-	}
-
-	private static function encryptURL(url:String):String
-		return usingMd5 ? Md5.encode(url + gameKey) : Sha1.encode(url + gameKey);
 }
