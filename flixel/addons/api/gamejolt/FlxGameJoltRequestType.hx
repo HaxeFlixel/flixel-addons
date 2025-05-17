@@ -11,7 +11,7 @@ enum FlxGameJoltRequestType
 	 * @param breakOnError Whether if you want this to return a general error message if one of the requests fails or not.
 	 * @param requests		The list of the requests to call, you can set up to 50.
 	 */
-	BATCH(parallel:Bool, breakOnError:Bool, requests:Array<FlxGameJoltRequest>);
+	BATCH(parallel:Bool, breakOnError:Bool, requests:Array<FlxGameJoltRequestType>);
 	
 	/**
 	 * Retrieves data from the Data Store.
