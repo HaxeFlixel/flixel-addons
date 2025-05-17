@@ -17,8 +17,9 @@ import flash.Lib;
 /**
  * Similar to FlxKongregate, this allows access to the GameJolt API. Based loosely on the AS3 version by SumYungGai with many changes.
  *
- * @see 	https://gamejolt.com/community/forums/topics/as3-trophy-api/305/
- * @see 	https://gamejolt.com/api/doc/game/
+ * @see 		https://gamejolt.com/community/forums/topics/as3-trophy-api/305/
+ * @see 		https://gamejolt.com/api/doc/game/
+ * @deprecated This class is outdated. Use "flixel.addons.api.gamejolt.GameJolt" instead.
  * @author 	SumYungGai
  * @author 	Steve Richey (STVR)
  *

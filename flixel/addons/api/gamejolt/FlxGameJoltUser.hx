@@ -1,33 +1,43 @@
 package flixel.addons.api.gamejolt;
 
 /**
- * The way the user data is fetched from the GameJolt API.
- * 
- * @param id The ID of the User.
- * @param type The cathegory the User is cataloged like in GameJolt.
- * @param username The username of the User. (Also available for guests).
- * @param avatar_url The link of the avatar of the User.
- * @param signed_up A short description about how long the User have been in GameJolt.
- * @param signed_up_timestamp A long time stamp (in seconds) of when the User signed up.
- * @param last_logged_in A short description about the last time the User was found active in GameJolt.
- * @param last_logged_in_timestamp A long time stamp (in seconds) of the last time the User logged in GameJolt.
- * @param status The actual status of the User.
- * @param developer_name The display name of the User. (Also available for guests).
- * @param developer_website The website of the User.
- * @param developer_description The description of the User.
+ * A user fetched from the GameJolt API.
  */
 typedef FlxGameJoltUser =
 {
-	id:Int,
-	type:String,
-	username:String,
-	avatar_url:String,
-	signed_up:String,
-	signed_up_timestamp:Int,
-	last_logged_in:String,
-	last_logged_in_timestamp:Int,
-	status:String,
-	developer_name:String,
-	developer_website:String,
-	developer_description:String
+	/** The ID of the User. */
+	var id:Int;
+	
+	/** The cathegory the User is cataloged like in GameJolt. */
+	var type:String;
+	
+	/** The username of the User. (Also available for guests). */
+	var username:String;
+	
+	/** The link of the avatar image of the User.*/
+	var avatar_url:String;
+	
+	/** A short description about how long the User have been in GameJolt. */
+	var signed_up:String;
+	
+	/** A long time stamp (in seconds) of when the User signed up. */
+	var signed_up_timestamp:Int;
+	
+	/** A short description about the last time the User was found active in GameJolt. */
+	var last_logged_in:String;
+	
+	/** A long time stamp (in seconds) of the last time the User logged in GameJolt. */
+	var last_logged_in_timestamp:Int;
+	
+	/** The actual status of the User. */
+	var status:String;
+	
+	/** The display name of the User. (Also available for guests). */
+	var developer_name:String;
+	
+	/** The website of the User. */
+	var developer_website:String;
+	
+	/** The description of the User. */
+	var developer_description:String;
 }
