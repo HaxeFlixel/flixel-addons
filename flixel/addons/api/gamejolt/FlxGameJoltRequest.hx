@@ -127,8 +127,8 @@ class FlxGameJoltRequest
 	
 	/**
 	 * Makes retrieved images to have a better resolution.
-	 * @param oldRes The `FlxGameJoltResponse` to be modified.
-	 * @return A new `FlxGameJoltResponse` with every Image URL modified for a better resolution when requested.
+	 * @param oldRes	The `FlxGameJoltResponse` to be modified.
+	 * @return 			 A new `FlxGameJoltResponse` with every Image URL modified for a better resolution when requested.
 	 */
 	function formatImages(res:FlxGameJoltResponse):FlxGameJoltResponse
 	{
@@ -163,8 +163,8 @@ class FlxGameJoltRequest
 	
 	/**
 	 * Converts a `FlxGameJoltRequestType` instance into a piece of stringified URL.
-	 * @param request The `FlxGameJoltRequestType` that will be converted to String.
-	 * @param signed Whether to sign this conversion or not.
+	 * @param request	The `FlxGameJoltRequestType` that will be converted to String.
+	 * @param signed 	Whether to sign this conversion or not.
 	 * @return The new URL piece.
 	 */
 	function parseType(request:FlxGameJoltRequestType, signed:Bool = false):String
@@ -357,7 +357,7 @@ class FlxGameJoltRequest
 	/**
 	 * Signs a piece of URL according to `usingMd5` parameter of the `FlxGameJolt` class.
 	 * @param daUrl The old URL piece.
-	 * @return The new URL piece.
+	 * @return 		 The new URL piece.
 	 */
 	function sign(daUrl:String):String
 	{
