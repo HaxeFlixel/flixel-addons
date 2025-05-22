@@ -14,7 +14,6 @@ using StringTools;
  * The general GameJolt class you can be able to make calls to its API from.
  * @see 	https://postman.com/gamerpablito/gamejolt-api-workspace
  * @see 	https://gamejolt.com/game-api
- * @author 	Pablo Gálvez (GamerPablito).
  */
 class FlxGameJoltRequest
 {
@@ -68,7 +67,7 @@ class FlxGameJoltRequest
 	
 	/**
 	 * Sends the current `call` to the GameJolt API to return a `FlxGameJoltResponse` from it, if `executing == false`.
-	 * @param async Whether to run the request asynchronously or not.
+	 * @param	async Whether to run the request asynchronously or not.
 	 */
 	public function send(async:Bool)
 	{
@@ -127,8 +126,8 @@ class FlxGameJoltRequest
 	
 	/**
 	 * Makes retrieved images to have a better resolution.
-	 * @param oldRes	The `FlxGameJoltResponse` to be modified.
-	 * @return 			 A new `FlxGameJoltResponse` with every Image URL modified for a better resolution when requested.
+	 * @param	oldRes	The `FlxGameJoltResponse` to be modified.
+	 * @return	A new `FlxGameJoltResponse` with every Image URL modified for a better resolution when requested.
 	 */
 	function formatImages(res:FlxGameJoltResponse):FlxGameJoltResponse
 	{
@@ -163,9 +162,9 @@ class FlxGameJoltRequest
 	
 	/**
 	 * Converts a `FlxGameJoltRequestType` instance into a piece of stringified URL.
-	 * @param request	The `FlxGameJoltRequestType` that will be converted to String.
-	 * @param signed 	Whether to sign this conversion or not.
-	 * @return The new URL piece.
+	 * @param	request	The `FlxGameJoltRequestType` that will be converted to String.
+	 * @param	signed 	Whether to sign this conversion or not.
+	 * @return	The new URL piece.
 	 */
 	function parseType(request:FlxGameJoltRequestType, signed:Bool = false):String
 	{
@@ -356,8 +355,8 @@ class FlxGameJoltRequest
 	
 	/**
 	 * Signs a piece of URL according to `usingMd5` parameter of the `FlxGameJolt` class.
-	 * @param daUrl The old URL piece.
-	 * @return 		 The new URL piece.
+	 * @param	daUrl The old URL piece.
+	 * @return	The new URL piece.
 	 */
 	function sign(daUrl:String):String
 	{

@@ -12,7 +12,7 @@ class FlxGameJolt
 	public static var username:String = "";
 	
 	/**
-	 * The user's GameJolt user token.
+	 * The user's GameJolt user token. Can only be red by the class itself for security.
 	 */
 	public static var usertoken(null, default):String = "";
 	
