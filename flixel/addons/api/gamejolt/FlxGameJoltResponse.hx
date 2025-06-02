@@ -6,7 +6,7 @@ package flixel.addons.api.gamejolt;
 typedef FlxGameJoltResponse =
 {
 	/**
-	 * Whether if the request ended successfully or not. \
+	 * Whether the request ended successfully or not.
 	 * This is also the holder of the response from `SESSION_CHECK` request.
 	 */
 	var success:Bool;

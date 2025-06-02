@@ -33,7 +33,7 @@ class FlxGameJoltRequest
 	public var call(default, set):FlxGameJoltRequestType;
 	
 	/**
-	 * Whether if the current `url` is being executed by `send()` or not.
+	 * Whether the current `url` is being executed by `send()`.
 	 */
 	public var executing(default, null):Bool = false;
 	
@@ -66,8 +66,9 @@ class FlxGameJoltRequest
 	}
 	
 	/**
-	 * Sends the current `call` to the GameJolt API to return a `FlxGameJoltResponse` from it, if `executing == false`.
-	 * @param   async  Whether to run the request asynchronously or not.
+	 * Sends, or "executes" the current `call` to the GameJolt API for a `FlxGameJoltResponse`.
+	 * Ignored if `executing` is `true`
+	 * @param   async  Whether to run the request asynchronously.
 	 */
 	public function send(async:Bool)
 	{
@@ -125,9 +126,9 @@ class FlxGameJoltRequest
 	}
 	
 	/**
-	 * Makes retrieved images to have a better resolution.
-	 * @param   oldRes  The `FlxGameJoltResponse` to be modified.
-	 * @return  A new `FlxGameJoltResponse` with every Image URL modified for a better resolution when requested.
+	 * Modifies any url  in the response to request a higher resolution png image
+	 * @param   res  The `FlxGameJoltResponse` to be modified.
+	 * @return  The modified `FlxGameJoltResponse`
 	 */
 	function formatImages(res:FlxGameJoltResponse):FlxGameJoltResponse
 	{
@@ -164,7 +165,7 @@ class FlxGameJoltRequest
 	 * Converts a `FlxGameJoltRequestType` instance into a piece of stringified URL.
 	 * @param   request  The `FlxGameJoltRequestType` that will be converted to String.
 	 * @param   signed   Whether to sign this conversion or not.
-	 * @return	The new URL piece.
+	 * @return  The new URL piece.
 	 */
 	function parseType(request:FlxGameJoltRequestType, signed:Bool = false):String
 	{
@@ -355,12 +356,12 @@ class FlxGameJoltRequest
 	
 	/**
 	 * Signs a piece of URL according to `usingMd5` parameter of the `FlxGameJolt` class.
-	 * @param   daUrl  The old URL piece.
+	 * @param   url  The old URL piece.
 	 * @return  The new URL piece.
 	 */
-	function sign(daUrl:String):String
+	function sign(url:String):String
 	{
-		var urlToEncode:String = daUrl + FlxGameJolt.gameKey;
+		var urlToEncode:String = url + FlxGameJolt.gameKey;
 		return '$daUrl&signature=${FlxGameJolt.usingMd5 ? haxe.crypto.Md5.encode(urlToEncode) : haxe.crypto.Sha1.encode(urlToEncode)}';
 	}
 }
