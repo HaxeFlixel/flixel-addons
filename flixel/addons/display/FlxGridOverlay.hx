@@ -44,7 +44,7 @@ class FlxGridOverlay
 			Height = FlxG.height;
 		}
 
-		if (Width < CellWidth || Height < CellHeight)
+		if (Width < CellWidth || Height < CellHeight || CellWidth <= 0 || CellHeight <= 0)
 		{
 			return null;
 		}
@@ -89,7 +89,7 @@ class FlxGridOverlay
 			Height = FlxG.height;
 		}
 
-		if (Width < CellWidth || Height < CellHeight)
+		if (Width < CellWidth || Height < CellHeight || CellWidth <= 0 || CellHeight <= 0)
 		{
 			return null;
 		}
