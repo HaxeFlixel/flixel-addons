@@ -22,10 +22,10 @@ class FlxGridOverlay
 	 * If false each row will be the same colour, creating a striped-pattern effect.
 	 * So to create an 8x8 grid you'd call create(8,8)
 	 *
-	 * @param	CellWidth		The grid cell width
-	 * @param	CellHeight		The grid cell height
-	 * @param	Width			The width of the FlxSprite. If -1 it will be the size of the game (FlxG.width)
-	 * @param	Height			The height of the FlxSprite. If -1 it will be the size of the game (FlxG.height)
+	 * @param	CellWidth		The grid cell width. Must be greater than 0.
+	 * @param	CellHeight		The grid cell height. Must be greater than 0.
+	 * @param	Width			The width of the FlxSprite. If -1 it will be the size of the game (FlxG.width). This value cannot be smaller than the `CellWidth`
+	 * @param	Height			The height of the FlxSprite. If -1 it will be the size of the game (FlxG.height). This value cannot be smaller than the `CellHeight`
 	 * @param	Alternate		Should the pattern alternate on each new row? Default true = checkerboard effect. False = vertical stripes
 	 * @param	Color1			The first fill colour in 0xAARRGGBB format
 	 * @param	Color2			The second fill colour in 0xAARRGGBB format
@@ -68,10 +68,10 @@ class FlxGridOverlay
 	 * So to create an 8x8 grid you'd call create(8,8,
 	 *
 	 * @param	Sprite			The FlxSprite you wish to draw the grid on-top of. This updates its pixels value, not just the current frame (don't use animated sprites!)
-	 * @param	CellWidth		The grid cell width
-	 * @param	CellHeight		The grid cell height
-	 * @param	Width			The width of the FlxSprite. If -1 it will be the size of the game (FlxG.width)
-	 * @param	Height			The height of the FlxSprite. If -1 it will be the size of the game (FlxG.height)
+	 * @param	CellWidth		The grid cell width. Must be greater than 0.
+	 * @param	CellHeight		The grid cell height. Must be greater than 0.
+	 * @param	Width			The width of the FlxSprite. If -1 it will be the size of the game (FlxG.width). This value cannot be smaller than the `CellWidth`
+	 * @param	Height			The height of the FlxSprite. If -1 it will be the size of the game (FlxG.height). This value cannot be smaller than the `CellHeight`
 	 * @param	Alternate		Should the pattern alternate on each new row? Default true = checkerboard effect. False = vertical stripes
 	 * @param	Color1			The first fill colour in 0xAARRGGBB format
 	 * @param	Color2			The second fill colour in 0xAARRGGBB format
