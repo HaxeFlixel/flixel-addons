@@ -44,10 +44,11 @@ class FlxGridOverlay
 			Height = FlxG.height;
 		}
 
-		if (Width < CellWidth || Height < CellHeight || CellWidth <= 0 || CellHeight <= 0)
-		{
-			return null;
-		}
+		if (Width < CellWidth || Height < CellHeight)
+			throw "The width and height of a grid cannot be smaller than the cell's width and height!";
+
+		if (CellWidth <= 0 || CellHeight <= 0)
+			throw "Grid cell width/height cannot be less or equal to 0";
 
 		var grid:BitmapData = createGrid(CellWidth, CellHeight, Width, Height, Alternate, Color1, Color2);
 
@@ -89,10 +90,11 @@ class FlxGridOverlay
 			Height = FlxG.height;
 		}
 
-		if (Width < CellWidth || Height < CellHeight || CellWidth <= 0 || CellHeight <= 0)
-		{
-			return null;
-		}
+		if (Width < CellWidth || Height < CellHeight)
+			throw "The width and height of a grid cannot be smaller than the cell's width and height!";
+
+		if (CellWidth <= 0 || CellHeight <= 0)
+			throw "Grid cell width/height cannot be less or equal to 0";
 
 		var grid:BitmapData = createGrid(CellWidth, CellHeight, Width, Height, Alternate, Color1, Color2);
 		Sprite.pixels.copyPixels(grid, new Rectangle(0, 0, Width, Height), new Point(0, 0), null, null, true);
