@@ -35,26 +35,29 @@ class FlxStarField2D extends FlxStarField
 	{
 		for (star in _stars)
 		{
-			star.x += (starVelocityOffset.x * star.speed) * elapsed;
-			star.y += (starVelocityOffset.y * star.speed) * elapsed;
+			if (star.speed > 0)
+			{
+				star.x += (starVelocityOffset.x * star.speed) * elapsed;
+				star.y += (starVelocityOffset.y * star.speed) * elapsed;
+				
+				// wrap the star
+				if (star.x > width)
+				{
+					star.x = 0;
+				}
+				else if (star.x < 0)
+				{
+					star.x = width;
+				}
 
-			// wrap the star
-			if (star.x > width)
-			{
-				star.x = 0;
-			}
-			else if (star.x < 0)
-			{
-				star.x = width;
-			}
-
-			if (star.y > height)
-			{
-				star.y = 0;
-			}
-			else if (star.y < 0)
-			{
-				star.y = height;
+				if (star.y > height)
+				{
+					star.y = 0;
+				}
+				else if (star.y < 0)
+				{
+					star.y = height;
+				}
 			}
 		}
 
@@ -151,7 +154,8 @@ private class FlxStarField extends FlxSprite
 
 		for (star in _stars)
 		{
-			var colorIndex:Int = Std.int(((star.speed - _minSpeed) / (_maxSpeed - _minSpeed)) * _depthColors.length);
+			var colorIndex:Int = star.speed == 0 ? Std.int(FlxG.random.float(0,
+				1) * _depthColors.length) : Std.int(((star.speed - _minSpeed) / (_maxSpeed - _minSpeed)) * _depthColors.length);
 			pixels.setPixel32(Std.int(star.x), Std.int(star.y), _depthColors[colorIndex]);
 		}
 
@@ -177,10 +181,9 @@ private class FlxStarField extends FlxSprite
 	{
 		_minSpeed = Min;
 		_maxSpeed = Max;
-
 		for (star in _stars)
 		{
-			star.speed = FlxG.random.float(Min, Max);
+			star.speed = Max == 0 ? 0 : FlxG.random.float(Min, Max);
 		}
 	}
 }
