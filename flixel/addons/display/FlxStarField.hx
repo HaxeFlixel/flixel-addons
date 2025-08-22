@@ -1,8 +1,3 @@
-/**
- * The logic in this module is largely ported from StarfieldFX.as by Richard Davey / photonstorm
- * @see https://github.com/photonstorm/Flixel-Power-Tools/blob/master/src/org/flixel/plugin/photonstorm/FX/StarfieldFX.as
- */
-
 package flixel.addons.display;
 
 import flixel.FlxG;
@@ -13,10 +8,26 @@ import flixel.util.FlxGradient;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRandom;
 
+/**
+ * The logic in this module is largely ported from StarfieldFX.as by Richard Davey / photonstorm
+ * @see https://github.com/photonstorm/Flixel-Power-Tools/blob/master/src/org/flixel/plugin/photonstorm/FX/StarfieldFX.as
+ * 
+ * FlxStarField2D: A class that creates a field of twinkling stars that can move in vertical and horizontal directions.
+ */
+
 class FlxStarField2D extends FlxStarField
 {
 	public var starVelocityOffset(default, null):FlxPoint;
 
+	/**
+	 * Change the number of layers (depth) and colors used for each layer of the starfield.
+	 *
+	 * @param	X			The X position of the field of Stars
+	 * @param	Y			The Y position of the field of stars
+	 * @param	Width		The width of the field of stars
+	 * @param	Height		The height of the field of stars
+	 * @param	StarAmount	The number of stars to be created
+	 */
 	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, StarAmount:Int = 300)
 	{
 		super(X, Y, Width, Height, StarAmount);
@@ -65,10 +76,22 @@ class FlxStarField2D extends FlxStarField
 	}
 }
 
+/**
+ * FlxStarField3D: A class that creates a group of stars that move from the center of the screen to the edges, to create a 3d motion effect.
+ */
 class FlxStarField3D extends FlxStarField
 {
 	public var center(default, null):FlxPoint;
 
+	/**
+	 * Change the number of layers (depth) and colors used for each layer of the starfield.
+	 *
+	 * @param	X			The X position of the field of Stars
+	 * @param	Y			The Y position of the field of stars
+	 * @param	Width		The width of the field of stars
+	 * @param	Height		The height of the field of stars
+	 * @param	StarAmount	The number of stars to be created
+	 */
 	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, StarAmount:Int = 300)
 	{
 		super(X, Y, Width, Height, StarAmount);
@@ -107,6 +130,10 @@ class FlxStarField3D extends FlxStarField
 	}
 }
 
+/**
+ * FlxStarField: The base class for FlxStarField2d and FlxStarField3D to manage the general creation and drawing of the stars
+ */
+
 private class FlxStarField extends FlxSprite
 {
 	public var bgColor:Int = FlxColor.BLACK;
@@ -116,6 +143,15 @@ private class FlxStarField extends FlxSprite
 	var _minSpeed:Float;
 	var _maxSpeed:Float;
 
+	/**
+	 * Change the number of layers (depth) and colors used for each layer of the starfield.
+	 *
+	 * @param	X			The X position of the field of Stars
+	 * @param	Y			The Y position of the field of stars
+	 * @param	Width		The width of the field of stars
+	 * @param	Height		The height of the field of stars
+	 * @param	StarAmount	The number of stars to be created
+	 */
 	public function new(X:Int, Y:Int, Width:Int, Height:Int, StarAmount:Int)
 	{
 		super(X, Y);
@@ -177,6 +213,12 @@ private class FlxStarField extends FlxSprite
 		_depthColors = FlxGradient.createGradientArray(1, Depth, [LowestColor, HighestColor]);
 	}
 
+	/**
+	 * Change the min and max speed for stars. The class sets a random speed between Min and Max.
+	 *
+	 * @param	Min		The minimum speed for the stars
+	 * @param	Max		The maximum speed for the stars. Set to 0 (zero) for stationary stars
+	 */
 	public function setStarSpeed(Min:Int, Max:Int):Void
 	{
 		_minSpeed = Min;
@@ -188,6 +230,9 @@ private class FlxStarField extends FlxSprite
 	}
 }
 
+/**
+ * FlxStar: The basic class for the stars to hold the data for the individual stars.
+ */
 private class FlxStar
 {
 	public var index:Int;
