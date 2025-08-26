@@ -74,6 +74,16 @@ class FlxStarField2D extends FlxStarField
 
 		super.update(elapsed);
 	}
+
+	/**
+	 * Change the starVelocityOffset of the star field. this is used to change the direction the stars move. 
+	 *
+	 * @param	Point		The point reference to change the movement direction of the stars.
+	 */
+	public function setStarVelocityOffset(Point:FlxPoint):Void
+	{
+		starVelocityOffset = Point;
+	}
 }
 
 /**
