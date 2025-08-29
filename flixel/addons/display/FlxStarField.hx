@@ -138,6 +138,16 @@ class FlxStarField3D extends FlxStarField
 
 		super.update(elapsed);
 	}
+
+	/**
+	 * Change the central point that stars move out from. When you want the stars to generate from a point other than the center of the screen.
+	 *
+	 * @param	Point		The point reference to change the central point of the stars.
+	 */
+	public function setCenter(point:FlxPoint):Void
+	{
+		center = point;
+	}
 }
 
 /**
