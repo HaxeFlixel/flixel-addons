@@ -23,6 +23,11 @@ private class GraphicNapeDebug extends BitmapData {}
  */
 class FlxNapeSpace extends FlxBasic
 {
+	/**
+	 * The instance of the global FlxNapeSpace plugin, created when calling init()
+	 */
+	public static var instance:FlxNapeSpace;
+
 	public static var space:Space;
 
 	/**
@@ -64,10 +69,19 @@ class FlxNapeSpace extends FlxBasic
 	 */
 	public static function init():Void
 	{
+		if (instance != null)
+		{
+			FlxG.plugins.remove(instance);
+			instance.destroy();
+			instance = null;
+		}
+
+		instance = new FlxNapeSpace();
+
 		#if (flixel < version("5.6.0"))
-		FlxG.plugins.add(new FlxNapeSpace());
+		FlxG.plugins.add(instance);
 		#else
-		FlxG.plugins.addPlugin(new FlxNapeSpace());
+		FlxG.plugins.addPlugin(instance);
 		#end
 
 		if (space == null)
