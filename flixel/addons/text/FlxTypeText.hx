@@ -174,17 +174,17 @@ class FlxTypeText extends FlxText
 	 * Create a FlxTypeText object, which is very similar to FlxText except that the text is initially hidden and can be
 	 * animated one character at a time by calling start().
 	 *
-	 * @param	X				The X position for this object.
-	 * @param	Y				The Y position for this object.
-	 * @param	Width			The width of this object. Text wraps automatically.
-	 * @param	Text			The text that will ultimately be displayed.
-	 * @param	Size			The size of the text.
-	 * @param	EmbeddedFont	Whether this text field uses embedded fonts or not.
+	 * @param	x				The X position for this object.
+	 * @param	y				The Y position for this object.
+	 * @param	width			The width of this object. Text wraps automatically.
+	 * @param	yext			The text that will ultimately be displayed.
+	 * @param	size			The size of the text.
+	 * @param	embeddedFont	Whether this text field uses embedded fonts or not.
 	 */
-	public function new(X:Float, Y:Float, Width:Int, Text:String, Size:Int = 8, EmbeddedFont:Bool = true)
+	public function new(x:Float = 0, y:Float = 0, width:Int = 0, text:String = "", size:Int = 8, embeddedFont:Bool = true)
 	{
-		super(X, Y, Width, "", Size, EmbeddedFont);
-		_finalText = Text;
+		super(x, y, width, "", size, embeddedFont);
+		_finalText = text;
 	}
 
 	/**
