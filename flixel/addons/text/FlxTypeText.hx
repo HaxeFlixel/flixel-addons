@@ -12,6 +12,7 @@ import flixel.math.FlxMath;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.sound.FlxSound;
+import flixel.util.FlxSignal;
 import flixel.math.FlxRandom;
 import openfl.media.Sound;
 
@@ -109,6 +110,8 @@ class FlxTypeText extends FlxText
 	 * This function is called when the message is done erasing, if that is enabled.
 	 */
 	public var eraseCallback:Void->Void;
+
+	public var onCharacterTyped(default, never):FlxSignal = new FlxSignal();
 
 	/**
 	 * The text that will ultimately be displayed.
@@ -439,6 +442,8 @@ class FlxTypeText extends FlxText
 				_length += Std.int(_timer / delay);
 				if (_length > _finalText.length)
 					_length = _finalText.length;
+
+				onCharacterTyped.dispatch();
 			}
 
 			if (_erasing && _timer >= eraseDelay)
@@ -516,6 +521,7 @@ class FlxTypeText extends FlxText
 			if (_length >= _finalText.length && _typing && !_waiting && !_erasing)
 			{
 				onComplete();
+				onCharacterTyped.dispatch();
 			}
 
 			// If we're done erasing, call the onErased() function
