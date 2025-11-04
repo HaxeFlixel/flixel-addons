@@ -177,7 +177,7 @@ class FlxTypeText extends FlxText
 	 * @param	x				The X position for this object.
 	 * @param	y				The Y position for this object.
 	 * @param	width			The width of this object. Text wraps automatically.
-	 * @param	yext			The text that will ultimately be displayed.
+	 * @param	text			The text that will ultimately be displayed.
 	 * @param	size			The size of the text.
 	 * @param	embeddedFont	Whether this text field uses embedded fonts or not.
 	 */
