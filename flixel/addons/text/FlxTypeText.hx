@@ -13,6 +13,7 @@ import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.sound.FlxSound;
 import flixel.util.FlxSignal;
+import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxRandom;
 import openfl.media.Sound;
 
@@ -111,7 +112,10 @@ class FlxTypeText extends FlxText
 	 */
 	public var eraseCallback:Void->Void;
 
-	public var onCharacterTyped(default, never):FlxSignal = new FlxSignal();
+	/**
+	 * Dispatches each time a character is typed.
+	 */
+	public final onCharacterTyped:FlxSignal = new FlxSignal();
 
 	/**
 	 * The text that will ultimately be displayed.
@@ -559,5 +563,11 @@ class FlxTypeText extends FlxText
 		_sound = new FlxSound();
 		_sound.loadEmbedded(new TypeSound());
 		#end
+	}
+
+	override public function destroy():Void
+	{
+		FlxDestroyUtil.destroy(onCharacterTyped);
+		super.destroy();
 	}
 }
