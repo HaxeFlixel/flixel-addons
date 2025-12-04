@@ -1,7 +1,5 @@
 package flixel.addons.display;
 
-import flixel.util.FlxDirectionFlags;
-import openfl.geom.ColorTransform;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -12,6 +10,8 @@ import flixel.math.FlxVelocity;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxDirectionFlags;
+import openfl.geom.ColorTransform;
 
 using flixel.util.FlxArrayUtil;
 
@@ -308,7 +308,9 @@ class FlxNestedSprite extends FlxSprite
 				colorTransform.blueMultiplier = blue;
 				colorTransform.alphaMultiplier = alpha;
 			}
+			#if (flixel < version("6.1.0"))
 			useColorTransform = true;
+			#end
 		}
 		else
 		{
@@ -319,7 +321,9 @@ class FlxNestedSprite extends FlxSprite
 				colorTransform.blueMultiplier = 1;
 				colorTransform.alphaMultiplier = 1;
 			}
+			#if (flixel < version("6.1.0"))
 			useColorTransform = false;
+			#end
 		}
 		dirty = true;
 
@@ -359,7 +363,9 @@ class FlxNestedSprite extends FlxSprite
 				colorTransform.blueMultiplier = combinedBlue;
 				colorTransform.alphaMultiplier = alpha;
 			}
+			#if (flixel < version("6.1.0"))
 			useColorTransform = true;
+			#end
 		}
 		else
 		{
@@ -370,7 +376,9 @@ class FlxNestedSprite extends FlxSprite
 				colorTransform.blueMultiplier = 1;
 				colorTransform.alphaMultiplier = 1;
 			}
+			#if (flixel < version("6.1.0"))
 			useColorTransform = false;
+			#end
 		}
 
 		dirty = true;

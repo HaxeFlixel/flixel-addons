@@ -289,17 +289,17 @@ class FlxPieDialUtils
 		// draw the interesting quadrant
 		if (Math.abs(degrees % 90) < 45)
 		{
-			p[1].setPolarDegrees(radius, -90 + Std.int(degrees / 90) * 90).addPoint(center);
-			p[2].setPolarDegrees(cornerLength, -90 + degrees).addPoint(center);
+			p[1].setPolarDegrees(radius, -90 + Std.int(degrees / 90) * 90).add(center.x, center.y);
+			p[2].setPolarDegrees(cornerLength, -90 + degrees).add(center.x, center.y);
 			p[3].copyFrom(center);
 		}
 		else
 		{
 			final quadDegreesStart = Std.int(degrees / 90) * 90;
 			final cornerDegrees = quadDegreesStart + (degrees < 0 ? -45 : 45);
-			p[1].setPolarDegrees(radius, -90 + quadDegreesStart).addPoint(center);
-			p[2].setPolarDegrees(cornerLength, -90 + cornerDegrees).addPoint(center);
-			p[3].setPolarDegrees(cornerLength, -90 + degrees).addPoint(center);
+			p[1].setPolarDegrees(radius, -90 + quadDegreesStart).add(center.x, center.y);
+			p[2].setPolarDegrees(cornerLength, -90 + cornerDegrees).add(center.x, center.y);
+			p[3].setPolarDegrees(cornerLength, -90 + degrees).add(center.x, center.y);
 		}
 		
 		drawPolygon(dest, p, color);

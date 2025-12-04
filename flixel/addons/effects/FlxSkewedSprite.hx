@@ -1,6 +1,5 @@
 package flixel.addons.effects;
 
-import openfl.geom.Matrix;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -8,6 +7,7 @@ import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import flixel.math.FlxAngle;
 import flixel.math.FlxPoint;
 import flixel.util.FlxDestroyUtil;
+import openfl.geom.Matrix;
 
 /**
  * @author Zaphod
@@ -71,8 +71,9 @@ class FlxSkewedSprite extends FlxSprite
 			_matrix.concat(_skewMatrix);
 		}
 
-		getScreenPosition(_point, camera).subtractPoint(offset);
-		_point.addPoint(origin);
+		getScreenPosition(_point, camera);
+		_point -= offset;
+		_point += origin;
 		if (isPixelPerfectRender(camera))
 			_point.floor();
 
