@@ -338,7 +338,7 @@ class FlxNestedSprite extends FlxSprite
 
 	override function set_color(Color:FlxColor):FlxColor
 	{
-		Color = Color.to24Bit();
+		Color = Color.rgb;
 
 		var combinedRed:Float = (Color >> 16) * _parentRed / 255;
 		var combinedGreen:Float = (Color >> 8 & 0xff) * _parentGreen / 255;
