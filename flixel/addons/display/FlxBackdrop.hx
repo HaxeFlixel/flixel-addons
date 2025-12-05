@@ -204,7 +204,7 @@ class FlxBackdrop extends FlxSprite
 		// The distance between repeated sprites, in screen space
 		final tileSize = FlxPoint.get(frame.frame.width, frame.frame.height);
 		if (drawDirect)
-			tileSize += spacing;
+			tileSize.add(spacing.x, spacing.y);
 		
 		getScreenPosition(_point, camera);
 		_point -= offset;
