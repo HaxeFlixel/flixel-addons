@@ -1,20 +1,20 @@
 package flixel.addons.ui;
 
 #if FLX_MOUSE
-import openfl.events.MouseEvent;
-import openfl.geom.Rectangle;
-import openfl.Lib;
-import flixel.addons.display.FlxExtendedMouseSprite;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.display.FlxExtendedMouseSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.group.*;
+import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxGradient;
-import flixel.math.FlxMath;
+import openfl.Lib;
+import openfl.events.MouseEvent;
+import openfl.geom.Rectangle;
 
 // TODO: Port to use touch as well
 
@@ -24,6 +24,7 @@ import flixel.math.FlxMath;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
+@:deprecated("FlxButtonPlus is deprecated, use FLxButton, instead")
 class FlxButtonPlus extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else FlxSpriteContainer #end
 {
 	public static inline var NORMAL:Int = 0;
@@ -69,7 +70,7 @@ class FlxButtonPlus extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else
 	/**
 	 * If this button has text, set this to change the value
 	 */
-	public var text(never, set):String;
+	public var text(get, set):String;
 
 	/**
 	 * Shows the current state of the button.
@@ -371,6 +372,14 @@ class FlxButtonPlus extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else
 		#end
 	}
 
+	function get_text():String
+	{
+		if (textNormal != null)
+			return textNormal.text;
+
+		return null;
+	}
+	
 	function set_text(NewText:String):String
 	{
 		if ((textNormal != null) && (textNormal.text != NewText))
