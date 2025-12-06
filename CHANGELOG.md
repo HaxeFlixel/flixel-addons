@@ -1,8 +1,11 @@
 ### 4.0.1 (December 6, 2025)
+
+#### Changes and improvements:
 - `FlxTilemapExt` and `FlxEffectSprite`: Fix deprecation warnings ([#473](https://github.com/HaxeFlixel/flixel/pull/473))
 
 # 4.0.0 (December 6, 2025)
-Removed deprecated classes
+
+#### Removed deprecated classes
 - `FlxRayCastTilemap`: `FlxBaseTilemap` has an all-around better `ray()` method ([#455](https://github.com/HaxeFlixel/flixel-addons/pull/455))
 - `FlxMouseControl`: Use `FlxMouseEvent`, instead ([#455](https://github.com/HaxeFlixel/flixel-addons/pull/455))
 
