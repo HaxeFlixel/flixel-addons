@@ -1,6 +1,5 @@
 package flixel.addons.tile;
 
-import openfl.display.BitmapData;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -15,6 +14,7 @@ import flixel.tile.FlxTilemap;
 import flixel.tile.FlxTilemapBuffer;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDirectionFlags;
+import openfl.display.BitmapData;
 
 using flixel.util.FlxColorTransformUtil;
 
@@ -126,8 +126,9 @@ class FlxTilemapExt extends FlxTilemap
 		}
 		else
 		{
-			getScreenPosition(_point, camera).subtractPoint(offset).copyToFlash(_helperPoint);
-
+			getScreenPosition(_point, camera);
+			_helperPoint.setTo(_point.x + offset.x, _point.y + offset.y);
+			
 			_helperPoint.x = isPixelPerfectRender(camera) ? Math.floor(_helperPoint.x) : _helperPoint.x;
 			_helperPoint.y = isPixelPerfectRender(camera) ? Math.floor(_helperPoint.y) : _helperPoint.y;
 
