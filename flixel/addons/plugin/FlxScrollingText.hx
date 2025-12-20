@@ -276,7 +276,11 @@ class FlxScrollingText extends FlxBasic
 	{
 		for (obj in members)
 		{
-			if (obj != null && (obj.onScreenScroller == true && obj.sprite.isOnScreen()) && obj.scrolling == true && obj.sprite.exists)
+			if (obj != null
+				&& (obj.onScreenScroller == true && obj.sprite.isOnScreen())
+				&& obj.scrolling == true
+				&& obj.sprite.exists
+				&& !obj.sprite.destroyed)
 			{
 				scroll(obj);
 			}

@@ -1,5 +1,6 @@
 package flixel.addons.display;
 
+import openfl.geom.ColorTransform;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -11,7 +12,6 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDirectionFlags;
-import openfl.geom.ColorTransform;
 
 using flixel.util.FlxArrayUtil;
 
@@ -177,7 +177,7 @@ class FlxNestedSprite extends FlxSprite
 
 		for (child in children)
 		{
-			if (child.active && child.exists)
+			if (child.active && child.exists && !child.destroyed)
 				child.update(elapsed);
 		}
 
@@ -260,7 +260,7 @@ class FlxNestedSprite extends FlxSprite
 
 	override public function draw():Void
 	{
-		if(_frame != null) 
+		if (_frame != null)
 			super.draw();
 
 		for (child in children)
