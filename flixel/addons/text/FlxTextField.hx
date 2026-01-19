@@ -25,7 +25,7 @@ class FlxTextField extends FlxText
 	 * @param	Size			The font size for this text object.
 	 * @param	EmbeddedFont	Whether this text field uses embedded fonts or not
 	 */
-	public function new(X:Float = 0, Y:Float = 0, Width:Int = 0, ?Text:String, Size:Int = 8, EmbeddedFont:Bool = truee)
+	public function new(X:Float = 0, Y:Float = 0, Width:Int = 0, ?Text:String, Size:Int = 8, EmbeddedFont:Bool = true)
 	{
 		super(X, Y, Width, Text, Size, EmbeddedFont);
 
