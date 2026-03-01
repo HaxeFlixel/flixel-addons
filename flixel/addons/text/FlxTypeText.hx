@@ -548,10 +548,12 @@ class FlxTypeText extends FlxText
 	function loadDefaultSound():Void
 	{
 		#if FLX_SOUND_SYSTEM
-		_sound = FlxG.sound.create(new TypeSound());
+		#if (flixel < version("6.2.0")) _sound = FlxG.sound.load(new TypeSound());
+		#else _sound = FlxG.sound.create(new TypeSound());
 		#else
 		_sound = new FlxSound();
-		_sound.load(new TypeSound());
+		#if (flixel < version("6.2.0")) _sound.loadEmbedded(new TypeSound());
+		#else _sound.load(new TypeSound());
 		#end
 	}
 }
