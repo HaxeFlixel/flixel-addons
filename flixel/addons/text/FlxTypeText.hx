@@ -549,11 +549,11 @@ class FlxTypeText extends FlxText
 	{
 		#if FLX_SOUND_SYSTEM
 		#if (flixel < version("6.2.0")) _sound = FlxG.sound.load(new TypeSound());
-		#else _sound = FlxG.sound.create(new TypeSound());
+		#else _sound = FlxG.sound.create(new TypeSound()); #end
 		#else
 		_sound = new FlxSound();
 		#if (flixel < version("6.2.0")) _sound.loadEmbedded(new TypeSound());
-		#else _sound.load(new TypeSound());
+		#else _sound.load(new TypeSound()); #end
 		#end
 	}
 }
