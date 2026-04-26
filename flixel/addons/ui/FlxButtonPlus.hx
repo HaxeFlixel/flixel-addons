@@ -24,7 +24,7 @@ import openfl.geom.Rectangle;
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  */
-@:deprecated("FlxButtonPlus is deprecated, use FLxButton, instead")
+@:deprecated("FlxButtonPlus is deprecated, use FlxButton, instead")
 class FlxButtonPlus extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else FlxSpriteContainer #end
 {
 	public static inline var NORMAL:Int = 0;
