@@ -132,9 +132,18 @@ class FlxEffectSprite extends FlxSprite
 			_flashRect = pixels.rect;
 		}
 
+		updateHitbox();
+
 		super.draw();
 	}
 
+	override public function updateHitbox() {
+		setSize(scale.x * target.frameWidth, scale.y * target.frameHeight);
+		offset.x = (target.frameWidth - width) * 0.5;
+		offset.y = (target.frameHeight - height) * 0.5;
+		origin.set(frameWidth * 0.5, frameHeight * 0.5);
+	}
+	
 	/**
 	 * Core update loop, and updates each active effect.
 	 */
