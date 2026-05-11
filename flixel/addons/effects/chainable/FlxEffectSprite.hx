@@ -137,7 +137,8 @@ class FlxEffectSprite extends FlxSprite
 		super.draw();
 	}
 
-	override public function updateHitbox() {
+	override public function updateHitbox():Void
+	{
 		setSize(scale.x * target.frameWidth, scale.y * target.frameHeight);
 		offset.x = (target.frameWidth - width) * 0.5;
 		offset.y = (target.frameHeight - height) * 0.5;
