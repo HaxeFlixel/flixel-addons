@@ -72,7 +72,7 @@ class FlxOutlineEffect implements IFlxEffect
 	var _matrix:Matrix = new Matrix();
 
 	/**
-	 * Creates an outline around the bitmapData with the specified color and thickness. To update, dirty need to be setted as true.
+	 * Creates an outline around the bitmapData with the specified color and thickness. To update, set `dirty` to true.
 	 *
 	 * @param	Mode		Which Mode you would like to use for the effect. FAST = Optimized using only 4 draw calls, NORMAL = Outline on all 8 sides, PIXEL_BY_PIXEL = Surround every pixel (can affect performance).
 	 * @param	Color		Color of the outline.
