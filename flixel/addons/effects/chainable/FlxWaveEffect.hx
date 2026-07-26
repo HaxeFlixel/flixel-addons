@@ -194,7 +194,7 @@ class FlxWaveEffect implements IFlxEffect
 			waveOffset = Math.PI * 2 * interlaceOffset;
 		}
 
-		return FlxMath.fastSin((p / wavelength) + _time + waveOffset);
+		return Math.sin((p / wavelength) + _time + waveOffset);
 	}
 
 	function set_interlaceOffset(InterlaceOffset:Float):Float
