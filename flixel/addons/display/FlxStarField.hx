@@ -10,101 +10,16 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxGradient;
-import flixel.math.FlxPoint;
-import flixel.math.FlxRandom;
 
-class FlxStarField2D extends FlxStarField
-{
-	public var starVelocityOffset(default, null):FlxPoint;
+#if FLX_NO_COVERAGE_TEST
+@:deprecated('FlxStarField2D was moved to flixel.addons.display.FlxStarField2D')
+typedef FlxStarField2D = flixel.addons.display.FlxStarField2D;
 
-	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, StarAmount:Int = 300)
-	{
-		super(X, Y, Width, Height, StarAmount);
-		starVelocityOffset = FlxPoint.get(-1, 0);
-		setStarDepthColors(5, 0xff585858, 0xffF4F4F4);
-		setStarSpeed(100, 400);
-	}
+@:deprecated('FlxStarField3D was moved to flixel.addons.display.FlxStarField3D')
+typedef FlxStarField3D = flixel.addons.display.FlxStarField3D;
+#end
 
-	override public function destroy():Void
-	{
-		starVelocityOffset = FlxDestroyUtil.put(starVelocityOffset);
-		super.destroy();
-	}
-
-	override public function update(elapsed:Float):Void
-	{
-		for (star in _stars)
-		{
-			star.x += (starVelocityOffset.x * star.speed) * elapsed;
-			star.y += (starVelocityOffset.y * star.speed) * elapsed;
-
-			// wrap the star
-			if (star.x > width)
-			{
-				star.x = 0;
-			}
-			else if (star.x < 0)
-			{
-				star.x = width;
-			}
-
-			if (star.y > height)
-			{
-				star.y = 0;
-			}
-			else if (star.y < 0)
-			{
-				star.y = height;
-			}
-		}
-
-		super.update(elapsed);
-	}
-}
-
-class FlxStarField3D extends FlxStarField
-{
-	public var center(default, null):FlxPoint;
-
-	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, StarAmount:Int = 300)
-	{
-		super(X, Y, Width, Height, StarAmount);
-		center = FlxPoint.get(width / 2, height / 2);
-		setStarDepthColors(300, 0xff292929, 0xffffffff);
-		setStarSpeed(0, 200);
-	}
-
-	override public function destroy():Void
-	{
-		center = FlxDestroyUtil.put(center);
-		super.destroy();
-	}
-
-	override public function update(elapsed:Float):Void
-	{
-		for (star in _stars)
-		{
-			star.d *= 1.1;
-			star.x = center.x + ((Math.cos(star.r) * star.d) * star.speed) * elapsed;
-			star.y = center.y + ((Math.sin(star.r) * star.d) * star.speed) * elapsed;
-
-			if ((star.x < 0) || (star.x > width) || (star.y < 0) || (star.y > height))
-			{
-				star.d = 1;
-				star.r = FlxG.random.float() * Math.PI * 2;
-				star.x = 0;
-				star.y = 0;
-				star.speed = FlxG.random.float(_minSpeed, _maxSpeed);
-
-				_stars[star.index] = star;
-			}
-		}
-
-		super.update(elapsed);
-	}
-}
-
-private class FlxStarField extends FlxSprite
+class FlxStarField extends FlxSprite
 {
 	public var bgColor:Int = FlxColor.BLACK;
 
@@ -113,20 +28,20 @@ private class FlxStarField extends FlxSprite
 	var _minSpeed:Float;
 	var _maxSpeed:Float;
 
-	public function new(X:Int, Y:Int, Width:Int, Height:Int, StarAmount:Int)
+	public function new(x:Int, y:Int, width = 0, height = 0, starAmount:Int)
 	{
-		super(X, Y);
-		Width = (Width <= 0) ? FlxG.width : Width;
-		Height = (Height <= 0) ? FlxG.height : Height;
-		makeGraphic(Width, Height, bgColor, true);
+		super(x, y);
+		width = (width <= 0) ? FlxG.width : width;
+		height = (height <= 0) ? FlxG.height : height;
+		makeGraphic(width, height, bgColor, true);
 		_stars = [];
 
-		for (i in 0...StarAmount)
+		for (i in 0...starAmount)
 		{
 			var star = new FlxStar();
 			star.index = i;
-			star.x = FlxG.random.int(0, Width);
-			star.y = FlxG.random.int(0, Height);
+			star.x = FlxG.random.int(0, width);
+			star.y = FlxG.random.int(0, height);
 			star.d = 1;
 			star.r = FlxG.random.float() * Math.PI * 2;
 			_stars.push(star);
@@ -185,7 +100,7 @@ private class FlxStarField extends FlxSprite
 	}
 }
 
-private class FlxStar
+class FlxStar
 {
 	public var index:Int;
 	public var x:Float;
