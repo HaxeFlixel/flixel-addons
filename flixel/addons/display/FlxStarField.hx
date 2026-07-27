@@ -11,11 +11,13 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxGradient;
 
+#if FLX_NO_COVERAGE_TEST
 @:deprecated('FlxStarField2D was moved to flixel.addons.display.FlxStarField2D')
 typedef FlxStarField2D = flixel.addons.display.FlxStarField2D;
 
 @:deprecated('FlxStarField3D was moved to flixel.addons.display.FlxStarField3D')
 typedef FlxStarField3D = flixel.addons.display.FlxStarField3D;
+#end
 
 class FlxStarField extends FlxSprite
 {
