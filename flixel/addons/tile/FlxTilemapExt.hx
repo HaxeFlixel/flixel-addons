@@ -661,10 +661,6 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	function solveCollisionSlopeNorthwest(slope:FlxObject, object:FlxObject):Void
 	{
-		if (object.x + object.width > slope.x + slope.width + _snapping)
-		{
-			return;
-		}
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(object.x + object.width + _snapping);
 		_objPoint.y = Math.floor(object.y + object.height);
@@ -733,10 +729,6 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	function solveCollisionSlopeNortheast(slope:FlxObject, object:FlxObject):Void
 	{
-		if (object.x < slope.x - _snapping)
-		{
-			return;
-		}
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(object.x - _snapping);
 		_objPoint.y = Math.floor(object.y + object.height);
