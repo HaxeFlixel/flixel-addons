@@ -26,6 +26,156 @@ class TypeSound extends Sound {}
 #end
 
 /**
+ * Represents the current animation status of the FlxTypeText.
+ */
+enum abstract TypeTextStatus(Int) from Int to Int
+{
+	/** No animation occurring */
+	var IDLE = 0;
+
+	/** Actively typing characters */
+	var TYPING = 1;
+
+	/** Typing animation paused */
+	var PAUSED_TYPING = 2;
+
+	/** Waiting between typing completion and erase start (when autoErase=true) */
+	var WAITING = 3;
+
+	/** Waiting animation paused */
+	var PAUSED_WAITING = 4;
+
+	/** Actively erasing characters */
+	var ERASING = 5;
+
+	/** Erasing animation paused */
+	var PAUSED_ERASING = 6;
+
+	var self(get, never):TypeTextStatus;
+
+	inline function get_self():TypeTextStatus
+	{
+		#if (haxe >= version("4.3.0"))
+		return abstract;
+		#else
+		return cast this;
+		#end
+	}
+
+	/**
+	 * Whether the current status is any paused status
+	 */
+	public var isPaused(get, never):Bool;
+
+	inline function get_isPaused():Bool
+	{
+		return self == PAUSED_TYPING
+			|| self == PAUSED_WAITING
+			|| self == PAUSED_ERASING;
+	}
+
+	/**
+	 * Whether the current status is actively animating (not paused, not idle)
+	 */
+	public var isAnimating(get, never):Bool;
+
+	inline function get_isAnimating():Bool
+	{
+		return self == TYPING
+			|| self == WAITING
+			|| self == ERASING;
+	}
+
+	/**
+	 * Whether this is a typing-related status (including paused typing)
+	 */
+	public var isTyping(get, never):Bool;
+
+	inline function get_isTyping():Bool
+	{
+		return self == TYPING || self == PAUSED_TYPING;
+	}
+
+	/**
+	 * Whether this is an erasing-related status (including paused erasing)
+	 */
+	public var isErasing(get, never):Bool;
+
+	inline function get_isErasing():Bool
+	{
+		return self == ERASING || self == PAUSED_ERASING;
+	}
+
+	/**
+	 * Whether this is a waiting-related status (including paused waiting)
+	 */
+	public var isWaiting(get, never):Bool;
+
+	inline function get_isWaiting():Bool
+	{
+		return self == WAITING || self == PAUSED_WAITING;
+	}
+
+	/**
+	 * Get the paused version of the current status, or return unchanged if already paused/idle
+	 */
+	public inline function toPaused():TypeTextStatus
+	{
+		return switch self
+		{
+			case TYPING: PAUSED_TYPING;
+			case ERASING: PAUSED_ERASING;
+			case WAITING: PAUSED_WAITING;
+			case _: self; // Already paused or idle
+		}
+	}
+
+	/**
+	 * Get the active (unpaused) version of the current status, or return unchanged if not paused
+	 */
+	public inline function toActive():TypeTextStatus
+	{
+		return switch self
+		{
+			case PAUSED_TYPING: TYPING;
+			case PAUSED_ERASING: ERASING;
+			case PAUSED_WAITING: WAITING;
+			case _: self; // Not paused
+		}
+	}
+
+	/**
+	 * Convert to integer value
+	 */
+	public inline function toInt():Int
+	{
+		return this;
+	}
+
+	/**
+	 * String representation for debugging
+	 */
+	public function toString():String
+	{
+		return switch self
+		{
+			case IDLE: "IDLE";
+			case TYPING: "TYPING";
+			case PAUSED_TYPING: "PAUSED_TYPING";
+			case WAITING: "WAITING";
+			case PAUSED_WAITING: "PAUSED_WAITING";
+			case ERASING: "ERASING";
+			case PAUSED_ERASING: "PAUSED_ERASING";
+		}
+	}
+
+	public inline static function fromInt(value:Int):TypeTextStatus
+	{
+		return cast value;
+	}
+}
+
+/**
  * This is loosely based on the TypeText class by Noel Berry, who wrote it for his Ludum Dare 22 game - Abandoned
  * http://www.ludumdare.com/compo/ludum-dare-22/?action=preview&uid=1527
  * @author Noel Berry
@@ -75,8 +225,28 @@ class FlxTypeText extends FlxText
 
 	/**
 	 * Whether or not to animate the text. Set to false by start() and erase().
+	 * @deprecated Use pause()/resume() methods or check currentStatus directly instead
 	 */
-	public var paused:Bool = false;
+	public var paused(get, set):Bool;
+
+	inline function get_paused():Bool
+	{
+		return _status.isPaused;
+	}
+
+	function set_paused(value:Bool):Bool
+	{
+		_status = value ? _status.toPaused() : _status.toActive();
+		return value;
+	}
+
+	/**
+	 * The current animation status.
+	 */
+	public var currentStatus(get, never):TypeTextStatus;
+
+	inline function get_currentStatus():TypeTextStatus
+		return _status;
 
 	/**
 	 * The sounds that are played when letters are added; optional.
@@ -131,19 +301,9 @@ class FlxTypeText extends FlxText
 	var _length:Int = 0;
 
 	/**
-	 * Whether or not to type the text. Set to true by start() and false by pause().
+	 * Current status of the text animation.
 	 */
-	var _typing:Bool = false;
-
-	/**
-	 * Whether or not to erase the text. Set to true by erase() and false by pause().
-	 */
-	var _erasing:Bool = false;
-
-	/**
-	 * Whether or not we're waiting between the type and erase phases.
-	 */
-	var _waiting:Bool = false;
+	var _status:TypeTextStatus = IDLE;
 
 	/**
 	 * Internal tracker for cursor blink time.
@@ -205,10 +365,7 @@ class FlxTypeText extends FlxText
 			delay = Delay;
 		}
 
-		_typing = true;
-		_erasing = false;
-		paused = false;
-		_waiting = false;
+		_status = TYPING;
 
 		if (ForceRestart)
 		{
@@ -289,10 +446,7 @@ class FlxTypeText extends FlxText
 	 */
 	public function erase(?Delay:Float, ForceRestart:Bool = false, ?SkipKeys:Array<FlxKey>, ?Callback:Void->Void):Void
 	{
-		_erasing = true;
-		_typing = false;
-		paused = false;
-		_waiting = false;
+		_status = ERASING;
 
 		if (Delay != null)
 		{
@@ -327,10 +481,7 @@ class FlxTypeText extends FlxText
 	{
 		text = prefix;
 		_finalText = Text;
-		_typing = false;
-		_erasing = false;
-		paused = false;
-		_waiting = false;
+		_status = IDLE;
 		_length = 0;
 	}
 
@@ -354,7 +505,6 @@ class FlxTypeText extends FlxText
 	function onComplete():Void
 	{
 		_timer = 0;
-		_typing = false;
 
 		if (useDefaultSound)
 		{
@@ -375,19 +525,23 @@ class FlxTypeText extends FlxText
 
 		if (autoErase && waitTime <= 0)
 		{
-			_erasing = true;
+			_status = ERASING;
 		}
 		else if (autoErase)
 		{
 			_waitTimer = waitTime;
-			_waiting = true;
+			_status = WAITING;
+		}
+		else
+		{
+			_status = IDLE;
 		}
 	}
 
 	function onErased():Void
 	{
 		_timer = 0;
-		_erasing = false;
+		_status = IDLE;
 
 		if (eraseCallback != null)
 		{
@@ -405,26 +559,25 @@ class FlxTypeText extends FlxText
 		}
 		#end
 
-		if (_waiting && !paused)
+		if (_status == WAITING)
 		{
 			_waitTimer -= elapsed;
 
 			if (_waitTimer <= 0)
 			{
-				_waiting = false;
-				_erasing = true;
+				_status = ERASING;
 			}
 		}
 
 		// So long as we should be animating, increment the timer by time elapsed.
-		if (!_waiting && !paused)
+		if (_status == TYPING || _status == ERASING)
 		{
-			if (_length < _finalText.length && _typing)
+			if (_length < _finalText.length && _status == TYPING)
 			{
 				_timer += elapsed;
 			}
 
-			if (_length > 0 && _erasing)
+			if (_length > 0 && _status == ERASING)
 			{
 				_timer += elapsed;
 			}
@@ -432,27 +585,27 @@ class FlxTypeText extends FlxText
 
 		// If the timer value is higher than the rate at which we should be changing letters, increase or decrease desired string length.
 
-		if (_typing || _erasing)
+		if (_status == TYPING || _status == ERASING)
 		{
-			if (_typing && _timer >= delay)
+			if (_status == TYPING && _timer >= delay)
 			{
 				_length += Std.int(_timer / delay);
 				if (_length > _finalText.length)
 					_length = _finalText.length;
 			}
 
-			if (_erasing && _timer >= eraseDelay)
+			if (_status == ERASING && _timer >= eraseDelay)
 			{
 				_length -= Std.int(_timer / eraseDelay);
 				if (_length < 0)
 					_length = 0;
 			}
 
-			if ((_typing && _timer >= delay) || (_erasing && _timer >= eraseDelay))
+			if ((_status == TYPING && _timer >= delay) || (_status == ERASING && _timer >= eraseDelay))
 			{
 				if (_typingVariation)
 				{
-					if (_typing)
+					if (_status == TYPING)
 					{
 						_timer = FlxG.random.float(-delay * _typeVarPercent / 2, delay * _typeVarPercent / 2);
 					}
@@ -513,13 +666,13 @@ class FlxTypeText extends FlxText
 			text = helperString;
 
 			// If we're done typing, call the onComplete() function
-			if (_length >= _finalText.length && _typing && !_waiting && !_erasing)
+			if (_length >= _finalText.length && _status == TYPING)
 			{
 				onComplete();
 			}
 
 			// If we're done erasing, call the onErased() function
-			if (_length == 0 && _erasing && !_typing && !_waiting)
+			if (_length == 0 && _status == ERASING)
 			{
 				onErased();
 			}
@@ -534,15 +687,46 @@ class FlxTypeText extends FlxText
 	 */
 	public function skip():Void
 	{
-		if (_erasing || _waiting)
+		switch (_status)
 		{
-			_length = 0;
-			_waiting = false;
+			case ERASING | PAUSED_ERASING | WAITING | PAUSED_WAITING:
+				_length = 0;
+				_status = IDLE;
+
+			case TYPING | PAUSED_TYPING:
+				_length = _finalText.length;
+				// Will trigger onComplete() in update(), which handles status transition
+
+			default:
+				// Already idle, do nothing
 		}
-		else if (_typing)
-		{
-			_length = _finalText.length;
-		}
+	}
+
+	/**
+	 * Pause the current animation.
+	 */
+	public function pause():Void
+	{
+		_status = _status.toPaused();
+	}
+
+	/**
+	 * Resume the current animation if paused.
+	 */
+	public function resume():Void
+	{
+		_status = _status.toActive();
+	}
+
+	/**
+	 * Stop all animation and return to idle status.
+	 * Unlike resetText(), this preserves the current text display.
+	 */
+	public function stop():Void
+	{
+		_status = IDLE;
+		_timer = 0;
+		_waitTimer = 0;
 	}
 
 	function loadDefaultSound():Void
