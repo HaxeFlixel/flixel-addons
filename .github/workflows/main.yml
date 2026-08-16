@@ -2,6 +2,11 @@ name: CI
 
 on:
   push:
+    branches:
+    - dev
+    paths-ignore:
+    - '**/*.md'
+    - '.vscode/*'
   pull_request:
   workflow_dispatch:
   repository_dispatch:
