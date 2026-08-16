@@ -36,7 +36,7 @@ using flixel.util.FlxColorTransformUtil;
 class FlxTilemapExt extends FlxTilemap
 {
 	// Slope related variables
-	var _snapping:Int = 2;
+	var _snapping:Int = 2; // 6 or higher fixes weird left to right slope bumping but breaks other things so idk
 	var _slopePoint:FlxPoint = FlxPoint.get();
 	var _objPoint:FlxPoint = FlxPoint.get();
 	var _downwardsGlue:Bool = false;
@@ -661,10 +661,6 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	function solveCollisionSlopeNorthwest(slope:FlxObject, object:FlxObject):Void
 	{
-		if (object.x + object.width > slope.x + slope.width + _snapping)
-		{
-			return;
-		}
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(object.x + object.width + _snapping);
 		_objPoint.y = Math.floor(object.y + object.height);
@@ -733,10 +729,6 @@ class FlxTilemapExt extends FlxTilemap
 	 */
 	function solveCollisionSlopeNortheast(slope:FlxObject, object:FlxObject):Void
 	{
-		if (object.x < slope.x - _snapping)
-		{
-			return;
-		}
 		// Calculate the corner point of the object
 		_objPoint.x = Math.floor(object.x - _snapping);
 		_objPoint.y = Math.floor(object.y + object.height);
