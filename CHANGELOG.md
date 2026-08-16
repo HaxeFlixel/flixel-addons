@@ -1,3 +1,8 @@
+### 4.0.2 (August 16, 2026)
+- `FlxWaveEffect`: Remove refs to FlxMath.fastSin and cos ([#486](https://github.com/HaxeFlixel/flixel-addons/pull/486))
+- `FlxTypeText`: Fix FlxSound deprecation warnings ([#478](https://github.com/HaxeFlixel/flixel-addons/pull/478))
+- `FlxSlider`: Replace set() calls with zero() ([#474](https://github.com/HaxeFlixel/flixel/pull/474))
+
 ### 4.0.1 (December 6, 2025)
 
 #### Changes and improvements:
