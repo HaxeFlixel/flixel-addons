@@ -111,6 +111,11 @@ class FlxSlider extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else Flx
 	public var varString(default, set):String;
 
 	/**
+		Whether the slider is currently being dragged
+	**/
+	public var dragging:Bool = false;
+
+	/**
 	 * The dragable area for the handle. Is configured automatically.
 	 */
 	var _bounds:FlxRect;
@@ -153,11 +158,6 @@ class FlxSlider extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else Flx
 	 * Helper var for callbacks.
 	 */
 	var _lastPos:Float;
-
-	/**
-	 * Helper variable to avoid the clickSound playing every frame.
-	 */
-	var _justClicked:Bool = false;
 
 	/**
 	 * Helper variable to avoid the hoverSound playing every frame.
@@ -294,22 +294,16 @@ class FlxSlider extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else Flx
 
 			_justHovered = true;
 
-			if (FlxG.mouse.pressed)
+			if (FlxG.mouse.justPressed)
 			{
-				handle.x = mousePosition.x;
-				updateValue();
-
+				dragging = true;
+			
 				#if FLX_SOUND_SYSTEM
-				if (clickSound != null && !_justClicked)
+				if (clickSound != null)
 				{
 					FlxG.sound.play(clickSound);
-					_justClicked = true;
 				}
 				#end
-			}
-			if (!FlxG.mouse.pressed)
-			{
-				_justClicked = false;
 			}
 		}
 		else
@@ -322,9 +316,13 @@ class FlxSlider extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else Flx
 			_justHovered = false;
 		}
 
-		// Update the target value whenever the slider is being used
-		if ((FlxG.mouse.pressed) && (FlxMath.pointInFlxRect(mousePosition.x, mousePosition.y, _bounds)))
+		if (dragging)
 		{
+			if (FlxG.mouse.pressed)
+				handle.x = mousePosition.x;
+			else
+				dragging = false;
+			
 			updateValue();
 		}
 
@@ -356,9 +354,11 @@ class FlxSlider extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else Flx
 	{
 		if (_lastPos != relativePos)
 		{
+			value = (relativePos * (maxValue - minValue)) + minValue;
+
 			if ((setVariable) && (varString != null))
 			{
-				Reflect.setProperty(_object, varString, (relativePos * (maxValue - minValue)) + minValue);
+				Reflect.setProperty(_object, varString, value);
 			}
 
 			_lastPos = relativePos;
@@ -466,6 +466,11 @@ class FlxSlider extends #if (flixel < version("5.7.0")) FlxSpriteGroup #else Flx
 		if (pos > 1)
 		{
 			pos = 1;
+		}
+		// Relative position can't be smaller than 0
+		else if (pos < 0)
+		{
+			pos = 0;
 		}
 
 		return pos;
